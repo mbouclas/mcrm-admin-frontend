@@ -2,10 +2,10 @@
   import Input from './lib/input.svelte'
   import Button from './lib/button.svelte'
   import Dashboard from './lib/dashboard.svelte'
-  import Profile from './lib/profile.svelte'
+
   import PrivateRoute from "./lib/auth/private-route.svelte";
   import Login from "./lib/auth/login.svelte";
-  import { Router, Route, Link } from "svelte-navigator";
+  import { Router, Route } from "svelte-navigator";
   import { user } from "./lib/store";
 
   function handleLogout() {
@@ -39,7 +39,7 @@ function handleSubmit(event) {
       <Link to="profile">Profile</Link>
     </nav>
   </header> -->
-  
+
 
 
  <Route path="/"><Dashboard /></Route>
