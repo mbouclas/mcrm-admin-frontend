@@ -8,18 +8,28 @@
 
   let username;
   let password;
+  $: errors = {
+    'password':null,
+    'username':null,
+    'general' : null,
+  };
 
   async function  handleSubmit() {
     $user = { username, password };
-    if(username === '' || password ==='') {
-      alert("Enter username/password")
+    if(username === null || username.length < 1) {
+      errors['username'] = 'Please enter username'
+      return;
+    }
+    if(password ===null || password.length < 1) {
+      errors['password'] = 'Please enter password'
       return;
     }
     const res = await new   AuthService().login(username, password);
-    if(!res.success) {
-      alert(res.reason.message ?? res.reason);
+    if(!res.accessToken) {
+      errors['general'] = (res.reason.message ?? res.reason);
       return;
     }
+    localStorage.setItem('user', res);
     const from = ($location.state && $location.state.from) || "/";
     navigate(from, { replace: true });
   }
@@ -53,24 +63,32 @@ class="w-full mt-16 lg:w-[28%] mx-auto  min-h-screen relative flex flex-col item
                      alt="">
                     </div>
                     <div class="flex-grow pt-12 flex flex-col  justify-between w-full px-6 lg:px-8 ">
-
+                        {#if errors.general}
+                          <p class="text-red-500 text-[13px] py-2 rounded w-full bg-red-200  px-3 font-light">{errors.general}</p>
+                        {/if}
                       <div class="group flex flex-col text-gray-500  w-full">
                         <label class="text-sm text-left font-semibold" for="email">Email</label>
                         <input type="text"
                         bind:value={username} 
                         id={username} 
                         placeholder="email"
-                        class="w-full mt-1 w-full px-3 py-2 text-sm bg-gray-secondary border border-gray-700 rounded" >
+                        class="w-full mt-1 w-full px-3 py-2 text-sm bg-gray-secondary border border-gray-700 rounded" required>
+                        {#if errors.username}
+                        <p class="text-red-500 text-sm font-light">{errors.username}</p>
+                        {/if}
                       </div>
                   
                       <div class="group flex flex-col text-gray-500  w-full">
-                        <label class="text-sm text-left  w-full  font-semibold" for="passoword">Password</label>
+                        <label class="text-sm text-left  w-full  font-semibold" for="passoword" required>Password</label>
                         <input type="password"
                         bind:value={password} 
                         id={password} 
                         placeholder="Password"
 
-                        class="w-full mt-2 w-full px-3 py-2 text-sm bg-gray-secondary border border-gray-700 rounded" >
+                        class="w-full mt-2 w-full px-3 py-2 text-sm bg-gray-secondary border border-gray-700 rounded" />
+                        {#if errors.password}
+                        <p class="text-red-500 text-sm font-light">{errors.password}</p>
+                        {/if}
                       </div>
                      <div class="group flex items-center text-gray-500 mb-2 w-full gap-2 relative">
                        <input type="checkbox" name="" class="h-4 w-4" id="remember">
