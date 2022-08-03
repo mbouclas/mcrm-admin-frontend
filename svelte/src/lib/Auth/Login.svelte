@@ -1,6 +1,7 @@
 <script>
   import { useNavigate, useLocation } from "svelte-navigator";
   import { user } from "../stores";
+  import { AuthService } from "./auth.service";
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -8,8 +9,17 @@
   let username;
   let password;
 
-  function handleSubmit() {
+  async function  handleSubmit() {
     $user = { username, password };
+    if(username === '' || password ==='') {
+      alert("Enter username/password")
+      return;
+    }
+    const res = await new   AuthService().login(username, password);
+    if(!res.success) {
+      alert(res.reason);
+      return;
+    }
     const from = ($location.state && $location.state.from) || "/";
     navigate(from, { replace: true });
   }
@@ -55,10 +65,11 @@ class="w-full mt-16 lg:w-[28%] mx-auto  min-h-screen relative flex flex-col item
                   
                       <div class="group flex flex-col text-gray-500  w-full">
                         <label class="text-sm text-left  w-full  font-semibold" for="passoword">Password</label>
-                        <input type="text"
+                        <input type="password"
                         bind:value={password} 
                         id={password} 
                         placeholder="Password"
+
                         class="w-full mt-2 w-full px-3 py-2 text-sm bg-gray-secondary border border-gray-700 rounded" >
                       </div>
                      <div class="group flex items-center text-gray-500 mb-2 w-full gap-2 relative">
