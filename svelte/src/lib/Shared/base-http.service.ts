@@ -12,7 +12,20 @@ export class BaseHttpService {
     return await res.json();
   }
 
-  async post(url: string, body: IGenericObject = {}) {}
+
+
+  async post(url: string, body: IGenericObject = {}) {
+    const rawResponse = await fetch(`${this.apiUrl}${url}`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Basic YWRtaW5BcHA6dG9wU2VjcmV0'
+      },
+      body: JSON.stringify(body)
+    });
+    return await rawResponse.json();
+  }
 
   private objectToQueryParams(obj: IGenericObject) {
     return Object.entries(obj)
