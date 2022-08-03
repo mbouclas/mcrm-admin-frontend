@@ -17,7 +17,7 @@
     }
     const res = await new   AuthService().login(username, password);
     if(!res.success) {
-      alert(res.reason);
+      alert(res.reason.message ?? res.reason);
       return;
     }
     const from = ($location.state && $location.state.from) || "/";
