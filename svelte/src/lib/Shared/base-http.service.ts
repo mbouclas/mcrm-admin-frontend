@@ -14,14 +14,21 @@ export class BaseHttpService {
 
 
 
-  async post(url: string, body: IGenericObject = {}) {
+  async post(url: string, body: IGenericObject = {}, extraHeaders: IGenericObject = {}) {
+    const headers = new Headers();
+
+    Object.keys(extraHeaders).forEach(header => {
+      headers.append(header, extraHeaders[header])
+    });
+
+    const contentType = headers.get('Content-Type');
+    if (!contentType) {
+      headers.append('Content-Type', 'application/json');
+    }
+
     const rawResponse = await fetch(`${this.apiUrl}${url}`, {
       method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Basic YWRtaW5BcHA6dG9wU2VjcmV0'
-      },
+      headers,
       body: JSON.stringify(body)
     });
     return await rawResponse.json();
