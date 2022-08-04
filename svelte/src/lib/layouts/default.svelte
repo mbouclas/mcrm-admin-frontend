@@ -4,6 +4,7 @@
   import Header from '../Shared/Header.svelte'
   import About from '../Dashboard/About.svelte'
   import Profile from '../User/Profile.svelte'
+  import CatalogueRoutes from '../Catalogue/routes.svelte'
 let url;
 	const location = useLocation();
 
@@ -27,5 +28,9 @@ location.subscribe(r => console.log(r))
 
   	<PrivateRoute path="profile/*"  let:location>
 		<Profile />
+	</PrivateRoute>
+
+	<PrivateRoute path="catalogue/*"  let:location>
+		<CatalogueRoutes />
 	</PrivateRoute>
 </Router>

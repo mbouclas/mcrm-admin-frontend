@@ -4,6 +4,15 @@
 
   const navigate = useNavigate();
   const location = useLocation();
+  let storedUser;
+  const storedUserString = localStorage.getItem('user');
+
+  if (storedUserString) {
+    storedUser = JSON.parse(storedUserString);
+    user.update(() => storedUser);
+
+  }
+
 
   $: if (!$user) {
     navigate("/login", {

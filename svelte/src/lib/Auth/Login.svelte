@@ -16,15 +16,15 @@
   };
 
   async function  handleSubmit() {
-    
+
     $user = { username, password };
     if(!username  || username==='') {
       errors['username'] = 'Please enter username'
-     
+
     }
     if(!password || password==='' ) {
       errors['password'] = 'Please enter password'
-     
+
     }
     if(errors['username'] || errors['password']) {
      return;
@@ -34,7 +34,8 @@
       errors['general'] = (res.reason.message ?? res.reason);
       return;
     }
-    localStorage.setItem('user', res);
+
+    localStorage.setItem('user', JSON.stringify(res));
     user.update(() =>  res);
     const from = ($location.state && $location.state.from) || "/";
     navigate(from, { replace: true });
@@ -45,9 +46,9 @@
    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 9v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9"/><path d="M9 22V12h6v10M2 10.6L12 2l10 8.6"/></svg>
   </a>
 </div>
-<form 
+<form
 class="w-full mt-16 lg:w-[28%] mx-auto  min-h-screen relative flex flex-col items-center justify-center">
-                   
+
                    <div class=" min-h-64 min-h-[80vh] flex flex-col w-full rounded bg-gray-secondary">
                      <div class="h-28 rounded-t w-full bg-dark-blue">
                        <div class="flex items-center justify-between  p-2 text-sm text-blue-500">
@@ -58,12 +59,12 @@ class="w-full mt-16 lg:w-[28%] mx-auto  min-h-screen relative flex flex-col item
 
 
                           <img class="h-20 w-32 object-fit" src="http://skote-v-dark.svelte.themesbrand.com/assets/images/profile-img.png" alt="">
-                       </div>  
+                       </div>
                     </div>
 
                     <div class="absolute h-16 w-16 top-[15%] rounded-full bg-gray-secondary left-4 flex items-center justify-center">
-                     <img 
-                     src="http://skote-v-dark.svelte.themesbrand.com/assets/images/logo-light.svg" 
+                     <img
+                     src="http://skote-v-dark.svelte.themesbrand.com/assets/images/logo-light.svg"
                      class="w-8 h-8 object-fit rounded-full"
                      alt="">
                     </div>
@@ -74,20 +75,20 @@ class="w-full mt-16 lg:w-[28%] mx-auto  min-h-screen relative flex flex-col item
                       <div class="group flex flex-col text-gray-500  w-full">
                         <label class="text-sm text-left font-semibold" for="email">Email</label>
                         <input type="text"
-                        bind:value={username} 
-                        id={username} 
+                        bind:value={username}
+                        id={username}
                         placeholder="email"
                         class="w-full mt-1 w-full px-3 py-2 text-sm bg-gray-secondary border border-gray-700 rounded" required>
                         {#if errors.username}
                         <p class="text-red-500 text-sm font-light">{errors.username}</p>
                         {/if}
                       </div>
-                  
+
                       <div class="group flex flex-col text-gray-500  w-full">
                         <label class="text-sm text-left  w-full  font-semibold" for="passoword" required>Password</label>
                         <input type="password"
-                        bind:value={password} 
-                        id={password} 
+                        bind:value={password}
+                        id={password}
                         placeholder="Password"
 
                         class="w-full mt-2 w-full px-3 py-2 text-sm bg-gray-secondary border border-gray-700 rounded" />

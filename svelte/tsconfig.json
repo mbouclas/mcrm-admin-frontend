@@ -18,6 +18,7 @@
     "paths": {
       "@shared": ["src/lib/Shared"],
       "@user": ["src/lib/User"],
+      "@catalogue": ["src/lib/Catalogue"],
       "@layouts": ["src/lib/layouts"],
       "@auth": ["src/lib/Auth"]
     }
