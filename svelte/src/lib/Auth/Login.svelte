@@ -3,6 +3,7 @@
   import { user } from "../stores";
   import { AuthService } from "./auth.service";
 
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -30,6 +31,7 @@
       return;
     }
     localStorage.setItem('user', res);
+    user.update(() =>  res);
     const from = ($location.state && $location.state.from) || "/";
     navigate(from, { replace: true });
   }
