@@ -16,14 +16,18 @@
   };
 
   async function  handleSubmit() {
+    
     $user = { username, password };
-    if(username === null || username.length < 1) {
+    if(!username  || username==='') {
       errors['username'] = 'Please enter username'
-      return;
+     
     }
-    if(password ===null || password.length < 1) {
+    if(!password || password==='' ) {
       errors['password'] = 'Please enter password'
-      return;
+     
+    }
+    if(errors['username'] || errors['password']) {
+     return;
     }
     const res = await new   AuthService().login(username, password);
     if(!res.accessToken) {
@@ -42,7 +46,6 @@
   </a>
 </div>
 <form 
-on:submit|preventDefault={handleSubmit}
 class="w-full mt-16 lg:w-[28%] mx-auto  min-h-screen relative flex flex-col items-center justify-center">
                    
                    <div class=" min-h-64 min-h-[80vh] flex flex-col w-full rounded bg-gray-secondary">
@@ -99,7 +102,7 @@ class="w-full mt-16 lg:w-[28%] mx-auto  min-h-screen relative flex flex-col item
                      </div>
 
                      <div class="w-full py-2">
-                       <button class="bg-primary w-full px-3 py-2 rounded hover:bg-opacity-80 text-white">Login</button>
+                       <button class="bg-primary w-full px-3 py-2 rounded hover:bg-opacity-80 text-white" on:click|preventDefault={handleSubmit}>Login</button>
                      </div>
 
                      <div class="flex w-full flex-col items-center justify-center">
