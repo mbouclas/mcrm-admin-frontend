@@ -3,10 +3,6 @@
   import Login from "./lib/Auth/Login.svelte";
   import PrivateRoute from "./lib/Auth/PrivateRoute.svelte";
   import DefaultLayout from './lib/layouts/default.svelte'
-
-  import { user } from "./lib/stores";
-
-
 </script>
 
 <Router>

@@ -34,7 +34,7 @@
       errors['general'] = (res.reason.message ?? res.reason);
       return;
     }
-    localStorage.setItem('user', res);
+    localStorage.setItem('user', JSON.stringify(res));
     user.update(() =>  res);
     const from = ($location.state && $location.state.from) || "/";
     navigate(from, { replace: true });

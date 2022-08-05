@@ -2,6 +2,10 @@
   import { useNavigate, useLocation } from "svelte-navigator";
   import { user } from "../stores";
 
+  if(localStorage.getItem('user')) {
+      user.update(() =>JSON.parse(localStorage.getItem('user')) )
+
+    }
   const navigate = useNavigate();
   const location = useLocation();
 
