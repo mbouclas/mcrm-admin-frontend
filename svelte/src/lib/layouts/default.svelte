@@ -3,6 +3,8 @@
     import PrivateRoute from "../Auth/PrivateRoute.svelte";
   import Header from '../Shared/Header.svelte'
   import About from '../Dashboard/About.svelte'
+  import Home from '../Dashboard/Home.svelte'
+
   import Profile from '../User/Profile.svelte'
 let url;
 	const location = useLocation();
@@ -18,7 +20,7 @@ location.subscribe(r => console.log(r))
 <Header />
 {url}
 <Route path="/">
-<h1>Home</h1>
+<Home />
 </Route>
 
 	<PrivateRoute path="about/*"  let:location>
