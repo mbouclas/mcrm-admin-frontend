@@ -1,16 +1,15 @@
 <script>
   import { useNavigate, useLocation } from "svelte-navigator";
   import { user } from "../stores";
+  import {AuthService} from "./auth.service.ts";
 
   const navigate = useNavigate();
   const location = useLocation();
-  let storedUser;
-  const storedUserString = localStorage.getItem('user');
+  const storedUser = AuthService.currentUser();
 
-  if (storedUserString) {
-    storedUser = JSON.parse(storedUserString);
+
+  if (storedUser) {
     user.update(() => storedUser);
-
   }
 
 
