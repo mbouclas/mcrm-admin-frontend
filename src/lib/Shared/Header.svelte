@@ -1,19 +1,23 @@
-  <script>
-    import { user } from "../stores";
-  import {  Link } from "svelte-navigator";
+<script>
+    import {user} from "../stores";
+    import {Link} from "svelte-navigator";
+
     function handleLogout() {
-    $user = null;
-  }
-  </script>
-  <header>
+        $user = null;
+        localStorage.clear();
+    }
+
+</script>
+
+<header>
     <nav>
-      <Link to="/">Home</Link>
-      <Link to="about">About</Link>
-      <Link to="profile">Profile</Link>
+        <Link to="/">Home</Link>
+        <Link to="about">About</Link>
+        <Link to="profile">Profile</Link>
 
-        
-  <button on:click={handleLogout}>Logout</button>
+
+        <button on:click={handleLogout}>Logout</button>
     </nav>
-  </header>
+</header>
 
-  <h3>Welcome {$user.username}</h3>
+<h3>Welcome {$user.user.firstName}</h3>

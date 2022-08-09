@@ -3,13 +3,61 @@
     import { useParams, useLocation } from "svelte-navigator";
     import {ProductsService} from "../services/products/products.service.ts";
     import {onMount} from "svelte";
+    import Grid from "gridjs-svelte"
+    import {html} from "gridjs";
     const service = new ProductsService();
     const params = useParams();
     const location = useLocation();
-    let data = [];
+    $: data = [];
+
+    const server = {
+        url: service.generateUrlForList(),
+        headers: service.getAuthHeaders(),
+        then: res => {
+            return res.data.map(row => [
+                html(`<a href='${row.uuid}'>${row.title}</a>`),
+                row.sku,
+                row.createdAt,
+            ])
+        },
+        total: data => data.total
+    };
+
+    const pagination = {
+        enabled: true,
+        limit: 10,
+        server: {
+            url: (prev, page, limit) => {
+                return `${prev}${prev.includes('?') ? '&' : '?'}limit=${limit}&page=${page+1}`;
+            }
+        }
+    };
+
+    const search = {
+        server: {
+            url: (prev, keyword) => {
+                return `${prev}${prev.includes('?') ? '&' : '?'}q=${keyword}`;
+            }
+        }
+    }
+
+    const sort = {
+        multiColumn: false,
+        server: {
+            url: (prev, columns) => {
+                if (!columns.length) return prev;
+                const col = columns[0];
+                const dir = col.direction === 1 ? 'asc' : 'desc';
+                let colName = ['title', 'sku'][col.index];
+
+
+                return `${prev}${prev.includes('?') ? '&' : '?'}orderBy=${colName}&way=${dir}`;
+            }
+        }
+    };
 
     onMount(async () => {
-        await fetchProducts();
+
     });
 
     $: console.log(queryString.parse($location.search));
@@ -19,25 +67,18 @@
     // We need a sidebar component to place the filters in
 
 
-
-    async function fetchProducts() {
-        const relationships = ['variants', 'properties'];
-        const res = await service.find({'with[]': relationships});
-        $: data = res.data;
-        return res;
-    }
-
     const columns = [
         {
             name: 'Title',
-            sort: true
+            id: 'title',
         },
         {
             name: 'Sku',
-            sort: false
+            id: 'sku',
         },
         {
             name: 'Date',
+            id: 'createdAt',
             formatter: cell => {
                 return new Date(cell).toLocaleString('el-EL', {
                     month: 'short',
@@ -66,3 +107,13 @@
 
 <h1>Product List 12</h1>
 
+<Grid {data} {columns} {sort}
+      {pagination}
+      {search}
+      {server}
+       />
+
+
+<style global>
+    @import "https://cdn.jsdelivr.net/npm/gridjs/dist/theme/mermaid.min.css";
+</style>

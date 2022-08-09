@@ -4,11 +4,21 @@ import {AuthService} from "../Auth/auth.service";
 export class BaseHttpService {
   protected apiUrl = import.meta.env.VITE_API_URL;
 
-  async get(url: string, queryParams?: IGenericObject) {
+  getApiUrl() {
+    return this.apiUrl;
+  }
+
+  getAuthHeaders() {
     const headers = new Headers();
     headers.append('Authorization', `Bearer ${AuthService.token()}`);
     headers.append('credentials', 'same-origin');
     headers.append('x-sess-id', AuthService.getSessionId());
+
+    return headers;
+  }
+
+  async get(url: string, queryParams?: IGenericObject) {
+    const headers = this.getAuthHeaders();
 
 
     const query =
@@ -22,9 +32,7 @@ export class BaseHttpService {
 
 
   async post(url: string, body: IGenericObject = {}, extraHeaders: IGenericObject = {}) {
-    const headers = new Headers();
-    headers.append('Authorization', `Bearer ${AuthService.token()}`);
-    headers.append('x-sess-id', AuthService.getSessionId());
+    const headers = this.getAuthHeaders();
 
     Object.keys(extraHeaders).forEach(header => {
       headers.append(header, extraHeaders[header])
@@ -44,9 +52,7 @@ export class BaseHttpService {
   }
 
   async patch(url: string, body: IGenericObject = {}, extraHeaders: IGenericObject = {}) {
-    const headers = new Headers();
-    headers.append('Authorization', `Bearer ${AuthService.token()}`);
-    headers.append('x-sess-id', AuthService.getSessionId());
+    const headers = this.getAuthHeaders();
 
     const res = await fetch(`${this.apiUrl}${url}`, {
       method: 'PATCH',

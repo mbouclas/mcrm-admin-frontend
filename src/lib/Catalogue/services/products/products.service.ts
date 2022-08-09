@@ -4,6 +4,15 @@ import queryString from "query-string";
 
 export class ProductsService extends BaseHttpService {
 
+    generateUrlForList(filters: IGenericObject = {}) {
+        let qs;
+        if (Object.keys(filters).length > 0) {
+            qs = queryString.stringify(filters);
+        }
+
+        return `${this.apiUrl}product${qs ? `?${qs}` : ''}`
+    }
+
     async findOne(id: string) {
 
     }
