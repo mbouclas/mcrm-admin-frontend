@@ -8,54 +8,34 @@
     const service = new ProductsService();
     const params = useParams();
     const location = useLocation();
-
+    const filters = {};
+    let gridInstance;
     $: data = [];
 
-    const server = {
-        url: service.generateUrlForList(),
-        headers: service.getAuthHeaders(),
-        then: res => {
-            return res.data.map(row => [
-                html(`<a href='${row.uuid}'>${row.title}</a>`),
-                row.sku,
-                row.createdAt,
-            ])
-        },
-        total: data => data.total
-    };
-
-    const pagination = {
-        enabled: true,
-        limit: 10,
-        server: {
-            url: (prev, page, limit) => {
-                return `${prev}${prev.includes('?') ? '&' : '?'}limit=${limit}&page=${page+1}`;
-            }
-        }
-    };
-
-    const search = {
-        server: {
-            url: (prev, keyword) => {
-                return `${prev}${prev.includes('?') ? '&' : '?'}q=${keyword}`;
-            }
-        }
-    }
-
-    const sort = {
-        multiColumn: false,
-        server: {
-            url: (prev, columns) => {
-                if (!columns.length) return prev;
-                const col = columns[0];
-                const dir = col.direction === 1 ? 'asc' : 'desc';
-                let colName = ['title', 'sku'][col.index];
-
-
-                return `${prev}${prev.includes('?') ? '&' : '?'}orderBy=${colName}&way=${dir}`;
-            }
-        }
-    };
+    const server = service.getGridUrl(filters);
+    const pagination = service.getGridPaginationObject();
+    const search = service.getGridSearchObject();
+    const sort = service.getGridSortObject(['title', 'sku']);
+    const columns = [
+           {
+                  name: 'Title',
+                  id: 'title',
+           },
+           {
+                  name: 'Sku',
+                  id: 'sku',
+           },
+           {
+                  name: 'Date',
+                  id: 'createdAt',
+                  formatter: cell => {
+                         return new Date(cell).toLocaleString('el-EL', {
+                                month: 'short',
+                                year: 'numeric'
+                         })
+                  }
+           }
+    ];
 
     onMount(async () => {
 
@@ -68,50 +48,28 @@
     // We need a sidebar component to place the filters in
 
 
-    const columns = [
-        {
-            name: 'Title',
-            id: 'title',
-        },
-        {
-            name: 'Sku',
-            id: 'sku',
-        },
-        {
-            name: 'Date',
-            id: 'createdAt',
-            formatter: cell => {
-                return new Date(cell).toLocaleString('el-EL', {
-                    month: 'short',
-                    year: 'numeric'
-                })
-            }
-        }
-    ]
 
-    function onSelect(event) {
-        const rows = event.detail
-        console.log(rows)
+
+    // gridInstance.on('rowClick', (...args) => console.log('row: ' + JSON.stringify(args), args));
+
+    function handleRowClick(...args) {
+           console.log('row: ' + JSON.stringify(args), args)
     }
 
-    function onGridReady() {
-        console.log('Grid is ready')
-    }
-
-    function onCellUpdated(event) {
-        const data = event.detail.data;
-        const idx = event.detail.row;
-        console.log(data, idx)
+    function handleCellClick(...args) {
+           console.log('cell: ' + JSON.stringify(args), args)
     }
 
 </script>
 
 <h1>Product List 12</h1>
 
-<Grid {data} {columns} {sort}
+<Grid {data} {columns} {sort} bind:instance={gridInstance}
       {pagination}
       {search}
       {server}
+      on:rowClick={handleRowClick}
+      on:cellClick={handleCellClick}
        />
 
 

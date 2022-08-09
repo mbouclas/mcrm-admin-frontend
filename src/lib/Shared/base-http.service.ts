@@ -1,5 +1,7 @@
 import type { IGenericObject } from './models/generic';
 import {AuthService} from "../Auth/auth.service";
+import {html} from "gridjs";
+import queryString from "query-string";
 
 export class BaseHttpService {
   protected apiUrl = import.meta.env.VITE_API_URL;
@@ -81,5 +83,62 @@ export class BaseHttpService {
           )}`
       )
       .join('&');
+  }
+
+  getGridPaginationObject(limit = 10) {
+    return {
+      enabled: true,
+      limit,
+      server: {
+        url: (prev, page, limit) => {
+          return `${prev}${prev.includes('?') ? '&' : '?'}limit=${limit}&page=${page+1}`;
+        }
+      }
+    };
+  }
+
+  getGridSearchObject() {
+    return {
+      server: {
+        url: (prev, keyword) => {
+          return `${prev}${prev.includes('?') ? '&' : '?'}q=${keyword}`;
+        }
+      }
+    }
+  }
+
+  getGridSortObject(cols = ['title']) {
+    return {
+      multiColumn: false,
+      server: {
+        url: (prev, columns) => {
+          if (!columns.length) return prev;
+          const col = columns[0];
+          const dir = col.direction === 1 ? 'asc' : 'desc';
+          let colName = cols[col.index];
+
+
+          return `${prev}${prev.includes('?') ? '&' : '?'}orderBy=${colName}&way=${dir}`;
+        }
+      }
+    }
+  }
+
+  generateUrlForList(endpoint: string, filters: IGenericObject = {}) {
+    let qs;
+    if (Object.keys(filters).length > 0) {
+      qs = queryString.stringify(filters);
+    }
+
+    return `${this.apiUrl}product${qs ? `?${qs}` : ''}`
+  }
+
+  getGridUrl(endpoint: string, filters = {}, thenFunction: Function) {
+    return {
+      url: this.generateUrlForList(endpoint, filters),
+      headers: this.getAuthHeaders(),
+      then: thenFunction.bind(this),
+      total: data => data.total
+    }
   }
 }
