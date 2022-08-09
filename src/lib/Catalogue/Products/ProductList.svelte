@@ -8,6 +8,7 @@
     const service = new ProductsService();
     const params = useParams();
     const location = useLocation();
+
     $: data = [];
 
     const server = {
@@ -112,6 +113,8 @@
       {search}
       {server}
        />
+
+
 
 
 <style global>
