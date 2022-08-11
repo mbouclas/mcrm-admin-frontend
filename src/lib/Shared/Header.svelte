@@ -1,5 +1,5 @@
 <script>
-    import {user} from "../stores";
+    import {user} from "../stores.ts";
     import {Link} from "svelte-navigator";
 
     function handleLogout() {

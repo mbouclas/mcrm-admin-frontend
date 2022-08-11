@@ -5,7 +5,14 @@
   import About from '../Dashboard/About.svelte'
   import Profile from '../User/Profile.svelte'
   import CatalogueRoutes from '../Catalogue/routes.svelte'
+  import {BootService} from "../Shared/boot.service.ts";
+  import {onMount} from "svelte";
+
 let url;
+  onMount(async () => {
+	  await (new BootService()).boot();
+  });
+
 	const location = useLocation();
 
 	$: {
