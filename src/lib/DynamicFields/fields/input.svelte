@@ -2,7 +2,7 @@
     import { Input, Label, Helper } from 'flowbite-svelte';
     import type {IDynamicFieldConfigBlueprint} from "../types";
 
-    export let field: IDynamicFieldConfigBlueprint;
+    export let field: IDynamicFieldConfigBlueprint = {} as IDynamicFieldConfigBlueprint;
     export let onChange;
     export let model;
     export let placeholder;

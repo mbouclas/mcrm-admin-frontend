@@ -1,6 +1,7 @@
 <script lang="ts">
     import {onMount} from "svelte";
     import Input from './fields/input.svelte';
+    import RichText from './fields/rich-text.svelte';
     import type {IDynamicFieldConfigBlueprint} from "./types";
 
     export let model = {};
@@ -14,6 +15,10 @@
 {#each fields as field}
     {#if field.type === 'text'}
         <Input field={field} bind:model={model[field.varName]} onChange={onModelChange} />
+    {/if}
+
+    {#if field.type === 'richText'}
+        <RichText field={field} bind:model={model[field.varName]} onChange={onModelChange} />
     {/if}
 {/each}
 Renderer
