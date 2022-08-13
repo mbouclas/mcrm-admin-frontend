@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+
+.list-menu .megamenu {
+    height: 0px;
+    overflow: hidden;
+    transition: all .5s ease-in-out;
+}
+.list-menu:hover .megamenu{
+   @apply h-64;
+}
+
+.dropdown .dropdown-item{
+      display: none;
+      transition: all .3s ease-in;
+
+}
+.dropdown:hover .dropdown-item {
+    display: block;
+}
+@tailwind utilities;
