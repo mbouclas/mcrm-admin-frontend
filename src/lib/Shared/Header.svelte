@@ -36,6 +36,10 @@
   };
 
   let spanClass = "flex-1 ml-3 whitespace-nowrap";
+  const aClass =
+    "flex items-center p-2 text-base font-normal text-[#a6b0cf] hover:text-white rounded-lg dark:text-white bg-[#2a3042] dark:hover:bg-gray-700";
+  const btnClass =
+    "flex items-center p-2 w-full text-base font-normal hover:text-white text-[#a6b0cf] rounded-lg transition duration-75 group dark:text-white dark:hover:bg-gray-700";
 </script>
 
 <Sidebar class="h-screen sidebar !bg-[#2a3042]">
@@ -52,12 +56,12 @@
   <SidebarWrapper class="rounded-none !bg-[#2a3042]">
     <SidebarGroup>
       <SidebarDropdownWrapper
-        class="!bg-[#2a3042] text-[#a6b0cf] hover:text-white"
+        {btnClass}
         label="Catalogue"
         icon={{ name: ViewGrid }}
       >
         <SidebarDropdownItem
-          class="!bg-[#2a3042] text-[#a6b0cf] hover:text-white"
+          aClass={btnClass + " pl-11"}
           label="Products"
           href="/catalogue/products"
           on:click={(e) => {
@@ -66,7 +70,7 @@
           }}
         />
         <SidebarDropdownItem
-          class="!bg-[#2a3042] text-[#a6b0cf] hover:text-white"
+          aClass={btnClass + " pl-11"}
           label="Categories"
           href="/catalogue/categories"
           on:click={(e) => {
@@ -75,7 +79,7 @@
           }}
         />
         <SidebarDropdownItem
-          class="!bg-[#2a3042] text-[#a6b0cf] hover:text-white"
+          aClass={btnClass + " pl-11"}
           label="Properties"
           href="/catalogue/properties"
           on:click={(e) => {
@@ -84,7 +88,7 @@
           }}
         />
         <SidebarDropdownItem
-          class="!bg-[#2a3042] text-[#a6b0cf] hover:text-white"
+          aClass={btnClass + " pl-11"}
           label="Manufacturers"
           href="/catalogue/manufacturers"
           on:click={(e) => {
@@ -95,7 +99,7 @@
       </SidebarDropdownWrapper>
 
       <SidebarItem
-        class="!bg-[#2a3042] text-[#a6b0cf] hover:text-white"
+        {aClass}
         label="Orders"
         {spanClass}
         icon={{ name: ShoppingCart }}
@@ -106,7 +110,7 @@
         }}
       />
       <SidebarItem
-        class="!bg-[#2a3042] text-[#a6b0cf] hover:text-white"
+        {aClass}
         label="Customers"
         {spanClass}
         icon={{ name: InboxIn }}
@@ -118,12 +122,12 @@
       />
 
       <SidebarDropdownWrapper
-        class="!bg-[#2a3042] text-[#a6b0cf] hover:text-white"
+        {btnClass}
         label="CMS"
         icon={{ name: ShoppingCart }}
       >
         <SidebarDropdownItem
-          class="!bg-[#2a3042] text-[#a6b0cf] hover:text-white"
+          aClass={btnClass + " pl-11"}
           label="Pages"
           href="/cms/pages"
           on:click={(e) => {
@@ -132,7 +136,7 @@
           }}
         />
         <SidebarDropdownItem
-          class="!bg-[#2a3042] text-[#a6b0cf] hover:text-white"
+          aClass={btnClass + " pl-11"}
           label="Categories"
           href="/cms/categories"
           on:click={(e) => {
@@ -141,7 +145,7 @@
           }}
         />
         <SidebarDropdownItem
-          class="!bg-[#2a3042] text-[#a6b0cf] hover:text-white"
+          aClass={btnClass + " pl-11"}
           label="Settings"
           href="/cms/settings"
           on:click={(e) => {
@@ -151,7 +155,7 @@
         />
       </SidebarDropdownWrapper>
       <SidebarItem
-        class="!bg-[#2a3042] text-[#a6b0cf] hover:text-white"
+        {aClass}
         label="Settings"
         icon={{ name: Cog }}
         href="/settings"
@@ -163,7 +167,7 @@
     </SidebarGroup>
     <SidebarGroup border class="border-gray-500">
       <SidebarItem
-        class="!bg-[#2a3042] text-[#a6b0cf] hover:text-white"
+        {aClass}
         label="Logout"
         icon={{ name: Logout }}
         href="/logout"
