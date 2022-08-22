@@ -63,10 +63,10 @@
         <SidebarDropdownItem
           aClass={btnClass + " pl-11"}
           label="Products"
-          href="/catalogue/products"
+          href="/catalogue/products/list"
           on:click={(e) => {
             e.preventDefault();
-            navigate("/catalogue/products");
+            navigate("/catalogue/products/list");
           }}
         />
         <SidebarDropdownItem
