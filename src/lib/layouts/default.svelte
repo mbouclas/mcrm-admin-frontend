@@ -26,7 +26,7 @@
   <div class="flex bg-[#222736]">
     <Header />
     <!-- {url} -->
-    <div class="body p-8">
+    <div class="body p-8 w-full">
       <Route path="/">
         <h1>Home</h1>
       </Route>
