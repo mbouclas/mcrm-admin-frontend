@@ -5,7 +5,7 @@
   import About from "../Dashboard/About.svelte";
   import Profile from "../User/Profile.svelte";
   import CatalogueRoutes from "../Catalogue/routes.svelte";
-  import { BootService } from "../Shared/boot.service.ts";
+  import { BootService } from "../Shared/boot.service";
   import { onMount } from "svelte";
 
   let url;
