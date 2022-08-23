@@ -138,7 +138,7 @@
 </script>
 
 <div class="grid-wrapper p-4 bg-[#2a3042] rounded-md text-[#a6b0cf]">
-  <h1>Product List 12</h1>
+  <h1 class="mt-4 mb-2 text-lg">Product List 12</h1>
   <Grid
     {columns}
     bind:instance={gridInstance}
@@ -188,6 +188,7 @@
 
   th[data-column-id="selectRow"] {
     text-align: center;
+    border-bottom: 2px solid #32394e !important;
   }
 
   .gridjs-footer {
@@ -200,6 +201,22 @@
     color: #6b7280 !important;
   }
   td[data-column-id="actions"] button {
-    background-color: #101218 !important;
+    background-color: #191d2a !important;
+  }
+  .gridjs-checkbox:not(:checked) {
+    background-color: #9daad1;
+  }
+
+  .gridjs-th-content input[type="checkbox"]:not(:checked) {
+    background-color: #9daad1;
+  }
+  .gridjs-wrapper {
+    border: none !important;
+  }
+  th.gridjs-th-fixed {
+    box-shadow: none !important;
+  }
+  .gridjs-pagination {
+    color: #6b7278 !important;
   }
 </style>
