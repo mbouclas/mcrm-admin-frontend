@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Input, Label, Helper } from "flowbite-svelte";
+  import { Datepicker, Label, Helper } from "flowbite-svelte";
   import type { IDynamicFieldConfigBlueprint } from "../types";
 
   export let field: IDynamicFieldConfigBlueprint =
@@ -21,7 +21,6 @@
       onChange(key, value);
     }
   };
-  //   alert(label);
 </script>
 
 <div class="mb-6">
@@ -29,16 +28,7 @@
     <Label for="success" color="green" class="block mb-2">{label}</Label>
   {/if}
 
-  <Input
-    bind:value={model}
-    placeholder={field.placeholder}
-    on:blur={(e) => {
-      onValueChange(field.varName, e.currentTarget.value);
-    }}
-    on:keyup={(e) => {
-      onValueChange(field.varName, e.currentTarget.value);
-    }}
-  />
+  <Datepicker />
   {#if helperText}
     <Helper>{helperText}</Helper>
   {/if}

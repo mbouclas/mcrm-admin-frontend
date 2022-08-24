@@ -1,9 +1,8 @@
 <script lang="ts">
-  import { Input, Label, Helper } from "flowbite-svelte";
   import type { IDynamicFieldConfigBlueprint } from "../types";
-
-  export let field: IDynamicFieldConfigBlueprint =
-    {} as IDynamicFieldConfigBlueprint;
+  import { Label, Textarea, Helper } from "flowbite-svelte";
+  import { onMount } from "svelte";
+  export let field: IDynamicFieldConfigBlueprint;
   export let onChange;
   export let model;
   export let placeholder;
@@ -15,13 +14,16 @@
   let pristine = true;
   let value = field.value || "";
 
+  let Editor;
+
+  onMount(async () => {});
+
   let onValueChange = (key, value) => {
     pristine = false;
     if (typeof onChange === "function") {
       onChange(key, value);
     }
   };
-  //   alert(label);
 </script>
 
 <div class="mb-6">
@@ -29,7 +31,8 @@
     <Label for="success" color="green" class="block mb-2">{label}</Label>
   {/if}
 
-  <Input
+  <Textarea
+    label={""}
     bind:value={model}
     placeholder={field.placeholder}
     on:blur={(e) => {

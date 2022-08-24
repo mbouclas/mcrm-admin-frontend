@@ -16,6 +16,6 @@
 
   <Route path="products/manufacturers" component={ManufacturersList} />
 
-  <Route path="products/new" component={Product} let:params />
+  <!-- <Route path="products/new" component={Product} let:params /> -->
   <Route path="products/:id" component={Product} let:params />
 </Router>

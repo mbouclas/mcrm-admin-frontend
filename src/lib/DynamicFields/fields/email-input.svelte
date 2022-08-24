@@ -30,6 +30,7 @@
   {/if}
 
   <Input
+    type="email"
     bind:value={model}
     placeholder={field.placeholder}
     on:blur={(e) => {
