@@ -29,8 +29,10 @@
     });
 
 
-    const onSubmit = data => {
+    const onSubmit = async data => {
      console.log('Submit', data)
+        await s.update($params.id, data)
+        // Show a toast of success, goes away after 4 seconds
     };
 </script>
 {#if !model}<Loading /> {/if}
