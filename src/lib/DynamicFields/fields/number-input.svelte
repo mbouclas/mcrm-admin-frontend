@@ -30,6 +30,7 @@
   {/if}
 
   <Input
+    type="number"
     bind:value={model}
     placeholder={field.placeholder}
     on:blur={(e) => {
