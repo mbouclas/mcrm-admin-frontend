@@ -96,7 +96,7 @@
             className:
               "py-2 mb-4 px-4 border rounded-md text-white bg-blue-600",
             onClick: () => {
-              alert(`Editing "${row.cells[0].data}" "${row.cells[1].data}"`);
+              // alert(`Editing "${row.cells[0].data}" "${row.cells[1].data}"`);
               navigate("/catalogue/products/" + row.cells[1].data);
             },
           },
