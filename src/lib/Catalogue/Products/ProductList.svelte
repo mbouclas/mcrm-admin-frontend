@@ -1,6 +1,6 @@
 <script>
   import queryString from "query-string";
-  import { useParams, useLocation } from "svelte-navigator";
+  import { useParams, useLocation, useNavigate } from "svelte-navigator";
   import { ProductsService } from "../services/products/products.service";
   import { onMount } from "svelte";
   import { Checkbox, Label, Helper } from "flowbite-svelte";
@@ -12,6 +12,7 @@
   const service = new ProductsService();
   const params = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const filters = {};
   let gridInstance;
   $: selectedRows = [];
@@ -94,8 +95,10 @@
           {
             className:
               "py-2 mb-4 px-4 border rounded-md text-white bg-blue-600",
-            onClick: () =>
-              alert(`Editing "${row.cells[0].data}" "${row.cells[1].data}"`),
+            onClick: () => {
+              alert(`Editing "${row.cells[0].data}" "${row.cells[1].data}"`);
+              navigate("/catalogue/products/" + row.cells[1].data);
+            },
           },
           "Edit"
         );

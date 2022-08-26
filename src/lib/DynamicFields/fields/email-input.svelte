@@ -25,8 +25,8 @@
 </script>
 
 <div class="mb-6">
-  {#if label}
-    <Label for="success" color="green" class="block mb-2">{label}</Label>
+  {#if field.label}
+    <Label for="success" class="block mb-2 !text-gray-400">{field.label}</Label>
   {/if}
 
   <Input
