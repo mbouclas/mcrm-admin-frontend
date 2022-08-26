@@ -3,13 +3,16 @@
   import Form from "../../DynamicFields/Form.svelte";
   import Fields from "../../DynamicFields/Renderer.svelte";
   import { ProductsService } from "../services/products/products.service";
+  import { Datepicker, Label, Helper } from "flowbite-svelte";
   import { onMount } from "svelte";
   import { AppService } from "../../Shared/app.service";
   import type { IDynamicFieldConfigBlueprint } from "../../DynamicFields/types";
   import Loading from "../../Shared/Loading.svelte";
   import getModelPrototypeFromFields from "../../helpers/model-prototype";
 
+  import DateInput from "../../DynamicFields/fields/date-input.svelte";
   import ImagePicker from "../../DynamicFields/fields/image-select.svelte";
+  import Select from "../../DynamicFields/fields/select.svelte";
 
   const s = new ProductsService();
   const params = useParams();
@@ -58,7 +61,10 @@
         <Fields fields={secondaryFields} bind:model />
 
         <!-- for the test -->
-        <ImagePicker />
+
+        <!-- <DateInput bind:model={model.updatedAt} /> -->
+        <!-- <Select bind:model /> -->
+        <!-- <ImagePicker /> -->
       </div>
       <!-- END BLOCK -->
     </div>

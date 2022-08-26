@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Datepicker, Label, Helper } from "flowbite-svelte";
+  import { DateInput } from "date-picker-svelte";
   import type { IDynamicFieldConfigBlueprint } from "../types";
 
   export let field: IDynamicFieldConfigBlueprint =
@@ -11,6 +12,8 @@
   export let helperText;
   export let inputId: string;
   export let classes: string[] = [];
+
+  export let format = "yyyy-MM-dd";
 
   let pristine = true;
   let value = field.value || "";
@@ -28,7 +31,7 @@
     <Label for="success" class="block mb-2 !text-gray-400">{field.label}</Label>
   {/if}
 
-  <Datepicker />
+  <DateInput bind:value={model} bind:format />
   {#if helperText}
     <Helper>{helperText}</Helper>
   {/if}
