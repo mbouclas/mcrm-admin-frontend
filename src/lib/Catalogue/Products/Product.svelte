@@ -9,6 +9,8 @@
   import Loading from "../../Shared/Loading.svelte";
   import getModelPrototypeFromFields from "../../helpers/model-prototype";
 
+  import ImagePicker from "../../DynamicFields/fields/image-select.svelte";
+
   const s = new ProductsService();
   const params = useParams();
   let model;
@@ -23,7 +25,7 @@
     } else {
       model = await s.findOne($params.id, ["*"]);
     }
-    console.log(fields);
+
     fields.forEach((field) => {
       if (!field.group || field.group === "main") {
         mainFields.push(field);
@@ -54,6 +56,9 @@
       <!-- END BLOCK -->
       <div class="w-full p-2">
         <Fields fields={secondaryFields} bind:model />
+
+        <!-- for the test -->
+        <ImagePicker />
       </div>
       <!-- END BLOCK -->
     </div>
