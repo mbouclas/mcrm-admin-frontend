@@ -2,7 +2,7 @@
   import { Button } from "flowbite-svelte";
   export let model;
   export let withSubmit = false;
-  export let onClick;
+  export let onClick = () => {};
   export let onSubmit = undefined;
   export let errorMessage = undefined;
 
