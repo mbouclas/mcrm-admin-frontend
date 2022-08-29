@@ -11,7 +11,7 @@
   import getModelPrototypeFromFields from "../../helpers/model-prototype";
 
   import DateInput from "../../DynamicFields/fields/date-input.svelte";
-  import ImagePicker from "../../DynamicFields/fields/image-select.svelte";
+  // import ImagePicker from "../../DynamicFields/fields/image-select.svelte";
   import Select from "../../DynamicFields/fields/select.svelte";
 
   const s = new ProductsService();
@@ -23,6 +23,7 @@
 
   onMount(async () => {
     fields = AppService.getModel("ProductModel").fields;
+    // console.log(fields);
     if ($params.id === "new") {
       model = getModelPrototypeFromFields(fields);
     } else {
@@ -55,16 +56,16 @@
     <div class="flex">
       <div class="w-full p-2">
         <Fields fields={mainFields} bind:model />
+
+        <!-- for the test -->
+
+        <DateInput />
+        <Select bind:model multiple={false} />
+        <!-- <ImagePicker /> -->
       </div>
       <!-- END BLOCK -->
       <div class="w-full p-2">
         <Fields fields={secondaryFields} bind:model />
-
-        <!-- for the test -->
-
-        <!-- <DateInput bind:model={model.updatedAt} /> -->
-        <!-- <Select bind:model /> -->
-        <!-- <ImagePicker /> -->
       </div>
       <!-- END BLOCK -->
     </div>
