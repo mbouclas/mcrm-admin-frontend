@@ -4,6 +4,7 @@
   import NumberInput from "./fields/number-input.svelte";
   import TextArea from "./fields/textarea.svelte";
   import DateInput from "./fields/date-input.svelte";
+  import ImageSelect from "./fields/image-select/index.svelte";
   import type { IDynamicFieldConfigBlueprint } from "./types";
 
   export let model = {};
@@ -41,6 +42,14 @@
 
   {#if field.type === "date"}
     <DateInput
+      {field}
+      bind:model={model[field.varName]}
+      onChange={onModelChange}
+    />
+  {/if}
+
+  {#if field.type === "image"}
+    <ImageSelect
       {field}
       bind:model={model[field.varName]}
       onChange={onModelChange}

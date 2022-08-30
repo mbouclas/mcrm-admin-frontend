@@ -4,12 +4,18 @@
   import fileSize from "filesize";
   import type { Files } from "filedrop-svelte";
 
-  import type { IDynamicFieldConfigImageSettingsBluePrint } from "../types";
+  import type {
+    IDynamicFieldConfigBlueprint,
+    IDynamicFieldConfigImageSettingsBluePrint,
+  } from "../../types";
 
   export let options: IDynamicFieldConfigImageSettingsBluePrint =
     {} as IDynamicFieldConfigImageSettingsBluePrint;
 
-  let files: Files;
+  export let field: IDynamicFieldConfigBlueprint =
+    {} as IDynamicFieldConfigBlueprint;
+  export let model;
+  export let files: Files;
   export let label: string;
   export let helperText: string;
 </script>
@@ -52,14 +58,6 @@
     </ul>
   {/if}
 
-  <!-- <FileDrop
-    {...options}
-    on:filedrop={(e) => {
-      files = e.detail.files;
-    }}
-  >
-    Upload files
-  </FileDrop> -->
   {#if helperText}
     <Helper>{helperText}</Helper>
   {/if}
