@@ -9,8 +9,10 @@
   import { onMount } from "svelte";
 
   let url;
+  const promise =  (new BootService()).boot();
+  // (new BootService()).boot().then(res => console.log('done'));
   onMount(async () => {
-    await new BootService().boot();
+
   });
 
   const location = useLocation();
@@ -21,7 +23,8 @@
 
   location.subscribe((r) => console.log(r));
 </script>
-
+{#await promise}
+{:then res}
 <Router>
   <div class="flex bg-[#222736]">
     <Header />
@@ -45,3 +48,6 @@
     </div>
   </div>
 </Router>
+{:catch error}
+  <p style="color: red">{error.message}</p>
+{/await}

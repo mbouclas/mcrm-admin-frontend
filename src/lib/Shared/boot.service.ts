@@ -6,5 +6,6 @@ export class BootService extends BaseHttpService {
         const res = await this.get(`boot`);
         // add the data to the store
         app.update(() => res);
+        return res;
     }
 }
