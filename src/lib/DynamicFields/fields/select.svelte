@@ -20,22 +20,37 @@
 {/if}
 
 <Label>
-  {#if multiple}
-    <Select class="mt-2" {items} bind:value={model.select} />
-  {:else}
-    <!-- TODO: styling -->
-    <div class="custom-multiselect">
-      <MultiSelect bind:selected={model.select} options={items} />
-    </div>
-  {/if}
+  <div class="dynamic-field">
+    {#if !multiple}
+      <Select class="mt-2" {items} bind:value={model.select} />
+    {:else}
+      <!-- TODO: styling -->
+      <div class="custom-multiselect">
+        <MultiSelect bind:selected={model.select} options={items} />
+      </div>
+    {/if}
+  </div>
 </Label>
 
 <style global>
   .custom-multiselect .multiselect {
-    background: white;
+    background-color: #2e3446 !important;
+    border: 1px solid #32394e !important;
+    color: #bfc8e2 !important;
     border: none;
     height: 42px;
     padding: 6px;
     border-radius: 10px;
+  }
+  .custom-multiselect .multiselect {
+    background-color: #2e3445 !important;
+  }
+
+  .dynamic-field select {
+    background-color: #2e3446 !important;
+    border: 1px solid #32394e !important;
+    color: #bfc8e2 !important;
+    outline: none !important;
+    box-shadow: none !important;
   }
 </style>

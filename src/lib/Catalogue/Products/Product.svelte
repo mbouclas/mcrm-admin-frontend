@@ -13,6 +13,9 @@
   import DateInput from "../../DynamicFields/fields/date-input.svelte";
   // import ImagePicker from "../../DynamicFields/fields/image-select.svelte";
   import Select from "../../DynamicFields/fields/select.svelte";
+  import Checkbox from "../../DynamicFields/fields/checkbox.svelte";
+  import Radio from "../../DynamicFields/fields/radio.svelte";
+  import Toggle from "../../DynamicFields/fields/toggle.svelte";
 
   const s = new ProductsService();
   const params = useParams();
@@ -61,6 +64,11 @@
 
         <DateInput />
         <Select bind:model multiple={false} />
+
+        <!-- <Checkbox /> -->
+        <!-- <Radio /> -->
+        <!-- <Toggle /> -->
+
         <!-- <ImagePicker /> -->
       </div>
       <!-- END BLOCK -->

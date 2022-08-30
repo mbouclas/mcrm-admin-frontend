@@ -42,9 +42,11 @@
   </TabPanel>
 
   <TabPanel>
-    <Button on:click={() => (defaultModal = true)}
-      >Select from media library</Button
-    >
+    <div class="dynamic-field">
+      <Button on:click={() => (defaultModal = true)}
+        >Select from media library</Button
+      >
+    </div>
     <Modal title="Media Library" bind:open={defaultModal}>
       <p>content here...</p>
       <svelte:fragment slot="footer">

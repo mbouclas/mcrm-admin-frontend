@@ -18,8 +18,23 @@
   <slot />
 
   {#if withSubmit}
-    <Button type="submit" size="lg" class="w-full" on:click={onNativeSubmit}
-      >Submit</Button
-    >
+    <div class="dynamic-field">
+      <Button type="submit" size="lg" class="w-full" on:click={onNativeSubmit}
+        >Submit</Button
+      >
+    </div>
   {/if}
 </form>
+
+<style global>
+  .dynamic-field button {
+    color: rgb(241, 239, 239) !important;
+    background-color: #556ee6 !important;
+    border-color: #556ee6 !important;
+  }
+  .dynamic-field button:hover {
+    color: rgb(241, 239, 239) !important;
+    background-color: #3d58df !important;
+    border-color: #3d58df !important;
+  }
+</style>

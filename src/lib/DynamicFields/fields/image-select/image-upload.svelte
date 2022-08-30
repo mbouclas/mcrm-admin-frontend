@@ -41,7 +41,7 @@
         d="M1 14.5a6.496 6.496 0 0 1 3.064-5.519 8.001 8.001 0 0 1 15.872 0 6.5 6.5 0 0 1-2.936 12L7 21c-3.356-.274-6-3.078-6-6.5zm15.848 4.487a4.5 4.5 0 0 0 2.03-8.309l-.807-.503-.12-.942a6.001 6.001 0 0 0-11.903 0l-.12.942-.805.503a4.5 4.5 0 0 0 2.029 8.309l.173.013h9.35l.173-.013zM13 13v4h-2v-4H8l4-5 4 5h-3z"
       /></svg
     >
-    <p>Drag &amp; drop files</p>
+    <!-- <p>Drag &amp; drop files</p> -->
   </div>
   {#if files}
     <h2>Accepted files</h2>
@@ -65,18 +65,19 @@
 
 <style>
   .filedrop {
-    background-color: #f0f0f0;
+    background-color: #2e3446;
     height: 200px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     border-radius: 0.375rem;
-    border: 0.7em dashed #c3c3c3;
-    outline: 1em solid #f0f0f0;
+    border: none;
+    outline: none;
     transition: border 0.3s ease-in-out;
     outline-offset: -1.3em;
     padding: 0.475em;
+    cursor: pointer;
   }
   .filedrop:focus {
     border-color: #2196f3;

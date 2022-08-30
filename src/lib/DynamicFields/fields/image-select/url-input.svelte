@@ -3,7 +3,11 @@
 </script>
 
 <div class="flex">
-  <Input placeholder="Image URL" />
+  <div class="dynamic-field flex-1 mr-1">
+    <Input placeholder="Image URL" />
+  </div>
 
-  <Button>Get URL</Button>
+  <div class="dynamic-field">
+    <Button>Get URL</Button>
+  </div>
 </div>
