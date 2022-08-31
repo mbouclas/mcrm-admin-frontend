@@ -63,7 +63,7 @@
         <!-- for the test -->
 
         <DateInput />
-        <Select bind:model multiple={false} />
+        <Select bind:model multiple={true} />
 
         <!-- <Checkbox /> -->
         <!-- <Radio /> -->

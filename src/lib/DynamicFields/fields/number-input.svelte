@@ -15,21 +15,37 @@
   let pristine = true;
   let value = field.value || "";
 
+  let hasError = false;
+
   let onValueChange = (key, value) => {
+    if (value === "") {
+      hasError = true;
+      helperText = "This field is required";
+    } else if (
+      parseFloat(value) < 0 &&
+      ["weight", "quantity", "price"].indexOf(model)
+    ) {
+      hasError = true;
+      helperText = "Should be positive value";
+    } else {
+      hasError = false;
+      helperText = null;
+    }
     pristine = false;
     if (typeof onChange === "function") {
       onChange(key, value);
     }
   };
-  //   alert(label);
 </script>
 
 <div class="mb-6">
   {#if field.label}
-    <Label for="success" class="block mb-2 !text-gray-400">{field.label}</Label>
+    <Label class={`block mb-2 !text-gray-400 ${hasError ? "has-error" : ""}`}>
+      {field.label}
+    </Label>
   {/if}
 
-  <div class="dynamic-field">
+  <div class={`dynamic-field ${hasError ? "has-error" : ""}`}>
     <Input
       type="number"
       bind:value={model}
@@ -43,6 +59,8 @@
     />
   </div>
   {#if helperText}
-    <Helper>{helperText}</Helper>
+    <Helper class={hasError ? "helper-text has-error" : "helper-text"}>
+      {helperText}
+    </Helper>
   {/if}
 </div>
