@@ -36,7 +36,7 @@
     <Label for="success" class="block mb-2 !text-gray-400">{field.label}</Label>
   {/if}
 
-  <div class="custom-dateinput">
+  <div class="custom-dateinput dynamic-field">
     <DateInput bind:value={model} bind:format placeholder={todayString()} />
   </div>
   {#if helperText}
