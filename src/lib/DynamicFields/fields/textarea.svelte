@@ -16,9 +16,16 @@
 
   let Editor;
 
-  onMount(async () => {});
+  let hasError = false;
 
   let onValueChange = (key, value) => {
+    if (value === "") {
+      hasError = true;
+      helperText = "This field is required";
+    } else {
+      hasError = false;
+      helperText = null;
+    }
     pristine = false;
     if (typeof onChange === "function") {
       onChange(key, value);
@@ -28,10 +35,12 @@
 
 <div class="mb-6">
   {#if field.label}
-    <Label for="success" class="block mb-2 !text-gray-400">{field.label}</Label>
+    <Label class={`block mb-2 !text-gray-400 ${hasError ? "has-error" : ""}`}>
+      {field.label}
+    </Label>
   {/if}
 
-  <div class="dynamic-field">
+  <div class={`dynamic-field ${hasError ? "has-error" : ""}`}>
     <Textarea
       label={""}
       bind:value={model}
@@ -45,7 +54,9 @@
     />
   </div>
   {#if helperText}
-    <Helper>{helperText}</Helper>
+    <Helper class={hasError ? "helper-text has-error" : "helper-text"}>
+      {helperText}
+    </Helper>
   {/if}
 </div>
 
@@ -64,5 +75,10 @@
     color: #bfc8e2 !important;
     outline: none !important;
     box-shadow: none !important;
+  }
+
+  .dynamic-field.has-error textarea {
+    background-color: #ff000011 !important;
+    border: 1px solid #970000 !important;
   }
 </style>

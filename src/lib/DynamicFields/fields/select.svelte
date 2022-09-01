@@ -7,30 +7,60 @@
     {} as IDynamicFieldConfigBlueprint;
 
   export let model;
+  export let label;
+  export let helperText;
   export let multiple;
   export let items = [
     { value: "us", name: "United States", label: "United States" },
     { value: "ca", name: "Canada", label: "Canada" },
     { value: "fr", name: "France", label: "France" },
   ];
+
+  let hasError = false;
+
+  let onValueChange = (value) => {
+    console.log(value);
+    // if (value === "") {
+    //   hasError = true;
+    //   helperText = "This field is required";
+    // } else {
+    //   hasError = false;
+    //   helperText = null;
+    // }
+  };
 </script>
 
 {#if field.label}
-  <Label for="success" class="block mb-2 !text-gray-400">{field.label}</Label>
+  <Label
+    for="success"
+    class={`block mb-2 !text-gray-400 ${hasError ? "has-error" : ""}`}
+    >{field.label}</Label
+  >
 {/if}
 
 <Label>
-  <div class="dynamic-field">
+  <div class={`dynamic-field ${hasError ? "has-error" : ""}`}>
     {#if !multiple}
       <Select class="mt-2" {items} bind:value={model.select} />
     {:else}
       <!-- TODO: styling -->
       <div class="custom-multiselect">
-        <MultiSelect bind:selected={model.select} options={items} />
+        <MultiSelect
+          bind:selected={model.select}
+          options={items}
+          on:change={(e) => {
+            onValueChange(e.currentTarget.value);
+          }}
+        />
       </div>
     {/if}
   </div>
 </Label>
+{#if helperText}
+  <Helper class={hasError ? "helper-text has-error" : "helper-text"}>
+    {helperText}
+  </Helper>
+{/if}
 
 <style global>
   .custom-multiselect .multiselect {
