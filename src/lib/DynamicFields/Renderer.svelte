@@ -12,6 +12,7 @@
 
   function onModelChange(key, value) {
     console.log(key, value);
+    // console.log(typeof value);
   }
 </script>
 

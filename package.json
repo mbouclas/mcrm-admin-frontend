@@ -10,9 +10,11 @@
     "check": "svelte-check --tsconfig ./tsconfig.json"
   },
   "devDependencies": {
+    "@ckeditor/ckeditor5-build-decoupled-document": "^35.1.0",
     "@sveltejs/vite-plugin-svelte": "^1.0.1",
     "@tsconfig/svelte": "^3.0.0",
     "autoprefixer": "^10.4.8",
+    "ckeditor5-svelte": "^0.0.10",
     "date-picker-svelte": "^2.1.1",
     "filedrop-svelte": "^0.1.2",
     "filesize": "^9.0.11",

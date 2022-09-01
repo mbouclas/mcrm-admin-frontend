@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Label, Select } from "flowbite-svelte";
+  import { Helper, Label, Select } from "flowbite-svelte";
   import MultiSelect from "svelte-multiselect";
   import type { IDynamicFieldConfigBlueprint } from "../types";
 
@@ -38,24 +38,22 @@
   >
 {/if}
 
-<Label>
-  <div class={`dynamic-field ${hasError ? "has-error" : ""}`}>
-    {#if !multiple}
-      <Select class="mt-2" {items} bind:value={model.select} />
-    {:else}
-      <!-- TODO: styling -->
-      <div class="custom-multiselect">
-        <MultiSelect
-          bind:selected={model.select}
-          options={items}
-          on:change={(e) => {
-            onValueChange(e.currentTarget.value);
-          }}
-        />
-      </div>
-    {/if}
-  </div>
-</Label>
+<div class={`select-dynamic-field ${hasError ? "has-error" : ""}`}>
+  {#if !multiple}
+    <Select class="mt-2" {items} bind:value={model.select} />
+  {:else}
+    <!-- TODO: styling -->
+    <div class="custom-multiselect">
+      <MultiSelect
+        bind:selected={model.select}
+        options={items}
+        on:change={(e) => {
+          onValueChange(e.currentTarget.value);
+        }}
+      />
+    </div>
+  {/if}
+</div>
 {#if helperText}
   <Helper class={hasError ? "helper-text has-error" : "helper-text"}>
     {helperText}
@@ -76,7 +74,7 @@
     background-color: #2e3445 !important;
   }
 
-  .dynamic-field select {
+  .select-dynamic-field select {
     background-color: #2e3446 !important;
     border: 1px solid #32394e !important;
     color: #bfc8e2 !important;
