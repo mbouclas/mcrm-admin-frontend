@@ -53,6 +53,7 @@
   {#if field.type === "image"}
     <ImageSelect
       {field}
+      options={field.imageSettings}
       bind:model={model[field.varName]}
       onChange={onModelChange}
     />

@@ -16,6 +16,7 @@
   export let model;
 
   let defaultModal;
+
 </script>
 
 <Tabs>
@@ -23,12 +24,16 @@
     <Tab>
       <Upload />
     </Tab>
+    {#if options.addFromUrl}
     <Tab>
       <PlusSm />
     </Tab>
+      {/if}
+    {#if options.selectFromMediaLibrary}
     <Tab>
       <Adjustments />
     </Tab>
+      {/if}
   </TabList>
 
   <TabPanel>
@@ -37,10 +42,12 @@
     </h2>
   </TabPanel>
 
+  {#if options.addFromUrl}
   <TabPanel>
     <UrlInput />
   </TabPanel>
-
+    {/if}
+  {#if options.selectFromMediaLibrary}
   <TabPanel>
     <div class="dynamic-field">
       <Button on:click={() => (defaultModal = true)}
@@ -55,6 +62,7 @@
       </svelte:fragment>
     </Modal>
   </TabPanel>
+    {/if}
 </Tabs>
 
 <style global>

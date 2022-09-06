@@ -34,6 +34,7 @@ export interface IDynamicFieldConfigImageSettingsBluePrint extends IDynamicField
     height?: number;
     quality?: number;
     maxFileSize?: number;
+    fileLimit?: number;
     accept?: string;//File accept, same as form accept
     multiple?: boolean;//Select more than one image
     selectFromMediaLibrary?: boolean;//If true, we need to show the library tab
@@ -93,6 +94,7 @@ export interface IDynamicFieldConfigBlueprint<ISettingsType = any> {
     config?: IImageUploaderSettings| IGenericObject
     options?: IDynamicFieldSelectOption[];
     itemSelectorConfig?: IDynamicFieldItemSelectorConfig;
+    imageSettings?: IDynamicFieldConfigImageSettingsBluePrint;
     filterField?: string;
     onValueChange?: (DynamicFieldOnValueChange) => void;
     [key: string]: any;

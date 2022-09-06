@@ -1,13 +1,16 @@
 <script lang="ts">
-  import { Label, Helper } from "flowbite-svelte";
-  import FileDrop, { filedrop } from "filedrop-svelte";
+  import { Label, Helper, Progressbar } from "flowbite-svelte";
+  import {filedrop} from "filedrop-svelte";
   import fileSize from "filesize";
   import type { Files } from "filedrop-svelte";
+  import '@uppy/core/dist/style.min.css'
 
   import type {
     IDynamicFieldConfigBlueprint,
     IDynamicFieldConfigImageSettingsBluePrint,
   } from "../../types";
+  import {XhrFileUploads} from "../../../helpers/xhr-file-uploads";
+  import type {IUploadResponse} from "../../../helpers/xhr-file-uploads";
 
   export let options: IDynamicFieldConfigImageSettingsBluePrint =
     {} as IDynamicFieldConfigImageSettingsBluePrint;
@@ -18,7 +21,61 @@
   export let files: Files;
   export let label: string;
   export let helperText: string;
+
+
+
+
+  async function onFilesDropped(e) {
+    files = e.detail.files;
+    for (let idx = 0; files.accepted.length > idx; idx++) {
+      files.accepted[idx]['progress'] = 0;
+      files.accepted[idx]['index'] = idx;
+      const uploader = new XhrFileUploads(files.accepted[idx], {module: 'Product', type: 'image'});
+      // Handle progress updates
+      uploader.subscription.subscribe(res => {
+        if (res.error) {
+          handleUploadError(res.error);
+          return;
+        }
+
+        // Update the progress for this upload
+        files.accepted[idx]['progress'] = res.progress;
+
+        //The image is not ready, we need to query it until we get a valid image object
+        if (res.response && res.response.jobId) {
+          uploader.startUploadUpdatesQuery(res.response.jobId);//Initialize the query
+          // Receive updates until we have something valid
+          uploader.uploadUpdates$.subscribe(async (res) => {
+            if (!res) { return; }
+            handleUploadDone(res);
+          })
+
+          return;
+        }
+
+        if (res.response && res.response.url) {
+          model = res.response;
+          return;
+        }
+
+      });
+      uploader.start();
+    }
+
+  }
+
+  function handleUploadDone(response: IUploadResponse) {
+
+    model = response;
+  }
+
+  function handleUploadError(error) {
+    console.log(error)
+  }
+
+
 </script>
+
 
 <div class="mb-6">
   {#if label}
@@ -27,9 +84,7 @@
 
   <div
     use:filedrop={options}
-    on:filedrop={(e) => {
-      files = e.detail.files;
-    }}
+    on:filedrop={onFilesDropped}
     class="filedrop"
   >
     <svg
@@ -47,7 +102,7 @@
     <h2>Accepted files</h2>
     <ul>
       {#each files.accepted as file}
-        <li>{file.name} - {fileSize(file.size)}</li>
+        <li>{file.name} - {fileSize(file.size)} <Progressbar progress={file.progress} />  - {file.progress}</li>
       {/each}
     </ul>
     <h2>Rejected files</h2>
