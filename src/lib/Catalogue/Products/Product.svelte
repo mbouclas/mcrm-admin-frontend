@@ -52,11 +52,11 @@
 
 {#if !model}<Loading /> {/if}
 {#if model}
-  <div class="text-white">
+  <!-- <div class="text-white">
     {JSON.stringify(model)}
-  </div>
+  </div> -->
   <Form {onSubmit} withSubmit bind:model>
-    <div class="flex">
+    <div class="block lg:flex">
       <div class="w-full p-2">
         <Fields fields={mainFields} bind:model />
 
