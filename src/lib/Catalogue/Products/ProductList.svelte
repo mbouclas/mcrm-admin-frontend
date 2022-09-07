@@ -8,6 +8,7 @@
   import { h, html } from "gridjs";
   import { RowSelection } from "gridjs/plugins/selection";
   import { SvelteWrapper } from "gridjs-svelte/plugins";
+  import Button from "./Button.svelte";
 
   const service = new ProductsService();
   const params = useParams();
@@ -49,6 +50,9 @@
           // use the "uuid" hidden column as the row identifier
           id: (row) => row.cell(1).data,
         },
+        onChange: (e) => {
+          console.log(e);
+        },
       },
     },
     {
@@ -59,7 +63,25 @@
     {
       name: "Title",
       id: "title",
+      formatter: (cell, row) => {
+        return h(
+          "p",
+          {
+            // className:
+            //   "py-2 mb-4 px-4 border rounded-md text-white bg-blue-600",
+            onClick: (e) => {
+              e.preventDefault();
+              navigate("/catalogue/products/" + row.cells[1].data);
+            },
+          },
+          cell
+        );
+      },
     },
+    // {
+    //   name: "Title",
+    //   id: "title",
+    // },
     {
       name: "Sku",
       id: "sku",
@@ -89,6 +111,19 @@
            }*/
     {
       name: "Actions",
+      // formatter: (cell, row, idx) => {
+      //   let el = document.querySelector(`#abc-${row.id}`);
+      //   setTimeout(() => {
+      //     if (el) {
+      //       const element = new Button({
+      //         target: el,
+      //         props: { title: "edit" },
+      //       });
+      //     }
+      //     // console.log(row.cells[1].data);
+      //   });
+      //   return h("div", { id: `abc-${row.id}` }, "");
+      // },
       formatter: (cell, row) => {
         return h(
           "button",
@@ -128,7 +163,7 @@
   // We need a sidebar component to place the filters in
 
   function handleRowClick(...args) {
-    // console.log('row: ' + JSON.stringify(args), args)
+    // console.log("row: " + JSON.stringify(args), args);
   }
 
   function handleCellClick(...args) {
@@ -221,5 +256,11 @@
   }
   .gridjs-pagination {
     color: #6b7278 !important;
+  }
+  .gridjs-tr-selected td.gridjs-td {
+    background-color: #2e3446e8 !important;
+  }
+  .gridjs-table {
+    width: 100% !important;
   }
 </style>
