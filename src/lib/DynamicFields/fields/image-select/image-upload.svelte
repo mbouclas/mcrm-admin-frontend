@@ -3,7 +3,7 @@
   import {filedrop} from "filedrop-svelte";
   import fileSize from "filesize";
   import type { Files } from "filedrop-svelte";
-  import '@uppy/core/dist/style.min.css'
+
 
   import type {
     IDynamicFieldConfigBlueprint,
@@ -18,11 +18,12 @@
   export let field: IDynamicFieldConfigBlueprint =
     {} as IDynamicFieldConfigBlueprint;
   export let model;
+  export let module;
+  export let itemId;
   export let files: Files;
   export let label: string;
   export let helperText: string;
-
-
+  let preview;
 
 
   async function onFilesDropped(e) {
@@ -30,7 +31,7 @@
     for (let idx = 0; files.accepted.length > idx; idx++) {
       files.accepted[idx]['progress'] = 0;
       files.accepted[idx]['index'] = idx;
-      const uploader = new XhrFileUploads(files.accepted[idx], {module: 'Product', type: 'image'});
+      const uploader = new XhrFileUploads(files.accepted[idx], {module, type: 'image', id: itemId});
       // Handle progress updates
       uploader.subscription.subscribe(res => {
         if (res.error) {
@@ -65,7 +66,7 @@
   }
 
   function handleUploadDone(response: IUploadResponse) {
-
+    preview = response.url;
     model = response;
   }
 
@@ -73,13 +74,23 @@
     console.log(error)
   }
 
-
+  function showPreview() {
+    return ((options && options.showPreview && preview) || (model && model.url))
+  }
 </script>
-
 
 <div class="mb-6">
   {#if label}
     <Label for="success" class="block mb-2 !text-gray-400">{label}</Label>
+  {/if}
+
+  {#if showPreview()}
+    <div class="group aspect-w-10 aspect-h-7 block w-full overflow-hidden rounded-lg bg-gray-100 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 focus-within:ring-offset-gray-100">
+      <img src={showPreview()} alt="" class="pointer-events-none object-cover group-hover:opacity-75">
+      <button type="button" class="inset-0 focus:outline-none">
+        Delete
+      </button>
+    </div>
   {/if}
 
   <div

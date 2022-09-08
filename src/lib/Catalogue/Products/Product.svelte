@@ -31,6 +31,7 @@
       model = getModelPrototypeFromFields(fields);
     } else {
       model = await s.findOne($params.id, ["*"]);
+      model.thumb = {url: 'https://res.cloudinary.com/businesslink/image/upload/v1662548134/rps/b3eaf906-a112-46c5-aeef-d5c125864b23.png'}
     }
 
     fields.forEach((field) => {
@@ -58,7 +59,7 @@
   <Form {onSubmit} withSubmit bind:model>
     <div class="block lg:flex">
       <div class="w-full p-2">
-        <Fields fields={mainFields} bind:model />
+        <Fields fields={mainFields} bind:model module="Product" itemId={model.uuid} />
 
         <!-- for the test -->
 
@@ -73,7 +74,7 @@
       </div>
       <!-- END BLOCK -->
       <div class="w-full p-2">
-        <Fields fields={secondaryFields} bind:model />
+        <Fields fields={secondaryFields} bind:model module="Product" itemId={model.uuid} />
       </div>
       <!-- END BLOCK -->
     </div>

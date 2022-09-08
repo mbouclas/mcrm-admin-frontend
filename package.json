@@ -47,6 +47,7 @@
     "gridjs-svelte": "^2.1.1",
     "query-string": "^7.1.1",
     "svelte-formly": "^2.0.1",
+    "svelte-heros-v2": "^0.1.5",
     "svelte-navigator": "^3.1.6"
   }
 }

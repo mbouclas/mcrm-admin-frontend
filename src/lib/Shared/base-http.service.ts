@@ -107,7 +107,7 @@ export class BaseHttpService {
     }
   }
 
-  getGridSortObject(cols = ['title']) {
+  getGridSortObject(cols = [{id: 'title', idx: 0}]) {
     return {
       multiColumn: false,
       server: {
@@ -115,9 +115,8 @@ export class BaseHttpService {
           if (!columns.length) return prev;
           const col = columns[0];
           const dir = col.direction === 1 ? 'asc' : 'desc';
-          let colName = cols[col.index];
-
-
+          let colName = cols.find(c => c.idx === col.index).id;
+      console.log(colName, col.index)
           return `${prev}${prev.includes('?') ? '&' : '?'}orderBy=${colName}&way=${dir}`;
         }
       }

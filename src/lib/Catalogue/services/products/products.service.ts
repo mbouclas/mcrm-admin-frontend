@@ -15,6 +15,8 @@ export class ProductsService extends BaseHttpService {
                 row.sku,
                 row.price,
                 row.createdAt,
+                row.updatedAt,
+                row.active,
             ])
         })
     }

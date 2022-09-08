@@ -14,6 +14,8 @@
   export let options: IDynamicFieldConfigImageSettingsBluePrint =
     {} as IDynamicFieldConfigImageSettingsBluePrint;
   export let model;
+  export let module;
+  export let itemId;
 
   let defaultModal;
 
@@ -38,7 +40,7 @@
 
   <TabPanel>
     <h2>
-      <UploadImage {field} bind:model {options} />
+      <UploadImage {field} bind:model {options} {module} {itemId} />
     </h2>
   </TabPanel>
 

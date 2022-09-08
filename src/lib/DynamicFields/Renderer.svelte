@@ -9,6 +9,8 @@
   import type { IDynamicFieldConfigBlueprint } from "./types";
 
   export let model = {};
+  export let module;
+  export let itemId;
   export let fields: IDynamicFieldConfigBlueprint[] = [];
 
   function onModelChange(key, value) {
@@ -52,6 +54,8 @@
 
   {#if field.type === "image"}
     <ImageSelect
+            {module}
+            {itemId}
       {field}
       options={field.imageSettings}
       bind:model={model[field.varName]}
