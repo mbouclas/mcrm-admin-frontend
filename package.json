@@ -30,6 +30,7 @@
     "svelte-drawer-component": "^1.2.2",
     "svelte-fa": "^3.0.3",
     "svelte-heros": "^2.3.3",
+    "svelte-heros-v2": "^0.2.1",
     "svelte-multiselect": "^5.0.6",
     "svelte-preprocess": "^4.10.7",
     "svelte-tabs": "^1.1.0",
@@ -51,7 +52,6 @@
     "gridjs-svelte": "^2.1.1",
     "query-string": "^7.1.1",
     "svelte-formly": "^2.0.1",
-    "svelte-heros-v2": "^0.1.5",
     "svelte-navigator": "^3.1.6"
   }
 }

@@ -5,7 +5,15 @@ import {html} from "gridjs";
 
 export class ProductsService extends BaseHttpService {
 
+    async activateRows(selectedIds: string[]) {
+        // return await super.post('/product/activate', { selectedIds });
+        return true;
+    }
 
+    async de_activateRows(selectedIds: string[]) {
+        // return await super.post('/product/activate', { selectedIds });
+        return true;
+    }
 
     getGridUrl(filters = {}) {
         return super.getGridUrl('product', filters, res => {
