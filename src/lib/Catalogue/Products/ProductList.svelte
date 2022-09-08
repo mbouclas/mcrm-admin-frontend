@@ -174,9 +174,20 @@
     }
 </script>
 
-
 <div class="grid-wrapper p-4 bg-[#2a3042] rounded-md text-[#a6b0cf]">
     <h1 class="mt-4 mb-2 text-lg">Product List 12</h1>
+    <div class="toolbar flex justify-end bg-[#517acd]">
+        <div class="items flex gap-4 p-6">
+            <i class="fa-solid fa-bars-filter text-white cursor-pointer" />
+            <i class="fa-solid fa-message text-white cursor-pointer" />
+            <i class="fa-solid fa-plus text-white cursor-pointer" />
+            <i class="fa-solid fa-database text-white cursor-pointer" />
+            <!-- <ChartPie color="#FFFFFF" class="cursor-pointer" />
+            <ShoppingCart color="#FFFFFF" class="cursor-pointer" />
+            <ViewGrid color="#FFFFFF" class="cursor-pointer" />
+            <InboxIn color="#FFFFFF" class="cursor-pointer" /> -->
+        </div>
+    </div>
     <Grid
             {columns}
             bind:instance={gridInstance}
@@ -198,11 +209,14 @@
 
 <style global>
     @import "https://cdn.jsdelivr.net/npm/gridjs/dist/theme/mermaid.min.css";
-
-    table * {
-        color: #6b7280 !important;
+    td,
+    th {
+        color: #a6b0cf !important;
+        font-size: 14px;
     }
-
+    th {
+        font-weight: 600;
+    }
     .gridjs-search input {
         color: #a6b0cf !important;
         background-color: #2e3446 !important;
@@ -210,7 +224,6 @@
         border: 1px solid #32394e !important;
         margin-top: 10px;
     }
-
     .gridjs-search input:focus {
         border: none;
         outline: none;
@@ -231,6 +244,10 @@
         text-align: center;
         border-bottom: 2px solid #32394e !important;
     }
+    th[data-column-id="actions"],
+    td[data-column-id="actions"] {
+        text-align: center;
+    }
 
     .gridjs-footer {
         background-color: #2e3446 !important;
@@ -241,11 +258,19 @@
         background-color: #2e3446 !important;
         color: #6b7280 !important;
     }
-
     td[data-column-id="actions"] button {
-        background-color: #191d2a !important;
+        margin: auto;
+        padding: 5px 15px;
+        font-size: 12px;
+        border: 1px solid #556ee6;
+        background-color: #556ee6;
     }
-
+    td[data-column-id="actions"] button:hover {
+        background-color: #485ec4;
+    }
+    td[data-column-id="actions"] button:focus {
+        box-shadow: 0 0 0 0.15rem rgb(111 132 234 / 50%);
+    }
     .gridjs-checkbox:not(:checked) {
         background-color: #9daad1;
     }
@@ -253,23 +278,18 @@
     .gridjs-th-content input[type="checkbox"]:not(:checked) {
         background-color: #9daad1;
     }
-
     .gridjs-wrapper {
         border: none !important;
     }
-
     th.gridjs-th-fixed {
         box-shadow: none !important;
     }
-
     .gridjs-pagination {
         color: #6b7278 !important;
     }
-
     .gridjs-tr-selected td.gridjs-td {
         background-color: #2e3446e8 !important;
     }
-
     .gridjs-table {
         width: 100% !important;
     }
