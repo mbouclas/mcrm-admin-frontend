@@ -31,8 +31,6 @@ export class BaseHttpService {
     return await res.json();
   }
 
-
-
   async post(url: string, body: IGenericObject = {}, extraHeaders: IGenericObject = {}) {
     const headers = this.getAuthHeaders();
 
