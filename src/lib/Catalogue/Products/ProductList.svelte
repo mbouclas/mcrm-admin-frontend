@@ -9,8 +9,12 @@
   import { RowSelection } from "gridjs/plugins/selection";
   import Drawer from "svelte-drawer-component";
   import LuckyToast from "../../Shared/Toast.svelte";
+  import { Modal } from "flowbite-svelte";
+  import Product from "./Product.svelte";
 
   let openFilter = false;
+  let openProductEditModal = false;
+  let itemId;
 
   const service = new ProductsService();
   const params = useParams();
@@ -216,6 +220,15 @@
   }
 </script>
 
+<Modal
+  title="Edit Product"
+  backdropClasses="bg-gray-900 bg-opacity-80 fixed inset-0 z-40"
+  open={openProductEditModal}
+  size="xl"
+>
+  <Product {itemId} />
+</Modal>
+
 <LuckyToast
   show={doneActivate}
   message="Activated successfully!"
@@ -372,6 +385,7 @@
     background-color: #9daad1;
   }
   .gridjs-wrapper {
+    overflow-x: hidden;
     border: none !important;
   }
   th.gridjs-th-fixed {

@@ -23,15 +23,25 @@
   let fields: IDynamicFieldConfigBlueprint[] = [];
   let mainFields = [];
   let secondaryFields = [];
+  export let itemId;
 
   onMount(async () => {
     fields = AppService.getModel("ProductModel").fields;
-    // console.log(fields);
-    if ($params.id === "new") {
-      model = getModelPrototypeFromFields(fields);
+
+    if (itemId) {
+      model = await s.findOne(itemId, ["*"]);
+      model.thumb = {
+        url: "https://res.cloudinary.com/businesslink/image/upload/v1662548134/rps/b3eaf906-a112-46c5-aeef-d5c125864b23.png",
+      };
     } else {
-      model = await s.findOne($params.id, ["*"]);
-      model.thumb = {url: 'https://res.cloudinary.com/businesslink/image/upload/v1662548134/rps/b3eaf906-a112-46c5-aeef-d5c125864b23.png'}
+      if ($params.id === "new") {
+        model = getModelPrototypeFromFields(fields);
+      } else {
+        model = await s.findOne($params.id, ["*"]);
+        model.thumb = {
+          url: "https://res.cloudinary.com/businesslink/image/upload/v1662548134/rps/b3eaf906-a112-46c5-aeef-d5c125864b23.png",
+        };
+      }
     }
 
     fields.forEach((field) => {
@@ -59,12 +69,17 @@
   <Form {onSubmit} withSubmit bind:model>
     <div class="block lg:flex">
       <div class="w-full p-2">
-        <Fields fields={mainFields} bind:model module="Product" itemId={model.uuid} />
+        <Fields
+          fields={mainFields}
+          bind:model
+          module="Product"
+          itemId={model.uuid}
+        />
 
         <!-- for the test -->
 
-        <DateInput />
-        <Select bind:model multiple={true} />
+        <!-- <DateInput /> -->
+        <!-- <Select bind:model multiple={true} /> -->
 
         <!-- <Checkbox /> -->
         <!-- <Radio /> -->
@@ -74,7 +89,12 @@
       </div>
       <!-- END BLOCK -->
       <div class="w-full p-2">
-        <Fields fields={secondaryFields} bind:model module="Product" itemId={model.uuid} />
+        <Fields
+          fields={secondaryFields}
+          bind:model
+          module="Product"
+          itemId={model.uuid}
+        />
       </div>
       <!-- END BLOCK -->
     </div>
