@@ -100,10 +100,6 @@
         );
       },
     },
-    // {
-    //   name: "Title",
-    //   id: "title",
-    // },
     {
       name: "Sku",
       id: "sku",
@@ -113,14 +109,38 @@
       id: "price",
     },
     {
-      name: "Date",
+      name: "Created",
       id: "createdAt",
+      hidden: true,
       formatter: (cell) => {
         return new Date(cell).toLocaleString("el-EL", {
           month: "short",
           year: "numeric",
+          hour: 'numeric',
+          minute: 'numeric'
         });
       },
+    },
+    {
+      name: "Updated",
+      id: "updatedAt",
+      // hidden: true,
+      formatter: (cell) => {
+        return new Date(cell).toLocaleString("el-EL", {
+          month: "short",
+          year: "numeric",
+          hour: 'numeric',
+          minute: 'numeric'
+        });
+      },
+    },
+    {
+      name: "Active",
+      id: "active",
+      formatter: (cell) => {
+        return (cell) ? 'Yes' : 'No';
+      },
+      sort: false,
     },
     {
       name: "Actions",
@@ -133,11 +153,12 @@
           }
           const wrapperEl = document.querySelector(`#action-${row.id}`);
           const id = row.cells[1].data;
+          const active = row.cells[7].data;
           // console.log(row.cells[6].data)
 
           new ActionList({
             target: wrapperEl,
-            props: { title: "edit", id },
+            props: { title: "edit", id, active },
           });
         });
         return h("div", { id: `action-${row.id}` }, "");
