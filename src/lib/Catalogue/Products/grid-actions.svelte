@@ -6,25 +6,35 @@
     DropdownHeader,
     Button,
   } from "flowbite-svelte";
-  // import { ChevronDown } from "svelte-heros-v2";
+  import { ChevronDown } from "svelte-heros-v2";
   import { navigate } from "svelte-navigator";
+  import {createEventDispatcher} from "svelte";
   export let id;// The product ID
   export let active; // If it's active
-
+  const dispatch = createEventDispatcher();
   function goToPage(e) {
     e.preventDefault();
     navigate("/catalogue/products/" + id);
   }
+
+
+
+  function handleEvent(e) {
+    // e.preventDefault();
+
+    dispatch('grid-action', {id})
+  }
 </script>
 
-<Dropdown class="w-44">
+<Button class="action-button"><ChevronDown>Dropdown button</ChevronDown></Button>
+<Dropdown class="w-44" triggeredBy=".action-button">
   {#if active}
-  <DropdownItem>Activate</DropdownItem>
+    <DropdownItem><span on:click={handleEvent}>Activate</span></DropdownItem>
     {:else }
-    <DropdownItem>Disable</DropdownItem>
+    <DropdownItem><span on:click={handleEvent}>Disable</span></DropdownItem>
     {/if}
-  <DropdownItem on:click={goToPage}>Edit</DropdownItem>
-  <DropdownItem>Quick Edit</DropdownItem>
+  <DropdownItem on:click={goToPage}><span on:click={goToPage}>Edit</span></DropdownItem>
+  <DropdownItem><span on:click={handleEvent}>Quick Edit</span></DropdownItem>
   <DropdownDivider />
-  <DropdownItem>Delete</DropdownItem>
+  <DropdownItem><span on:click={handleEvent}>Delete</span></DropdownItem>
 </Dropdown>

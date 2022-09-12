@@ -160,10 +160,11 @@
           const active = row.cells[7].data;
           // console.log(row.cells[6].data)
 
-          new ActionList({
+          const e = new ActionList({
             target: wrapperEl,
             props: { title: "edit", id, active },
           });
+          e.$on('grid-action', (m) => console.log(m))
         });
         return h("div", { id: `action-${row.id}` }, "");
       },
