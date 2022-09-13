@@ -12,6 +12,11 @@
   import { Modal } from "flowbite-svelte";
   import Product from "./Product.svelte";
 
+  import { Confirm } from "svelte-confirm";
+  import { openModal } from "svelte-modals";
+  import Modals from "../../Shared/Modals.svelte";
+  import QuickEditModal from "./QuickEditModal.svelte";
+
   let openFilter = false;
   let openProductEditModal = false;
   let itemId;
@@ -27,6 +32,7 @@
 
   let doneActivate = false;
   let doneDeactivate = false;
+  let doneDelete = false;
 
   const server = service.getGridUrl(filters);
   const pagination = service.getGridPaginationObject();
@@ -120,8 +126,8 @@
         return new Date(cell).toLocaleString("el-EL", {
           month: "short",
           year: "numeric",
-          hour: 'numeric',
-          minute: 'numeric'
+          hour: "numeric",
+          minute: "numeric",
         });
       },
     },
@@ -133,8 +139,8 @@
         return new Date(cell).toLocaleString("el-EL", {
           month: "short",
           year: "numeric",
-          hour: 'numeric',
-          minute: 'numeric'
+          hour: "numeric",
+          minute: "numeric",
         });
       },
     },
@@ -142,7 +148,7 @@
       name: "Active",
       id: "active",
       formatter: (cell) => {
-        return (cell) ? 'Yes' : 'No';
+        return cell ? "Yes" : "No";
       },
       sort: false,
     },
@@ -164,7 +170,10 @@
             target: wrapperEl,
             props: { title: "edit", id, active },
           });
-          e.$on('grid-action', (m) => console.log(m))
+          e.$on("grid-action", (m) => console.log(m));
+          e.$on("delete-row", (e) => deleteItem(e.detail.id));
+          e.$on("activate-item", (e) => activateRow(e.detail.id));
+          e.$on("de-activate-item", (e) => de_activateRow(e.detail.id));
         });
         return h("div", { id: `action-${row.id}` }, "");
       },
@@ -212,23 +221,50 @@
     }
   }
 
-  async function de_activateRows() {
+  async function activateRow(itemId) {
+    console.log(itemId);
+    const res = await service.activateRow(itemId);
+    if (res) {
+      doneActivate = true;
+      setTimeout(() => (doneActivate = false), 3000);
+    }
+  }
+
+  async function de_activateRows(selectedRows) {
     const res = await service.de_activateRows(selectedRows);
     if (res) {
       doneDeactivate = true;
       setTimeout(() => (doneDeactivate = false), 3000);
     }
   }
+  async function de_activateRow(itemId) {
+    console.log(itemId);
+    const res = await service.de_activateRow(itemId);
+    if (res) {
+      doneDeactivate = true;
+      setTimeout(() => (doneDeactivate = false), 3000);
+    }
+  }
+
+  async function deleteItems() {
+    const res = await service.deleteRows(selectedRows);
+    if (res) {
+      doneDelete = true;
+      setTimeout(() => (doneDelete = false), 3000);
+    }
+  }
+
+  async function deleteItem(itemId) {
+    console.log(itemId);
+    const res = await service.deleteRow(itemId);
+    if (res) {
+      doneDelete = true;
+      setTimeout(() => (doneDelete = false), 3000);
+    }
+  }
 </script>
 
-<Modal
-  title="Edit Product"
-  backdropClasses="bg-gray-900 bg-opacity-80 fixed inset-0 z-40"
-  open={openProductEditModal}
-  size="xl"
->
-  <Product {itemId} />
-</Modal>
+<Modals />
 
 <LuckyToast
   show={doneActivate}
@@ -240,6 +276,7 @@
   message="De-activated successfully!"
   type="success"
 />
+<LuckyToast show={doneDelete} message="Deleted successfully!" type="success" />
 
 <div class="grid-wrapper p-4 bg-[#2a3042] rounded-md text-[#a6b0cf]">
   <h1 class="mt-4 mb-2 text-lg">Product List 12</h1>
@@ -262,7 +299,18 @@
           class="fa-solid fa-eye-slash text-[#9f9f9f] cursor-pointer mr-6"
           on:click={() => de_activateRows()}
         />
-        <i class="fa-solid fa-trash-can text-[#892626] cursor-pointer" />
+        <Confirm
+          confirmTitle="Delete"
+          cancelTitle="Cancel"
+          let:confirm={confirmThis}
+        >
+          <i
+            class="fa-solid fa-trash-can text-[#892626] cursor-pointer"
+            on:click={() => confirmThis(deleteItems)}
+          />
+          <span slot="title"> Are you sure? </span>
+          <span slot="description"> You won't be able to revert this! </span>
+        </Confirm>
       {/if}
     </div>
   </div>
@@ -355,6 +403,26 @@
   td[data-column-id="actions"] div[data-testid="tooltip"] {
     right: 0;
   }
+  td[data-column-id="actions"] div[role="tooltip"] ul {
+    background-color: #222736 !important;
+  }
+  td[data-column-id="actions"] div[role="tooltip"] ul > div {
+    background-color: #2e3446 !important;
+  }
+  td[data-column-id="actions"] div[role="tooltip"] li > div {
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: 20px;
+    opacity: 0.8 !important;
+  }
+  td[data-column-id="actions"] div[role="tooltip"] li:hover {
+    background-color: #222736 !important;
+  }
+  td[data-column-id="actions"] div[role="tooltip"] li > div:hover {
+    opacity: 1 !important;
+  }
 
   .gridjs-footer {
     background-color: #2e3446 !important;
@@ -419,5 +487,17 @@
   }
   .grid-filter-input:focus {
     box-shadow: none !important;
+  }
+
+  .confirm-dialog {
+    position: fixed !important;
+    text-align: center !important;
+  }
+  .confirm-dialog .actions {
+    display: flex;
+    justify-content: space-around;
+  }
+  .confirm-dialog .cancel-button:hover {
+    background: none !important;
   }
 </style>
