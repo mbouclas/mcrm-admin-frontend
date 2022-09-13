@@ -10,8 +10,28 @@ export class ProductsService extends BaseHttpService {
         return true;
     }
 
+    async activateRow(itemId: string) {
+        // return await super.patch('/product/activate', { itemId });
+        return true;
+    }
+
     async de_activateRows(selectedIds: string[]) {
-        // return await super.post('/product/activate', { selectedIds });
+        // return await super.post('/product/de-activate', { selectedIds });
+        return true;
+    }
+
+    async de_activateRow(itemId: string) {
+        // return await super.patch('/product/de-activate', { itemId });
+        return true;
+    }
+    
+    async deleteRows(selectedIds: string[]) {
+        // return await super.post('/product/delete', { selectedIds });
+        return true;
+    }
+    
+    async deleteRow(itemId: string) {
+        // return await super.delete(`/product/delete/${itemId}`);
         return true;
     }
 
