@@ -16,3 +16,9 @@
     <DefaultLayout />
   </PrivateRoute>
 </Router>
+
+<style global>
+  body.lock-scroll {
+    overflow-y: hidden !important;
+  }
+</style>
