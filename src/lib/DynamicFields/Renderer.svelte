@@ -54,8 +54,8 @@
 
   {#if field.type === "image"}
     <ImageSelect
-            {module}
-            {itemId}
+      {module}
+      {itemId}
       {field}
       options={field.imageSettings}
       bind:model={model[field.varName]}
