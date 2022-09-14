@@ -61,6 +61,7 @@
     flex-direction: column;
     justify-content: space-between;
     pointer-events: auto;
+    width: 80vw;
   }
 
   h2 {
