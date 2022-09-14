@@ -5,7 +5,7 @@
     TabHeadItem,
     TabContentItem,
   } from "flowbite-svelte";
-  import Gallery from "./tabs/Gallery.svelte";
+  import General from "./tabs/General.svelte";
   import SEO from "./tabs/SEO.svelte";
 
   import { useParams } from "svelte-navigator";
@@ -52,6 +52,12 @@
         };
       }
     }
+
+    if (!model.seo) {
+      model.seo = {
+        title: model.title
+      };
+    }
   });
 
   const onSubmit = (data) => {
@@ -68,8 +74,14 @@
     "inline-block p-4 text-white rounded-t-lg border-b-2 border-white active dark:text-white-500 dark:border-white-500";
   let customInActiveClass =
     "inline-block p-4 rounded-t-lg border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300";
-</script>
 
+  //We need this to reflect model changes that are not passed down the event bubble
+  function handleModelChange(key: string, e) {
+    model[key] = e.detail
+  }
+</script>
+{JSON.stringify(model)}
+<Form {onSubmit} withSubmit  bind:model>
 <TabWrapper
   tabStyle="underline"
   class="mb-4"
@@ -84,7 +96,7 @@
       {activeTabValue}
       {customActiveClass}
       {customInActiveClass}
-      on:click={() => handleTabClick(1)}>Gallery</TabHeadItem
+      on:click={() => handleTabClick(1)}>General</TabHeadItem
     >
     <TabHeadItem
       tabStyle="custom"
@@ -128,10 +140,10 @@
     >
   </TabHead>
   <TabContentItem id={1} {activeTabValue} {contentDivClass}>
-    <Gallery {fields} {model} {onSubmit} />
+    <General {fields} {model} {onSubmit} />
   </TabContentItem>
   <TabContentItem id={2} {activeTabValue} {contentDivClass}>
-    <SEO {model} {onSubmit} />
+    <SEO model={model.seo} {onSubmit} on:change={handleModelChange.bind(this, 'seo')} />
   </TabContentItem>
   <TabContentItem id={3} {activeTabValue} {contentDivClass}>
     <p class="text-sm text-gray-500 dark:text-gray-400">Tab Content 3</p>
@@ -146,3 +158,4 @@
     <p class="text-sm text-gray-500 dark:text-gray-400">Tab Content 6</p>
   </TabContentItem>
 </TabWrapper>
+</Form>

@@ -7,13 +7,16 @@
   import DateInput from "./fields/date-input.svelte";
   import ImageSelect from "./fields/image-select/index.svelte";
   import type { IDynamicFieldConfigBlueprint } from "./types";
+  import { createEventDispatcher } from 'svelte';
 
   export let model = {};
   export let module;
   export let itemId;
   export let fields: IDynamicFieldConfigBlueprint[] = [];
+  const dispatch = createEventDispatcher();
 
   function onModelChange(key, value) {
+    dispatch('change', {key, value})
     console.log(key, value);
     // console.log(typeof value);
   }

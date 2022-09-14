@@ -3,8 +3,10 @@
   import Fields from "../../../DynamicFields/Renderer.svelte";
   import Loading from "../../../Shared/Loading.svelte";
   import Form from "../../../DynamicFields/Form.svelte";
+  import {createEventDispatcher} from "svelte";
 
   export let model;
+  const dispatch = createEventDispatcher();
   let fields: IDynamicFieldConfigBlueprint[] = [
     { type: "text", varName: "title", label: "Title", placeholder: "Title" },
     {
@@ -49,15 +51,12 @@
   //     }
   //   });
   // }
-</script>
 
-{#if !model}<Loading /> {/if}
-{#if model}
-  <Form {onSubmit} withSubmit bind:model>
-    <div class="block lg:flex">
-      <div class="w-full p-2">
-        <Fields {fields} bind:model module="Product" itemId={model.uuid} />
-      </div>
-    </div>
-  </Form>
-{/if}
+
+  function handleModelChange(e) {
+      model[e.detail.key] = e.detail.value;
+      dispatch('change', model);
+  }
+
+</script>
+<Fields {fields} bind:model module="Product" itemId={model.uuid} on:change={handleModelChange} />

@@ -27,7 +27,7 @@
 
 {#if !model}<Loading /> {/if}
 {#if model}
-  <Form {onSubmit} withSubmit bind:model>
+
     <div class="block lg:flex">
       <div class="w-full p-2">
         <Fields
@@ -48,5 +48,5 @@
       </div>
       <!-- END BLOCK -->
     </div>
-  </Form>
+
 {/if}
