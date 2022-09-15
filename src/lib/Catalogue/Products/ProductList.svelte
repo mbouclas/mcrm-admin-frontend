@@ -9,13 +9,9 @@
   import { RowSelection } from "gridjs/plugins/selection";
   import Drawer from "svelte-drawer-component";
   import LuckyToast from "../../Shared/Toast.svelte";
-  import { Modal } from "flowbite-svelte";
-  import Product from "./Product.svelte";
 
   import { Confirm } from "svelte-confirm";
-  import { openModal } from "svelte-modals";
   import Modals from "../../Shared/Modals.svelte";
-  import QuickEditModal from "./QuickEditModal.svelte";
 
   let openFilter = false;
   let openProductEditModal = false;
