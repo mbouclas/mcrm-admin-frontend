@@ -39,17 +39,13 @@
 
     if (itemId) {
       model = await s.findOne(itemId, ["*"]);
-      model.thumb = {
-        url: "https://res.cloudinary.com/businesslink/image/upload/v1662548134/rps/b3eaf906-a112-46c5-aeef-d5c125864b23.png",
-      };
+
     } else {
       if ($params.id === "new") {
         model = getModelPrototypeFromFields(fields);
       } else {
         model = await s.findOne($params.id, ["*"]);
-        model.thumb = {
-          url: "https://res.cloudinary.com/businesslink/image/upload/v1662548134/rps/b3eaf906-a112-46c5-aeef-d5c125864b23.png",
-        };
+
       }
     }
 

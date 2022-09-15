@@ -24,7 +24,7 @@
   export let label: string;
   export let helperText: string;
   let preview;
-
+  showPreview();
 
   async function onFilesDropped(e) {
     files = e.detail.files;
@@ -68,6 +68,7 @@
   function handleUploadDone(response: IUploadResponse) {
     preview = response.url;
     model = response;
+    showPreview();
   }
 
   function handleUploadError(error) {
@@ -75,7 +76,7 @@
   }
 
   function showPreview() {
-    return ((options && options.showPreview && preview) || (model && model.url))
+    preview = ((options && options.showPreview && preview) || (model && model.url))
   }
 </script>
 
@@ -84,9 +85,9 @@
     <Label for="success" class="block mb-2 !text-gray-400">{label}</Label>
   {/if}
 
-  {#if showPreview()}
+  {#if preview}
     <div class="group aspect-w-10 aspect-h-7 block w-full overflow-hidden rounded-lg bg-gray-100 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 focus-within:ring-offset-gray-100">
-      <img src={showPreview()} alt="" class="pointer-events-none object-cover group-hover:opacity-75">
+      <img src={preview} alt="" class="pointer-events-none object-cover group-hover:opacity-75">
       <button type="button" class="inset-0 focus:outline-none">
         Delete
       </button>
