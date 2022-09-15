@@ -1,33 +1,34 @@
 <script lang="ts">
   import { Button, Alert } from "flowbite-svelte";
-  import isEmpty from "../helpers/isEmpty";
+  // import isEmpty from "../helpers/isEmpty";
   export let model;
   export let withSubmit = false;
   export let onClick = () => {};
   export let onSubmit = undefined;
   export let errorMessage = undefined;
-  export let errors = {};
+  // export let errors = {};
   export let hasError = false;
+  export let onNativeSubmit: (e: any) => void;
 
-  function validateModel() {
-    Object.keys(model).map((key) => {
-      if (isEmpty(model[key])) {
-        hasError = true;
-        errors[key] = true;
-      } else {
-        errors[key] = false;
-      }
-    });
+  // function validateModel() {
+  //   Object.keys(model).map((key) => {
+  //     if (isEmpty(model[key])) {
+  //       hasError = true;
+  //       errors[key] = true;
+  //     } else {
+  //       errors[key] = false;
+  //     }
+  //   });
 
-    return !hasError;
-  }
+  //   return !hasError;
+  // }
 
-  function onNativeSubmit(e) {
-    e.preventDefault();
-    if (e.currentTarget.checkValidity() && onSubmit && validateModel()) {
-      onSubmit(model);
-    }
-  }
+  // function onNativeSubmit(e) {
+  //   e.preventDefault();
+  //   if (e.currentTarget.checkValidity() && onSubmit && validateModel()) {
+  //     onSubmit(model);
+  //   }
+  // }
 </script>
 
 {#if hasError}
@@ -55,13 +56,13 @@
 <form on:submit={onNativeSubmit}>
   <slot />
 
-  {#if withSubmit}
+  <!-- {#if withSubmit}
     <div class="dynamic-field">
       <Button type="submit" size="lg" class="w-full" on:click={onNativeSubmit}
         >Submit</Button
       >
     </div>
-  {/if}
+  {/if} -->
 </form>
 
 <style global>
