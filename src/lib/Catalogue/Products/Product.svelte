@@ -49,11 +49,11 @@
 
       }
     }
-    // if (!model.seo) {
-    //   model.seo = {
-    //     title: model.title,
-    //   };
-    // }
+    if (!model.seo) {
+      model.seo = {
+        title: model.title,
+      };
+    }
     model = {
       createdAt: "2022-08-08T07:36:55.023Z",
       quantity: 0,
