@@ -8,6 +8,7 @@
   } from "flowbite-svelte";
   import General from "./tabs/General.svelte";
   import SEO from "./tabs/SEO.svelte";
+  import Files from "./tabs/Files.svelte";
 
   import { useParams } from "svelte-navigator";
   import Form from "../../DynamicFields/Form.svelte";
@@ -40,20 +41,20 @@
 
     if (itemId) {
       model = await s.findOne(itemId, ["*"]);
-
+      model.thumb = {
+        url: "https://res.cloudinary.com/businesslink/image/upload/v1662548134/rps/b3eaf906-a112-46c5-aeef-d5c125864b23.png",
+      };
     } else {
       if ($params.id === "new") {
         model = getModelPrototypeFromFields(fields);
       } else {
         model = await s.findOne($params.id, ["*"]);
-
+        model.thumb = {
+          url: "https://res.cloudinary.com/businesslink/image/upload/v1662548134/rps/b3eaf906-a112-46c5-aeef-d5c125864b23.png",
+        };
       }
     }
-    if (!model.seo) {
-      model.seo = {
-        title: model.title,
-      };
-    }
+
     model = {
       createdAt: "2022-08-08T07:36:55.023Z",
       quantity: 0,
@@ -89,6 +90,10 @@
           url: "https://res.cloudinary.com/businesslink/image/upload/v1662548134/rps/b3eaf906-a112-46c5-aeef-d5c125864b23.png",
           updatedAt: "2022-09-12T06:25:40.632Z",
           type: "main",
+          title: "",
+          alt: "",
+          description: "",
+          caption: "",
         },
         {
           createdAt: "2022-09-12T06:23:54.151Z",
@@ -97,6 +102,10 @@
           url: "https://res.cloudinary.com/businesslink/image/upload/v1662548134/rps/b3eaf906-a112-46c5-aeef-d5c125864b23.png",
           updatedAt: "2022-09-12T06:23:54.162Z",
           type: null,
+          title: "",
+          alt: "",
+          description: "",
+          caption: "",
         },
         {
           createdAt: "2022-09-12T06:21:14.953Z",
@@ -105,6 +114,10 @@
           url: "https://res.cloudinary.com/businesslink/image/upload/v1662548134/rps/b3eaf906-a112-46c5-aeef-d5c125864b23.png",
           updatedAt: "2022-09-12T06:21:14.965Z",
           type: null,
+          title: "",
+          alt: "",
+          description: "",
+          caption: "",
         },
         {
           createdAt: "2022-09-12T06:13:55.599Z",
@@ -113,6 +126,10 @@
           url: "https://res.cloudinary.com/businesslink/image/upload/v1662548134/rps/b3eaf906-a112-46c5-aeef-d5c125864b23.png",
           updatedAt: "2022-09-12T06:13:55.612Z",
           type: null,
+          title: "",
+          alt: "",
+          description: "",
+          caption: "",
         },
         {
           createdAt: "2022-09-12T06:11:05.982Z",
@@ -121,6 +138,10 @@
           url: "https://res.cloudinary.com/businesslink/image/upload/v1662548134/rps/b3eaf906-a112-46c5-aeef-d5c125864b23.png",
           updatedAt: "2022-09-12T06:11:06.000Z",
           type: null,
+          title: "",
+          alt: "",
+          description: "",
+          caption: "",
         },
       ],
       thumb: {
@@ -132,6 +153,15 @@
         type: "main",
       },
     };
+    if (!model.seo) {
+      model.seo = {
+        title: model.title,
+        description: model.description,
+        keywords: "",
+        og_title: "",
+        og_description: "",
+      };
+    }
   });
 
   const onSubmit = (data) => {
@@ -156,7 +186,6 @@
 
   import isEmpty from "../../helpers/isEmpty";
   import Gallery from "./tabs/Gallery.svelte";
-  import { Modals } from "svelte-modals";
 
   let errors = {};
   let hasError = false;
@@ -186,7 +215,7 @@
 
 <!-- <Modals /> -->
 
-<Form {onSubmit} withSubmit bind:model {onNativeSubmit} {hasError}>
+<Form bind:model {hasError}>
   <TabWrapper
     tabStyle="underline"
     class="mb-4"
@@ -256,20 +285,16 @@
       </li>
     </TabHead>
     <TabContentItem id={1} {activeTabValue} {contentDivClass}>
-      <General {fields} {model} {onSubmit} />
+      <General {fields} {model} />
     </TabContentItem>
     <TabContentItem id={2} {activeTabValue} {contentDivClass}>
       <Gallery {model} />
     </TabContentItem>
     <TabContentItem id={3} {activeTabValue} {contentDivClass}>
-      <SEO
-        model={model.seo}
-        {onSubmit}
-        on:change={handleModelChange.bind(this, "seo")}
-      />
+      <SEO model={model.seo} on:change={handleModelChange.bind(this, "seo")} />
     </TabContentItem>
     <TabContentItem id={4} {activeTabValue} {contentDivClass}>
-      <p class="text-sm text-gray-500 dark:text-gray-400">Tab Content 3</p>
+      <Files {model} />
     </TabContentItem>
     <TabContentItem id={5} {activeTabValue} {contentDivClass}>
       <p class="text-sm text-gray-500 dark:text-gray-400">Tab Content 4</p>

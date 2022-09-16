@@ -2,9 +2,12 @@
   import { PencilAlt, Trash } from "svelte-heros";
   import { Confirm } from "svelte-confirm";
   import type { IDynamicFieldConfigBlueprint } from "../../../DynamicFields/types";
+  import ImageSelect from "../../../DynamicFields/fields/image-select/index.svelte";
+
   import Popup from "./Popup.svelte";
 
   export let model;
+  let imageIndex;
   let show_modal = false;
   let fields: IDynamicFieldConfigBlueprint[] = [
     {
@@ -32,33 +35,69 @@
       placeholder: "Caption",
     },
   ];
-  let imgModel = {
-    title: "",
-    alt: "",
-    description: "",
-    caption: "",
+  let imgModel;
+  let imageSettings = {
+    multiple: false,
+    accept: "image/*",
+    addFromUrl: true,
+    selectFromMediaLibrary: true,
+    showPreview: true,
+    width: 250,
+    height: 250,
+    defaultCopy: "thumb",
+    maxFileSize: 5000,
+    quality: 70,
   };
 
   function deleteImage(image) {
     console.log(image);
   }
-  const showModal = () => {
+  const showModal = (index) => {
     show_modal = true;
+    imageIndex = index;
+    imgModel = {
+      title: "",
+      alt: "",
+      description: "",
+      caption: "",
+    };
+  };
+
+  const showModalForEdit = (index) => {
+    show_modal = true;
+    imageIndex = index;
+    imgModel = {
+      title: model.images[index].title,
+      alt: model.images[index].alt,
+      description: model.images[index].description,
+      caption: model.images[index].caption,
+    };
   };
   const hideModal = () => {
     show_modal = false;
   };
+
+  function onSave() {
+    hideModal();
+    model.images[imageIndex] = { ...model.images[imageIndex], ...imgModel };
+  }
 </script>
 
 {#if show_modal}
-  <Popup {hideModal} {showModal} {fields} model={imgModel} />
+  <Popup {hideModal} {showModal} {onSave} {fields} model={imgModel} />
 {/if}
-<div class="grid-wrapper">
-  {#each model.images as image}
+<ImageSelect options={imageSettings} />
+<hr class="mt-4" />
+<div class="grid-wrapper mt-4">
+  {#each model.images as image, index}
     <div class="grid-item">
-      <img src={image.url} alt="" on:click={showModal} />
+      <img src={image.url} alt="" on:click={showModal.bind(this, index)} />
       <div class="btn-wrapper">
-        <button class="image-btn edit-btn"><PencilAlt size="16" /></button>
+        <button
+          class="image-btn edit-btn"
+          on:click={showModalForEdit.bind(this, index)}
+          ><PencilAlt size="16" /></button
+        >
         <Confirm
           confirmTitle="Delete"
           cancelTitle="Cancel"

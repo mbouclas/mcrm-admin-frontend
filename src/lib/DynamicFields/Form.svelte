@@ -2,13 +2,12 @@
   import { Button, Alert } from "flowbite-svelte";
   // import isEmpty from "../helpers/isEmpty";
   export let model;
-  export let withSubmit = false;
   export let onClick = () => {};
   export let onSubmit = undefined;
   export let errorMessage = undefined;
   // export let errors = {};
   export let hasError = false;
-  export let onNativeSubmit: (e: any) => void;
+  // export let onNativeSubmit: (e: any) => void;
 
   // function validateModel() {
   //   Object.keys(model).map((key) => {
@@ -53,7 +52,7 @@
     </div>
   </Alert>
 {/if}
-<form on:submit={onNativeSubmit}>
+<div>
   <slot />
 
   <!-- {#if withSubmit}
@@ -63,7 +62,7 @@
       >
     </div>
   {/if} -->
-</form>
+</div>
 
 <style global>
   .dynamic-field button {
