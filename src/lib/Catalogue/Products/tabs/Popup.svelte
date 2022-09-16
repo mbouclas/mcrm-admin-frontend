@@ -6,6 +6,7 @@
   const dispatch = createEventDispatcher();
   export let hideModal;
   export let showModal;
+  export let onSave;
   export let fields;
   export let model;
 </script>
@@ -16,14 +17,14 @@
     <h1 class="title">Image Reference</h1>
     {#each fields as field}
       {#if field.type === "text"}
-        <TextInput {field} />
+        <TextInput {field} bind:model={model[field.varName]} />
       {/if}
 
       {#if field.type === "richText"}
-        <Richtext {field} />
+        <Richtext {field} bind:model={model[field.varName]} />
       {/if}
     {/each}
-    <button class="save-btn"> S A V E</button>
+    <button class="save-btn" on:click={onSave}> S A V E</button>
   </div>
 </div>
 
