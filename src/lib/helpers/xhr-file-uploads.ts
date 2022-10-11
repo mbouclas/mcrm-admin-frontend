@@ -30,11 +30,14 @@ export class XhrFileUploads extends BaseHttpService {
 
 
 
-    constructor(file: IFile, metaData: IFileUploadMetaData) {
+    constructor(file: IFile, metaData: IFileUploadMetaData, baseUrl?: string) {
         super();
         file.progress = 0;
         this.file = file;
         this.metaData = metaData;
+        if (baseUrl) {
+            this.setBaseUrl(baseUrl);
+        }
 
         this.subscription =  writable({
             response: null,
@@ -66,6 +69,10 @@ export class XhrFileUploads extends BaseHttpService {
         this.xhr = xhr;
     }
 
+    setBaseUrl(url: string) {
+        this.baseUrl = `${import.meta.env.VITE_API_URL}${url}`;
+    }
+
     start() {
         const fd = new FormData();
         fd.append("file", this.file);
@@ -91,7 +98,7 @@ export class XhrFileUploads extends BaseHttpService {
             // Query for some updated response
             const res = await this.get(`file-uploader/status/${jobId}`);
 
-            if (!res.url) {
+            if (!res.success) {
                 return;
 
             }

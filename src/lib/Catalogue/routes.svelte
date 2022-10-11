@@ -5,6 +5,7 @@
   import ProductCategoriesList from "./Products/ProductCategoriesList.svelte";
   import PropertiesList from "./Products/PropertiesList.svelte";
   import ManufacturersList from "./Products/ManufacturersList.svelte";
+  import Import from "./Products/Import.svelte";
 </script>
 
 <Router>
@@ -15,6 +16,7 @@
   <Route path="products/properties" component={PropertiesList} />
 
   <Route path="products/manufacturers" component={ManufacturersList} />
+  <Route path="products/import" component={Import} />
 
   <!-- <Route path="products/new" component={Product} let:params /> -->
   <Route path="products/:id" component={Product} let:params />

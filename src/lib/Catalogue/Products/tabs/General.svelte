@@ -20,7 +20,7 @@
       if (field.group === "right") {
         secondaryFields.push(field);
       }
-      console.log(mainFields);
+
     });
   }
 </script>

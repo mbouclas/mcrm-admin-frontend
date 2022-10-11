@@ -29,6 +29,14 @@ export interface IDynamicFieldConfigPasswordSettingsBluePrint extends IDynamicFi
     confirmRequired: boolean;
 }
 
+export interface IDynamicFieldConfigFileUploadSettingsBluePrint extends IDynamicFieldConfigSettingsBluePrint {
+    maxFileSize?: number;
+    multiple?: boolean;
+    fileLimit?: number;
+    accept?: string;
+    baseUrl?: string;
+}
+
 export interface IDynamicFieldConfigImageSettingsBluePrint extends IDynamicFieldConfigSettingsBluePrint {
     width?: number;
     height?: number;

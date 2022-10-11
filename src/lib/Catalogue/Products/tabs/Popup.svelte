@@ -1,29 +1,55 @@
-<script>
-  import Richtext from "../../../DynamicFields/fields/richtext.svelte";
-  import TextInput from "../../../DynamicFields/fields/text-input.svelte";
+<script lang="ts">
   import { createEventDispatcher } from "svelte";
-
+  import Fields from "../../../DynamicFields/Renderer.svelte";
+  import type {IDynamicFieldConfigBlueprint} from "../../../DynamicFields/types.js";
   const dispatch = createEventDispatcher();
   export let hideModal;
   export let showModal;
   export let onSave;
-  export let fields;
+  let fields: IDynamicFieldConfigBlueprint[] = [
+    {
+      type: "text",
+      varName: "title",
+      label: "Title",
+      placeholder: "Title",
+    },
+    {
+      type: "text",
+      varName: "alt",
+      label: "ALT",
+      placeholder: "ALT",
+    },
+    {
+      type: "richText",
+      varName: "description",
+      label: "Description",
+      placeholder: "Description",
+    },
+    {
+      type: "text",
+      varName: "caption",
+      label: "Caption",
+      placeholder: "Caption",
+    },
+  ];
   export let model;
+
+  function handleChange(e) {
+    dispatch('change', model)
+  }
 </script>
 
 <div class="modal">
   <div class="backdrop" on:click={hideModal} />
   <div class="content">
-    <h1 class="title">Image Reference</h1>
-    {#each fields as field}
-      {#if field.type === "text"}
-        <TextInput {field} bind:model={model[field.varName]} />
-      {/if}
+    <h1 class="title">Image Details</h1>
 
-      {#if field.type === "richText"}
-        <Richtext {field} bind:model={model[field.varName]} />
-      {/if}
-    {/each}
+    <Fields
+            fields={fields}
+            bind:model
+            itemId={model.uuid}
+            on:change={handleChange}
+    />
     <button class="save-btn" on:click={onSave}> S A V E</button>
   </div>
 </div>

@@ -6,35 +6,10 @@
 
   import Popup from "./Popup.svelte";
 
-  export let model;
+  export let model = [];
   let imageIndex;
   let show_modal = false;
-  let fields: IDynamicFieldConfigBlueprint[] = [
-    {
-      type: "text",
-      varName: "title",
-      label: "Title",
-      placeholder: "Title",
-    },
-    {
-      type: "text",
-      varName: "alt",
-      label: "ALT",
-      placeholder: "ALT",
-    },
-    {
-      type: "richText",
-      varName: "description",
-      label: "Description",
-      placeholder: "Description",
-    },
-    {
-      type: "text",
-      varName: "caption",
-      label: "Caption",
-      placeholder: "Caption",
-    },
-  ];
+
   let imgModel;
   let imageSettings = {
     multiple: false,
@@ -54,24 +29,12 @@
   }
   const showModal = (index) => {
     show_modal = true;
-    imageIndex = index;
-    imgModel = {
-      title: "",
-      alt: "",
-      description: "",
-      caption: "",
-    };
+    imgModel = model[index];
   };
 
   const showModalForEdit = (index) => {
     show_modal = true;
-    imageIndex = index;
-    imgModel = {
-      title: model.images[index].title,
-      alt: model.images[index].alt,
-      description: model.images[index].description,
-      caption: model.images[index].caption,
-    };
+    imgModel = model[index];
   };
   const hideModal = () => {
     show_modal = false;
@@ -79,17 +42,27 @@
 
   function onSave() {
     hideModal();
-    model.images[imageIndex] = { ...model.images[imageIndex], ...imgModel };
+    model[imageIndex] = { ...model[imageIndex], ...imgModel };
+  }
+
+  /**
+   * Will update the images model when something changes on the popup
+   * @param e
+   */
+  function handleModalModelChange(e) {
+    const foundIndex = model.findIndex(item => item.uuid === e.detail.uuid);
+    model[foundIndex] = e.detail;
   }
 </script>
 
 {#if show_modal}
-  <Popup {hideModal} {showModal} {onSave} {fields} model={imgModel} />
+  <Popup {hideModal} {showModal} {onSave}  model={imgModel} on:change={handleModalModelChange} />
 {/if}
+{JSON.stringify(model)}
 <ImageSelect options={imageSettings} />
 <hr class="mt-4" />
 <div class="grid-wrapper mt-4">
-  {#each model.images as image, index}
+  {#each model as image, index}
     <div class="grid-item">
       <img src={image.url} alt="" on:click={showModal.bind(this, index)} />
       <div class="btn-wrapper">

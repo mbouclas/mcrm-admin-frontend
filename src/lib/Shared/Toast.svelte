@@ -9,6 +9,7 @@
   export let message;
   export let type;
   export let show;
+  export let position;
   let colors = {
     success: "#3f83f8",
   };
@@ -18,6 +19,7 @@
   simple
   :transition={slide}
   visible={show}
+  position={position}
   divClass={`product-toast ${type} fixed top-[20px] !right-[20px] z-[10000] rounded-lg p-2 text-white`}
 >
   <svelte:fragment slot="icon">

@@ -100,6 +100,16 @@
               navigate("/catalogue/manufacturers");
             }}
           />
+
+          <SidebarDropdownItem
+                  aClass={btnClass + " pl-11"}
+                  label="Import"
+                  href="/catalogue/products/import"
+                  on:click={(e) => {
+              e.preventDefault();
+              navigate("/catalogue/products/import");
+            }}
+          />
         </SidebarDropdownWrapper>
 
         <SidebarItem
@@ -233,6 +243,16 @@
           on:click={(e) => {
             e.preventDefault();
             navigate("/catalogue/manufacturers");
+          }}
+        />
+
+        <SidebarDropdownItem
+                aClass={btnClass + " pl-11"}
+                label="Import"
+                href="/catalogue/products/import"
+                on:click={(e) => {
+            e.preventDefault();
+            navigate("/catalogue/products/import");
           }}
         />
       </SidebarDropdownWrapper>
