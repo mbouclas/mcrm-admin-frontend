@@ -6,15 +6,14 @@
   import About from "../Dashboard/About.svelte";
   import Profile from "../User/Profile.svelte";
   import CatalogueRoutes from "../Catalogue/routes.svelte";
+  import OrderRoutes from "../Order/routes.svelte";
   import { BootService } from "../Shared/boot.service";
   import { onMount } from "svelte";
 
   let url;
-  const promise =  (new BootService()).boot();
+  const promise = new BootService().boot();
   // (new BootService()).boot().then(res => console.log('done'));
-  onMount(async () => {
-
-  });
+  onMount(async () => {});
 
   const location = useLocation();
 
@@ -26,34 +25,38 @@
 
   let open = false;
 </script>
-{#await promise}
-{:then res}
-<Router>
-  <div class="flex">
-    <Header bind:open />
-    <div class="bg-[#222736]  w-full">
-      <Topbar bind:open />
-      <!-- {url} -->
-      <div class="body p-4">
-        <Route path="/">
-          <h1>Home</h1>
-        </Route>
 
-        <PrivateRoute path="about/*" let:location>
-          <About />
-        </PrivateRoute>
+{#await promise then res}
+  <Router>
+    <div class="flex">
+      <Header bind:open />
+      <div class="bg-[#222736]  w-full">
+        <Topbar bind:open />
+        <!-- {url} -->
+        <div class="body p-4">
+          <Route path="/">
+            <h1>Home</h1>
+          </Route>
 
-        <PrivateRoute path="profile/*" let:location>
-          <Profile />
-        </PrivateRoute>
+          <PrivateRoute path="about/*" let:location>
+            <About />
+          </PrivateRoute>
 
-        <PrivateRoute path="catalogue/*" let:location>
-          <CatalogueRoutes />
-        </PrivateRoute>
+          <PrivateRoute path="profile/*" let:location>
+            <Profile />
+          </PrivateRoute>
+
+          <PrivateRoute path="catalogue/*" let:location>
+            <CatalogueRoutes />
+          </PrivateRoute>
+
+          <PrivateRoute path="orders/*" let:location>
+            <OrderRoutes />
+          </PrivateRoute>
+        </div>
       </div>
     </div>
-  </div>
-</Router>
+  </Router>
 {:catch error}
   <p style="color: red">{error.message}</p>
 {/await}
