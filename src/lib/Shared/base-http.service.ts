@@ -1,6 +1,6 @@
 import type { IGenericObject } from './models/generic';
-import {AuthService} from "../Auth/auth.service";
-import {html} from "gridjs";
+import { AuthService } from "../Auth/auth.service";
+import { html } from "gridjs";
 import queryString from "query-string";
 
 export class BaseHttpService {
@@ -27,7 +27,7 @@ export class BaseHttpService {
       queryParams && Object.keys(queryParams).length > 0
         ? `?${this.objectToQueryParams(queryParams)}`
         : '';
-    const res = await fetch(`${this.apiUrl}${url}${query}`, {headers});
+    const res = await fetch(`${this.apiUrl}${url}${query}`, { headers });
     return await res.json();
   }
 
@@ -89,7 +89,7 @@ export class BaseHttpService {
       limit,
       server: {
         url: (prev, page, limit) => {
-          return `${prev}${prev.includes('?') ? '&' : '?'}limit=${limit}&page=${page+1}`;
+          return `${prev}${prev.includes('?') ? '&' : '?'}limit=${limit}&page=${page + 1}`;
         }
       }
     };
@@ -105,7 +105,7 @@ export class BaseHttpService {
     }
   }
 
-  getGridSortObject(cols = [{id: 'title', idx: 0}]) {
+  getGridSortObject(cols = [{ id: 'title', idx: 0 }]) {
     return {
       multiColumn: false,
       server: {
@@ -127,7 +127,7 @@ export class BaseHttpService {
       qs = queryString.stringify(filters);
     }
 
-    return `${this.apiUrl}product${qs ? `?${qs}` : ''}`
+    return `${this.apiUrl}${endpoint}${qs ? `?${qs}` : ''}`
   }
 
   getGridUrl(endpoint: string, filters = {}, thenFunction: Function) {

@@ -4,5 +4,5 @@
 </script>
 
 <Router>
-  <Route path="orders/list" component={OrderList} />
+  <Route path="list" component={OrderList} />
 </Router>

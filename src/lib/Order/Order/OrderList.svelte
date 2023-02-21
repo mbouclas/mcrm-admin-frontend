@@ -1,7 +1,7 @@
 <script>
   import queryString from "query-string";
   import { useParams, useLocation, useNavigate } from "svelte-navigator";
-  import { ProductsService } from "../../Catalogue/services/products/products.service";
+  import { OrderService } from "../services/order/order.service";
   import { onMount } from "svelte";
   import ActionList from "./grid-actions.svelte";
   import Grid from "gridjs-svelte";
@@ -17,7 +17,7 @@
   let openProductEditModal = false;
   let itemId;
 
-  const service = new ProductsService();
+  const service = new OrderService();
   const params = useParams();
   const location = useLocation();
   const navigate = useNavigate();
@@ -89,35 +89,8 @@
       hidden: true,
     },
     {
-      name: "Title",
-      id: "title",
-      formatter: (cell, row) => {
-        return h(
-          "p",
-          {
-            // className:
-            //   "py-2 mb-4 px-4 border rounded-md text-white bg-blue-600",
-            onClick: (e) => {
-              e.preventDefault();
-              navigate("/catalogue/products/" + row.cells[1].data);
-            },
-          },
-          cell
-        );
-      },
-    },
-    {
-      name: "Sku",
-      id: "sku",
-    },
-    {
-      name: "Price",
-      id: "price",
-    },
-    {
-      name: "Created",
-      id: "createdAt",
-      hidden: true,
+      name: "Date",
+      id: "date",
       formatter: (cell) => {
         return new Date(cell).toLocaleString("el-EL", {
           month: "short",
@@ -128,25 +101,20 @@
       },
     },
     {
-      name: "Updated",
-      id: "updatedAt",
-      // hidden: true,
-      formatter: (cell) => {
-        return new Date(cell).toLocaleString("el-EL", {
-          month: "short",
-          year: "numeric",
-          hour: "numeric",
-          minute: "numeric",
-        });
-      },
+      name: "Order Id",
+      id: "orderId",
     },
     {
-      name: "Active",
-      id: "active",
-      formatter: (cell) => {
-        return cell ? "Yes" : "No";
-      },
-      sort: false,
+      name: "Customer",
+      id: "customer",
+    },
+    {
+      name: "Status",
+      id: "status",
+    },
+    {
+      name: "Total",
+      id: "total",
     },
     {
       name: "Actions",
