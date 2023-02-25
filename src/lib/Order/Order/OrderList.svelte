@@ -21,7 +21,9 @@
   const params = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const filters = {};
+  const filters = {
+    with: ["user"],
+  };
   let gridInstance;
   $: selectedRows = [];
   $: allRowsSelected = false;

@@ -39,16 +39,19 @@ export class OrderService extends BaseHttpService {
 
   getGridUrl(filters = {}) {
     return super.getGridUrl('order', filters, res => {
-      console.log(res.data);
-      return res.data.map(row => [
-        '',
-        row.createdAt,
-        row.orderId,
-        row.userId,
-        row.status,
-        row.paymentInfo.price,
-        row.active,
-      ])
+      return res.data.map(row => {
+        const user = row.user[0];
+
+        return [
+          '',
+          row.createdAt,
+          row.orderId,
+          `${user.firstName} ${user.lastName}`,
+          row.status,
+          row.paymentInfo.price,
+          row.active,
+        ]
+      })
     })
   }
 
