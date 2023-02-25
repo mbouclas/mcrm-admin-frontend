@@ -43,7 +43,7 @@ export class OrderService extends BaseHttpService {
         const user = row.user[0];
 
         return [
-          '',
+          row.uuid,
           row.createdAt,
           row.orderId,
           `${user.firstName} ${user.lastName}`,

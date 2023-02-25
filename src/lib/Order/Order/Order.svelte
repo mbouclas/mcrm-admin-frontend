@@ -10,7 +10,7 @@
   import { useParams } from "svelte-navigator";
   import Form from "../../DynamicFields/Form.svelte";
   import Fields from "../../DynamicFields/Renderer.svelte";
-  import { ProductsService } from "../../Catalogue/services/products/products.service";
+  import { OrderService } from "../services/order/order.service";
   import { Datepicker, Label, Helper } from "flowbite-svelte";
   import { onMount } from "svelte";
   import { AppService } from "../../Shared/app.service";
@@ -25,7 +25,7 @@
   import Radio from "../../DynamicFields/fields/radio.svelte";
   import Toggle from "../../DynamicFields/fields/toggle.svelte";
 
-  const s = new ProductsService();
+  const s = new OrderService();
   const params = useParams();
   let model;
   let fields: IDynamicFieldConfigBlueprint[] = [];
@@ -34,7 +34,7 @@
   export let itemId;
 
   onMount(async () => {
-    fields = AppService.getModel("ProductModel").fields;
+    fields = AppService.getModel("OrderModel").fields;
 
     if (itemId) {
       model = await s.findOne(itemId, ["*"]);
