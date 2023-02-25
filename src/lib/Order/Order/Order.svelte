@@ -6,6 +6,9 @@
     TabContentItem,
     Button,
   } from "flowbite-svelte";
+  import General from "./tabs/General.svelte";
+  import SEO from "./tabs/SEO.svelte";
+  import Files from "./tabs/Files.svelte";
 
   import { useParams } from "svelte-navigator";
   import Form from "../../DynamicFields/Form.svelte";
@@ -78,6 +81,7 @@
   }
 
   import isEmpty from "../../helpers/isEmpty";
+  import Gallery from "./tabs/Gallery.svelte";
 
   let errors = {};
   let hasError = false;
@@ -176,6 +180,27 @@
         <Button type="submit" on:click={onNativeSubmit}>Submit</Button>
       </li>
     </TabHead>
+    <TabContentItem id={1} {activeTabValue} {contentDivClass}>
+      <General {fields} {model} />
+    </TabContentItem>
+    <TabContentItem id={2} {activeTabValue} {contentDivClass}>
+      <Gallery model={model.images} />
+    </TabContentItem>
+    <TabContentItem id={3} {activeTabValue} {contentDivClass}>
+      <SEO model={model.seo} on:change={handleModelChange.bind(this, "seo")} />
+    </TabContentItem>
+    <TabContentItem id={4} {activeTabValue} {contentDivClass}>
+      <Files {model} />
+    </TabContentItem>
+    <TabContentItem id={5} {activeTabValue} {contentDivClass}>
+      <p class="text-sm text-gray-500 dark:text-gray-400">Tab Content 4</p>
+    </TabContentItem>
+    <TabContentItem id={6} {activeTabValue} {contentDivClass}>
+      <p class="text-sm text-gray-500 dark:text-gray-400">Tab Content 5</p>
+    </TabContentItem>
+    <TabContentItem id={7} {activeTabValue} {contentDivClass}>
+      <p class="text-sm text-gray-500 dark:text-gray-400">Tab Content 6</p>
+    </TabContentItem>
   </TabWrapper>
 </Form>
 
@@ -185,3 +210,4 @@
     margin-left: auto;
   }
 </style>
+

@@ -28,6 +28,7 @@
   //     onSubmit(model);
   //   }
   // }
+  $: console.log(model, hasError);
 </script>
 
 {#if hasError}
