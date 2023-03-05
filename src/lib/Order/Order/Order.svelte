@@ -53,16 +53,20 @@
         let relationshipData = relationships[relationshipKey];
 
         let relationshipModelName = `${relationshipData.model}Model`;
-        console.log("namememe ra", relationshipModelName);
         let rawRelationshipModel = AppService.getModel(relationshipModelName);
-        console.log("rawww rel ", rawRelationshipModel);
 
-        rawRelationshipModel.fields.map((relationshipField) => {
-          fields = [
-            ...fields,
-            { ...relationshipField, group: relationshipData.group },
-          ];
-        });
+        fields = [
+          ...fields,
+          {
+            varName: relationshipModelName,
+            label: relationshipModelName,
+            placeholder: relationshipModelName,
+            type: "nested",
+            isSortable: true,
+            group: relationshipData.group,
+            fields: rawRelationshipModel.fields,
+          },
+        ];
       });
 
     if (itemId) {
