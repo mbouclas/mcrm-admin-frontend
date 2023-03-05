@@ -21,11 +21,28 @@
     console.log(key, value);
     // console.log(typeof value);
   }
-
-  $: console.log("model", model);
 </script>
 
 {#each fields as field}
+  {#if field.type === "related"}
+    <div class="pb-5">
+      {#if field.label}
+        <Label class={`block mb-2 !text-gray-400`}>{field.label}</Label>
+      {/if}
+
+      {#each model[field.varName] as subModel}
+        <div class="p-3 bg-blue-500 bg-opacity-10">
+          <svelte:self
+            {itemId}
+            {module}
+            bind:model={subModel}
+            fields={field.fields}
+          />
+        </div>
+      {/each}
+    </div>
+  {/if}
+
   {#if field.type === "json" || field.type === "nested"}
     <div class="pb-5">
       {#if field.label}

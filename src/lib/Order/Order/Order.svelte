@@ -41,7 +41,6 @@
     let rawModel = AppService.getModel("OrderModel");
     fields = rawModel.fields;
     relationships = rawModel.relationships;
-    console.log("rel ", relationships);
 
     Object.keys(relationships)
       .filter(
@@ -58,12 +57,12 @@
         fields = [
           ...fields,
           {
-            varName: relationshipModelName,
-            label: relationshipModelName,
-            placeholder: relationshipModelName,
-            type: "nested",
+            varName: "shippingMethod",
+            label: relationshipData.model,
+            placeholder: relationshipData.model,
+            type: "related",
             isSortable: true,
-            group: relationshipData.group,
+            group: "right",
             fields: rawRelationshipModel.fields,
           },
         ];

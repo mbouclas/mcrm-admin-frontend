@@ -10,8 +10,6 @@
   let secondaryFields = [];
   // export let onSubmit: (data: any) => void;
 
-  // console.log(fields);
-
   $: {
     fields.forEach((field) => {
       if (!field.group || field.group === "main") {
