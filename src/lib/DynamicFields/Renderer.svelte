@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { Label } from "flowbite-svelte";
   import TextInput from "./fields/text-input.svelte";
   import NumberInput from "./fields/number-input.svelte";
   import RichText from "./fields/richtext.svelte";
@@ -20,9 +21,28 @@
     console.log(key, value);
     // console.log(typeof value);
   }
+
+  $: console.log("field", fields);
 </script>
 
 {#each fields as field}
+  {#if field.type === "json" || field.type === "nested"}
+    <div class="pb-5">
+      {#if field.label}
+        <Label class={`block mb-2 !text-gray-400`}>{field.label}</Label>
+      {/if}
+
+      <div class="p-3 bg-blue-500 bg-opacity-10">
+        <svelte:self
+          {itemId}
+          {module}
+          bind:model={model[field.varName]}
+          fields={field.fields}
+        />
+      </div>
+    </div>
+  {/if}
+
   {#if field.type === "text"}
     <TextInput
       {field}
