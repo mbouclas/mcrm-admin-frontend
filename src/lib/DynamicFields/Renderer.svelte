@@ -22,7 +22,7 @@
     // console.log(typeof value);
   }
 
-  $: console.log("field", fields);
+  $: console.log("model", model);
 </script>
 
 {#each fields as field}

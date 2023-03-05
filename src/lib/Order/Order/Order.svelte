@@ -32,12 +32,38 @@
   const params = useParams();
   let model;
   let fields: IDynamicFieldConfigBlueprint[] = [];
+  let relationships: any[] = [];
   let mainFields = [];
   let secondaryFields = [];
   export let itemId;
 
   onMount(async () => {
-    fields = AppService.getModel("OrderModel").fields;
+    let rawModel = AppService.getModel("OrderModel");
+    fields = rawModel.fields;
+    relationships = rawModel.relationships;
+    console.log("rel ", relationships);
+
+    Object.keys(relationships)
+      .filter(
+        (relationshipKey) =>
+          relationships[relationshipKey].tabs &&
+          relationships[relationshipKey].tabs.includes("General")
+      )
+      .map((relationshipKey) => {
+        let relationshipData = relationships[relationshipKey];
+
+        let relationshipModelName = `${relationshipData.model}Model`;
+        console.log("namememe ra", relationshipModelName);
+        let rawRelationshipModel = AppService.getModel(relationshipModelName);
+        console.log("rawww rel ", rawRelationshipModel);
+
+        rawRelationshipModel.fields.map((relationshipField) => {
+          fields = [
+            ...fields,
+            { ...relationshipField, group: relationshipData.group },
+          ];
+        });
+      });
 
     if (itemId) {
       model = await s.findOne(itemId, ["*"]);
@@ -210,4 +236,3 @@
     margin-left: auto;
   }
 </style>
-
