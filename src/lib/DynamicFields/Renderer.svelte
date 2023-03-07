@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import { Label } from "flowbite-svelte";
   import TextInput from "./fields/text-input.svelte";
+  import Text from "./fields/text.svelte";
   import NumberInput from "./fields/number-input.svelte";
   import RichText from "./fields/richtext.svelte";
   import TextArea from "./fields/textarea.svelte";
@@ -14,13 +15,105 @@
   export let module;
   export let itemId;
   export let fields: IDynamicFieldConfigBlueprint[] = [];
+
+  $: console.log({ model });
   const dispatch = createEventDispatcher();
+
+  interface Rule {
+    type: string;
+    value: string;
+  }
+
+  interface Rules {
+    must: Rule[];
+  }
 
   function onModelChange(key, value) {
     dispatch("change", { key, value });
     console.log(key, value);
     // console.log(typeof value);
   }
+
+  const role = "ADMIN";
+
+  const specialCharsIndex = (value, specialChars) => {
+    for (const char of specialChars) {
+      const index = value.indexOf(char);
+      if (index !== -1) {
+        return index;
+      }
+    }
+    return -1;
+  };
+
+  const compare = (value1, specialChar, value2) => {
+    if (specialChar === "=") {
+      return value1 === value2;
+    }
+
+    if (specialChar === "<") {
+      return value1 < value2;
+    }
+
+    if (specialChar === ">") {
+      return value1 > value2;
+    }
+
+    return false;
+  };
+
+  const isValidForEdit = (field, model) => {
+    //if (
+    //  !field.editableRules ||
+    //  (!field?.must?.length && !field?.should?.length)
+    //) {
+    //  return true;
+    //}
+
+    let rules: Rules = field.editableRules;
+    let mustRules = rules?.must;
+    if (!mustRules) {
+      return true;
+    }
+
+    for (let i = 0; i < mustRules.length; i++) {
+      const rule = mustRules[i];
+      console.log("RULE ", rule);
+      if (rule.type === "role") {
+        if (rule.value !== role) {
+          return false;
+        }
+      }
+
+      if (rule.type === "field") {
+        const parsedValues = rule.value.split(",");
+
+        for (let i = 0; i < parsedValues.length; i++) {
+          const ruleValue = parsedValues[i];
+          const specialChars = ["=", "<", ">"];
+
+          const index = specialCharsIndex(ruleValue, specialChars);
+          const specialChar = ruleValue[index];
+
+          if (index === -1) {
+            console.log("Invalid rule value");
+            continue;
+          }
+
+          const firstValueKey = ruleValue.slice(0, index);
+          const firstValue = model[firstValueKey];
+          const secondValue = ruleValue.slice(index + 1);
+          const isValid = compare(firstValue, specialChar, secondValue);
+
+          if (!isValid) {
+            return false;
+          }
+        }
+      }
+    }
+
+    return true;
+  };
 </script>
 
 {#each fields as field}
@@ -61,19 +154,35 @@
   {/if}
 
   {#if field.type === "text"}
-    <TextInput
-      {field}
-      bind:model={model[field.varName]}
-      onChange={onModelChange}
-    />
+    {#if isValidForEdit(field, model)}
+      <TextInput
+        {field}
+        bind:model={model[field.varName]}
+        onChange={onModelChange}
+      />
+    {:else}
+      <Text
+        {field}
+        bind:model={model[field.varName]}
+        onChange={onModelChange}
+      />
+    {/if}
   {/if}
 
   {#if field.type === "number"}
-    <NumberInput
-      {field}
-      bind:model={model[field.varName]}
-      onChange={onModelChange}
-    />
+    {#if isValidForEdit(field, model)}
+      <NumberInput
+        {field}
+        bind:model={model[field.varName]}
+        onChange={onModelChange}
+      />
+    {:else}
+      <Text
+        {field}
+        bind:model={model[field.varName]}
+        onChange={onModelChange}
+      />
+    {/if}
   {/if}
 
   {#if field.type === "richText"}
