@@ -79,7 +79,6 @@
 
     for (let i = 0; i < mustRules.length; i++) {
       const rule = mustRules[i];
-      console.log("RULE ", rule);
       if (rule.type === "role") {
         if (rule.value !== role) {
           return false;
@@ -103,11 +102,31 @@
 
           const firstValueKey = ruleValue.slice(0, index);
           const firstValue = model[firstValueKey];
-          const secondValue = ruleValue.slice(index + 1);
-          const isValid = compare(firstValue, specialChar, secondValue);
+          let secondValue = ruleValue.slice(index + 1);
 
-          if (!isValid) {
-            return false;
+          if (!isNaN(Number(secondValue))) {
+            const isValid = compare(
+              firstValue,
+              specialChar,
+              parseInt(secondValue)
+            );
+
+            console.log({
+              firstValue,
+              specialChar,
+              sv: parseInt(secondValue),
+              isValid,
+            });
+
+            if (!isValid) {
+              return false;
+            }
+          } else {
+            const isValid = compare(firstValue, specialChar, secondValue);
+
+            if (!isValid) {
+              return false;
+            }
           }
         }
       }
