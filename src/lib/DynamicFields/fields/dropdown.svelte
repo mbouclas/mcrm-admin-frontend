@@ -47,7 +47,9 @@
       hasError ? "has-error" : ""
     }`}
   >
-    <div class="text-xl my-auto pl-2">{model}</div>
+    <div class="text-xl my-auto pl-2">
+      {field.ui.values.find((value) => value.value === model).label}
+    </div>
     <Button
       class="action-button"
       on:click={() => (dropDownOpened = !dropDownOpened)}
@@ -55,16 +57,16 @@
     >
 
     <Dropdown open={dropDownOpened} class="w-44">
-      {#each field.ui.defaultValues as value}
+      {#each field.ui.values as value}
         <DropdownItem liClass="p-0 cursor-pointer"
           ><div
             class="w-full h-full text-xl p-2"
             on:click={() => {
-              model = value;
+              model = value.value;
               dropDownOpened = false;
             }}
           >
-            {value}
+            {value.label}
           </div></DropdownItem
         >
       {/each}

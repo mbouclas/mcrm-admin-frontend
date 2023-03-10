@@ -28,6 +28,14 @@
   import Radio from "../../DynamicFields/fields/radio.svelte";
   import Toggle from "../../DynamicFields/fields/toggle.svelte";
 
+  const statusLabels = {
+    0: "EDIT",
+    1: "CREATING",
+    2: "TEST 1",
+    3: "TEST 2",
+    4: "TEST 2",
+    5: "CANCEL",
+  };
   const s = new OrderService();
   const params = useParams();
   let model;
@@ -41,6 +49,13 @@
     let rawModel = AppService.getModel("OrderModel");
     fields = rawModel.fields;
     relationships = rawModel.relationships;
+
+    console.log("fields", fields);
+    const statusIndex = fields.findIndex((field) => field.varName === "status");
+
+    fields[statusIndex].ui.values = fields[statusIndex].ui.defaultValues.map(
+      (value) => ({ label: statusLabels[value], value })
+    );
 
     Object.keys(relationships)
       .filter(
