@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import { Label } from "flowbite-svelte";
   import TextInput from "./fields/text-input.svelte";
+  import DropDown from "./fields/dropdown.svelte";
   import Text from "./fields/text.svelte";
   import NumberInput from "./fields/number-input.svelte";
   import RichText from "./fields/richtext.svelte";
@@ -170,7 +171,13 @@
   {/if}
 
   {#if field.type === "number"}
-    {#if isValidForEdit(field, model)}
+    {#if field.ui && field.ui.component === "DropDown"}
+      <DropDown
+        {field}
+        bind:model={model[field.varName]}
+        onChange={onModelChange}
+      />
+    {:else if isValidForEdit(field, model)}
       <NumberInput
         {field}
         bind:model={model[field.varName]}
