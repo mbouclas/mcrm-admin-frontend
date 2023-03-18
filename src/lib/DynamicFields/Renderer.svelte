@@ -13,6 +13,7 @@
   import { createEventDispatcher } from "svelte";
 
   export let model = {};
+  export let parentModel = null;
   export let module;
   export let itemId;
   export let fields: IDynamicFieldConfigBlueprint[] = [];
@@ -148,6 +149,7 @@
             {itemId}
             {module}
             bind:model={subModel}
+            bind:parentModel={model}
             fields={field.fields}
           />
         </div>
@@ -166,14 +168,20 @@
           {itemId}
           {module}
           bind:model={model[field.varName]}
-          fields={field.fields}
+          bind:parentModel={model}
+          fields={field.fields && field.fields.length
+            ? field.fields.map((nestedField) => ({
+                ...nestedField,
+                updateRules: field.updateRules,
+              }))
+            : []}
         />
       </div>
     </div>
   {/if}
 
   {#if field.type === "text"}
-    {#if isValidForEdit(field, model)}
+    {#if isValidForEdit(field, parentModel || model)}
       <TextInput
         {field}
         bind:model={model[field.varName]}
@@ -195,7 +203,7 @@
         bind:model={model[field.varName]}
         onChange={onModelChange}
       />
-    {:else if isValidForEdit(field, model)}
+    {:else if isValidForEdit(field, parentModel || model)}
       <NumberInput
         {field}
         bind:model={model[field.varName]}
