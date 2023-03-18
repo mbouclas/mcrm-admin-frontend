@@ -13,7 +13,7 @@
 
   export let model = {};
   export let onModelChange;
-  export let parentModel = null;
+  export let rootModel;
   export let module;
   export let itemId;
   export let fields: IDynamicFieldConfigBlueprint[] = [];
@@ -141,7 +141,7 @@
             {itemId}
             {module}
             bind:model={subModel}
-            bind:parentModel={model}
+            {rootModel}
             fields={field.fields}
           />
         </div>
@@ -160,7 +160,7 @@
           {itemId}
           {module}
           bind:model={model[field.varName]}
-          bind:parentModel={model}
+          {rootModel}
           fields={field.fields && field.fields.length
             ? field.fields.map((nestedField) => ({
                 ...nestedField,
@@ -173,7 +173,7 @@
   {/if}
 
   {#if field.type === "text"}
-    {#if isValidForEdit(field, parentModel || model)}
+    {#if isValidForEdit(field, rootModel || model)}
       <TextInput
         {field}
         bind:model={model[field.varName]}
@@ -195,7 +195,7 @@
         bind:model={model[field.varName]}
         onChange={onModelChange}
       />
-    {:else if isValidForEdit(field, parentModel || model)}
+    {:else if isValidForEdit(field, rootModel || model)}
       <NumberInput
         {field}
         bind:model={model[field.varName]}
