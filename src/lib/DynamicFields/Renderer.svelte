@@ -17,7 +17,6 @@
   export let itemId;
   export let fields: IDynamicFieldConfigBlueprint[] = [];
 
-  $: console.log({ model });
   const dispatch = createEventDispatcher();
 
   interface Rule {
@@ -71,7 +70,7 @@
     //  return true;
     //}
 
-    let rules: Rules = field.editableRules;
+    let rules: Rules = field.updateRules;
     let mustRules = rules?.must;
     if (!mustRules) {
       return true;

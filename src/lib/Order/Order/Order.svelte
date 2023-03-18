@@ -50,7 +50,6 @@
     fields = rawModel.fields;
     relationships = rawModel.relationships;
 
-    console.log("fields", fields);
     const statusIndex = fields.findIndex((field) => field.varName === "status");
 
     fields[statusIndex].ui.values = fields[statusIndex].ui.defaultValues.map(
@@ -66,19 +65,16 @@
       .map((relationshipKey) => {
         let relationshipData = relationships[relationshipKey];
 
-        let relationshipModelName = `${relationshipData.model}Model`;
-        let rawRelationshipModel = AppService.getModel(relationshipModelName);
-
         fields = [
           ...fields,
           {
-            varName: "shippingMethod",
+            varName: relationshipData.modelAlias,
             label: relationshipData.model,
             placeholder: relationshipData.model,
             type: "related",
             isSortable: true,
             group: "right",
-            fields: rawRelationshipModel.fields,
+            fields: relationshipData.fields,
           },
         ];
       });
