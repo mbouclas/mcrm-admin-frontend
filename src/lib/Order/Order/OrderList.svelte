@@ -222,7 +222,6 @@
   }
 
   async function deleteItem(itemId) {
-    console.log(itemId);
     const res = await service.deleteRow(itemId);
     if (res) {
       doneDelete = true;

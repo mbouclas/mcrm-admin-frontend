@@ -103,13 +103,6 @@
               parseInt(secondValue)
             );
 
-            console.log({
-              firstValue,
-              specialChar,
-              sv: parseInt(secondValue),
-              isValid,
-            });
-
             if (!isValid) {
               return false;
             }
