@@ -12,21 +12,13 @@
 
   import { useParams } from "svelte-navigator";
   import Form from "../../DynamicFields/Form.svelte";
-  import Fields from "../../DynamicFields/Renderer.svelte";
   import { OrderService } from "../services/order/order.service";
-  import { Datepicker, Label, Helper } from "flowbite-svelte";
   import { onMount } from "svelte";
   import { AppService } from "../../Shared/app.service";
   import type { IDynamicFieldConfigBlueprint } from "../../DynamicFields/types";
-  import Loading from "../../Shared/Loading.svelte";
   import getModelPrototypeFromFields from "../../helpers/model-prototype";
 
-  import DateInput from "../../DynamicFields/fields/date-input.svelte";
   // import ImagePicker from "../../DynamicFields/fields/image-select.svelte";
-  import Select from "../../DynamicFields/fields/select.svelte";
-  import Checkbox from "../../DynamicFields/fields/checkbox.svelte";
-  import Radio from "../../DynamicFields/fields/radio.svelte";
-  import Toggle from "../../DynamicFields/fields/toggle.svelte";
 
   const statusLabels = {
     0: "EDIT",
@@ -101,6 +93,10 @@
   });
 
   const onSubmit = (data) => {
+    console.log("submit");
+    if (activeTabValue === 1) {
+      s.update(data.uuid, data);
+    }
     console.log("Submit", data);
   };
 
@@ -141,9 +137,9 @@
 
   function onNativeSubmit(e) {
     e.preventDefault();
-    if (e.currentTarget.checkValidity() && onSubmit && validateModel()) {
-      onSubmit(model);
-    }
+    //if (e.currentTarget.checkValidity() && onSubmit && validateModel()) {
+    onSubmit(model);
+    //}
   }
 </script>
 
