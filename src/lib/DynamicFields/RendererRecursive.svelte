@@ -27,7 +27,7 @@
     must: Rule[];
   }
 
-  const role = "ADMIN";
+  const roleLevel = 99;
 
   const specialCharsIndex = (value, specialChars) => {
     for (const char of specialChars) {
@@ -72,7 +72,7 @@
     for (let i = 0; i < mustRules.length; i++) {
       const rule = mustRules[i];
       if (rule.type === "role") {
-        if (rule.value !== role) {
+        if (rule.value > roleLevel) {
           return false;
         }
       }

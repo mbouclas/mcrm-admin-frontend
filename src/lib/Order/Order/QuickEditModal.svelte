@@ -22,7 +22,7 @@
   <div role="dialog" class="modal">
     <div class="contents">
       <div class="header">
-        <h1>Quick Product Edit</h1>
+        <h1>Quick Order Edit</h1>
         <X on:click={close} />
       </div>
       <div class="content-body">

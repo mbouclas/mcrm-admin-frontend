@@ -275,7 +275,7 @@
 <LuckyToast show={doneDelete} message="Deleted successfully!" type="success" />
 
 <div class="grid-wrapper p-4 bg-[#2a3042] rounded-md text-[#a6b0cf]">
-  <h1 class="mt-4 mb-2 text-lg">Product List 12</h1>
+  <h1 class="mt-4 mb-2 text-lg">Product List</h1>
   <div class="toolbar flex justify-end bg-[#517acd]">
     <div class="p-6">
       <i
