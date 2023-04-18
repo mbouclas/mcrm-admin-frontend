@@ -159,7 +159,7 @@
     </div>
   {/if}
 
-  {#if field.type === "json" || field.type === "nested"}
+  {#if (field.type === "json" || field.type === "nested") && field?.fields?.length}
     <div class="pb-5">
       {#if field.label}
         <Label class={`block mb-2 !text-gray-400`}>{field.label}</Label>
