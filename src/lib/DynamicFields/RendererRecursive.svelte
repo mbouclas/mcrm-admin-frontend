@@ -119,9 +119,26 @@
 
     return true;
   };
+
+  $: sortedFields = fields.sort((a, b) => {
+    if (
+      typeof a.groupIndex !== "undefined" &&
+      typeof b.groupIndex !== "undefined"
+    ) {
+      return a.groupIndex - b.groupIndex;
+    }
+
+    if (typeof a.groupIndex === "undefined") {
+      return 1;
+    }
+
+    if (typeof b.groupIndex === "undefined") {
+      return -1;
+    }
+  });
 </script>
 
-{#each fields as field}
+{#each sortedFields as field}
   {#if field.type === "related"}
     <div class="pb-5">
       {#if field.label}
