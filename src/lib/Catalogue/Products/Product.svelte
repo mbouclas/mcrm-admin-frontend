@@ -29,7 +29,9 @@
   export let itemId;
 
   onMount(async () => {
-    fields = AppService.getModel("ProductModel").fields;
+    fields = AppService.getModel("ProductModel").fields.filter(
+      (f) => f.varName !== "thumb"
+    );
 
     if (itemId) {
       model = await s.findOne(itemId, ["*"]);
@@ -54,7 +56,6 @@
 
   const onSubmit = async (data) => {
     console.log("Submit", data);
-    delete data.thumb;
     await s.store(data);
   };
 
