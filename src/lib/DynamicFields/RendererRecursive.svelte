@@ -136,6 +136,7 @@
       return -1;
     }
   });
+  $: console.log("sroted ", sortedFields, model);
 </script>
 
 {#each sortedFields as field}
@@ -145,17 +146,29 @@
         <Label class={`block mb-2 !text-gray-400`}>{field.label}</Label>
       {/if}
 
-      {#each model[field.varName] as subModel}
+      {#if field.isCollection}
+        {#each model[field.varName] as subModel}
+          <div class="p-3 bg-blue-500 bg-opacity-10">
+            <svelte:self
+              {itemId}
+              {module}
+              bind:model={subModel}
+              {rootModel}
+              fields={field.fields}
+            />
+          </div>
+        {/each}
+      {:else}
         <div class="p-3 bg-blue-500 bg-opacity-10">
           <svelte:self
             {itemId}
             {module}
-            bind:model={subModel}
+            bind:model={model[field.varName]}
             {rootModel}
             fields={field.fields}
           />
         </div>
-      {/each}
+      {/if}
     </div>
   {/if}
 

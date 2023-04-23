@@ -24,8 +24,6 @@
   const params = useParams();
   let model;
   let fields: IDynamicFieldConfigBlueprint[] = [];
-  let mainFields = [];
-  let secondaryFields = [];
   export let itemId;
 
   onMount(async () => {

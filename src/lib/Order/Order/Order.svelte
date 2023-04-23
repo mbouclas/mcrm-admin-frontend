@@ -33,8 +33,6 @@
   let model;
   let fields: IDynamicFieldConfigBlueprint[] = [];
   let relationships: any[] = [];
-  let mainFields = [];
-  let secondaryFields = [];
   export let itemId;
 
   onMount(async () => {
@@ -65,6 +63,7 @@
             placeholder: relationshipData.model,
             type: "related",
             isSortable: true,
+            isCollection: relationshipData.isCollection || true,
             group: "right",
             fields: relationshipData.fields,
           },
