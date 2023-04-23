@@ -102,10 +102,10 @@
           />
 
           <SidebarDropdownItem
-                  aClass={btnClass + " pl-11"}
-                  label="Import"
-                  href="/catalogue/products/import"
-                  on:click={(e) => {
+            aClass={btnClass + " pl-11"}
+            label="Import"
+            href="/catalogue/products/import"
+            on:click={(e) => {
               e.preventDefault();
               navigate("/catalogue/products/import");
             }}
@@ -247,10 +247,10 @@
         />
 
         <SidebarDropdownItem
-                aClass={btnClass + " pl-11"}
-                label="Import"
-                href="/catalogue/products/import"
-                on:click={(e) => {
+          aClass={btnClass + " pl-11"}
+          label="Import"
+          href="/catalogue/products/import"
+          on:click={(e) => {
             e.preventDefault();
             navigate("/catalogue/products/import");
           }}
@@ -262,10 +262,10 @@
         label="Orders"
         {spanClass}
         icon={{ name: ShoppingCart }}
-        href="/orders"
+        href="/orders/list"
         on:click={(e) => {
           e.preventDefault();
-          navigate("/orders");
+          navigate("/orders/list");
         }}
       />
       <SidebarItem

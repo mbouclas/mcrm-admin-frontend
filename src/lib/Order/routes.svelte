@@ -1,8 +1,11 @@
 <script>
   import { Router, Route, Link } from "svelte-navigator";
   import OrderList from "./Order/OrderList.svelte";
+  import Order from "./Order/Order.svelte";
 </script>
 
 <Router>
   <Route path="list" component={OrderList} />
+
+  <Route path=":id" component={Order} />
 </Router>

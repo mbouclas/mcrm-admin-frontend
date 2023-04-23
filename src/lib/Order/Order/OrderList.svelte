@@ -153,13 +153,13 @@
   };
 
   onMount(async () => {
-    gridInstance.on("ready", () => {
-      const checkboxPlugin = gridInstance.config.plugin.get("selectRow");
-      checkboxPlugin.props.store.on("updated", (state) => {
-        selectedRows = state.rowIds;
-        // console.log(selectedRows);
-      });
-    });
+    //gridInstance.on("ready", () => {
+    //  const checkboxPlugin = gridInstance.config.plugin.get("selectRow");
+    //  checkboxPlugin.props.store.on("updated", (state) => {
+    //    selectedRows = state.rowIds;
+    //    // console.log(selectedRows);
+    //  });
+    //});
   });
 
   $: console.log(queryString.parse($location.search));
@@ -254,7 +254,7 @@
       />
       <i
         class="fa-solid fa-plus text-white cursor-pointer"
-        on:click={() => navigate("/catalogue/products/new")}
+        on:click={() => navigate("/orders/new")}
       />
       {#if Array.isArray(selectedRows) && selectedRows.length > 0}
         <i
