@@ -18,15 +18,7 @@
   import { onMount } from "svelte";
   import { AppService } from "../../Shared/app.service";
   import type { IDynamicFieldConfigBlueprint } from "../../DynamicFields/types";
-  import Loading from "../../Shared/Loading.svelte";
   import getModelPrototypeFromFields from "../../helpers/model-prototype";
-
-  import DateInput from "../../DynamicFields/fields/date-input.svelte";
-  // import ImagePicker from "../../DynamicFields/fields/image-select.svelte";
-  import Select from "../../DynamicFields/fields/select.svelte";
-  import Checkbox from "../../DynamicFields/fields/checkbox.svelte";
-  import Radio from "../../DynamicFields/fields/radio.svelte";
-  import Toggle from "../../DynamicFields/fields/toggle.svelte";
 
   const s = new ProductsService();
   const params = useParams();
@@ -41,7 +33,6 @@
 
     if (itemId) {
       model = await s.findOne(itemId, ["*"]);
-
     } else {
       if ($params.id === "new") {
         model = getModelPrototypeFromFields(fields);
@@ -49,7 +40,6 @@
         model = await s.findOne($params.id, ["*"]);
       }
     }
-
 
     if (!model.seo) {
       model.seo = {
@@ -62,8 +52,10 @@
     }
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     console.log("Submit", data);
+    delete data.thumb;
+    await s.store(data);
   };
 
   let activeTabValue = 1;
@@ -103,9 +95,9 @@
 
   function onNativeSubmit(e) {
     e.preventDefault();
-    if (e.currentTarget.checkValidity() && onSubmit && validateModel()) {
-      onSubmit(model);
-    }
+    //if (e.currentTarget.checkValidity() && onSubmit && validateModel()) {
+    onSubmit(model);
+    //}
   }
 </script>
 
