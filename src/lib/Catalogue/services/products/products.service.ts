@@ -64,7 +64,7 @@ export class ProductsService extends BaseHttpService {
   }
 
   async update(id: string, data: IGenericObject) {
-
+    return await this.post(`product/${id}`, data);
   }
 
   async store(data: IGenericObject) {

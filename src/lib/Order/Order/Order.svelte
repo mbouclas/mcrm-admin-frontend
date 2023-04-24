@@ -94,9 +94,18 @@
 
   const onSubmit = (data) => {
     console.log("submit");
-    //if (activeTabValue === 1) {
-    //  s.update(data.uuid, data);
-    //}
+    if (activeTabValue === 1) {
+      if ($params.id === "new") {
+        s.store({
+          ...data,
+          status: 1,
+          paymentStatus: 1,
+          shippingStatus: 1,
+        });
+      } else {
+        s.update(data.uuid, data);
+      }
+    }
     console.log("Submit", data);
   };
 

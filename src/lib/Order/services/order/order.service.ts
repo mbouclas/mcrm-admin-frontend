@@ -66,8 +66,13 @@ export class OrderService extends BaseHttpService {
     return await this.get(`order${qs ? `?${qs}` : ''}`);
   }
 
-  async update(uuid, body) {
-    return await this.post(`order/${uuid}`, body);
+  async update(id, data) {
+    return await this.post(`order/${id}`, data);
   }
+
+  async store(data: IGenericObject) {
+    return super.post('order/basic', data)
+  }
+
 
 }
