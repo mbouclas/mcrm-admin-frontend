@@ -46,30 +46,31 @@
       (value) => ({ label: statusLabels[value], value })
     );
 
-    Object.keys(relationships)
-      .filter(
-        (relationshipKey) =>
-          relationships[relationshipKey].tabs &&
-          relationships[relationshipKey].tabs.includes("General")
-      )
-      .map((relationshipKey) => {
-        let relationshipData = relationships[relationshipKey];
+    if ($params.id !== "new") {
+      Object.keys(relationships)
+        .filter(
+          (relationshipKey) =>
+            relationships[relationshipKey].tabs &&
+            relationships[relationshipKey].tabs.includes("General")
+        )
+        .map((relationshipKey) => {
+          let relationshipData = relationships[relationshipKey];
 
-        fields = [
-          ...fields,
-          {
-            varName: relationshipData.modelAlias,
-            label: relationshipData.model,
-            placeholder: relationshipData.model,
-            type: "related",
-            isSortable: true,
-            isCollection: relationshipData.isCollection || true,
-            group: "right",
-            fields: relationshipData.fields,
-          },
-        ];
-      });
-
+          fields = [
+            ...fields,
+            {
+              varName: relationshipData.modelAlias,
+              label: relationshipData.model,
+              placeholder: relationshipData.model,
+              type: "related",
+              isSortable: true,
+              isCollection: relationshipData.isCollection || true,
+              group: "right",
+              fields: relationshipData.fields,
+            },
+          ];
+        });
+    }
     if (itemId) {
       model = await s.findOne(itemId, ["*"]);
     } else {
@@ -93,9 +94,9 @@
 
   const onSubmit = (data) => {
     console.log("submit");
-    if (activeTabValue === 1) {
-      s.update(data.uuid, data);
-    }
+    //if (activeTabValue === 1) {
+    //  s.update(data.uuid, data);
+    //}
     console.log("Submit", data);
   };
 

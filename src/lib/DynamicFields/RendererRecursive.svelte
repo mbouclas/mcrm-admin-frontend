@@ -136,7 +136,6 @@
       return -1;
     }
   });
-  $: console.log("sroted ", sortedFields, model);
 </script>
 
 {#each sortedFields as field}
