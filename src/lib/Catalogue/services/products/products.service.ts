@@ -31,8 +31,7 @@ export class ProductsService extends BaseHttpService {
   }
 
   async deleteRow(itemId: string) {
-    // return await super.delete(`/product/delete/${itemId}`);
-    return true;
+    return await super.delete(`product/${itemId}`);
   }
 
   getGridUrl(filters = {}) {

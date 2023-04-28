@@ -93,7 +93,6 @@
   });
 
   const onSubmit = (data) => {
-    console.log("submit");
     if (activeTabValue === 1) {
       if ($params.id === "new") {
         s.store({
@@ -106,7 +105,6 @@
         s.update(data.uuid, data);
       }
     }
-    console.log("Submit", data);
   };
 
   let activeTabValue = 1;
