@@ -1,7 +1,7 @@
 <script>
   import queryString from "query-string";
   import { useParams, useLocation, useNavigate } from "svelte-navigator";
-  import { ProductsService } from "../services/products/products.service";
+  import { PropertiesService } from "../services/properties/properties.service";
   import { onMount } from "svelte";
   import ActionList from "./grid-actions.svelte";
   import Grid from "gridjs-svelte";
@@ -17,7 +17,7 @@
   let openProductEditModal = false;
   let itemId;
 
-  const service = new ProductsService();
+  const service = new PropertiesService();
   const params = useParams();
   const location = useLocation();
   const navigate = useNavigate();
