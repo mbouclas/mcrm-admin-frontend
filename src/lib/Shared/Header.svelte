@@ -85,10 +85,10 @@
           <SidebarDropdownItem
             aClass={btnClass + " pl-11"}
             label="Properties"
-            href="/catalogue/properties"
+            href="/catalogue/properties/list"
             on:click={(e) => {
               e.preventDefault();
-              navigate("/catalogue/properties");
+              navigate("/catalogue/properties/list");
             }}
           />
           <SidebarDropdownItem
@@ -230,10 +230,10 @@
         <SidebarDropdownItem
           aClass={btnClass + " pl-11"}
           label="Properties"
-          href="/catalogue/properties"
+          href="/catalogue/properties/list"
           on:click={(e) => {
             e.preventDefault();
-            navigate("/catalogue/properties");
+            navigate("/catalogue/properties/list");
           }}
         />
         <SidebarDropdownItem
