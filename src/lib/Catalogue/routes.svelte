@@ -7,6 +7,7 @@
   import ManufacturersList from "./Products/ManufacturersList.svelte";
   import Import from "./Products/Import.svelte";
   import PropertiesList from "./Properties/PropertiesList.svelte";
+  import Property from "./Properties/Property.svelte";
 </script>
 
 <Router>
@@ -23,4 +24,7 @@
   <Route path="products/:id" component={Product} let:params />
 
   <Route path="properties/list" component={PropertiesList} />
+
+  <!-- <Route path="properties/new" component={Property} let:params /> -->
+  <Route path="properties/:id" component={Property} let:params />
 </Router>

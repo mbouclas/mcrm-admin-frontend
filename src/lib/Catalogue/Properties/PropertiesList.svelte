@@ -99,7 +99,7 @@
             //   "py-2 mb-4 px-4 border rounded-md text-white bg-blue-600",
             onClick: (e) => {
               e.preventDefault();
-              navigate("/catalogue/products/" + row.cells[1].data);
+              navigate("/catalogue/properties/" + row.cells[1].data);
             },
           },
           cell
@@ -194,7 +194,7 @@
   $: console.log(queryString.parse($location.search));
   $: console.log($params); // -> { id: "123", splat: "pauls-profile" }
 
-  // Go to the service and get the products
+  // Go to the service and get the properties
   // We need a sidebar component to place the filters in
 
   function handleRowClick(...args) {
@@ -274,7 +274,7 @@
 <LuckyToast show={doneDelete} message="Deleted successfully!" type="success" />
 
 <div class="grid-wrapper p-4 bg-[#2a3042] rounded-md text-[#a6b0cf]">
-  <h1 class="mt-4 mb-2 text-lg">Product List</h1>
+  <h1 class="mt-4 mb-2 text-lg">Property List</h1>
   <div class="toolbar flex justify-end bg-[#517acd]">
     <div class="p-6">
       <i
@@ -283,7 +283,7 @@
       />
       <i
         class="fa-solid fa-plus text-white cursor-pointer"
-        on:click={() => navigate("/catalogue/products/new")}
+        on:click={() => navigate("/catalogue/properties/new")}
       />
       {#if Array.isArray(selectedRows) && selectedRows.length > 0}
         <i

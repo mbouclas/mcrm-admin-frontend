@@ -10,8 +10,6 @@
   let secondaryFields = [];
   // export let onSubmit: (data: any) => void;
 
-  // console.log(fields);
-
   $: {
     fields.forEach((field) => {
       if (!field.group || field.group === "main") {
@@ -31,7 +29,7 @@
       <Fields
         fields={mainFields}
         bind:model
-        module="Product"
+        module="Property"
         itemId={model.uuid}
       />
     </div>
@@ -40,7 +38,7 @@
       <Fields
         fields={secondaryFields}
         bind:model
-        module="Product"
+        module="Property"
         itemId={model.uuid}
       />
     </div>

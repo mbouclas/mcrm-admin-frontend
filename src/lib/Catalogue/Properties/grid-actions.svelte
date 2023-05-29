@@ -16,12 +16,12 @@
   // import Modals from "../../Shared/Modals.svelte";
   import QuickEditModal from "./QuickEditModal.svelte";
 
-  export let id; // The product ID
+  export let id; // The property ID
   export let active; // If it's active
   const dispatch = createEventDispatcher();
   function goToPage(e) {
     e.preventDefault();
-    navigate("/catalogue/products/" + id);
+    navigate("/catalogue/properties/" + id);
   }
 
   function handleEvent(e) {

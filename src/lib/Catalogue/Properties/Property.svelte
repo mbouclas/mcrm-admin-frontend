@@ -23,12 +23,64 @@
   let model;
   let fields: IDynamicFieldConfigBlueprint[] = [];
   export let itemId;
+  let relationships: any[] = [];
 
   onMount(async () => {
-    fields = AppService.getModel("PropertyModel").fields.filter(
-      (f) => f.varName !== "thumb"
-    );
+    let rawModel = AppService.getModel("PropertyModel");
+    fields = rawModel.fields;
+    relationships = rawModel.relationships;
 
+    if ($params.id === "new") {
+      Object.keys(relationships)
+        .filter(
+          (relationshipKey) =>
+            relationships[relationshipKey].tabs &&
+            relationships[relationshipKey].tabs.includes("General")
+        )
+        .map((relationshipKey) => {
+          let relationshipData = relationships[relationshipKey];
+
+          fields = [
+            ...fields,
+            {
+              varName: relationshipData.modelAlias,
+              label: relationshipData.model,
+              placeholder: relationshipData.model,
+              type: "related",
+              isSortable: true,
+              isCollection: relationshipData.isCollection || true,
+              group: "right",
+              fields: relationshipData.fields,
+            },
+          ];
+        });
+    }
+
+    if ($params.id !== "new") {
+      Object.keys(relationships)
+        .filter(
+          (relationshipKey) =>
+            relationships[relationshipKey].tabs &&
+            relationships[relationshipKey].tabs.includes("General")
+        )
+        .map((relationshipKey) => {
+          let relationshipData = relationships[relationshipKey];
+
+          fields = [
+            ...fields,
+            {
+              varName: relationshipData.modelAlias,
+              label: relationshipData.model,
+              placeholder: relationshipData.model,
+              type: "related",
+              isSortable: true,
+              isCollection: relationshipData.isCollection || true,
+              group: "right",
+              fields: relationshipData.fields,
+            },
+          ];
+        });
+    }
     if (itemId) {
       model = await s.findOne(itemId, ["*"]);
     } else {
@@ -51,7 +103,6 @@
   });
 
   const onSubmit = async (data) => {
-    console.log("Submit", data);
     await s.store(data);
   };
 
