@@ -39,15 +39,15 @@
       idx: 2,
     },
     {
-      id: "sku",
+      id: "description",
       idx: 3,
     },
     {
-      id: "price",
+      id: "createdAt",
       idx: 4,
     },
     {
-      id: "createdAt",
+      id: "active",
       idx: 5,
     },
   ]);
@@ -107,12 +107,8 @@
       },
     },
     {
-      name: "Sku",
-      id: "sku",
-    },
-    {
-      name: "Price",
-      id: "price",
+      name: "Description",
+      id: "description",
     },
     {
       name: "Created",
@@ -130,7 +126,7 @@
     {
       name: "Updated",
       id: "updatedAt",
-      // hidden: true,
+      hidden: true,
       formatter: (cell) => {
         return new Date(cell).toLocaleString("el-EL", {
           month: "short",

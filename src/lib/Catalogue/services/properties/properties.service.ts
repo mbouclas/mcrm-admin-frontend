@@ -38,8 +38,7 @@ export class PropertiesService extends BaseHttpService {
       return res.data.map((row) => [
         row.uuid,
         html(`<a href='${row.uuid}'>${row.title}</a>`),
-        row.sku,
-        row.price,
+        row.description,
         row.createdAt,
         row.updatedAt,
         row.active,
