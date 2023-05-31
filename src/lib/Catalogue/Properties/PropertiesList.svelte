@@ -21,7 +21,9 @@
   const params = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const filters = {};
+  const filters = {
+    with: ["propertyValues"],
+  };
   let gridInstance;
   $: selectedRows = [];
   $: allRowsSelected = false;
@@ -106,6 +108,53 @@
         );
       },
     },
+    {
+      name: "Property Values",
+      id: "propertyValue",
+      formatter: (cell, row) => {
+        if (cell && cell.length) {
+          const names = cell.map((dataItem) => dataItem.name);
+
+          let firstThree = names.slice(0, 3).join(", ");
+          let remainingItems =
+            names.length > 3 ? ` + ${names.length - 3} more` : "";
+
+          let result = firstThree + remainingItems;
+
+          return h(
+            "div",
+            {
+              style: { display: "flex" },
+            },
+            [
+              h(
+                "span", // first span, the items
+                {
+                  style: {
+                    flex: 5,
+                    overflow: "hidden",
+                    "text-overflow": "ellipsis",
+                  },
+                },
+                firstThree
+              ),
+              h(
+                "span", // second span, the "+ X more"
+                {
+                  style: {
+                    flex: 1,
+                  },
+                },
+                remainingItems
+              ),
+            ]
+          );
+        }
+
+        return h("p", {}, "No property values");
+      },
+    },
+
     {
       name: "Description",
       id: "description",
@@ -490,5 +539,10 @@
   }
   .confirm-dialog .cancel-button:hover {
     background: none !important;
+  }
+
+  td[data-column-id="propertyValue"] {
+    width: 300px !important;
+    max-width: 300px !important;
   }
 </style>
