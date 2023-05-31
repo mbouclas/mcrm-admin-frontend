@@ -8,6 +8,7 @@
   export let model;
   let mainFields = [];
   let secondaryFields = [];
+  let bottomFields = [];
   // export let onSubmit: (data: any) => void;
 
   $: {
@@ -17,6 +18,10 @@
       }
       if (field.group === "right") {
         secondaryFields.push(field);
+      }
+
+      if (field.group === "bottom") {
+        bottomFields.push(field);
       }
     });
   }
@@ -43,5 +48,16 @@
       />
     </div>
     <!-- END BLOCK -->
+  </div>
+
+  <div class="block lg:flex">
+    <div class="w-full p-2">
+      <Fields
+        fields={bottomFields}
+        bind:model
+        module="Property"
+        itemId={model.uuid}
+      />
+    </div>
   </div>
 {/if}

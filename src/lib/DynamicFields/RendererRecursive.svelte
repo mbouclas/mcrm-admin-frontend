@@ -10,6 +10,7 @@
   import DateInput from "./fields/date-input.svelte";
   import ImageSelect from "./fields/image-select/index.svelte";
   import type { IDynamicFieldConfigBlueprint } from "./types";
+  import RelatedCreateList from "./RelatedCreateList.svelte";
 
   export let model = {};
   export let onModelChange;
@@ -139,6 +140,10 @@
 </script>
 
 {#each sortedFields as field}
+  {#if field.type === "related_create"}
+    <RelatedCreateList {field} {model} />
+  {/if}
+
   {#if field.type === "related"}
     <div class="pb-5">
       {#if field.label}
