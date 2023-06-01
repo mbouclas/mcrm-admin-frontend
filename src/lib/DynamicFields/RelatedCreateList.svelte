@@ -11,10 +11,15 @@
   export let field;
 
   let gridInstance;
+  $: console.log("FIELD", field);
 
   const navigate = useNavigate();
 
-  $: addedValues = model[field.varName] || [];
+  let addedValues = model[field.varName]
+    ? JSON.parse(JSON.stringify(model[field.varName]))
+    : [];
+
+  $: model[field.varName] = addedValues;
 
   let doneActivate = false;
   let doneDeactivate = false;
@@ -132,10 +137,6 @@
       {field.placeholder}
     </h1>
     <div class="flex justify-center items-center">
-      <i
-        class="fa-solid fa-bars-filter text-white cursor-pointer text-xl p-3"
-        on:click={() => (openFilter = true)}
-      />
       <i
         class="fa-solid fa-plus text-white cursor-pointer text-xl p-3 pr-5"
         on:click={openAddModal}

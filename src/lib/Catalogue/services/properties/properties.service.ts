@@ -66,6 +66,6 @@ export class PropertiesService extends BaseHttpService {
   }
 
   async store(data: IGenericObject) {
-    return super.post("property/basic", data);
+    return super.post("property", data);
   }
 }

@@ -11,7 +11,6 @@
   export let model;
   export let handleAddItem;
 
-  $: console.log(model);
   $: {
     if (isOpen) {
       document.body.classList.add("lock-scroll");

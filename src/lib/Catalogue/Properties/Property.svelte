@@ -25,6 +25,8 @@
   export let itemId;
   let relationships: any[] = [];
 
+  $: console.log("model ", model);
+
   onMount(async () => {
     let rawModel = AppService.getModel("PropertyModel");
     fields = rawModel.fields;
@@ -45,9 +47,9 @@
           fields = [
             ...fields,
             {
-              varName: relationshipData.modelAlias,
+              varName: relationshipKey,
               label: relationshipData.model,
-              placeholder: relationshipData.model,
+              placeholder: relationshipKey,
               type: "related_create",
               isSortable: true,
               isCollection,
