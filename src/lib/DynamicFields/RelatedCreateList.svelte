@@ -22,6 +22,7 @@
 
   let openFilter = false;
   let openProductEditModal = false;
+  import ActionList from "./grid-actions.svelte";
   let itemId;
 
   let selectedRows = [];
@@ -34,12 +35,43 @@
     },
   ];
 
+  const lastColumns = [
+    {
+      name: "Actions",
+      formatter: (cell, row, idx) => {
+        setTimeout(() => {
+          if (
+            document.querySelector(`#action-${row.id}`).children.length === 1
+          ) {
+            return;
+          }
+          const wrapperEl = document.querySelector(`#action-${row.id}`);
+          console.log(row);
+          const id = row.cells[1].data;
+          const active = row.cells[6].data;
+          // console.log(row.cells[6].data)
+
+          const e = new ActionList({
+            target: wrapperEl,
+            props: { title: "edit", id, active },
+          });
+          e.$on("grid-action", (m) => console.log(m));
+          e.$on("delete-row", (e) => deleteItem(e.detail.id));
+          e.$on("activate-item", (e) => activateRow(e.detail.id));
+          e.$on("de-activate-item", (e) => de_activateRow(e.detail.id));
+        });
+        return h("div", { id: `action-${row.id}` }, "");
+      },
+    },
+  ];
+
   $: columns = [
     ...firstColumns,
     ...field.fields.map((fieldItem) => ({
       name: fieldItem.placeholder,
       id: fieldItem.varName,
     })),
+    ...lastColumns,
   ];
 
   $: data = addedValues.map((item) => {
@@ -68,7 +100,15 @@
 
   async function deleteItems() {}
 
-  async function deleteItem(itemId) {}
+  async function deleteItem(itemId) {
+    const fieldIdName = field.fields[0].varName;
+    const wantedIndex = addedValues.findIndex(
+      (value) => value[fieldIdName] === itemId
+    );
+    if (wantedIndex !== -1) {
+      addedValues = addedValues.filter((_, index) => index !== wantedIndex);
+    }
+  }
 
   const handleAddItem = (item) => {
     addedValues = [...addedValues, item];
