@@ -1,14 +1,16 @@
 <script lang="ts">
   import { h } from "gridjs";
   import { useParams, useLocation, useNavigate } from "svelte-navigator";
+  import Modals from "../Shared/Modals.svelte";
 
   import Grid from "gridjs-svelte";
+  import RelatedCreateListAddModal from "./RelatedCreateListAddModal.svelte";
+  import { openModal } from "svelte-modals";
 
   export let model;
   export let field;
 
   let gridInstance;
-  console.log(field, model);
 
   const navigate = useNavigate();
 
@@ -67,8 +69,17 @@
   async function deleteItems() {}
 
   async function deleteItem(itemId) {}
+
+  function openAddModal() {
+    openModal(RelatedCreateListAddModal, {
+      itemId: 12,
+      fields: field.fields,
+      model,
+    });
+  }
 </script>
 
+<Modals />
 <div class="grid-wrapper p-4 bg-[#2a3042] rounded-md text-[#a6b0cf]">
   <h1 class="mt-4 mb-2 text-lg">{field.placeholder}</h1>
 
@@ -80,7 +91,7 @@
       />
       <i
         class="fa-solid fa-plus text-white cursor-pointer"
-        on:click={() => navigate("/catalogue/properties/new")}
+        on:click={openAddModal}
       />
       {#if Array.isArray(selectedRows) && selectedRows.length > 0}
         <i
@@ -91,18 +102,6 @@
           class="fa-solid fa-eye-slash text-[#9f9f9f] cursor-pointer mr-6"
           on:click={() => de_activateRows()}
         />
-        <Confirm
-          confirmTitle="Delete"
-          cancelTitle="Cancel"
-          let:confirm={confirmThis}
-        >
-          <i
-            class="fa-solid fa-trash-can text-[#892626] cursor-pointer"
-            on:click={() => confirmThis(deleteItems)}
-          />
-          <span slot="title"> Are you sure? </span>
-          <span slot="description"> You won't be able to revert this! </span>
-        </Confirm>
       {/if}
     </div>
   </div>
