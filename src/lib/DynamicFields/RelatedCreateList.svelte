@@ -70,51 +70,58 @@
 
   async function deleteItem(itemId) {}
 
+  const handleAddItem = (item) => {
+    addedValues = [...addedValues, item];
+  };
+
   function openAddModal() {
     openModal(RelatedCreateListAddModal, {
       itemId: 12,
       fields: field.fields,
       model,
+      handleAddItem,
     });
   }
 </script>
 
 <Modals />
-<div class="grid-wrapper p-4 bg-[#2a3042] rounded-md text-[#a6b0cf]">
-  <h1 class="mt-4 mb-2 text-lg">{field.placeholder}</h1>
 
-  <div class="toolbar flex justify-end bg-[#517acd]">
-    <div class="p-6">
+<div class="grid-wrappe bg-[#2a3042] rounded-md text-[#a6b0cf]">
+  <div class="toolbar flex justify-between bg-[#517acd] overflow-hidden">
+    <h1 class="mt-4 mb-2 text-lg justify-self-start pl-2">
+      {field.placeholder}
+    </h1>
+    <div class="flex justify-center items-center">
       <i
-        class="fa-solid fa-bars-filter text-white cursor-pointer mr-2"
+        class="fa-solid fa-bars-filter text-white cursor-pointer text-xl p-3"
         on:click={() => (openFilter = true)}
       />
       <i
-        class="fa-solid fa-plus text-white cursor-pointer"
+        class="fa-solid fa-plus text-white cursor-pointer text-xl p-3 pr-5"
         on:click={openAddModal}
       />
       {#if Array.isArray(selectedRows) && selectedRows.length > 0}
         <i
-          class="fa-solid fa-eye text-white cursor-pointer ml-6 mr-2"
+          class="fa-solid fa-eye text-white cursor-pointer ml-6 mr-2 text-xl p-3"
           on:click={() => activateRows()}
         />
         <i
-          class="fa-solid fa-eye-slash text-[#9f9f9f] cursor-pointer mr-6"
+          class="fa-solid fa-eye-slash text-[#9f9f9f] cursor-pointer mr-6 texl-xl p-3"
           on:click={() => de_activateRows()}
         />
       {/if}
     </div>
   </div>
-
-  <Grid
-    {columns}
-    bind:instance={gridInstance}
-    {data}
-    resizable
-    autoWidth
-    fixedHeader
-  />
 </div>
+
+<Grid
+  {columns}
+  bind:instance={gridInstance}
+  {data}
+  resizable
+  autoWidth
+  fixedHeader
+/>
 
 <style global>
   @import "https://cdn.jsdelivr.net/npm/gridjs/dist/theme/mermaid.min.css";

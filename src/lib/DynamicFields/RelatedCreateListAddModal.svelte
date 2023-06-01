@@ -3,12 +3,15 @@
   import Fields from "./Renderer.svelte";
 
   import { X } from "svelte-heros";
+  import { Button } from "flowbite-svelte";
   // provided by <Modals />
   export let isOpen;
   export let itemId;
   export let fields;
   export let model;
+  export let handleAddItem;
 
+  $: console.log(model);
   $: {
     if (isOpen) {
       document.body.classList.add("lock-scroll");
@@ -20,8 +23,10 @@
     document.body.classList.remove("lock-scroll");
   }
 
-  function handleModelChange(key: string, e) {
-    model[key] = e.detail;
+  function onNativeSubmit(e) {
+    e.preventDefault();
+    handleAddItem(JSON.parse(JSON.stringify(model)));
+    close();
   }
 </script>
 
@@ -34,16 +39,9 @@
       </div>
       <div class="content-body" />
 
-      <Fields
-        {fields}
-        bind:model
-        module="Product"
-        itemId={model?.uuid || ""}
-        on:change={handleModelChange}
-      />
-      <!-- <div class="actions">
-        <button on:click={closeModal}>OK</button>
-      </div> -->
+      <Fields {fields} bind:model module="Product" itemId={model?.uuid || ""} />
+
+      <Button type="submit" on:click={onNativeSubmit}>Submit</Button>
     </div>
   </div>
 {/if}
