@@ -76,10 +76,10 @@
               varName: relationshipData.modelAlias,
               label: relationshipData.model,
               placeholder: relationshipData.model,
-              type: "related",
+              type: "related_create",
               isSortable: true,
               isCollection: relationshipData.isCollection || true,
-              group: "right",
+              group: "bottom",
               fields: relationshipData.fields,
             },
           ];

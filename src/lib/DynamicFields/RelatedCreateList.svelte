@@ -11,7 +11,6 @@
   export let field;
 
   let gridInstance;
-  $: console.log("FIELD", field);
 
   const navigate = useNavigate();
 
@@ -31,6 +30,7 @@
   let itemId;
 
   let selectedRows = [];
+  let pagination = { limit: 10, enabled: true };
 
   const firstColumns = [
     {
@@ -159,6 +159,7 @@
   {columns}
   bind:instance={gridInstance}
   {data}
+  {pagination}
   resizable
   autoWidth
   fixedHeader
