@@ -173,54 +173,6 @@
         {customInActiveClass}
         on:click={() => handleTabClick(1)}>General</TabHeadItem
       >
-      <TabHeadItem
-        id={2}
-        tabStyle="custom"
-        {activeTabValue}
-        {customActiveClass}
-        {customInActiveClass}
-        on:click={() => handleTabClick(2)}>Gallery</TabHeadItem
-      >
-      <TabHeadItem
-        tabStyle="custom"
-        {customActiveClass}
-        {customInActiveClass}
-        id={3}
-        {activeTabValue}
-        on:click={() => handleTabClick(3)}>SEO</TabHeadItem
-      >
-      <TabHeadItem
-        tabStyle="custom"
-        {customActiveClass}
-        {customInActiveClass}
-        id={4}
-        {activeTabValue}
-        on:click={() => handleTabClick(4)}>Files</TabHeadItem
-      >
-      <TabHeadItem
-        tabStyle="custom"
-        {customActiveClass}
-        {customInActiveClass}
-        id={5}
-        {activeTabValue}
-        on:click={() => handleTabClick(5)}>Items</TabHeadItem
-      >
-      <TabHeadItem
-        tabStyle="custom"
-        {customActiveClass}
-        {customInActiveClass}
-        id={6}
-        {activeTabValue}
-        on:click={() => handleTabClick(6)}>Variants</TabHeadItem
-      >
-      <TabHeadItem
-        tabStyle="custom"
-        {customActiveClass}
-        {customInActiveClass}
-        id={7}
-        {activeTabValue}
-        on:click={() => handleTabClick(7)}>Properties</TabHeadItem
-      >
       <li class="submit-button-wrapper">
         <Button type="submit" on:click={onNativeSubmit}>Submit</Button>
       </li>
