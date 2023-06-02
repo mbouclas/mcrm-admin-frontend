@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { v4 as uuidv4 } from "uuid";
   import { h } from "gridjs";
   import { useParams, useLocation, useNavigate } from "svelte-navigator";
   import Modals from "../Shared/Modals.svelte";
@@ -29,7 +30,6 @@
   let openFilter = false;
   let openProductEditModal = false;
   import ActionList from "./grid-actions.svelte";
-  let itemId;
 
   let selectedRows = [];
   let pagination = { limit: 10, enabled: true };
@@ -94,7 +94,7 @@
             props: { title: "edit", id, active },
           });
           e.$on("grid-action", (m) => console.log(m));
-          e.$on("delete-row", (e) => deleteItem(e.detail.id));
+          e.$on("delete-row", (e) => deleteItem(id));
           e.$on("activate-item", (e) => activateRow(e.detail.id));
           e.$on("de-activate-item", (e) => de_activateRow(e.detail.id));
         });
@@ -144,13 +144,8 @@
   async function deleteItems() {}
 
   async function deleteItem(itemId) {
-    const fieldIdName = field.fields[0].varName;
-    const wantedIndex = addedValues.findIndex(
-      (value) => value[fieldIdName] === itemId
-    );
-    if (wantedIndex !== -1) {
-      addedValues = addedValues.filter((_, index) => index !== wantedIndex);
-    }
+    console.log(itemId, addedValues);
+    addedValues = addedValues.filter((item) => item.uuid !== itemId);
   }
 
   const handleAddItem = (item) => {
@@ -159,7 +154,7 @@
 
   function openAddModal() {
     openModal(RelatedCreateListAddModal, {
-      itemId: 12,
+      uuid: uuidv4(),
       fields: field.fields,
       model,
       handleAddItem,

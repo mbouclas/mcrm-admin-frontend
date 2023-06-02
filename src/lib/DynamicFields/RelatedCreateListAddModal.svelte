@@ -6,7 +6,7 @@
   import { Button } from "flowbite-svelte";
   // provided by <Modals />
   export let isOpen;
-  export let itemId;
+  export let uuid;
   export let fields;
   export let model;
   export let handleAddItem;
@@ -24,7 +24,7 @@
 
   function onNativeSubmit(e) {
     e.preventDefault();
-    handleAddItem(JSON.parse(JSON.stringify(model)));
+    handleAddItem(JSON.parse(JSON.stringify({ ...model, uuid })));
     close();
   }
 </script>
