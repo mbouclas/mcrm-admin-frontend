@@ -204,6 +204,7 @@
           }
           const wrapperEl = document.querySelector(`#action-${row.id}`);
           const id = row.cells[1].data;
+          console.log(row.cells);
           const active = row.cells[7].data;
           // console.log(row.cells[6].data)
 

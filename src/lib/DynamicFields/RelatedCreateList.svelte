@@ -2,6 +2,7 @@
   import { h } from "gridjs";
   import { useParams, useLocation, useNavigate } from "svelte-navigator";
   import Modals from "../Shared/Modals.svelte";
+  import { RowSelection } from "gridjs/plugins/selection";
 
   import Grid from "gridjs-svelte";
   import RelatedCreateListAddModal from "./RelatedCreateListAddModal.svelte";
@@ -23,6 +24,7 @@
   let doneActivate = false;
   let doneDeactivate = false;
   let doneDelete = false;
+  $: allRowsSelected = false;
 
   let openFilter = false;
   let openProductEditModal = false;
@@ -33,6 +35,37 @@
   let pagination = { limit: 10, enabled: true };
 
   const firstColumns = [
+    {
+      id: "selectRow",
+      sort: false,
+      name: h("input", {
+        type: "checkbox",
+        onChange: (e) => {
+          allRowsSelected = e.target.checked;
+          // Exceptionally hacky. There's no documented method to get the table data and do something with them
+          // So we find all the checkboxes on the table and click them
+          // There is of course the obvious bug where if there were selected rows, and you click on this
+          // only the inverse will happen. This calls for an intermediate action, like on gmail
+          gridInstance.config.tableRef.current.base
+            .querySelectorAll(".gridjs-checkbox")
+            .forEach((checkbox) => {
+              checkbox.click();
+            });
+        },
+      }),
+      plugin: {
+        // install the RowSelection plugin
+        component: RowSelection,
+        // RowSelection config
+        props: {
+          // use the "uuid" hidden column as the row identifier
+          id: (row) => row.cell(1).data,
+        },
+        onChange: (e) => {
+          console.log(e);
+        },
+      },
+    },
     {
       name: "uuid",
       id: "uuid",
@@ -51,9 +84,9 @@
             return;
           }
           const wrapperEl = document.querySelector(`#action-${row.id}`);
-          console.log(row);
           const id = row.cells[1].data;
           const active = row.cells[5].data;
+
           // console.log(row.cells[6].data)
 
           const e = new ActionList({
@@ -79,9 +112,14 @@
     ...lastColumns,
   ];
 
-  $: data = addedValues.map((item) => {
+  $: data = addedValues.map((item, valueIndex) => {
     // Map each field into an array in the correct column order
-    return columns.map((column) => item[column.id]);
+    return [
+      item[columns[1].id] || valueIndex,
+      ...columns.slice(2, columns.length - 1).map((column, index) => {
+        return item[column.id];
+      }),
+    ];
   });
 
   function handleRowClick(...args) {
