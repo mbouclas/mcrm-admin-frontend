@@ -29,6 +29,20 @@ let validRows = 0,
     file,
     errors;
 
+const templates = [
+    {
+        name: 'Template 1',
+        id: 1,
+        default: true
+    },
+    {
+        name: 'Template 2',
+        id: 2,
+        default: false
+    }
+];
+let selectedTemplate;
+
 
 function handleUploadDone(e) {
     const res: IImportAnalyzerResult = e.detail.response;
@@ -98,12 +112,25 @@ async function handleStartImport() {
     }
 }
 
+function handleTemplateChange() {
+    const parts = options.baseUrl.split('?');
+    options.baseUrl = `${parts[0]}?template=${selectedTemplate.id}`;
+
+    console.log(options.baseUrl, selectedTemplate)
+}
+
 </script>
 
 {#if processing}<Loading /> {/if}
 <p>Valid Rows: {validRows}</p>
 <p>Invalid Rows: {invalidRows}</p>
 {#if !importInProgress}
+    {selectedTemplate?.name}
+    <select bind:value={selectedTemplate} on:change="{handleTemplateChange}">
+        {#each templates as template}
+            <option value={template}>{template.name}</option>
+        {/each}
+    </select>
 <FileUpload {options} {model} on:done={handleUploadDone} on:started={handleUploadStart} />
 {/if}
 

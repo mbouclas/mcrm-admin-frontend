@@ -2,7 +2,7 @@
   import queryString from "query-string";
   import { useParams, useLocation, useNavigate } from "svelte-navigator";
   import { ProductsService } from "../services/products/products.service";
-  import { onMount } from "svelte";
+  import {createEventDispatcher, onMount} from "svelte";
   import ActionList from "./grid-actions.svelte";
   import Grid from "gridjs-svelte";
   import { h } from "gridjs";
@@ -12,10 +12,46 @@
 
   import { Confirm } from "svelte-confirm";
   import Modals from "../../Shared/Modals.svelte";
+  import {gridRowsStore} from "../../stores";
 
+  const dispatch = createEventDispatcher();
   let openFilter = false;
   let openProductEditModal = false;
   let itemId;
+
+  gridRowsStore.subscribe(data => {
+    if (!data) {
+      return;
+    }
+
+    const {row, active, id} = data;
+
+
+    const selector = document.querySelector(`#action-${row.id}`);
+      // DOM is not ready yet
+      if (!selector) {return}
+
+      // Avoid duplicates, grid fires more than once
+      if ( selector && selector.children && selector.children.length === 1) {
+        return;
+      }
+
+      createActionsButton(selector, {row, active, id});
+  });
+
+  function createActionsButton(selector, data) {
+    const wrapperEl = selector;
+    const {row, active, id} = data;
+    const e = new ActionList({
+      target: wrapperEl,
+      props: { title: `edit ${id}`, id, active },
+    });
+
+    e.$on("grid-action", (m) => console.log(m));
+    e.$on("delete-row", (e) => deleteItem(e.detail.id));
+    e.$on("activate-item", (e) => activateRow(e.detail.id));
+    e.$on("de-activate-item", (e) => de_activateRow(e.detail.id));
+  }
 
   const service = new ProductsService();
   const params = useParams();
@@ -152,14 +188,10 @@
       name: "Actions",
       formatter: (cell, row, idx) => {
         setTimeout(() => {
-          if (
-            document.querySelector(`#action-${row.id}`).children.length === 1
-          ) {
-            return;
-          }
-          const wrapperEl = document.querySelector(`#action-${row.id}`);
-          const id = row.cells[1].data;
-          const active = row.cells[7].data;
+
+
+/*          const wrapperEl = selector;
+
           // console.log(row.cells[6].data)
 
           const e = new ActionList({
@@ -169,9 +201,12 @@
           e.$on("grid-action", (m) => console.log(m));
           e.$on("delete-row", (e) => deleteItem(e.detail.id));
           e.$on("activate-item", (e) => activateRow(e.detail.id));
-          e.$on("de-activate-item", (e) => de_activateRow(e.detail.id));
-        });
-        return h("div", { id: `action-${row.id}` }, "");
+          e.$on("de-activate-item", (e) => de_activateRow(e.detail.id));*/
+        }, 5000);
+        const id = row.cells[1].data;
+        const active = row.cells[7].data;
+        gridRowsStore.set({row, active, id})
+        return h("div", { id: `action-${row.id}`}, '');
       },
     },
   ];
@@ -257,6 +292,10 @@
       setTimeout(() => (doneDelete = false), 3000);
     }
   }
+
+  function onRowReady(row) {
+    console.log('row ready', row);
+  }
 </script>
 
 <Modals />
@@ -278,16 +317,16 @@
   <div class="toolbar flex justify-end bg-[#517acd]">
     <div class="p-6">
       <i
-        class="fa-solid fa-bars-filter text-white cursor-pointer mr-2"
+        class="mr-2 text-white cursor-pointer fa-solid fa-bars-filter"
         on:click={() => (openFilter = true)}
       />
       <i
-        class="fa-solid fa-plus text-white cursor-pointer"
+        class="text-white cursor-pointer fa-solid fa-plus"
         on:click={() => navigate("/catalogue/products/new")}
       />
       {#if Array.isArray(selectedRows) && selectedRows.length > 0}
         <i
-          class="fa-solid fa-eye text-white cursor-pointer ml-6 mr-2"
+          class="ml-6 mr-2 text-white cursor-pointer fa-solid fa-eye"
           on:click={() => activateRows()}
         />
         <i
@@ -318,10 +357,10 @@
       on:clickAway={() => (openFilter = false)}
     >
       <div class=" w-full h-full bg-[#222736] ">
-        <div class="flex justify-between p-4 text-white w-full">
+        <div class="flex justify-between w-full p-4 text-white">
           <p>Filters</p>
           <i
-            class="fa-solid fa-xmark text-xl cursor-pointer"
+            class="text-xl cursor-pointer fa-solid fa-xmark"
             on:click={() => (openFilter = false)}
           />
         </div>

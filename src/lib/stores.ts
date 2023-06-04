@@ -8,7 +8,7 @@ export interface IAppState {
     models: IBaseModel[];
 }
 
-
+export const gridRowsStore = writable(null);
 export const user = writable(null);
 export const app = writable(null);
 app.subscribe(res => {

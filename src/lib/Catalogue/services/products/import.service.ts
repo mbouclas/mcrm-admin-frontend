@@ -21,7 +21,7 @@ export class ImportService extends BaseHttpService {
     startUploadUpdatesQuery(jobId: number) {
         let i = 0;
         const interval = setInterval(async () => {
-            if (i > 10) {return}
+            if (i > 20) {return}
             i++;
             // Query for some updated response
             const res = await this.getProgress(jobId);
@@ -37,6 +37,6 @@ export class ImportService extends BaseHttpService {
                 clearInterval(interval);
             }
 
-        }, 1000);
+        }, 2000);
     }
 }

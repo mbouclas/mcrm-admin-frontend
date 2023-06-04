@@ -9,7 +9,7 @@
   import { Eye, EyeOff, Pencil, PencilAlt, Trash } from "svelte-heros";
   import { ChevronDown } from "svelte-heros-v2";
   import { navigate } from "svelte-navigator";
-  import { createEventDispatcher } from "svelte";
+  import {createEventDispatcher, onMount} from "svelte";
   import { Confirm } from "svelte-confirm";
 
   import { openModal } from "svelte-modals";
@@ -18,7 +18,12 @@
 
   export let id; // The product ID
   export let active; // If it's active
+  export let title;
   const dispatch = createEventDispatcher();
+
+  onMount(() => {
+    console.log("---", id, '----', title);
+  });
   function goToPage(e) {
     e.preventDefault();
     navigate("/catalogue/products/" + id);
@@ -39,13 +44,15 @@
   function openQuickEditModal() {
     openModal(QuickEditModal, { itemId: id });
   }
+
+
 </script>
 
 <Confirm confirmTitle="Delete" cancelTitle="Cancel" let:confirm={confirmThis}>
-  <Button class="action-button"
+  <Button class="action-button" id={`action-button-${id}`} on:click={handleEvent}
     ><ChevronDown>Dropdown button</ChevronDown></Button
   >
-  <Dropdown class="w-44" triggeredBy=".action-button">
+  <Dropdown class="w-44" triggeredBy={`#action-button-${id}`}>
     {#if !active}
       <DropdownItem
         ><div on:click={() => dispatch("activate-item", { id })}>
