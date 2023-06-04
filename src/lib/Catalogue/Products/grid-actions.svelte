@@ -22,7 +22,7 @@
   const dispatch = createEventDispatcher();
 
   onMount(() => {
-    console.log("---", id, '----', title);
+
   });
   function goToPage(e) {
     e.preventDefault();
@@ -53,6 +53,11 @@
     ><ChevronDown>Dropdown button</ChevronDown></Button
   >
   <Dropdown class="w-44" triggeredBy={`#action-button-${id}`}>
+    <DropdownItem
+    ><div on:click={() => console.log(id)}>
+      <Eye size="16" /><span>test</span>
+    </div></DropdownItem
+  >
     {#if !active}
       <DropdownItem
         ><div on:click={() => dispatch("activate-item", { id })}>

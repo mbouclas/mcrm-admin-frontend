@@ -2,7 +2,7 @@
   import queryString from "query-string";
   import { useParams, useLocation, useNavigate } from "svelte-navigator";
   import { ProductsService } from "../services/products/products.service";
-  import {createEventDispatcher, onMount} from "svelte";
+  import {onMount} from "svelte";
   import ActionList from "./grid-actions.svelte";
   import Grid from "gridjs-svelte";
   import { h } from "gridjs";
@@ -12,46 +12,14 @@
 
   import { Confirm } from "svelte-confirm";
   import Modals from "../../Shared/Modals.svelte";
-  import {gridRowsStore} from "../../stores";
 
-  const dispatch = createEventDispatcher();
+
   let openFilter = false;
   let openProductEditModal = false;
   let itemId;
 
-  gridRowsStore.subscribe(data => {
-    if (!data) {
-      return;
-    }
-
-    const {row, active, id} = data;
 
 
-    const selector = document.querySelector(`#action-${row.id}`);
-      // DOM is not ready yet
-      if (!selector) {return}
-
-      // Avoid duplicates, grid fires more than once
-      if ( selector && selector.children && selector.children.length === 1) {
-        return;
-      }
-
-      createActionsButton(selector, {row, active, id});
-  });
-
-  function createActionsButton(selector, data) {
-    const wrapperEl = selector;
-    const {row, active, id} = data;
-    const e = new ActionList({
-      target: wrapperEl,
-      props: { title: `edit ${id}`, id, active },
-    });
-
-    e.$on("grid-action", (m) => console.log(m));
-    e.$on("delete-row", (e) => deleteItem(e.detail.id));
-    e.$on("activate-item", (e) => activateRow(e.detail.id));
-    e.$on("de-activate-item", (e) => de_activateRow(e.detail.id));
-  }
 
   const service = new ProductsService();
   const params = useParams();
@@ -187,25 +155,10 @@
     {
       name: "Actions",
       formatter: (cell, row, idx) => {
-        setTimeout(() => {
-
-
-/*          const wrapperEl = selector;
-
-          // console.log(row.cells[6].data)
-
-          const e = new ActionList({
-            target: wrapperEl,
-            props: { title: "edit", id, active },
-          });
-          e.$on("grid-action", (m) => console.log(m));
-          e.$on("delete-row", (e) => deleteItem(e.detail.id));
-          e.$on("activate-item", (e) => activateRow(e.detail.id));
-          e.$on("de-activate-item", (e) => de_activateRow(e.detail.id));*/
-        }, 5000);
         const id = row.cells[1].data;
         const active = row.cells[7].data;
-        gridRowsStore.set({row, active, id})
+        createActionsButton({row, active, id});
+
         return h("div", { id: `action-${row.id}`}, '');
       },
     },
@@ -228,6 +181,28 @@
 
   $: console.log(queryString.parse($location.search));
   $: console.log($params); // -> { id: "123", splat: "pauls-profile" }
+
+  function createActionsButton(data) {
+    const {row, active, id} = data;
+    const selector = document.querySelector(`#action-${row.id}`);
+    if (!selector) {return}
+
+    // Avoid duplicates, grid fires more than once
+    if ( selector && selector.children && selector.children.length === 1) {
+      return;
+    }
+    const wrapperEl = selector;
+    
+    const e = new ActionList({
+      target: wrapperEl,
+      props: { title: `edit ${id}`, id, active },
+    });
+
+    e.$on("grid-action", (m) => console.log(m));
+    e.$on("delete-row", (e) => deleteItem(e.detail.id));
+    e.$on("activate-item", (e) => activateRow(e.detail.id));
+    e.$on("de-activate-item", (e) => de_activateRow(e.detail.id));
+  }
 
   // Go to the service and get the products
   // We need a sidebar component to place the filters in
