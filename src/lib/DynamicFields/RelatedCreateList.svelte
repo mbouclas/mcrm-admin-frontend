@@ -89,7 +89,8 @@
           const activeIndex =
             activeColumnIndex !== -1 ? activeColumnIndex : null;
 
-          const active = activeIndex !== null ? row.cellds[activeIndex] : null;
+          const active =
+            activeIndex !== null ? row.cells[activeIndex].data : null;
 
           const e = new ActionList({
             target: wrapperEl,
