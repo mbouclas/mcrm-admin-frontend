@@ -85,9 +85,11 @@
           }
           const wrapperEl = document.querySelector(`#action-${row.id}`);
           const id = row.cells[1].data;
-          const active = row.cells[5].data;
 
-          // console.log(row.cells[6].data)
+          const activeIndex =
+            activeColumnIndex !== -1 ? activeColumnIndex : null;
+
+          const active = activeIndex !== null ? row.cellds[activeIndex] : null;
 
           const e = new ActionList({
             target: wrapperEl,
@@ -118,6 +120,8 @@
     })),
     ...lastColumns,
   ];
+
+  $: activeColumnIndex = columns.findIndex((column) => column.id === "active");
 
   $: data = addedValues.map((item, valueIndex) => {
     // Map each field into an array in the correct column order

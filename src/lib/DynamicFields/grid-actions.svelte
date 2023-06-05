@@ -35,18 +35,20 @@
     ><ChevronDown>Dropdown button</ChevronDown></Button
   >
   <Dropdown class="w-44" triggeredBy=".action-button">
-    {#if !active}
-      <DropdownItem
-        ><div on:click={() => dispatch("activate-item", { id })}>
-          <Eye size="16" /><span>Activate</span>
-        </div></DropdownItem
-      >
-    {:else}
-      <DropdownItem
-        ><div on:click={() => dispatch("de-activate-item", { id })}>
-          <EyeOff size="16" /><span>Disable</span>
-        </div></DropdownItem
-      >
+    {#if active !== null}
+      {#if !active}
+        <DropdownItem
+          ><div on:click={() => dispatch("activate-item", { id })}>
+            <Eye size="16" /><span>Activate</span>
+          </div></DropdownItem
+        >
+      {:else}
+        <DropdownItem
+          ><div on:click={() => dispatch("de-activate-item", { id })}>
+            <EyeOff size="16" /><span>Disable</span>
+          </div></DropdownItem
+        >
+      {/if}
     {/if}
     <DropdownItem
       ><div
