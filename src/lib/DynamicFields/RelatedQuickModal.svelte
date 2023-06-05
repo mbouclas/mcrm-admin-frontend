@@ -9,7 +9,8 @@
   export let uuid;
   export let fields;
   export let model;
-  export let handleAddItem;
+  export let handleItemAction;
+  export let type;
 
   $: {
     if (isOpen) {
@@ -24,7 +25,7 @@
 
   function onNativeSubmit(e) {
     e.preventDefault();
-    handleAddItem(JSON.parse(JSON.stringify({ ...model, uuid })));
+    handleItemAction(JSON.parse(JSON.stringify({ ...model, uuid })), type);
     close();
   }
 </script>

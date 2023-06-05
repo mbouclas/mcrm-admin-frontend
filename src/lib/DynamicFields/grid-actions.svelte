@@ -12,17 +12,12 @@
   import { createEventDispatcher } from "svelte";
   import { Confirm } from "svelte-confirm";
 
-  import { openModal } from "svelte-modals";
-  // import Modals from "../../Shared/Modals.svelte";
-  //import QuickEditModal from "./QuickEditModal.svelte";
-
   export let id; // The product ID
   export let active; // If it's active
+
+  export let openQuickEditModal;
+
   const dispatch = createEventDispatcher();
-  function goToPage(e) {
-    e.preventDefault();
-    navigate("/catalogue/products/" + id);
-  }
 
   function handleEvent(e) {
     // e.preventDefault();
@@ -32,10 +27,6 @@
 
   function deleteItem(e) {
     dispatch("delete-row", { id });
-  }
-
-  function openQuickEditModal() {
-    // openModal(QuickEditModal, { itemId: id });
   }
 </script>
 
@@ -58,12 +49,11 @@
       >
     {/if}
     <DropdownItem
-      ><div on:click={goToPage}>
-        <Pencil size="16" /><span>Edit</span>
-      </div></DropdownItem
-    >
-    <DropdownItem
-      ><div on:click={openQuickEditModal}>
+      ><div
+        on:click={() => {
+          openQuickEditModal();
+        }}
+      >
         <PencilAlt size="16" /><span>Quick Edit</span>
       </div></DropdownItem
     >

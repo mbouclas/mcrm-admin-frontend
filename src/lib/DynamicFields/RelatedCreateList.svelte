@@ -6,7 +6,7 @@
   import { RowSelection } from "gridjs/plugins/selection";
 
   import Grid from "gridjs-svelte";
-  import RelatedCreateListAddModal from "./RelatedCreateListAddModal.svelte";
+  import RelatedQuickModal from "./RelatedQuickModal.svelte";
   import { openModal } from "svelte-modals";
 
   export let model;
@@ -91,7 +91,13 @@
 
           const e = new ActionList({
             target: wrapperEl,
-            props: { title: "edit", id, active },
+            props: {
+              id,
+              active,
+              openQuickEditModal: () => {
+                openQuickModal("edit");
+              },
+            },
           });
           e.$on("grid-action", (m) => console.log(m));
           e.$on("delete-row", (e) => deleteItem(id));
@@ -144,20 +150,23 @@
   async function deleteItems() {}
 
   async function deleteItem(itemId) {
-    console.log(itemId, addedValues);
     addedValues = addedValues.filter((item) => item.uuid !== itemId);
   }
 
-  const handleAddItem = (item) => {
-    addedValues = [...addedValues, item];
+  const handleItemAction = (item, type) => {
+    if (type === "add") {
+      addedValues = [...addedValues, item];
+    }
   };
 
-  function openAddModal() {
-    openModal(RelatedCreateListAddModal, {
+  function openQuickModal(type) {
+    console.log("OPEN ME BITC");
+    openModal(RelatedQuickModal, {
       uuid: uuidv4(),
       fields: field.fields,
       model,
-      handleAddItem,
+      handleItemAction,
+      type,
     });
   }
 </script>
@@ -172,7 +181,7 @@
     <div class="flex justify-center items-center">
       <i
         class="fa-solid fa-plus text-white cursor-pointer text-xl p-3 pr-5"
-        on:click={openAddModal}
+        on:click={() => openQuickModal("add")}
       />
       {#if Array.isArray(selectedRows) && selectedRows.length > 0}
         <i
