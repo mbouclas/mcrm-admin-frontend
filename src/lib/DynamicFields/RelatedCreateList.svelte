@@ -158,6 +158,14 @@
     if (type === "add") {
       addedValues = [...addedValues, item];
     }
+    if (type === "edit") {
+      const valueIndex = addedValues.findIndex(
+        (value) => value.uuid === item.uuid
+      );
+      if (valueIndex !== -1) {
+        addedValues[valueIndex] = item;
+      }
+    }
   };
 
   const handleModalClose = () => {
@@ -166,7 +174,7 @@
 
   function openQuickModal(type) {
     openModal(RelatedQuickModal, {
-      uuid: uuidv4(),
+      uuid: type === "edit" ? model.uuid : uuidv4(),
       fields: field.fields,
       model,
       handleModalConfirm,
