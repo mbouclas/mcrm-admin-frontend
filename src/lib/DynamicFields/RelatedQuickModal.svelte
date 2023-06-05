@@ -9,7 +9,8 @@
   export let uuid;
   export let fields;
   export let model;
-  export let handleItemAction;
+  export let handleModalConfirm;
+  export let handleModalClose;
   export let type;
 
   $: {
@@ -21,11 +22,12 @@
   function close() {
     closeModal();
     document.body.classList.remove("lock-scroll");
+    handleModalClose();
   }
 
   function onNativeSubmit(e) {
     e.preventDefault();
-    handleItemAction(JSON.parse(JSON.stringify({ ...model, uuid })), type);
+    handleModalConfirm(JSON.parse(JSON.stringify({ ...model, uuid })), type);
     close();
   }
 </script>

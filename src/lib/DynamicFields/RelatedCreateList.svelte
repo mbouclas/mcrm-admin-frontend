@@ -95,6 +95,7 @@
               id,
               active,
               openQuickEditModal: () => {
+                model = addedValues.find((value) => value.uuid === id);
                 openQuickModal("edit");
               },
             },
@@ -153,19 +154,23 @@
     addedValues = addedValues.filter((item) => item.uuid !== itemId);
   }
 
-  const handleItemAction = (item, type) => {
+  const handleModalConfirm = (item, type) => {
     if (type === "add") {
       addedValues = [...addedValues, item];
     }
   };
 
+  const handleModalClose = () => {
+    model = {};
+  };
+
   function openQuickModal(type) {
-    console.log("OPEN ME BITC");
     openModal(RelatedQuickModal, {
       uuid: uuidv4(),
       fields: field.fields,
       model,
-      handleItemAction,
+      handleModalConfirm,
+      handleModalClose,
       type,
     });
   }
