@@ -34,6 +34,37 @@
   let selectedRows = [];
   let pagination = { limit: 10, enabled: true };
 
+  function createActionsButton(data) {
+    const { row, active, id } = data;
+    const selector = document.querySelector(`#action-${row.id}`);
+    if (!selector) {
+      return;
+    }
+
+    // Avoid duplicates, grid fires more than once
+    if (selector && selector.children && selector.children.length === 1) {
+      return;
+    }
+
+    const wrapperEl = selector;
+
+    const e = new ActionList({
+      target: wrapperEl,
+      props: {
+        id,
+        active,
+        openQuickEditModal: () => {
+          model = addedValues.find((value) => value.uuid === id);
+          openQuickModal("edit");
+        },
+      },
+    });
+    e.$on("grid-action", (m) => console.log(m));
+    e.$on("delete-row", (e) => deleteItem(id));
+    e.$on("activate-item", (e) => activateRow(e.detail.id));
+    e.$on("de-activate-item", (e) => de_activateRow(e.detail.id));
+  }
+
   const firstColumns = [
     {
       id: "selectRow",
@@ -77,37 +108,15 @@
     {
       name: "Actions",
       formatter: (cell, row, idx) => {
-        setTimeout(() => {
-          if (
-            document.querySelector(`#action-${row.id}`).children.length === 1
-          ) {
-            return;
-          }
-          const wrapperEl = document.querySelector(`#action-${row.id}`);
-          const id = row.cells[1].data;
+        const id = row.cells[1].data;
 
-          const activeIndex =
-            activeColumnIndex !== -1 ? activeColumnIndex : null;
+        const activeIndex = activeColumnIndex !== -1 ? activeColumnIndex : null;
 
-          const active =
-            activeIndex !== null ? row.cells[activeIndex].data : null;
+        const active =
+          activeIndex !== null ? row.cells[activeIndex].data : null;
 
-          const e = new ActionList({
-            target: wrapperEl,
-            props: {
-              id,
-              active,
-              openQuickEditModal: () => {
-                model = addedValues.find((value) => value.uuid === id);
-                openQuickModal("edit");
-              },
-            },
-          });
-          e.$on("grid-action", (m) => console.log(m));
-          e.$on("delete-row", (e) => deleteItem(id));
-          e.$on("activate-item", (e) => activateRow(e.detail.id));
-          e.$on("de-activate-item", (e) => de_activateRow(e.detail.id));
-        });
+        createActionsButton({ row, active, id });
+
         return h("div", { id: `action-${row.id}` }, "");
       },
     },
