@@ -62,7 +62,7 @@ export class PropertiesService extends BaseHttpService {
   }
 
   async update(id: string, data: IGenericObject) {
-    return await this.post(`property/${id}`, data);
+    return await this.patch(`property/${id}`, data);
   }
 
   async store(data: IGenericObject) {
