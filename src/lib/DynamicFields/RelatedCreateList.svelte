@@ -14,13 +14,12 @@
 
   let gridInstance;
 
+  let modalValue = {};
   const navigate = useNavigate();
 
-  let addedValues = model[field.varName]
-    ? JSON.parse(JSON.stringify(model[field.varName]))
-    : [];
+  let addedValues = model ? JSON.parse(JSON.stringify(model)) : [];
 
-  $: model[field.varName] = addedValues;
+  $: model = addedValues;
 
   let doneActivate = false;
   let doneDeactivate = false;
@@ -54,7 +53,7 @@
         id,
         active,
         openQuickEditModal: () => {
-          model = addedValues.find((value) => value.uuid === id);
+          modalValue = addedValues.find((value) => value.uuid === id);
           openQuickModal("edit");
         },
       },
@@ -168,29 +167,29 @@
     addedValues = addedValues.filter((item) => item.uuid !== itemId);
   }
 
-  const handleModalConfirm = (item, type) => {
+  const handleModalConfirm = (type) => {
     if (type === "add") {
-      addedValues = [...addedValues, item];
+      addedValues = [...addedValues, { ...modalValue }];
     }
     if (type === "edit") {
       const valueIndex = addedValues.findIndex(
-        (value) => value.uuid === item.uuid
+        (value) => value.uuid === modalValue.uuid
       );
       if (valueIndex !== -1) {
-        addedValues[valueIndex] = item;
+        addedValues[valueIndex] = modalValue;
       }
     }
   };
 
   const handleModalClose = () => {
-    model = {};
+    modalValue = {};
   };
 
   function openQuickModal(type) {
     openModal(RelatedQuickModal, {
       uuid: type === "edit" ? model.uuid : uuidv4(),
       fields: field.fields,
-      model,
+      modalValue,
       handleModalConfirm,
       handleModalClose,
       type,
