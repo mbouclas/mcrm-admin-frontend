@@ -14,13 +14,12 @@
 
   let gridInstance;
 
+  let modalValue = {};
   const navigate = useNavigate();
 
-  let addedValues = model[field.varName]
-    ? JSON.parse(JSON.stringify(model[field.varName]))
-    : [];
+  let addedValues = model ? JSON.parse(JSON.stringify(model)) : [];
 
-  $: model[field.varName] = addedValues;
+  $: model = addedValues;
 
   let doneActivate = false;
   let doneDeactivate = false;
@@ -33,6 +32,37 @@
 
   let selectedRows = [];
   let pagination = { limit: 10, enabled: true };
+
+  function createActionsButton(data) {
+    const { row, active, id } = data;
+    const selector = document.querySelector(`#action-${row.id}`);
+    if (!selector) {
+      return;
+    }
+
+    // Avoid duplicates, grid fires more than once
+    if (selector && selector.children && selector.children.length === 1) {
+      return;
+    }
+
+    const wrapperEl = selector;
+
+    const e = new ActionList({
+      target: wrapperEl,
+      props: {
+        id,
+        active,
+        openQuickEditModal: () => {
+          modalValue = addedValues.find((value) => value.uuid === id);
+          openQuickModal("edit");
+        },
+      },
+    });
+    e.$on("grid-action", (m) => console.log(m));
+    e.$on("delete-row", (e) => deleteItem(id));
+    e.$on("activate-item", (e) => activateRow(e.detail.id));
+    e.$on("de-activate-item", (e) => de_activateRow(e.detail.id));
+  }
 
   const firstColumns = [
     {
@@ -77,37 +107,15 @@
     {
       name: "Actions",
       formatter: (cell, row, idx) => {
-        setTimeout(() => {
-          if (
-            document.querySelector(`#action-${row.id}`).children.length === 1
-          ) {
-            return;
-          }
-          const wrapperEl = document.querySelector(`#action-${row.id}`);
-          const id = row.cells[1].data;
+        const id = row.cells[1].data;
 
-          const activeIndex =
-            activeColumnIndex !== -1 ? activeColumnIndex : null;
+        const activeIndex = activeColumnIndex !== -1 ? activeColumnIndex : null;
 
-          const active =
-            activeIndex !== null ? row.cells[activeIndex].data : null;
+        const active =
+          activeIndex !== null ? row.cells[activeIndex].data : null;
 
-          const e = new ActionList({
-            target: wrapperEl,
-            props: {
-              id,
-              active,
-              openQuickEditModal: () => {
-                model = addedValues.find((value) => value.uuid === id);
-                openQuickModal("edit");
-              },
-            },
-          });
-          e.$on("grid-action", (m) => console.log(m));
-          e.$on("delete-row", (e) => deleteItem(id));
-          e.$on("activate-item", (e) => activateRow(e.detail.id));
-          e.$on("de-activate-item", (e) => de_activateRow(e.detail.id));
-        });
+        createActionsButton({ row, active, id });
+
         return h("div", { id: `action-${row.id}` }, "");
       },
     },
@@ -159,29 +167,29 @@
     addedValues = addedValues.filter((item) => item.uuid !== itemId);
   }
 
-  const handleModalConfirm = (item, type) => {
+  const handleModalConfirm = (type) => {
     if (type === "add") {
-      addedValues = [...addedValues, item];
+      addedValues = [...addedValues, { ...modalValue }];
     }
     if (type === "edit") {
       const valueIndex = addedValues.findIndex(
-        (value) => value.uuid === item.uuid
+        (value) => value.uuid === modalValue.uuid
       );
       if (valueIndex !== -1) {
-        addedValues[valueIndex] = item;
+        addedValues[valueIndex] = modalValue;
       }
     }
   };
 
   const handleModalClose = () => {
-    model = {};
+    modalValue = {};
   };
 
   function openQuickModal(type) {
     openModal(RelatedQuickModal, {
       uuid: type === "edit" ? model.uuid : uuidv4(),
       fields: field.fields,
-      model,
+      modalValue,
       handleModalConfirm,
       handleModalClose,
       type,

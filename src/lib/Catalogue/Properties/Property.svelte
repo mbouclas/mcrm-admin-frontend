@@ -25,8 +25,6 @@
   export let itemId;
   let relationships: any[] = [];
 
-  $: console.log("model ", model);
-
   onMount(async () => {
     let rawModel = AppService.getModel("PropertyModel");
     fields = rawModel.fields;
@@ -107,7 +105,12 @@
   });
 
   const onSubmit = async (data) => {
-    await s.store(data);
+    if ($params.id === "new") {
+      await s.store(data);
+      return null;
+    }
+
+    await s.update($params.id, data);
   };
 
   let activeTabValue = 1;

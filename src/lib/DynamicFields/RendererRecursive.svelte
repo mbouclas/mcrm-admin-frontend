@@ -141,7 +141,7 @@
 
 {#each sortedFields as field}
   {#if field.type === "related_create"}
-    <RelatedCreateList {field} {model} />
+    <RelatedCreateList {field} bind:model={model[field.varName]} />
   {/if}
 
   {#if field.type === "related"}

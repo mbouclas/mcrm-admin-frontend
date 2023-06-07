@@ -8,7 +8,7 @@
   export let isOpen;
   export let uuid;
   export let fields;
-  export let model;
+  export let modalValue;
   export let handleModalConfirm;
   export let handleModalClose;
   export let type;
@@ -27,7 +27,7 @@
 
   function onNativeSubmit(e) {
     e.preventDefault();
-    handleModalConfirm(JSON.parse(JSON.stringify({ ...model, uuid })), type);
+    handleModalConfirm(type);
     close();
   }
 </script>
@@ -41,7 +41,12 @@
       </div>
       <div class="content-body" />
 
-      <Fields {fields} bind:model module="Product" itemId={model?.uuid || ""} />
+      <Fields
+        {fields}
+        bind:model={modalValue}
+        module="Product"
+        itemId={modalValue?.uuid || ""}
+      />
 
       <Button type="submit" on:click={onNativeSubmit}>Submit</Button>
     </div>

@@ -40,10 +40,12 @@
 </script>
 
 <Confirm confirmTitle="Delete" cancelTitle="Cancel" let:confirm={confirmThis}>
-  <Button class="action-button"
-    ><ChevronDown>Dropdown button</ChevronDown></Button
+  <Button
+    class="action-button"
+    id={`action-button-${id}`}
+    on:click={handleEvent}><ChevronDown>Dropdown button</ChevronDown></Button
   >
-  <Dropdown class="w-44" triggeredBy=".action-button">
+  <Dropdown class="w-44" triggeredBy={`#action-button-${id}`}>
     {#if !active}
       <DropdownItem
         ><div on:click={() => dispatch("activate-item", { id })}>
