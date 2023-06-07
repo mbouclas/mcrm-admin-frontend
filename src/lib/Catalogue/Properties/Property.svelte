@@ -39,6 +39,9 @@
         )
         .map((relationshipKey) => {
           let relationshipData = relationships[relationshipKey];
+          const relationshipFields = relationshipData.fields.filter(
+            (field) => field.group !== "hidden"
+          );
 
           const isCollection = relationshipData.isCollection || true;
 
@@ -52,7 +55,7 @@
               isSortable: true,
               isCollection,
               group: "bottom",
-              fields: relationshipData.fields,
+              fields: relationshipFields,
             },
           ];
         });
@@ -68,6 +71,10 @@
         .map((relationshipKey) => {
           let relationshipData = relationships[relationshipKey];
 
+          const relationshipFields = relationshipData.fields.filter(
+            (field) => field.group !== "hidden"
+          );
+
           fields = [
             ...fields,
             {
@@ -78,7 +85,7 @@
               isSortable: true,
               isCollection: relationshipData.isCollection || true,
               group: "bottom",
-              fields: relationshipData.fields,
+              fields: relationshipFields,
             },
           ];
         });
