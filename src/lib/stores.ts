@@ -8,10 +8,23 @@ export interface IAppState {
     models: IBaseModel[];
 }
 
+export interface INotification {
+    message: string;
+    type: 'success' | 'error' | 'warning' | 'info';
+}
+
 export const gridRowsStore = writable(null);
 export const user = writable(null);
 export const app = writable(null);
+export const notificationsStore = writable<INotification>(null);
+
+
 app.subscribe(res => {
     if (!res) {return;}
     AppService.updateAppState(res)
 })
+
+
+export function setNotificationAction(notification: INotification|null) {
+    notificationsStore.set(notification);
+}

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { Router, Route, Link, useLocation } from "svelte-navigator";
   import PrivateRoute from "../Auth/PrivateRoute.svelte";
   import Header from "../Shared/Header.svelte";
@@ -9,9 +9,18 @@
   import OrderRoutes from "../Order/routes.svelte";
   import { BootService } from "../Shared/boot.service";
   import { onMount } from "svelte";
+  import { notificationsStore } from "../stores";
+  import type { INotification } from "../stores";
 
-  let url;
+  let url,
+  showNotifications: INotification|null = null;
   const promise = new BootService().boot();
+
+  notificationsStore.subscribe((state: INotification|null) => {
+    if (!state) {return;}
+    showNotifications = state;
+  });
+
   // (new BootService()).boot().then(res => console.log('done'));
   onMount(async () => {});
 
@@ -25,6 +34,10 @@
 
   let open = false;
 </script>
+{#if showNotifications}
+{JSON.stringify(showNotifications)}
+  Show notifications component
+{/if}
 
 {#await promise then res}
   <Router>
@@ -33,7 +46,7 @@
       <div class="bg-[#222736]  w-full">
         <Topbar bind:open />
         <!-- {url} -->
-        <div class="body p-4">
+        <div class="p-4 body">
           <Route path="/">
             <h1>Home</h1>
           </Route>

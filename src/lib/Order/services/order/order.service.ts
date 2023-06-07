@@ -43,9 +43,9 @@ export class OrderService extends BaseHttpService {
           row.uuid,
           row.createdAt,
           row.orderId,
-          `${row.user.firstName} ${row.user.lastName}`,
+          row.user ? `${row.user.firstName} ${row.user.lastName}` : 'No customer',
           row.status,
-          row.paymentInfo.price,
+          row.paymentInfo ? row.paymentInfo.price : row.total,
           row.active,
         ]
       })

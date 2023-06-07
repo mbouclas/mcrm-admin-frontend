@@ -95,6 +95,7 @@
       id: "date",
       formatter: (cell) => {
         return new Date(cell).toLocaleString("el-EL", {
+          day: "numeric",
           month: "short",
           year: "numeric",
           hour: "numeric",
@@ -121,27 +122,6 @@
     {
       name: "Actions",
       formatter: (cell, row, idx) => {
-        setTimeout(() => {
-          if (
-            document.querySelector(`#action-${row.id}`).children.length === 1
-          ) {
-            return;
-          }
-          const wrapperEl = document.querySelector(`#action-${row.id}`);
-          console.log(row);
-          const id = row.cells[1].data;
-          const active = row.cells[7].data;
-          // console.log(row.cells[6].data)
-
-          const e = new ActionList({
-            target: wrapperEl,
-            props: { title: "edit", id, active },
-          });
-          e.$on("grid-action", (m) => console.log(m));
-          e.$on("delete-row", (e) => deleteItem(e.detail.id));
-          e.$on("activate-item", (e) => activateRow(e.detail.id));
-          e.$on("de-activate-item", (e) => de_activateRow(e.detail.id));
-        });
         return h("div", { id: `action-${row.id}` }, "");
       },
     },
@@ -249,16 +229,16 @@
   <div class="toolbar flex justify-end bg-[#517acd]">
     <div class="p-6">
       <i
-        class="fa-solid fa-bars-filter text-white cursor-pointer mr-2"
+        class="mr-2 text-white cursor-pointer fa-solid fa-bars-filter"
         on:click={() => (openFilter = true)}
       />
       <i
-        class="fa-solid fa-plus text-white cursor-pointer"
+        class="text-white cursor-pointer fa-solid fa-plus"
         on:click={() => navigate("/orders/new")}
       />
       {#if Array.isArray(selectedRows) && selectedRows.length > 0}
         <i
-          class="fa-solid fa-eye text-white cursor-pointer ml-6 mr-2"
+          class="ml-6 mr-2 text-white cursor-pointer fa-solid fa-eye"
           on:click={() => activateRows()}
         />
         <i
@@ -289,10 +269,10 @@
       on:clickAway={() => (openFilter = false)}
     >
       <div class=" w-full h-full bg-[#222736] ">
-        <div class="flex justify-between p-4 text-white w-full">
+        <div class="flex justify-between w-full p-4 text-white">
           <p>Filters</p>
           <i
-            class="fa-solid fa-xmark text-xl cursor-pointer"
+            class="text-xl cursor-pointer fa-solid fa-xmark"
             on:click={() => (openFilter = false)}
           />
         </div>
