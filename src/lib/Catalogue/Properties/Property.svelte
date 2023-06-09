@@ -30,6 +30,12 @@
     fields = rawModel.fields;
     relationships = rawModel.relationships;
 
+    const typeIndex = fields.findIndex((field) => field.varName === "type");
+
+    fields[typeIndex].ui.values = fields[typeIndex].ui.defaultValues.map(
+      (value) => ({ label: value, value })
+    );
+
     if ($params.id === "new") {
       Object.keys(relationships)
         .filter(

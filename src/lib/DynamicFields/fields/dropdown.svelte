@@ -48,7 +48,8 @@
     }`}
   >
     <div class="text-xl my-auto pl-2">
-      {field.ui.values.find((value) => value.value === model).label}
+      {field.ui.values.find((value) => value.value === model)?.label ||
+        field.ui.values[0]?.label}
     </div>
     <Button
       class="action-button"

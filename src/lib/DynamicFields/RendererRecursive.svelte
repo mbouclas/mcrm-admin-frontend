@@ -200,7 +200,13 @@
   {/if}
 
   {#if field.type === "text"}
-    {#if isValidForEdit(field, rootModel || model)}
+    {#if field.ui && field.ui.component === "DropDown"}
+      <DropDown
+        {field}
+        bind:model={model[field.varName]}
+        onChange={onModelChange}
+      />
+    {:else if isValidForEdit(field, rootModel || model)}
       <TextInput
         {field}
         bind:model={model[field.varName]}
