@@ -26,7 +26,9 @@
     console.log("change");
   };
 
-  $: model.addresses = [model.address];
+  $: if (model) {
+    model.addresses = model.address ? [model.address] : [];
+  }
 </script>
 
 {#if !model}
@@ -196,7 +198,7 @@
                   </div>
                   <div class="field">
                     <span class="field-name">Color</span>
-                    <span class="field-value">{item.metaData.color}</span>
+                    <span class="field-value">{item.metaData.color.name}</span>
                   </div>
                 </div>
                 <div class="item-image-wrapper">
