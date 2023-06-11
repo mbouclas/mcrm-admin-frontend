@@ -26,7 +26,7 @@
     console.log("change");
   };
 
-  $: console.log(model);
+  $: model.addresses = [model.address];
 </script>
 
 {#if !model}
@@ -75,6 +75,68 @@
           <span class="field-value">{model.metaData.preferredDeliveryDate}</span
           >
         </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">Customer Information</div>
+      <div class="section-body">
+        <div class="field field-general">
+          <span class="field-name">Name</span>
+          <span class="field-value"
+            >{model.user.firstName}, {model.user.lastName}</span
+          >
+        </div>
+        <div class="field field-general">
+          <span class="field-name">Email</span>
+          <span class="field-value">{model.user.email}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">Addresses</div>
+      <div class="section-body">
+        {#each model.addresses as address}
+          <div class="address">
+            <div class="field field-address">
+              <span class="field-name">First Name</span>
+              <span class="field-value">{address.firstName}</span>
+            </div>
+            <div class="field field-address">
+              <span class="field-name">Last Name</span>
+              <span class="field-value">{address.lastName}</span>
+            </div>
+            <div class="field field-address">
+              <span class="field-name">Street</span>
+              <span class="field-value">{address.street}</span>
+            </div>
+            <div class="field field-address">
+              <span class="field-name">Apartment</span>
+              <span class="field-value">{address.apartment}</span>
+            </div>
+            <div class="field field-address">
+              <span class="field-name">City</span>
+              <span class="field-value">{address.city}</span>
+            </div>
+            <div class="field field-address">
+              <span class="field-name">Region</span>
+              <span class="field-value">{address.region}</span>
+            </div>
+            <div class="field field-address">
+              <span class="field-name">Post Code</span>
+              <span class="field-value">{address.postCode}</span>
+            </div>
+            <div class="field field-address">
+              <span class="field-name">Country</span>
+              <span class="field-value">{address.country}</span>
+            </div>
+            <div class="field field-address">
+              <span class="field-name">Phone</span>
+              <span class="field-value">{address.phone}</span>
+            </div>
+          </div>
+        {/each}
       </div>
     </div>
 
@@ -271,5 +333,9 @@
   .item-details {
     flex: 3;
     padding: 0 10px;
+  }
+
+  .field-address {
+    margin-bottom: 15px;
   }
 </style>
