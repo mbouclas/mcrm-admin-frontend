@@ -64,7 +64,7 @@
               placeholder: relationshipData.model,
               type: "related",
               isSortable: true,
-              isCollection: relationshipData.isCollection || true,
+              isCollection: relationshipData.isCollection,
               group: "right",
               fields: relationshipData.fields,
             },

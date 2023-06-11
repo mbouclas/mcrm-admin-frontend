@@ -21,7 +21,7 @@
   const dispatch = createEventDispatcher();
   function goToPage(e) {
     e.preventDefault();
-    navigate("/orders/list/" + id);
+    navigate("/orders/" + id);
   }
 
   function handleEvent(e) {
