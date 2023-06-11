@@ -67,16 +67,21 @@
           <span class="field-value">{model.total}</span>
         </div>
 
-        <div class="field field-general">
-          <span class="field-name">Notes</span>
-          <span class="field-value">{model.metaData.notes}</span>
-        </div>
+        {#if model?.metaData?.notes}
+          <div class="field field-general">
+            <span class="field-name">Notes</span>
+            <span class="field-value">{model.metaData.notes}</span>
+          </div>
+        {/if}
 
-        <div class="field field-general">
-          <span class="field-name">Preferred Delivery Date</span>
-          <span class="field-value">{model.metaData.preferredDeliveryDate}</span
-          >
-        </div>
+        {#if model?.metaData?.preferredDeliveryDate}
+          <div class="field field-general">
+            <span class="field-name">Preferred Delivery Date</span>
+            <span class="field-value"
+              >{model.metaData.preferredDeliveryDate}</span
+            >
+          </div>
+        {/if}
       </div>
     </div>
 
