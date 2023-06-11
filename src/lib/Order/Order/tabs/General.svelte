@@ -26,9 +26,7 @@
     console.log("change");
   };
 
-  $: if (model) {
-    model.addresses = model.address ? [model.address] : [];
-  }
+  $: console.log(model);
 </script>
 
 {#if !model}
@@ -104,7 +102,7 @@
     <div class="section">
       <div class="section-header">Addresses</div>
       <div class="section-body">
-        {#each model.addresses as address}
+        {#each model.address as address}
           <div class="address">
             <div class="field field-address">
               <span class="field-name">First Name</span>
