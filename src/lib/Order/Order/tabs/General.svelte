@@ -294,7 +294,7 @@
     font-weight: 600;
     margin-bottom: 20px;
     color: #111;
-    background: linear-gradient(145deg, #f9f9f9, #ececec);
+    background: linear-gradient(145deg, #f9f9f9, #d1d1d1);
     padding: 15px;
     border-radius: 8px;
     text-align: center;
