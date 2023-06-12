@@ -2,17 +2,16 @@
   import type { IDynamicFieldConfigBlueprint } from "../../../DynamicFields/types";
   import Loading from "../../../Shared/Loading.svelte";
   import { FileService } from "../../../Shared/files.service.ts";
-  import {app} from "../../../stores";
-  import type {IAppState} from "../../../stores";
-
+  import { app } from "../../../stores";
+  import type { IAppState } from "../../../stores";
 
   export let fields: IDynamicFieldConfigBlueprint[] = [];
   export let model;
 
   let fileService = new FileService();
-app.subscribe((state: IAppState) => {
-  state.configs.store.orderStatuses
-})
+  app.subscribe((state: IAppState) => {
+    state.configs.store.orderStatuses;
+  });
   const statusLabels = {
     0: { name: "Edit", color: "yellow" },
     1: { name: "Creating", color: "#4caf50" },
@@ -70,14 +69,18 @@ app.subscribe((state: IAppState) => {
       });
   };
 </script>
-<select>
-{#each $app.configs.store.orderStatuses as status}
-  <option value={status.id} selected={status.id === model.status}>{status.label} {model.status} {status.id}</option>
-  {/each}
-</select>
+
 {#if !model}
   <Loading />
 {:else}
+  <select>
+    {#each $app.configs.store.orderStatuses as status}
+      <option value={status.id} selected={status.id === model.status}
+        >{status.label} {model.status} {status.id}</option
+      >
+    {/each}
+  </select>
+
   <div class="container">
     <div class="layout-header">
       <span class="order">Order</span> /#{model.orderId} /
