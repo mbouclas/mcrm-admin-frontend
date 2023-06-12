@@ -6,9 +6,9 @@
   export let model;
 
   const statusLabels = {
-    0: "Edit",
-    1: "Creating",
-    2: "CANCEL",
+    0: { name: "Edit", color: "yellow" },
+    1: { name: "Creating", color: "green" },
+    2: { name: "Cancel", color: "red" },
   };
 
   let statusIndex = 0;
@@ -43,6 +43,15 @@
   <Loading />
 {:else}
   <div class="container">
+    <div class="layout-header">
+      <span class="order">Order</span> /#{model.orderId} /
+      <span
+        class="status"
+        style={`background-color: ${statusLabels[model.status].color}`}
+        >{statusLabels[model.status].name}</span
+      >
+      / {model.createdAt}
+    </div>
     <div class="layout">
       <div class="main-content">
         <!-- Put all content except the customer information here -->
@@ -56,27 +65,8 @@
             </div>
 
             <div class="field field-general">
-              <span class="field-name">Order Id</span>
-              <span class="field-value">{model.orderId}</span>
-            </div>
-
-            <div class="field field-general">
-              <span class="field-name">Status</span>
-              <span class="field-value">{model.status}</span>
-            </div>
-
-            <div class="field field-general">
-              <span class="field-name">Created At</span>
-              <span class="field-value">{model.createdAt}</span>
-            </div>
-
-            <div class="field field-general">
               <span class="field-name">VAT</span>
               <span class="field-value">{model.VAT}</span>
-            </div>
-            <div class="field field-general">
-              <span class="field-name">Total</span>
-              <span class="field-value">{model.total}</span>
             </div>
 
             {#if model?.metaData?.notes}
@@ -94,6 +84,11 @@
                 >
               </div>
             {/if}
+
+            <div class="field field-wrapper">
+              <span class="field-name field-total">Total</span>
+              <span class="field-value field-total">{model.total}</span>
+            </div>
           </div>
         </div>
 
@@ -246,10 +241,24 @@
     position: relative; /* Add this to position the sidebar relative to the container */
     padding: 30px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(145deg, #cdcdcd, #444);
   }
 
   .layout {
     display: flex;
+  }
+
+  .layout-header {
+    display: flex;
+    font-size: 20px;
+    font-weight: 600;
+    background: linear-gradient(145deg, #f9f9f9, #ececec);
+    color: #111;
+    padding: 5px;
+    margin: 5px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    align-items: flex-end;
   }
 
   .main-content {
@@ -267,6 +276,7 @@
     height: 100vh;
     overflow-y: auto;
     border-radius: 8px;
+    margin-top: 5px;
   }
 
   /* Other existing styles remain unchanged */
@@ -334,37 +344,6 @@
     text-align: left;
   }
 
-  .sub-sections {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-  }
-
-  .sub-section {
-    background-color: #444;
-    border-radius: 8px;
-    width: 48%;
-    padding: 20px;
-  }
-
-  .sub-section-header {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 10px;
-    color: #f9f9f9;
-    text-align: center;
-  }
-
-  .sub-section-body .field {
-    background-color: transparent;
-    padding: 5px;
-  }
-
-  .sub-section-body .field-name,
-  .sub-section-body .field-value {
-    color: #f9f9f9;
-  }
-
   .cart-section {
     margin-top: 30px;
   }
@@ -399,5 +378,27 @@
   .sidebar-field {
     margin-bottom: 2px;
     background: transparent;
+  }
+
+  .field-total {
+    font-size: 24px;
+    color: #f9f9f9;
+  }
+
+  .field-wrapper {
+    background: linear-gradient(145deg, #6a6a6a, #444);
+  }
+
+  .status {
+    padding: 0px 5px;
+    margin: 0px 5px;
+    border-radius: 8px;
+  }
+
+  .order {
+    font-size: 30px;
+    color: #111;
+    font-weight: 600;
+    padding: 0px 10px;
   }
 </style>
