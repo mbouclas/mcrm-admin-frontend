@@ -2,10 +2,12 @@ import { writable } from "svelte/store";
 import {AppService} from "./Shared/app.service";
 import type {IGates} from "./Auth/auth.service";
 import type {IBaseModel} from "./DynamicFields/base-model";
+import type {IBootConfigs} from "../models/boot";
 
 export interface IAppState {
     gates: IGates[];
     models: IBaseModel[];
+    configs: IBootConfigs;
 }
 
 export interface INotification {

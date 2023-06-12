@@ -320,6 +320,7 @@
     background: linear-gradient(145deg, #f9f9f9, #ececec);
     padding: 20px 3px;
     box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    height: 100vh;
     overflow-y: auto;
     border-radius: 8px;
     margin-top: 5px;
@@ -396,6 +397,8 @@
     display: flex;
     margin-bottom: 20px;
     padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 6px;
     height: 180px;
     align-items: center;
   }
