@@ -1,13 +1,15 @@
 <script lang="ts">
   import type { IDynamicFieldConfigBlueprint } from "../../../DynamicFields/types";
   import Loading from "../../../Shared/Loading.svelte";
+  import { FileService } from "../../../Shared/files.service.ts";
 
   export let fields: IDynamicFieldConfigBlueprint[] = [];
   export let model;
+  let fileService = new FileService();
 
   const statusLabels = {
     0: { name: "Edit", color: "yellow" },
-    1: { name: "Creating", color: "green" },
+    1: { name: "Creating", color: "#4caf50" },
     2: { name: "Cancel", color: "red" },
   };
 
@@ -30,11 +32,13 @@
 
   let formattedCreatedAt = "";
   $: if (model) {
-    shippingAddress = model.address.find((address) =>
-      address.type.includes("shipping")
+    shippingAddress = model.address.find(
+      (address) =>
+        address.type.includes("SHIPPING") || address.type.includes("shipping")
     );
-    billingAddress = model.address.find((address) =>
-      address.type.includes("billing")
+    billingAddress = model.address.find(
+      (address) =>
+        address.type.includes("BILLING") || address.type.includes("billing")
     );
 
     const date = new Date(model.createdAt);
@@ -48,6 +52,18 @@
       second: "2-digit",
     }).format(date);
   }
+
+  const downloadFile = (file) => {
+    fileService
+      .getFile(file.filename)
+      .then((response) => response.json())
+      .then((data) => {
+        window.open(data.url, "_blank");
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
 </script>
 
 {#if !model}
@@ -104,34 +120,55 @@
               <div class="section-header">Items</div>
               <div class="section-body">
                 {#each model.metaData.cart.items as item (item.uuid)}
-                  <div class="cart-item">
-                    <div class="item-details">
-                      <div class="field">
-                        <span class="field-name">Product Title</span>
-                        <span class="field-value">{item.title}</span>
+                  <div class="item">
+                    <div class="cart-item">
+                      <div class="item-details">
+                        <div class="field">
+                          <span class="field-name">Product Title</span>
+                          <span class="field-value">{item.title}</span>
+                        </div>
+                        <div class="field">
+                          <span class="field-name">Quantity</span>
+                          <span class="field-value">{item.quantity}</span>
+                        </div>
+                        <div class="field">
+                          <span class="field-name">Price</span>
+                          <span class="field-value">${item.price}</span>
+                        </div>
+                        <div class="field">
+                          <span class="field-name">Color</span>
+                          <span class="field-value"
+                            >{item.metaData.color.name}</span
+                          >
+                        </div>
                       </div>
-                      <div class="field">
-                        <span class="field-name">Quantity</span>
-                        <span class="field-value">{item.quantity}</span>
-                      </div>
-                      <div class="field">
-                        <span class="field-name">Price</span>
-                        <span class="field-value">${item.price}</span>
-                      </div>
-                      <div class="field">
-                        <span class="field-name">Color</span>
-                        <span class="field-value"
-                          >{item.metaData.color.name}</span
-                        >
+                      <div class="item-image-wrapper">
+                        <img
+                          src={item.thumb}
+                          alt={item.title}
+                          class="item-image"
+                        />
                       </div>
                     </div>
-                    <div class="item-image-wrapper">
-                      <img
-                        src={item.thumb}
-                        alt={item.title}
-                        class="item-image"
-                      />
-                    </div>
+
+                    {#if item?.metaData?.uploadedFiles?.length}
+                      <div class="attachments">
+                        {#each item?.metaData?.uploadedFiles as file}
+                          <div class="attachment">
+                            <div class="attachment-info">
+                              <div class="filename">{file.filename}</div>
+                              <div class="description">{file.description}</div>
+                            </div>
+
+                            <div class="download-button">
+                              <button on:click={() => downloadFile(file)}
+                                >Download</button
+                              >
+                            </div>
+                          </div>
+                        {/each}
+                      </div>
+                    {/if}
                   </div>
                 {/each}
               </div>
@@ -283,7 +320,6 @@
     background: linear-gradient(145deg, #f9f9f9, #ececec);
     padding: 20px 3px;
     box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
-    height: 100vh;
     overflow-y: auto;
     border-radius: 8px;
     margin-top: 5px;
@@ -360,8 +396,6 @@
     display: flex;
     margin-bottom: 20px;
     padding: 10px;
-    background-color: #f9f9f9;
-    border-radius: 6px;
     height: 180px;
     align-items: center;
   }
@@ -417,5 +451,63 @@
     padding: 0px 10px;
     position: relative;
     top: 5px;
+  }
+  .item {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+  }
+
+  .attachment {
+    color: #111;
+  }
+
+  .attachments {
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+  }
+
+  .attachment {
+    display: flex;
+    justify-content: space-between;
+    background: linear-gradient(0deg, #e0ffdb, #f9f9f9);
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+  }
+
+  .attachment-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .filename {
+    font-size: 18px;
+    color: #111;
+    font-weight: 600;
+  }
+
+  .description {
+    font-size: 14px;
+    color: #666;
+  }
+
+  .download-button button {
+    cursor: pointer;
+    display: inline-block;
+    background-color: #4caf50;
+    border: none;
+    color: white;
+    text-align: center;
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .download-button button:hover {
+    background-color: #45a049;
   }
 </style>
