@@ -168,8 +168,8 @@
 
               <div class="field sidebar-field">
                 <span class="field-value"
-                  >{billingAddress.country}, {billingAddress.city},{billingAddress.region},
-                  {billingAddress.postCode}</span
+                  >{shippingAddress.country}, {shippingAddress.city}, {shippingAddress.region},
+                  {shippingAddress.postCode}</span
                 >
               </div>
 
@@ -180,65 +180,63 @@
               </div>
             </div>
           </div>
+        </div>
 
-          <div class="section">
-            <div class="side-section-header">Billing address</div>
-            <div class="section-body">
-              <div class="address">
-                <div class="field sidebar-field">
-                  <span class="field-value"
-                    >{shippingAddress.firstName}, {shippingAddress.lastName}, {shippingAddress.phone}</span
-                  >
-                </div>
-
-                <div class="field sidebar-field">
-                  <span class="field-value"
-                    >{billingAddress.country}, {billingAddress.city}, {billingAddress.region},
-                    {billingAddress.postCode}</span
-                  >
-                </div>
-
-                <div class="field sidebar-field">
-                  <span class="field-value"
-                    >{shippingAddress.street}, {shippingAddress.apartment}</span
-                  >
-                </div>
-              </div>
+        <div class="section">
+          <div class="side-section-header">Payment Method</div>
+          <div class="section-body">
+            <div class="field sidebar-field">
+              <span class="field-value">{model.paymentMethod.title}</span>
             </div>
-
-            <div class="section">
-              <div class="side-section-header">Payment Method</div>
-              <div class="section-body">
-                <div class="field sidebar-field">
-                  <span class="field-value">{model.paymentMethod.title}</span>
-                </div>
-                <div class="field sidebar-field">
-                  <span class="field-value"
-                    >{model.paymentMethod.description}</span
-                  >
-                </div>
-              </div>
-            </div>
-
-            <div class="section">
-              <div class="side-section-header">Shipping Method</div>
-              <div class="section-body">
-                <div class="field sidebar-field">
-                  <span class="field-value">{model.shippingMethod.title}</span>
-                </div>
-                <div class="field sidebar-field">
-                  <span class="field-value"
-                    >{model.shippingMethod.shippingTime}</span
-                  >
-                </div>
-              </div>
-            </div>
-
-            <div class="total-field">
-              <span class="total-field-item">Total</span>
-              <span class="total-field-item">{model.total.toFixed(3)}</span>
+            <div class="field sidebar-field">
+              <span class="field-value">{model.paymentMethod.description}</span>
             </div>
           </div>
+        </div>
+
+        <div class="section">
+          <div class="side-section-header">Billing address</div>
+          <div class="section-body">
+            <div class="address">
+              <div class="field sidebar-field">
+                <span class="field-value"
+                  >{billingAddress.firstName}, {billingAddress.lastName}, {billingAddress.phone}</span
+                >
+              </div>
+
+              <div class="field sidebar-field">
+                <span class="field-value"
+                  >{billingAddress.country}, {billingAddress.city}, {billingAddress.region},
+                  {billingAddress.postCode}</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="field sidebar-field">
+            <span class="field-value"
+              >{shippingAddress.street}, {shippingAddress.apartment}</span
+            >
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="side-section-header">Shipping Method</div>
+          <div class="section-body">
+            <div class="field sidebar-field">
+              <span class="field-value">{model.shippingMethod.title}</span>
+            </div>
+            <div class="field sidebar-field">
+              <span class="field-value"
+                >{model.shippingMethod.shippingTime}</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="total-field">
+          <span class="total-field-item">Total</span>
+          <span class="total-field-item">{model.total.toFixed(3)}</span>
         </div>
       </div>
     </div>
@@ -249,10 +247,10 @@
   .container {
     max-width: 1200px;
     margin: 50px auto;
-    position: relative; /* Add this to position the sidebar relative to the container */
+    position: relative;
     padding: 30px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    background: linear-gradient(145deg, #cdcdcd, #444);
+    background: linear-gradient(145deg, #cdcdcd, #fff);
   }
 
   .layout {
@@ -270,6 +268,7 @@
     margin-bottom: 10px;
     border-radius: 8px;
     align-items: flex-end;
+    box-shadow: -2px 7px 10px rgba(0, 0, 0, 0.1);
   }
 
   .main-content {
@@ -279,18 +278,16 @@
 
   .sidebar {
     flex: 1;
-    position: sticky; /* Changed to sticky */
+    position: sticky;
     top: 0;
     background: linear-gradient(145deg, #f9f9f9, #ececec);
-    padding: 20px;
+    padding: 20px 3px;
     box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
     height: 100vh;
     overflow-y: auto;
     border-radius: 8px;
     margin-top: 5px;
   }
-
-  /* Other existing styles remain unchanged */
 
   .section-header {
     font-size: 20px;
@@ -404,6 +401,7 @@
     background: linear-gradient(145deg, #6a6a6a, #444);
     border-radius: 8px;
     padding: 5px;
+    margin: 0px 5px;
   }
 
   .status {
