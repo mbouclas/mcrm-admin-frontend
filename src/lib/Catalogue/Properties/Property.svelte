@@ -17,6 +17,7 @@
   import { AppService } from "../../Shared/app.service";
   import type { IDynamicFieldConfigBlueprint } from "../../DynamicFields/types";
   import getModelPrototypeFromFields from "../../helpers/model-prototype";
+  import { setNotificationAction } from "../../../lib/stores";
 
   const s = new PropertiesService();
   const params = useParams();
@@ -119,11 +120,17 @@
 
   const onSubmit = async (data) => {
     if ($params.id === "new") {
-      await s.store(data);
+      await s.store(data).then(res=>{
+        if(res.success){
+          setNotificationAction({message:"Created successfully", type:"success"})
+        } else {
+          setNotificationAction({message:"Failed to create", type:"error"})
+        } 
+      });
       return null;
     }
 
-    await s.update($params.id, data);
+    await s.update($params.id, data)
   };
 
   let activeTabValue = 1;
@@ -164,6 +171,7 @@
     e.preventDefault();
     //if (e.currentTarget.checkValidity() && onSubmit && validateModel()) {
     onSubmit(model);
+
     //}
   }
 </script>

@@ -101,8 +101,9 @@ export class BaseHttpService {
       limit,
       server: {
         url: (prev, page, limit) => {
-          return `${prev}${prev.includes("?") ? "&" : "?"}limit=${limit}&page=${page + 1
-            }`;
+          return `${prev}${prev.includes("?") ? "&" : "?"}limit=${limit}&page=${
+            page + 1
+          }`;
         },
       },
     };
@@ -128,8 +129,9 @@ export class BaseHttpService {
           const dir = col.direction === 1 ? "asc" : "desc";
           let colName = cols.find((c) => c.idx === col.index).id;
 
-          return `${prev}${prev.includes("?") ? "&" : "?"
-            }orderBy=${colName}&way=${dir}`;
+          return `${prev}${
+            prev.includes("?") ? "&" : "?"
+          }orderBy=${colName}&way=${dir}`;
         },
       },
     };

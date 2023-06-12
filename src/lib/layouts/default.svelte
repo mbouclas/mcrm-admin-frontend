@@ -11,15 +11,22 @@
   import { onMount } from "svelte";
   import { notificationsStore } from "../stores";
   import type { INotification } from "../stores";
+  import { fly } from "svelte/transition";
 
   let url,
-  showNotifications: INotification|null = null;
+  showNotifications: INotification[] = [];
   const promise = new BootService().boot();
 
-  notificationsStore.subscribe((state: INotification|null) => {
-    if (!state) {return;}
-    showNotifications = state;
-  });
+  
+let addAndRemove = () => {
+  showNotifications = [$notificationsStore[$notificationsStore.length - 1], ...showNotifications];
+      setTimeout(() => {
+      showNotifications.pop();
+      showNotifications = showNotifications;
+    }, 3000);
+};
+
+$: $notificationsStore && $notificationsStore.length && addAndRemove();
 
   // (new BootService()).boot().then(res => console.log('done'));
   onMount(async () => {});
@@ -34,16 +41,28 @@
 
   let open = false;
 </script>
-{#if showNotifications}
-{JSON.stringify(showNotifications)}
-  Show notifications component
+{#if showNotifications && showNotifications.length !== 0}
+<div class="notificator-wrapper">
+{#each showNotifications as notification}
+  <!-- 
+  <Toast message={notification.message} type={notification.type} position="tr" show/>
+  -->
+  <div
+  in:fly={{ x: 200, duration: 500 }}
+  out:fly={{ x: 200, duration: 500 }}
+  class="notificator"
+>
+ {notification.message}
+</div>
+  {/each}
+  </div>
 {/if}
 
 {#await promise then res}
   <Router>
     <div class="flex">
       <Header bind:open />
-      <div class="bg-[#222736]  w-full">
+      <div class="bg-[#222736] w-full">
         <Topbar bind:open />
         <!-- {url} -->
         <div class="p-4 body">
@@ -73,3 +92,15 @@
 {:catch error}
   <p style="color: red">{error.message}</p>
 {/await}
+<style>
+  .notificator-wrapper {
+        @apply absolute top-0 right-0 mt-10 mr-10 p-5;
+        width: 300px;
+        z-index: 3000;
+    }
+    .notificator {
+        @apply bg-gray-500 border-4 rounded-md border-solid  text-white p-5 font-bold;
+        width: 300px;
+        z-index: 3000;
+    }
+</style>
