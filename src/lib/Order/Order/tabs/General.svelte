@@ -28,14 +28,25 @@
     console.log("change");
   };
 
+  let formattedCreatedAt = "";
   $: if (model) {
-    console.log(model);
     shippingAddress = model.address.find((address) =>
       address.type.includes("shipping")
     );
     billingAddress = model.address.find((address) =>
       address.type.includes("billing")
     );
+
+    const date = new Date(model.createdAt);
+
+    formattedCreatedAt = new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    }).format(date);
   }
 </script>
 
@@ -50,7 +61,7 @@
         style={`background-color: ${statusLabels[model.status].color}`}
         >{statusLabels[model.status].name}</span
       >
-      / {model.createdAt}
+      / Created at {formattedCreatedAt}
     </div>
     <div class="layout">
       <div class="main-content">
@@ -84,11 +95,6 @@
                 >
               </div>
             {/if}
-
-            <div class="field field-wrapper">
-              <span class="field-name field-total">Total</span>
-              <span class="field-value field-total">{model.total}</span>
-            </div>
           </div>
         </div>
 
@@ -226,6 +232,11 @@
                   >
                 </div>
               </div>
+            </div>
+
+            <div class="total-field">
+              <span class="total-field-item">Total</span>
+              <span class="total-field-item">{model.total.toFixed(3)}</span>
             </div>
           </div>
         </div>
@@ -380,13 +391,19 @@
     background: transparent;
   }
 
-  .field-total {
+  .total-field-item {
     font-size: 24px;
     color: #f9f9f9;
+    font-weight: 600;
+    padding: 5px 10px;
   }
 
-  .field-wrapper {
+  .total-field {
+    display: flex;
+    justify-content: space-between;
     background: linear-gradient(145deg, #6a6a6a, #444);
+    border-radius: 8px;
+    padding: 5px;
   }
 
   .status {
@@ -400,5 +417,7 @@
     color: #111;
     font-weight: 600;
     padding: 0px 10px;
+    position: relative;
+    top: 5px;
   }
 </style>
