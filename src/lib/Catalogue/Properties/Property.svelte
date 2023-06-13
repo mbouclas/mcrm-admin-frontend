@@ -120,13 +120,7 @@
 
   const onSubmit = async (data) => {
     if ($params.id === "new") {
-      await s.store(data).then(res=>{
-        if(res.success){
-          setNotificationAction({message:"Created successfully", type:"success"})
-        } else {
-          setNotificationAction({message:"Failed to create", type:"error"})
-        } 
-      });
+      await s.store(data)
       return null;
     }
 

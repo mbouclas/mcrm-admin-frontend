@@ -2,6 +2,7 @@ import { BaseHttpService } from "../../../Shared/base-http.service";
 import type { IGenericObject } from "../../../Shared/models/generic";
 import queryString from "query-string";
 import { html } from "gridjs";
+import { setNotificationAction } from "../../../stores";
 
 export class PropertiesService extends BaseHttpService {
   async activateRows(selectedIds: string[]) {
@@ -66,6 +67,15 @@ export class PropertiesService extends BaseHttpService {
   }
 
   async store(data: IGenericObject) {
-    return super.post("property", data);
+    try {
+      const res = await super.post("property", data);
+      setNotificationAction({
+        message: "Created successfully",
+        type: "success",
+      });
+      return res;
+    } catch (err) {
+      setNotificationAction({ message: "Failed to create", type: "error" });
+    }
   }
 }

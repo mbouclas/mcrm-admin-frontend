@@ -35,23 +35,34 @@ export class BaseHttpService {
     body: IGenericObject = {},
     extraHeaders: IGenericObject = {}
   ) {
-    const headers = this.getAuthHeaders();
+    try {
+      const headers = this.getAuthHeaders();
 
-    Object.keys(extraHeaders).forEach((header) => {
-      headers.append(header, extraHeaders[header]);
-    });
+      Object.keys(extraHeaders).forEach((header) => {
+        headers.append(header, extraHeaders[header]);
+      });
 
-    const contentType = headers.get("Content-Type");
-    if (!contentType) {
-      headers.append("Content-Type", "application/json");
+      const contentType = headers.get("Content-Type");
+      if (!contentType) {
+        headers.append("Content-Type", "application/json");
+      }
+
+      const rawResponse = await fetch(`${this.apiUrl}${url}`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(body),
+      });
+      if (!rawResponse.ok) {
+        throw new Error("Bad request");
+      }
+      const res = await rawResponse.json();
+      if (typeof res.success !== undefined && !res.success) {
+        throw res;
+      }
+      return res;
+    } catch (err) {
+      throw err;
     }
-
-    const rawResponse = await fetch(`${this.apiUrl}${url}`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(body),
-    });
-    return await rawResponse.json();
   }
 
   async patch(
