@@ -2,38 +2,22 @@
   import type { IDynamicFieldConfigBlueprint } from "../../../DynamicFields/types";
   import Loading from "../../../Shared/Loading.svelte";
   import { FileService } from "../../../Shared/files.service.ts";
-  import {app} from "../../../stores";
-  import type {IAppState} from "../../../stores";
-
+  import { app } from "../../../stores";
+  import type { IAppState } from "../../../stores";
 
   export let fields: IDynamicFieldConfigBlueprint[] = [];
   export let model;
 
   let fileService = new FileService();
-app.subscribe((state: IAppState) => {
-  state.configs.store.orderStatuses
-})
-  const statusLabels = {
-    0: { name: "Edit", color: "yellow" },
-    1: { name: "Creating", color: "#4caf50" },
-    2: { name: "Cancel", color: "red" },
-  };
+  app.subscribe((state: IAppState) => {
+    state.configs.store.orderStatuses;
+  });
 
-  let statusIndex = 0;
   let shippingAddress;
   let billingAddress;
-  $: {
-    if (fields && fields.length) {
-      statusIndex = fields.findIndex((field) => field.varName === "status");
 
-      fields[statusIndex].ui.values = fields[statusIndex].ui.defaultValues.map(
-        (value) => ({ label: statusLabels[value], value })
-      );
-    }
-  }
-
-  const onStatusChange = () => {
-    console.log("change");
+  const onStatusChange = (event) => {
+    model.status = parseInt(event.target.value);
   };
 
   let formattedCreatedAt = "";
@@ -70,26 +54,21 @@ app.subscribe((state: IAppState) => {
       });
   };
 </script>
-{#if model}
-{JSON.stringify($app.configs.store.orderStatuses)}
 
-<select bind:value={model.status}>
-{#each $app.configs.store.orderStatuses as status}
-  <option value={status.id}>{status.label} {model.status} {status.id}</option>
-  {/each}
-</select>
-  {/if}
 {#if !model}
   <Loading />
 {:else}
   <div class="container">
     <div class="layout-header">
       <span class="order">Order</span> /#{model.orderId} /
-      <span
-        class="status"
-        style={`background-color: ${statusLabels[model.status].color}`}
-        >{statusLabels[model.status].name}</span
-      >
+
+      <select class="status" on:change={onStatusChange}>
+        {#each $app.configs.store.orderStatuses as status}
+          <option value={status.id} selected={status.id === model.status}
+            >{status.label}</option
+          >
+        {/each}
+      </select>
       / Created at {formattedCreatedAt}
     </div>
     <div class="layout">
@@ -458,6 +437,7 @@ app.subscribe((state: IAppState) => {
     padding: 0px 5px;
     margin: 0px 5px;
     border-radius: 8px;
+    width: 130px;
   }
 
   .order {
