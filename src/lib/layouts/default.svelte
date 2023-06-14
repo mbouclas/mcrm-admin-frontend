@@ -12,6 +12,8 @@
   import { notificationsStore } from "../stores";
   import type { INotification } from "../stores";
   import { fly } from "svelte/transition";
+  import { flip } from "svelte/animate";
+
   import { v4 } from "uuid";
 
   interface ExtendedINotification extends INotification {
@@ -66,6 +68,7 @@
       <div
         in:fly={{ x: 500, duration: 500 }}
         out:fly={{ x: 500, duration: 500 }}
+        animate:flip
         class="notificator"
       >
         {notification.message}
