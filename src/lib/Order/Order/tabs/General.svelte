@@ -12,27 +12,12 @@
   app.subscribe((state: IAppState) => {
     state.configs.store.orderStatuses;
   });
-  const statusLabels = {
-    0: { name: "Edit", color: "yellow" },
-    1: { name: "Creating", color: "#4caf50" },
-    2: { name: "Cancel", color: "red" },
-  };
 
-  let statusIndex = 0;
   let shippingAddress;
   let billingAddress;
-  $: {
-    if (fields && fields.length) {
-      statusIndex = fields.findIndex((field) => field.varName === "status");
 
-      fields[statusIndex].ui.values = fields[statusIndex].ui.defaultValues.map(
-        (value) => ({ label: statusLabels[value], value })
-      );
-    }
-  }
-
-  const onStatusChange = () => {
-    console.log("change");
+  const onStatusChange = (event) => {
+    model.status = parseInt(event.target.value);
   };
 
   let formattedCreatedAt = "";
@@ -73,22 +58,17 @@
 {#if !model}
   <Loading />
 {:else}
-  <select>
-    {#each $app.configs.store.orderStatuses as status}
-      <option value={status.id} selected={status.id === model.status}
-        >{status.label} {model.status} {status.id}</option
-      >
-    {/each}
-  </select>
-
   <div class="container">
     <div class="layout-header">
       <span class="order">Order</span> /#{model.orderId} /
-      <span
-        class="status"
-        style={`background-color: ${statusLabels[model.status].color}`}
-        >{statusLabels[model.status].name}</span
-      >
+
+      <select class="status" on:change={onStatusChange}>
+        {#each $app.configs.store.orderStatuses as status}
+          <option value={status.id} selected={status.id === model.status}
+            >{status.label}</option
+          >
+        {/each}
+      </select>
       / Created at {formattedCreatedAt}
     </div>
     <div class="layout">
@@ -457,6 +437,7 @@
     padding: 0px 5px;
     margin: 0px 5px;
     border-radius: 8px;
+    width: 130px;
   }
 
   .order {
