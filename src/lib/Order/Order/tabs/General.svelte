@@ -70,11 +70,15 @@ app.subscribe((state: IAppState) => {
       });
   };
 </script>
-<select>
+{#if model}
+{JSON.stringify($app.configs.store.orderStatuses)}
+
+<select bind:value={model.status}>
 {#each $app.configs.store.orderStatuses as status}
-  <option value={status.id} selected={status.id === model.status}>{status.label} {model.status} {status.id}</option>
+  <option value={status.id}>{status.label} {model.status} {status.id}</option>
   {/each}
 </select>
+  {/if}
 {#if !model}
   <Loading />
 {:else}
