@@ -70,12 +70,15 @@ export class PropertiesService extends BaseHttpService {
     try {
       const res = await super.post("property", data);
       setNotificationAction({
-        message: "Created successfully",
+        message: "Created successfully" + Math.round(Math.random() * 100),
         type: "success",
       });
       return res;
     } catch (err) {
-      setNotificationAction({ message: "Failed to create", type: "error" });
+      setNotificationAction({
+        message: "Failed to create" + Math.round(Math.random() * 100),
+        type: "error",
+      });
     }
   }
 }

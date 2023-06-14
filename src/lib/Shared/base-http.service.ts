@@ -49,7 +49,7 @@ export class BaseHttpService {
 
       const rawResponse = await fetch(`${this.apiUrl}${url}`, {
         method: "POST",
-        headers,
+        headers: {},
         body: JSON.stringify(body),
       });
       if (!rawResponse.ok) {

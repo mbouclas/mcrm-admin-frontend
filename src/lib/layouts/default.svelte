@@ -12,21 +12,36 @@
   import { notificationsStore } from "../stores";
   import type { INotification } from "../stores";
   import { fly } from "svelte/transition";
+  import { v4 } from "uuid";
+
+  interface ExtendedINotification extends INotification {
+    id: string;
+  }
 
   let url,
-  showNotifications: INotification[] = [];
+    showNotifications: ExtendedINotification[] = [];
   const promise = new BootService().boot();
 
-  
-let addAndRemove = () => {
-  showNotifications = [$notificationsStore[$notificationsStore.length - 1], ...showNotifications];
-      setTimeout(() => {
-      showNotifications.pop();
-      showNotifications = showNotifications;
-    }, 3000);
-};
+  let addAndRemove = () => {
+    const newNotification = {
+      id: v4(),
+      ...$notificationsStore[0],
+    };
+    showNotifications = [newNotification, ...showNotifications];
 
-$: $notificationsStore && $notificationsStore.length && addAndRemove();
+    const removeNotificationById = (id) => {
+      showNotifications = showNotifications.filter(
+        (notification) => notification.id !== id
+      );
+    };
+
+    // Set a timeout for the new notification based on its expiration time
+    setTimeout(() => {
+      removeNotificationById(newNotification.id);
+    }, newNotification.expiration); // Assuming expiration is in seconds
+  };
+
+  $: $notificationsStore && $notificationsStore.length && addAndRemove();
 
   // (new BootService()).boot().then(res => console.log('done'));
   onMount(async () => {});
@@ -41,20 +56,21 @@ $: $notificationsStore && $notificationsStore.length && addAndRemove();
 
   let open = false;
 </script>
+
 {#if showNotifications && showNotifications.length !== 0}
-<div class="notificator-wrapper">
-{#each showNotifications as notification}
-  <!-- 
+  <div class="notificator-wrapper">
+    {#each showNotifications as notification, index (notification.id)}
+      <!-- 
   <Toast message={notification.message} type={notification.type} position="tr" show/>
   -->
-  <div
-  in:fly={{ x: 200, duration: 500 }}
-  out:fly={{ x: 200, duration: 500 }}
-  class="notificator"
->
- {notification.message}
-</div>
-  {/each}
+      <div
+        in:fly={{ x: 500, duration: 500 }}
+        out:fly={{ x: 500, duration: 500 }}
+        class="notificator"
+      >
+        {notification.message}
+      </div>
+    {/each}
   </div>
 {/if}
 
@@ -92,15 +108,16 @@ $: $notificationsStore && $notificationsStore.length && addAndRemove();
 {:catch error}
   <p style="color: red">{error.message}</p>
 {/await}
+
 <style>
   .notificator-wrapper {
-        @apply absolute top-0 right-0 mt-10 mr-10 p-5;
-        width: 300px;
-        z-index: 3000;
-    }
-    .notificator {
-        @apply bg-gray-500 border-4 rounded-md border-solid  text-white p-5 font-bold;
-        width: 300px;
-        z-index: 3000;
-    }
+    @apply absolute top-0 right-0 mt-10 mr-20 p-5;
+    width: 300px;
+    z-index: 3000;
+  }
+  .notificator {
+    @apply bg-gray-500 border-4 rounded-md border-solid  text-white p-5 font-bold;
+    width: 300px;
+    z-index: 3000;
+  }
 </style>

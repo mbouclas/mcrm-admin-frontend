@@ -11,6 +11,7 @@ export interface IAppState {
 export interface INotification {
   message: string;
   type: "success" | "error" | "warning" | "info";
+  expiration?: number;
 }
 
 export const gridRowsStore = writable(null);
@@ -27,7 +28,10 @@ app.subscribe((res) => {
 
 export function setNotificationAction(notification: INotification | null) {
   notificationsStore.update((arr) => {
-    const newArr = [notification, ...arr];
+    const newArr = [
+      { ...notification, expiration: notification.expiration || 3000 },
+      ...arr,
+    ];
     return newArr;
   });
 }
