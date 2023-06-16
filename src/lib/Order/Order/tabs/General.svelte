@@ -275,9 +275,8 @@
 <style>
   .container {
     max-width: 1200px;
-    margin: 50px auto;
+    margin: auto;
     position: relative;
-    padding: 30px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     background: linear-gradient(145deg, #cdcdcd, #fff);
   }

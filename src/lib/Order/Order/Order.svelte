@@ -150,6 +150,7 @@
 <!-- <Modals /> -->
 
 <Form bind:model {hasError}>
-  <General {fields} {model} />
   <Button type="submit" on:click={onNativeSubmit}>Submit</Button>
+
+  <General {fields} {model} />
 </Form>
