@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { X } from "svelte-heros";
+  import { XMark } from "svelte-heros-v2";
   export let isOpen;
 </script>
 
@@ -8,7 +8,7 @@
     <div class="contents">
       <div class="header">
         <h1>Quick Order Edit</h1>
-        <X on:click={close} />
+        <XMark on:click={close} />
       </div>
       <div class="content-body">this is image gallery modal</div>
     </div>

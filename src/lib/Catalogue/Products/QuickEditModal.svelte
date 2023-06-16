@@ -1,7 +1,7 @@
 <script>
   import { closeModal } from "svelte-modals";
   import Product from "./Product.svelte";
-  import { X } from "svelte-heros";
+  import { XMark } from "svelte-heros-v2";
   // provided by <Modals />
   export let isOpen;
   export let itemId;
@@ -23,7 +23,7 @@
     <div class="contents">
       <div class="header">
         <h1>Quick Product Edit</h1>
-        <X on:click={close} />
+        <XMark on:click={close} />
       </div>
       <div class="content-body">
         <Product {itemId} />

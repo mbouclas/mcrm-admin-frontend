@@ -2,7 +2,7 @@
   import { closeModal } from "svelte-modals";
   import Fields from "./Renderer.svelte";
 
-  import { X } from "svelte-heros";
+  import { XMark } from "svelte-heros-v2";
   import { Button } from "flowbite-svelte";
   // provided by <Modals />
   export let isOpen;
@@ -37,7 +37,7 @@
     <div class="contents">
       <div class="header">
         <h1>Quick Order Edit</h1>
-        <X on:click={close} />
+        <XMark on:click={close} />
       </div>
       <div class="content-body" />
 

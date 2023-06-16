@@ -6,10 +6,10 @@
     ToolbarButton,
     Button,
   } from "flowbite-svelte";
-  import { Eye, EyeOff, Pencil, PencilAlt, Trash } from "svelte-heros";
+  import { Eye, EyeSlash, Pencil, PencilSquare, Trash } from "svelte-heros-v2";
   import { ChevronDown } from "svelte-heros-v2";
   import { navigate } from "svelte-navigator";
-  import {createEventDispatcher, onMount} from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   import { Confirm } from "svelte-confirm";
 
   import { openModal } from "svelte-modals";
@@ -21,15 +21,11 @@
   export let title;
   const dispatch = createEventDispatcher();
 
-  onMount(() => {
-
-  });
+  onMount(() => {});
   function goToPage(e) {
     e.preventDefault();
     navigate("/catalogue/products/" + id);
   }
-
-
 
   function handleEvent(e) {
     // e.preventDefault();
@@ -44,20 +40,20 @@
   function openQuickEditModal() {
     openModal(QuickEditModal, { itemId: id });
   }
-
-
 </script>
 
 <Confirm confirmTitle="Delete" cancelTitle="Cancel" let:confirm={confirmThis}>
-  <Button class="action-button" id={`action-button-${id}`} on:click={handleEvent}
-    ><ChevronDown>Dropdown button</ChevronDown></Button
+  <Button
+    class="action-button"
+    id={`action-button-${id}`}
+    on:click={handleEvent}><ChevronDown>Dropdown button</ChevronDown></Button
   >
   <Dropdown class="w-44" triggeredBy={`#action-button-${id}`}>
     <DropdownItem
-    ><div on:click={() => console.log(id)}>
-      <Eye size="16" /><span>test</span>
-    </div></DropdownItem
-  >
+      ><div on:click={() => console.log(id)}>
+        <Eye size="16" /><span>test</span>
+      </div></DropdownItem
+    >
     {#if !active}
       <DropdownItem
         ><div on:click={() => dispatch("activate-item", { id })}>
@@ -67,7 +63,7 @@
     {:else}
       <DropdownItem
         ><div on:click={() => dispatch("de-activate-item", { id })}>
-          <EyeOff size="16" /><span>Disable</span>
+          <EyeSlash size="16" /><span>Disable</span>
         </div></DropdownItem
       >
     {/if}
@@ -78,7 +74,7 @@
     >
     <DropdownItem
       ><div on:click={openQuickEditModal}>
-        <PencilAlt size="16" /><span>Quick Edit</span>
+        <PencilSquare size="16" /><span>Quick Edit</span>
       </div></DropdownItem
     >
     <DropdownDivider />

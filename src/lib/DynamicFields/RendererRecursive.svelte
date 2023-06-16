@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { Label } from "flowbite-svelte";
+  import { Label, Heading } from "flowbite-svelte";
   import TextInput from "./fields/text-input.svelte";
   import DropDown from "./fields/dropdown.svelte";
   import Text from "./fields/text.svelte";
@@ -8,9 +8,11 @@
   import RichText from "./fields/richtext.svelte";
   import TextArea from "./fields/textarea.svelte";
   import DateInput from "./fields/date-input.svelte";
+  import Group from "./fields/group.svelte";
   import ImageSelect from "./fields/image-select/index.svelte";
   import type { IDynamicFieldConfigBlueprint } from "./types";
   import RelatedCreateList from "./RelatedCreateList.svelte";
+  import Fields from "./Renderer.svelte";
 
   export let model = {};
   export let onModelChange;
@@ -268,5 +270,15 @@
       bind:model={model[field.varName]}
       onChange={onModelChange}
     />
+  {/if}
+
+  {#if field.type === "group"}
+    <Heading tag="h4">{field.label}</Heading>
+ <Fields
+ fields={field.fields}
+ bind:model={model[field.varName]}
+ {module}
+ {itemId}
+ />
   {/if}
 {/each}

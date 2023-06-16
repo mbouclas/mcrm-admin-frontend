@@ -6,7 +6,7 @@
     ToolbarButton,
     Button,
   } from "flowbite-svelte";
-  import { Eye, EyeOff, Pencil, PencilAlt, Trash } from "svelte-heros";
+  import { Eye, EyeSlash, Pencil, PencilSquare, Trash } from "svelte-heros-v2";
   import { ChevronDown } from "svelte-heros-v2";
   import { navigate } from "svelte-navigator";
   import { createEventDispatcher } from "svelte";
@@ -53,7 +53,7 @@
     {:else}
       <DropdownItem
         ><div on:click={() => dispatch("de-activate-item", { id })}>
-          <EyeOff size="16" /><span>Disable</span>
+          <EyeSlash size="16" /><span>Disable</span>
         </div></DropdownItem
       >
     {/if}
@@ -64,7 +64,7 @@
     >
     <DropdownItem
       ><div on:click={openQuickEditModal}>
-        <PencilAlt size="16" /><span>Quick Edit</span>
+        <PencilSquare size="16" /><span>Quick Edit</span>
       </div></DropdownItem
     >
     <DropdownDivider />

@@ -7,6 +7,7 @@
   import Profile from "../User/Profile.svelte";
   import CatalogueRoutes from "../Catalogue/routes.svelte";
   import OrderRoutes from "../Order/routes.svelte";
+  import EditableRegions from "../EditableRegions/routes.svelte";
   import { BootService } from "../Shared/boot.service";
   import { onMount } from "svelte";
   import { notificationsStore } from "../stores";
@@ -107,6 +108,10 @@
           <PrivateRoute path="orders/*" let:location>
             <OrderRoutes />
           </PrivateRoute>
+
+          <PrivateRoute path="editable-regions/*" let:location>
+            <EditableRegions />
+          </PrivateRoute>
         </div>
       </div>
     </div>
@@ -117,12 +122,12 @@
 
 <style>
   .notificator-wrapper {
-    @apply absolute top-0 right-0 mt-3 mr-28 p-5;
+    @apply absolute right-5 p-5;
     width: 300px;
     z-index: 3000;
   }
   .notificator {
-    @apply relative rounded-md mt-4 text-white p-5 font-bold;
+    @apply rounded-md mt-4 text-white p-5 font-bold;
     width: 300px;
     z-index: 3000;
   }

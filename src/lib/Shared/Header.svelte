@@ -12,13 +12,11 @@
   import {
     ChartPie,
     ShoppingCart,
-    ViewGrid,
-    InboxIn,
-    User,
-    Login,
+    Squares2x2,
+    InboxArrowDown,
     Cog,
-    Logout,
-  } from "svelte-heros";
+    ArrowRightOnRectangle,
+  } from "svelte-heros-v2";
   import Drawer from "svelte-drawer-component";
 
   import { user } from "../stores";
@@ -62,7 +60,7 @@
         <SidebarDropdownWrapper
           {btnClass}
           label="Catalogue"
-          icon={{ name: ViewGrid }}
+          icon={{ name: Squares2x2 }}
         >
           <SidebarDropdownItem
             aClass={btnClass + " pl-11"}
@@ -127,7 +125,7 @@
           {aClass}
           label="Customers"
           {spanClass}
-          icon={{ name: InboxIn }}
+          icon={{ name: InboxArrowDown }}
           href="/customers"
           on:click={(e) => {
             e.preventDefault();
@@ -169,6 +167,16 @@
           />
         </SidebarDropdownWrapper>
         <SidebarItem
+                {aClass}
+                label="Editable Regions"
+                icon={{ name: Cog }}
+                href="/editable-regions"
+                on:click={(e) => {
+            e.preventDefault();
+            navigate("/editable-regions");
+          }}
+        />
+        <SidebarItem
           {aClass}
           label="Settings"
           icon={{ name: Cog }}
@@ -183,7 +191,7 @@
         <SidebarItem
           {aClass}
           label="Logout"
-          icon={{ name: Logout }}
+          icon={{ name: ArrowRightOnRectangle }}
           href="/logout"
           on:click={handleLogout}
         />
@@ -207,7 +215,7 @@
       <SidebarDropdownWrapper
         {btnClass}
         label="Catalogue"
-        icon={{ name: ViewGrid }}
+        icon={{ name: Squares2x2 }}
       >
         <SidebarDropdownItem
           aClass={btnClass + " pl-11"}
@@ -272,7 +280,7 @@
         {aClass}
         label="Customers"
         {spanClass}
-        icon={{ name: InboxIn }}
+        icon={{ name: InboxArrowDown }}
         href="/customers"
         on:click={(e) => {
           e.preventDefault();
@@ -314,6 +322,16 @@
         />
       </SidebarDropdownWrapper>
       <SidebarItem
+              {aClass}
+              label="Editable Regions"
+              icon={{ name: Cog }}
+              href="/editable-regions"
+              on:click={(e) => {
+            e.preventDefault();
+            navigate("/editable-regions");
+          }}
+      />
+      <SidebarItem
         {aClass}
         label="Settings"
         icon={{ name: Cog }}
@@ -328,7 +346,7 @@
       <SidebarItem
         {aClass}
         label="Logout"
-        icon={{ name: Logout }}
+        icon={{ name: ArrowRightOnRectangle }}
         href="/logout"
         on:click={handleLogout}
       />

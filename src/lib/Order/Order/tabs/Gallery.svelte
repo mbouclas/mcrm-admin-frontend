@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { PencilAlt, Trash } from "svelte-heros";
+  import { PencilSquare, Trash } from "svelte-heros-v2";
   import { Confirm } from "svelte-confirm";
   import type { IDynamicFieldConfigBlueprint } from "../../../DynamicFields/types";
   import ImageSelect from "../../../DynamicFields/fields/image-select/index.svelte";
@@ -50,13 +50,19 @@
    * @param e
    */
   function handleModalModelChange(e) {
-    const foundIndex = model.findIndex(item => item.uuid === e.detail.uuid);
+    const foundIndex = model.findIndex((item) => item.uuid === e.detail.uuid);
     model[foundIndex] = e.detail;
   }
 </script>
 
 {#if show_modal}
-  <Popup {hideModal} {showModal} {onSave}  model={imgModel} on:change={handleModalModelChange} />
+  <Popup
+    {hideModal}
+    {showModal}
+    {onSave}
+    model={imgModel}
+    on:change={handleModalModelChange}
+  />
 {/if}
 {JSON.stringify(model)}
 <ImageSelect options={imageSettings} />
@@ -69,7 +75,7 @@
         <button
           class="image-btn edit-btn"
           on:click={showModalForEdit.bind(this, index)}
-          ><PencilAlt size="16" /></button
+          ><PencilSquare size="16" /></button
         >
         <Confirm
           confirmTitle="Delete"
