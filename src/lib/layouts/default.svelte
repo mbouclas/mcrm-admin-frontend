@@ -12,15 +12,40 @@
   import { onMount } from "svelte";
   import { notificationsStore } from "../stores";
   import type { INotification } from "../stores";
+  import { fly } from "svelte/transition";
+  import { flip } from "svelte/animate";
+
+  import { v4 } from "uuid";
+  import Toast from "../Shared/Toast.svelte";
+
+  interface ExtendedINotification extends INotification {
+    id: string;
+  }
 
   let url,
-  showNotifications: INotification|null = null;
+    showNotifications: ExtendedINotification[] = [];
   const promise = new BootService().boot();
 
-  notificationsStore.subscribe((state: INotification|null) => {
-    if (!state) {return;}
-    showNotifications = state;
-  });
+  let addAndRemove = () => {
+    const newNotification = {
+      id: v4(),
+      ...$notificationsStore[0],
+    };
+    showNotifications = [newNotification, ...showNotifications];
+
+    const removeNotificationById = (id) => {
+      showNotifications = showNotifications.filter(
+        (notification) => notification.id !== id
+      );
+    };
+
+    // Set a timeout for the new notification based on its expiration time
+    setTimeout(() => {
+      removeNotificationById(newNotification.id);
+    }, newNotification.expiration); // Assuming expiration is in seconds
+  };
+
+  $: $notificationsStore && $notificationsStore.length && addAndRemove();
 
   // (new BootService()).boot().then(res => console.log('done'));
   onMount(async () => {});
@@ -35,16 +60,32 @@
 
   let open = false;
 </script>
-{#if showNotifications}
-{JSON.stringify(showNotifications)}
-  Show notifications component
+
+{#if showNotifications && showNotifications.length !== 0}
+  <div class="notificator-wrapper">
+    {#each showNotifications as notification, index (notification.id)}
+      <div
+        in:fly={{ x: 500, duration: 500 }}
+        out:fly={{ x: 500, duration: 500 }}
+        animate:flip
+        class="notificator"
+      >
+        <Toast
+          message={notification.message}
+          type={notification.type}
+          position="tr"
+          show
+        />
+      </div>
+    {/each}
+  </div>
 {/if}
 
 {#await promise then res}
   <Router>
     <div class="flex">
       <Header bind:open />
-      <div class="bg-[#222736]  w-full">
+      <div class="bg-[#222736] w-full">
         <Topbar bind:open />
         <!-- {url} -->
         <div class="p-4 body">
@@ -78,3 +119,16 @@
 {:catch error}
   <p style="color: red">{error.message}</p>
 {/await}
+
+<style>
+  .notificator-wrapper {
+    @apply absolute right-5 p-5;
+    width: 300px;
+    z-index: 3000;
+  }
+  .notificator {
+    @apply rounded-md mt-4 text-white p-5 font-bold;
+    width: 300px;
+    z-index: 3000;
+  }
+</style>

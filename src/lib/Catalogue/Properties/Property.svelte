@@ -11,6 +11,7 @@
   import { AppService } from "../../Shared/app.service";
   import type { IDynamicFieldConfigBlueprint } from "../../DynamicFields/types";
   import getModelPrototypeFromFields from "../../helpers/model-prototype";
+  import { setNotificationAction } from "../../../lib/stores";
 
   const s = new PropertiesService();
   const params = useParams();
@@ -113,11 +114,11 @@
 
   const onSubmit = async (data) => {
     if ($params.id === "new") {
-      await s.store(data);
+      await s.store(data)
       return null;
     }
 
-    await s.update($params.id, data);
+    await s.update($params.id, data)
   };
 
   let contentDivClass = "p-4 bg-[#2a3042] rounded-lg dark:bg-gray-800";
@@ -153,6 +154,7 @@
     e.preventDefault();
     //if (e.currentTarget.checkValidity() && onSubmit && validateModel()) {
     onSubmit(model);
+
     //}
   }
 </script>
