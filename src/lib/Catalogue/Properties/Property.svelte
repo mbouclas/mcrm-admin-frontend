@@ -1,11 +1,5 @@
 <script lang="ts">
-  import {
-    TabWrapper,
-    TabHead,
-    TabHeadItem,
-    TabContentItem,
-    Button,
-  } from "flowbite-svelte";
+  import { Tabs, TabItem, Button } from "flowbite-svelte";
   import General from "./tabs/General.svelte";
 
   import { useParams } from "svelte-navigator";
@@ -126,11 +120,6 @@
     await s.update($params.id, data);
   };
 
-  let activeTabValue = 1;
-  function handleTabClick(id) {
-    activeTabValue = id;
-  }
-
   let contentDivClass = "p-4 bg-[#2a3042] rounded-lg dark:bg-gray-800";
   let customActiveClass =
     "inline-block p-4 text-white rounded-t-lg border-b-2 border-white active dark:text-white-500 dark:border-white-500";
@@ -173,30 +162,21 @@
 <!-- <Modals /> -->
 
 <Form bind:model {hasError}>
-  <TabWrapper
-    tabStyle="underline"
-    class="mb-4"
-    bind:activeTabValue
-    let:tabStyle
-    let:tabId
-  >
-    <TabHead {tabStyle} {tabId}>
-      <TabHeadItem
-        id={1}
-        tabStyle="custom"
-        {activeTabValue}
-        {customActiveClass}
-        {customInActiveClass}
-        on:click={() => handleTabClick(1)}>General</TabHeadItem
-      >
-      <li class="submit-button-wrapper">
-        <Button type="submit" on:click={onNativeSubmit}>Submit</Button>
-      </li>
-    </TabHead>
-    <TabContentItem id={1} {activeTabValue} {contentDivClass}>
+  <Tabs style="underline">
+    <TabItem
+      open
+      title="General"
+      tabStyle="custom"
+      {customActiveClass}
+      {customInActiveClass}
+    >
       <General {fields} {model} />
-    </TabContentItem>
-  </TabWrapper>
+    </TabItem>
+
+    <li class="submit-button-wrapper">
+      <Button type="submit" on:click={onNativeSubmit}>Submit</Button>
+    </li>
+  </Tabs>
 </Form>
 
 <style>

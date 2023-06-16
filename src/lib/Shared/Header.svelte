@@ -13,7 +13,7 @@
     ChartPie,
     ShoppingCart,
     Squares2x2,
-    Inbox,
+    InboxArrowDown,
     Cog,
     ArrowRightOnRectangle,
   } from "svelte-heros-v2";
@@ -125,7 +125,7 @@
           {aClass}
           label="Customers"
           {spanClass}
-          icon={{ name: Inbox }}
+          icon={{ name: InboxArrowDown }}
           href="/customers"
           on:click={(e) => {
             e.preventDefault();
@@ -205,7 +205,7 @@
       <SidebarDropdownWrapper
         {btnClass}
         label="Catalogue"
-        icon={{ name: ViewGrid }}
+        icon={{ name: Squares2x2 }}
       >
         <SidebarDropdownItem
           aClass={btnClass + " pl-11"}
@@ -270,7 +270,7 @@
         {aClass}
         label="Customers"
         {spanClass}
-        icon={{ name: InboxIn }}
+        icon={{ name: InboxArrowDown }}
         href="/customers"
         on:click={(e) => {
           e.preventDefault();
@@ -326,7 +326,7 @@
       <SidebarItem
         {aClass}
         label="Logout"
-        icon={{ name: Logout }}
+        icon={{ name: ArrowRightOnRectangle }}
         href="/logout"
         on:click={handleLogout}
       />

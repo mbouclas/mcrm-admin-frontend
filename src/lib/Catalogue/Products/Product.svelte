@@ -1,11 +1,5 @@
 <script lang="ts">
-  import {
-    TabWrapper,
-    TabHead,
-    TabHeadItem,
-    TabContentItem,
-    Button,
-  } from "flowbite-svelte";
+  import { Tabs, TabItem, Button } from "flowbite-svelte";
   import General from "./tabs/General.svelte";
   import SEO from "./tabs/SEO.svelte";
   import Files from "./tabs/Files.svelte";
@@ -57,11 +51,6 @@
     await s.store(data);
   };
 
-  let activeTabValue = 1;
-  function handleTabClick(id) {
-    activeTabValue = id;
-  }
-
   let contentDivClass = "p-4 bg-[#2a3042] rounded-lg dark:bg-gray-800";
   let customActiveClass =
     "inline-block p-4 text-white rounded-t-lg border-b-2 border-white active dark:text-white-500 dark:border-white-500";
@@ -105,96 +94,69 @@
 <!-- <Modals /> -->
 
 <Form bind:model {hasError}>
-  <TabWrapper
-    tabStyle="underline"
-    class="mb-4"
-    bind:activeTabValue
-    let:tabStyle
-    let:tabId
-  >
-    <TabHead {tabStyle} {tabId}>
-      <TabHeadItem
-        id={1}
-        tabStyle="custom"
-        {activeTabValue}
-        {customActiveClass}
-        {customInActiveClass}
-        on:click={() => handleTabClick(1)}>General</TabHeadItem
-      >
-      <TabHeadItem
-        id={2}
-        tabStyle="custom"
-        {activeTabValue}
-        {customActiveClass}
-        {customInActiveClass}
-        on:click={() => handleTabClick(2)}>Gallery</TabHeadItem
-      >
-      <TabHeadItem
-        tabStyle="custom"
-        {customActiveClass}
-        {customInActiveClass}
-        id={3}
-        {activeTabValue}
-        on:click={() => handleTabClick(3)}>SEO</TabHeadItem
-      >
-      <TabHeadItem
-        tabStyle="custom"
-        {customActiveClass}
-        {customInActiveClass}
-        id={4}
-        {activeTabValue}
-        on:click={() => handleTabClick(4)}>Files</TabHeadItem
-      >
-      <TabHeadItem
-        tabStyle="custom"
-        {customActiveClass}
-        {customInActiveClass}
-        id={5}
-        {activeTabValue}
-        on:click={() => handleTabClick(5)}>Items</TabHeadItem
-      >
-      <TabHeadItem
-        tabStyle="custom"
-        {customActiveClass}
-        {customInActiveClass}
-        id={6}
-        {activeTabValue}
-        on:click={() => handleTabClick(6)}>Variants</TabHeadItem
-      >
-      <TabHeadItem
-        tabStyle="custom"
-        {customActiveClass}
-        {customInActiveClass}
-        id={7}
-        {activeTabValue}
-        on:click={() => handleTabClick(7)}>Properties</TabHeadItem
-      >
-      <li class="submit-button-wrapper">
-        <Button type="submit" on:click={onNativeSubmit}>Submit</Button>
-      </li>
-    </TabHead>
-    <TabContentItem id={1} {activeTabValue} {contentDivClass}>
+  <Tabs tabStyle="underline" class="mb-4">
+    <TabItem
+      open
+      title="General"
+      tabStyle="custom"
+      {customActiveClass}
+      {customInActiveClass}
+    >
       <General {fields} {model} />
-    </TabContentItem>
-    <TabContentItem id={2} {activeTabValue} {contentDivClass}>
+    </TabItem>
+    <TabItem
+      title="Gallery"
+      tabStyle="custom"
+      {customActiveClass}
+      {customInActiveClass}
+    >
       <Gallery model={model.images} />
-    </TabContentItem>
-    <TabContentItem id={3} {activeTabValue} {contentDivClass}>
+    </TabItem>
+    <TabItem
+      title="SEO"
+      tabStyle="custom"
+      {customActiveClass}
+      {customInActiveClass}
+    >
       <SEO model={model.seo} on:change={handleModelChange.bind(this, "seo")} />
-    </TabContentItem>
-    <TabContentItem id={4} {activeTabValue} {contentDivClass}>
+    </TabItem>
+    <TabItem
+      title="Files"
+      tabStyle="custom"
+      {customActiveClass}
+      {customInActiveClass}
+    >
       <Files {model} />
-    </TabContentItem>
-    <TabContentItem id={5} {activeTabValue} {contentDivClass}>
+    </TabItem>
+    <TabItem
+      title="Items"
+      tabStyle="custom"
+      {customActiveClass}
+      {customInActiveClass}
+    >
       <p class="text-sm text-gray-500 dark:text-gray-400">Tab Content 4</p>
-    </TabContentItem>
-    <TabContentItem id={6} {activeTabValue} {contentDivClass}>
+    </TabItem>
+    <TabItem
+      title="Variants"
+      tabStyle="custom"
+      {customActiveClass}
+      {customInActiveClass}
+    >
       <p class="text-sm text-gray-500 dark:text-gray-400">Tab Content 5</p>
-    </TabContentItem>
-    <TabContentItem id={7} {activeTabValue} {contentDivClass}>
+    </TabItem>
+    <TabItem
+      title="Properties"
+      tabStyle="custom"
+      {customActiveClass}
+      {customInActiveClass}
+    >
       <p class="text-sm text-gray-500 dark:text-gray-400">Tab Content 6</p>
-    </TabContentItem>
-  </TabWrapper>
+    </TabItem>
+
+    <li class="submit-button-wrapper">
+      <Button type="submit" on:click={onNativeSubmit}>Submit</Button>
+    </li>
+  </Tabs>
 </Form>
 
 <style>
