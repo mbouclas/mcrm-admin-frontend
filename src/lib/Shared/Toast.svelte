@@ -17,7 +17,7 @@
 
 <Toast
   simple
-  visible={show}
+  open={show}
   {position}
   divClass={`product-toast ${type} fixed !right-[20px] z-[10000] rounded-lg p-2 text-white`}
 >
