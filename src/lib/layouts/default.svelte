@@ -15,6 +15,7 @@
   import { flip } from "svelte/animate";
 
   import { v4 } from "uuid";
+  import Toast from "../Shared/Toast.svelte";
 
   interface ExtendedINotification extends INotification {
     id: string;
@@ -62,16 +63,18 @@
 {#if showNotifications && showNotifications.length !== 0}
   <div class="notificator-wrapper">
     {#each showNotifications as notification, index (notification.id)}
-      <!-- 
-  <Toast message={notification.message} type={notification.type} position="tr" show/>
-  -->
       <div
         in:fly={{ x: 500, duration: 500 }}
         out:fly={{ x: 500, duration: 500 }}
         animate:flip
         class="notificator"
       >
-        {notification.message}
+        <Toast
+          message={notification.message}
+          type={notification.type}
+          position="tr"
+          show
+        />
       </div>
     {/each}
   </div>
@@ -114,12 +117,12 @@
 
 <style>
   .notificator-wrapper {
-    @apply absolute top-0 right-0 mt-10 mr-20 p-5;
+    @apply absolute top-0 right-0 mt-3 mr-28 p-5;
     width: 300px;
     z-index: 3000;
   }
   .notificator {
-    @apply bg-gray-500 border-4 rounded-md border-solid  text-white p-5 font-bold;
+    @apply relative rounded-md mt-4 text-white p-5 font-bold;
     width: 300px;
     z-index: 3000;
   }
