@@ -167,6 +167,16 @@
           />
         </SidebarDropdownWrapper>
         <SidebarItem
+                {aClass}
+                label="Editable Regions"
+                icon={{ name: Cog }}
+                href="/editable-regions"
+                on:click={(e) => {
+            e.preventDefault();
+            navigate("/editable-regions");
+          }}
+        />
+        <SidebarItem
           {aClass}
           label="Settings"
           icon={{ name: Cog }}
@@ -311,6 +321,16 @@
           }}
         />
       </SidebarDropdownWrapper>
+      <SidebarItem
+              {aClass}
+              label="Editable Regions"
+              icon={{ name: Cog }}
+              href="/editable-regions"
+              on:click={(e) => {
+            e.preventDefault();
+            navigate("/editable-regions");
+          }}
+      />
       <SidebarItem
         {aClass}
         label="Settings"

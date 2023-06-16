@@ -7,6 +7,7 @@
   import Profile from "../User/Profile.svelte";
   import CatalogueRoutes from "../Catalogue/routes.svelte";
   import OrderRoutes from "../Order/routes.svelte";
+  import EditableRegions from "../EditableRegions/routes.svelte";
   import { BootService } from "../Shared/boot.service";
   import { onMount } from "svelte";
   import { notificationsStore } from "../stores";
@@ -65,6 +66,10 @@
 
           <PrivateRoute path="orders/*" let:location>
             <OrderRoutes />
+          </PrivateRoute>
+
+          <PrivateRoute path="editable-regions/*" let:location>
+            <EditableRegions />
           </PrivateRoute>
         </div>
       </div>

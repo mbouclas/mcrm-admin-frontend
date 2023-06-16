@@ -1,9 +1,12 @@
+import type {IEditableRegion} from "../lib/EditableRegions/models";
+
 export interface IBootConfigs {
     [key: string]: any;
     catalogue: Catalogue;
     images: Images;
     mail: Mail;
     store: Store;
+    editableRegions: IEditableRegion[]
 }
 
 
