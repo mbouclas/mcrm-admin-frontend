@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { PencilAlt, Trash } from "svelte-heros";
   import { Confirm } from "svelte-confirm";
   import type { IDynamicFieldConfigBlueprint } from "../../../DynamicFields/types";
   import ImageSelect from "../../../DynamicFields/fields/image-select/index.svelte";

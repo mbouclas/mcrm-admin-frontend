@@ -12,13 +12,11 @@
   import {
     ChartPie,
     ShoppingCart,
-    ViewGrid,
-    InboxIn,
-    User,
-    Login,
+    Squares2x2,
+    Inbox,
     Cog,
-    Logout,
-  } from "svelte-heros";
+    ArrowRightOnRectangle,
+  } from "svelte-heros-v2";
   import Drawer from "svelte-drawer-component";
 
   import { user } from "../stores";
@@ -62,7 +60,7 @@
         <SidebarDropdownWrapper
           {btnClass}
           label="Catalogue"
-          icon={{ name: ViewGrid }}
+          icon={{ name: Squares2x2 }}
         >
           <SidebarDropdownItem
             aClass={btnClass + " pl-11"}
@@ -127,7 +125,7 @@
           {aClass}
           label="Customers"
           {spanClass}
-          icon={{ name: InboxIn }}
+          icon={{ name: Inbox }}
           href="/customers"
           on:click={(e) => {
             e.preventDefault();
@@ -183,7 +181,7 @@
         <SidebarItem
           {aClass}
           label="Logout"
-          icon={{ name: Logout }}
+          icon={{ name: ArrowRightOnRectangle }}
           href="/logout"
           on:click={handleLogout}
         />

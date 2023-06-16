@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Modal, Button } from "flowbite-svelte";
   import { Tabs, Tab, TabList, TabPanel } from "svelte-tabs";
-  import { Upload, PlusSm, Adjustments, ClipboardList } from "svelte-heros";
+  import { ArrowUpOnSquare, Plus, AdjustmentsVertical } from "svelte-heros-v2";
   import UploadImage from "./image-upload.svelte";
   import UrlInput from "./url-input.svelte";
   import type {
@@ -18,24 +18,23 @@
   export let itemId;
 
   let defaultModal;
-
 </script>
 
 <Tabs>
   <TabList>
     <Tab>
-      <Upload />
+      <ArrowUpOnSquare />
     </Tab>
     {#if options.addFromUrl}
-    <Tab>
-      <PlusSm />
-    </Tab>
-      {/if}
+      <Tab>
+        <Plus />
+      </Tab>
+    {/if}
     {#if options.selectFromMediaLibrary}
-    <Tab>
-      <Adjustments />
-    </Tab>
-      {/if}
+      <Tab>
+        <AdjustmentsVertical />
+      </Tab>
+    {/if}
   </TabList>
 
   <TabPanel>
@@ -45,26 +44,26 @@
   </TabPanel>
 
   {#if options.addFromUrl}
-  <TabPanel>
-    <UrlInput />
-  </TabPanel>
-    {/if}
+    <TabPanel>
+      <UrlInput />
+    </TabPanel>
+  {/if}
   {#if options.selectFromMediaLibrary}
-  <TabPanel>
-    <div class="dynamic-field">
-      <Button on:click={() => (defaultModal = true)}
-        >Select from media library</Button
-      >
-    </div>
-    <Modal title="Media Library" bind:open={defaultModal}>
-      <p>content here...</p>
-      <svelte:fragment slot="footer">
-        <Button>Select</Button>
-        <Button color="alternative">Cancel</Button>
-      </svelte:fragment>
-    </Modal>
-  </TabPanel>
-    {/if}
+    <TabPanel>
+      <div class="dynamic-field">
+        <Button on:click={() => (defaultModal = true)}
+          >Select from media library</Button
+        >
+      </div>
+      <Modal title="Media Library" bind:open={defaultModal}>
+        <p>content here...</p>
+        <svelte:fragment slot="footer">
+          <Button>Select</Button>
+          <Button color="alternative">Cancel</Button>
+        </svelte:fragment>
+      </Modal>
+    </TabPanel>
+  {/if}
 </Tabs>
 
 <style global>
