@@ -1,6 +1,5 @@
 import type { IGenericObject } from "./models/generic";
 import { AuthService } from "../Auth/auth.service";
-import { html } from "gridjs";
 import queryString from "query-string";
 
 export class BaseHttpService {
@@ -70,29 +69,62 @@ export class BaseHttpService {
     body: IGenericObject = {},
     extraHeaders: IGenericObject = {}
   ) {
-    const headers = this.getAuthHeaders();
+    try {
+      const headers = this.getAuthHeaders();
 
-    const contentType = headers.get("Content-Type");
-    if (!contentType) {
-      headers.append("Content-Type", "application/json");
+      Object.keys(extraHeaders).forEach((header) => {
+        headers.append(header, extraHeaders[header]);
+      });
+
+      const contentType = headers.get("Content-Type");
+      if (!contentType) {
+        headers.append("Content-Type", "application/json");
+      }
+
+      const rawResponse = await fetch(`${this.apiUrl}${url}`, {
+        method: "PATCH",
+        headers,
+        body: JSON.stringify(body),
+      });
+      if (!rawResponse.ok) {
+        throw new Error("Bad request");
+      }
+      const res = await rawResponse.json();
+      if (typeof res.success !== undefined && !res.success) {
+        throw res;
+      }
+      return res;
+    } catch (err) {
+      throw err;
     }
-
-    const res = await fetch(`${this.apiUrl}${url}`, {
-      method: "PATCH",
-      headers,
-      body: JSON.stringify(body),
-    });
   }
 
   async delete(url: string) {
-    const headers = new Headers();
-    headers.append("Authorization", `Bearer ${AuthService.token()}`);
-    headers.append("x-sess-id", AuthService.getSessionId());
+    try {
+      const headers = new Headers();
+      headers.append("Authorization", `Bearer ${AuthService.token()}`);
+      headers.append("x-sess-id", AuthService.getSessionId());
 
-    const res = await fetch(`${this.apiUrl}${url}`, {
-      method: "DELETE",
-      headers,
-    });
+      const contentType = headers.get("Content-Type");
+      if (!contentType) {
+        headers.append("Content-Type", "application/json");
+      }
+
+      const rawResponse = await fetch(`${this.apiUrl}${url}`, {
+        method: "DELETE",
+        headers,
+      });
+      if (!rawResponse.ok) {
+        throw new Error("Bad request");
+      }
+      const res = await rawResponse.json();
+      if (typeof res.success !== undefined && !res.success) {
+        throw res;
+      }
+      return res;
+    } catch (err) {
+      throw err;
+    }
   }
 
   private objectToQueryParams(obj: IGenericObject) {

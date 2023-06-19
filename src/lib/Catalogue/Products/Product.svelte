@@ -47,8 +47,11 @@
   });
 
   const onSubmit = async (data) => {
-    console.log("Submit", data);
-    await s.store(data);
+    if ($params.id === "new") {
+      await s.store(data);
+      return null;
+    }
+    await s.update($params.id, data);
   };
 
   let contentDivClass = "p-4 bg-[#2a3042] rounded-lg dark:bg-gray-800";

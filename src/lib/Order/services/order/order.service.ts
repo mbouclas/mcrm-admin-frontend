@@ -2,6 +2,7 @@ import { BaseHttpService } from "../../../Shared/base-http.service";
 import type { IGenericObject } from "../../../Shared/models/generic";
 import queryString from "query-string";
 import { html } from "gridjs";
+import { setNotificationAction } from "../../../stores";
 
 export class OrderService extends BaseHttpService {
   async activateRows(selectedIds: string[]) {
@@ -30,7 +31,19 @@ export class OrderService extends BaseHttpService {
   }
 
   async deleteRow(itemId: string) {
-    return await super.delete(`order/${itemId}`);
+    try {
+      const res = await super.delete(`order/${itemId}`);
+      setNotificationAction({
+        message: "Deleted successfully",
+        type: "success",
+      });
+      return res;
+    } catch (err) {
+      setNotificationAction({
+        message: "Failed to delete",
+        type: "error",
+      });
+    }
   }
 
   getGridUrl(filters = {}) {
@@ -66,10 +79,34 @@ export class OrderService extends BaseHttpService {
   }
 
   async update(id, data) {
-    return await this.post(`order/${id}`, data);
+    try {
+      const res = await this.patch(`order/${id}`, data);
+      setNotificationAction({
+        message: "Updated successfully",
+        type: "success",
+      });
+      return res;
+    } catch (err) {
+      setNotificationAction({
+        message: "Failed to update",
+        type: "error",
+      });
+    }
   }
 
   async store(data: IGenericObject) {
-    return super.post("order/basic", data);
+    try {
+      const res = super.post("order/basic", data);
+      setNotificationAction({
+        message: "Created successfully",
+        type: "success",
+      });
+      return res;
+    } catch (err) {
+      setNotificationAction({
+        message: "Failed to create",
+        type: "error",
+      });
+    }
   }
 }

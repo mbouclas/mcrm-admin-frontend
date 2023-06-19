@@ -8,7 +8,6 @@
   import { h } from "gridjs";
   import { RowSelection } from "gridjs/plugins/selection";
   import Drawer from "svelte-drawer-component";
-  import LuckyToast from "../../Shared/Toast.svelte";
 
   import { Confirm } from "svelte-confirm";
   import Modals from "../../Shared/Modals.svelte";
@@ -27,10 +26,6 @@
   let gridInstance;
   $: selectedRows = [];
   $: allRowsSelected = false;
-
-  let doneActivate = false;
-  let doneDeactivate = false;
-  let doneDelete = false;
 
   function createActionsButton(data) {
     const { row, active, id } = data;
@@ -264,68 +259,31 @@
 
   async function activateRows() {
     const res = await service.activateRows(selectedRows);
-    if (res) {
-      doneActivate = true;
-      setTimeout(() => (doneActivate = false), 3000);
-    }
   }
 
   async function activateRow(itemId) {
     console.log(itemId);
     const res = await service.activateRow(itemId);
-    if (res) {
-      doneActivate = true;
-      setTimeout(() => (doneActivate = false), 3000);
-    }
   }
 
   async function de_activateRows(selectedRows) {
     const res = await service.de_activateRows(selectedRows);
-    if (res) {
-      doneDeactivate = true;
-      setTimeout(() => (doneDeactivate = false), 3000);
-    }
   }
   async function de_activateRow(itemId) {
     console.log(itemId);
     const res = await service.de_activateRow(itemId);
-    if (res) {
-      doneDeactivate = true;
-      setTimeout(() => (doneDeactivate = false), 3000);
-    }
   }
 
   async function deleteItems() {
     const res = await service.deleteRows(selectedRows);
-    if (res) {
-      doneDelete = true;
-      setTimeout(() => (doneDelete = false), 3000);
-    }
   }
 
   async function deleteItem(itemId) {
     const res = await service.deleteRow(itemId);
-    if (res) {
-      doneDelete = true;
-      setTimeout(() => (doneDelete = false), 3000);
-    }
   }
 </script>
 
 <Modals />
-
-<LuckyToast
-  show={doneActivate}
-  message="Activated successfully!"
-  type="success"
-/>
-<LuckyToast
-  show={doneDeactivate}
-  message="De-activated successfully!"
-  type="success"
-/>
-<LuckyToast show={doneDelete} message="Deleted successfully!" type="success" />
-
 <div class="grid-wrapper p-4 bg-[#2a3042] rounded-md text-[#a6b0cf]">
   <h1 class="mt-4 mb-2 text-lg">Property List</h1>
   <div class="toolbar flex justify-end bg-[#517acd]">

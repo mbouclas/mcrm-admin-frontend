@@ -31,7 +31,19 @@ export class PropertiesService extends BaseHttpService {
   }
 
   async deleteRow(itemId: string) {
-    return await super.delete(`property/${itemId}`);
+    try {
+      const res = await super.delete(`property/${itemId}`);
+      setNotificationAction({
+        message: "Deleted successfully",
+        type: "success",
+      });
+      return res;
+    } catch (err) {
+      setNotificationAction({
+        message: "Failed to delete",
+        type: "error",
+      });
+    }
   }
 
   getGridUrl(filters = {}) {
@@ -63,7 +75,19 @@ export class PropertiesService extends BaseHttpService {
   }
 
   async update(id: string, data: IGenericObject) {
-    return await this.patch(`property/${id}`, data);
+    try {
+      const res = await this.patch(`property/${id}`, data);
+      setNotificationAction({
+        message: "Updated successfully",
+        type: "success",
+      });
+      return res;
+    } catch (err) {
+      setNotificationAction({
+        message: "Failed to update",
+        type: "error",
+      });
+    }
   }
 
   async store(data: IGenericObject) {

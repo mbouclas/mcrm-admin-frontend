@@ -21,9 +21,6 @@
 
   $: model = addedValues;
 
-  let doneActivate = false;
-  let doneDeactivate = false;
-  let doneDelete = false;
   $: allRowsSelected = false;
 
   let openFilter = false;

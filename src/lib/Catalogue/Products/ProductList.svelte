@@ -2,25 +2,28 @@
   import queryString from "query-string";
   import { useParams, useLocation, useNavigate } from "svelte-navigator";
   import { ProductsService } from "../services/products/products.service";
-  import {onMount} from "svelte";
+  import { onMount } from "svelte";
   import ActionList from "./grid-actions.svelte";
   import Grid from "gridjs-svelte";
   import { h } from "gridjs";
   import { RowSelection } from "gridjs/plugins/selection";
   import Drawer from "svelte-drawer-component";
-  import LuckyToast from "../../Shared/Toast.svelte";
-  import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Checkbox} from 'flowbite-svelte';
+  import {
+    Table,
+    TableBody,
+    TableBodyCell,
+    TableBodyRow,
+    TableHead,
+    TableHeadCell,
+    Checkbox,
+  } from "flowbite-svelte";
 
   import { Confirm } from "svelte-confirm";
   import Modals from "../../Shared/Modals.svelte";
 
-
   let openFilter = false;
   let openProductEditModal = false;
   let itemId;
-
-
-
 
   const service = new ProductsService();
   const params = useParams();
@@ -30,10 +33,6 @@
   let gridInstance;
   $: selectedRows = [];
   $: allRowsSelected = false;
-
-  let doneActivate = false;
-  let doneDeactivate = false;
-  let doneDelete = false;
 
   const server = service.getGridUrl(filters);
   const pagination = service.getGridPaginationObject();
@@ -158,9 +157,9 @@
       formatter: (cell, row, idx) => {
         const id = row.cells[1].data;
         const active = row.cells[7].data;
-        createActionsButton({row, active, id});
+        createActionsButton({ row, active, id });
 
-        return h("div", { id: `action-${row.id}`}, '');
+        return h("div", { id: `action-${row.id}` }, "");
       },
     },
   ];
@@ -184,16 +183,18 @@
   $: console.log($params); // -> { id: "123", splat: "pauls-profile" }
 
   function createActionsButton(data) {
-    const {row, active, id} = data;
+    const { row, active, id } = data;
     const selector = document.querySelector(`#action-${row.id}`);
-    if (!selector) {return}
+    if (!selector) {
+      return;
+    }
 
     // Avoid duplicates, grid fires more than once
-    if ( selector && selector.children && selector.children.length === 1) {
+    if (selector && selector.children && selector.children.length === 1) {
       return;
     }
     const wrapperEl = selector;
-    
+
     const e = new ActionList({
       target: wrapperEl,
       props: { title: `edit ${id}`, id, active },
@@ -222,57 +223,33 @@
 
   async function activateRows() {
     const res = await service.activateRows(selectedRows);
-    if (res) {
-      doneActivate = true;
-      setTimeout(() => (doneActivate = false), 3000);
-    }
   }
 
   async function activateRow(itemId) {
-    console.log(itemId);
     const res = await service.activateRow(itemId);
-    if (res) {
-      doneActivate = true;
-      setTimeout(() => (doneActivate = false), 3000);
-    }
   }
 
   async function de_activateRows(selectedRows) {
     const res = await service.de_activateRows(selectedRows);
-    if (res) {
-      doneDeactivate = true;
-      setTimeout(() => (doneDeactivate = false), 3000);
-    }
   }
   async function de_activateRow(itemId) {
     console.log(itemId);
     const res = await service.de_activateRow(itemId);
-    if (res) {
-      doneDeactivate = true;
-      setTimeout(() => (doneDeactivate = false), 3000);
-    }
   }
 
   async function deleteItems() {
     const res = await service.deleteRows(selectedRows);
-    if (res) {
-      doneDelete = true;
-      setTimeout(() => (doneDelete = false), 3000);
-    }
   }
 
   async function deleteItem(itemId) {
     const res = await service.deleteRow(itemId);
-    if (res) {
-      doneDelete = true;
-      setTimeout(() => (doneDelete = false), 3000);
-    }
   }
 
   function onRowReady(row) {
-    console.log('row ready', row);
+    console.log("row ready", row);
   }
 </script>
+
 <Table>
   <TableHead>
     <TableHeadCell class="!p-4">
@@ -300,10 +277,16 @@
       <TableBodyCell>$2999</TableBodyCell>
       <TableBodyCell>3.0 lb.</TableBodyCell>
       <TableBodyCell
-        ><a href="/tables" class="font-medium text-blue-600 hover:underline dark:text-blue-500">
+        ><a
+          href="/tables"
+          class="font-medium text-blue-600 hover:underline dark:text-blue-500"
+        >
           Edit
         </a>
-        <a href="/tables" class="font-medium text-red-600 hover:underline dark:text-red-500">
+        <a
+          href="/tables"
+          class="font-medium text-red-600 hover:underline dark:text-red-500"
+        >
           Remove
         </a></TableBodyCell
       >
@@ -320,10 +303,16 @@
       <TableBodyCell>$1999</TableBodyCell>
       <TableBodyCell>1.0 lb.</TableBodyCell>
       <TableBodyCell
-        ><a href="/tables" class="font-medium text-blue-600 hover:underline dark:text-blue-500">
+        ><a
+          href="/tables"
+          class="font-medium text-blue-600 hover:underline dark:text-blue-500"
+        >
           Edit
         </a>
-        <a href="/tables" class="font-medium text-red-600 hover:underline dark:text-red-500">
+        <a
+          href="/tables"
+          class="font-medium text-red-600 hover:underline dark:text-red-500"
+        >
           Remove
         </a></TableBodyCell
       >
@@ -340,10 +329,16 @@
       <TableBodyCell>$99</TableBodyCell>
       <TableBodyCell>0.2 lb.</TableBodyCell>
       <TableBodyCell
-        ><a href="/tables" class="font-medium text-blue-600 hover:underline dark:text-blue-500">
+        ><a
+          href="/tables"
+          class="font-medium text-blue-600 hover:underline dark:text-blue-500"
+        >
           Edit
         </a>
-        <a href="/tables" class="font-medium text-red-600 hover:underline dark:text-red-500">
+        <a
+          href="/tables"
+          class="font-medium text-red-600 hover:underline dark:text-red-500"
+        >
           Remove
         </a></TableBodyCell
       >
@@ -352,19 +347,6 @@
 </Table>
 
 <Modals />
-
-<LuckyToast
-  show={doneActivate}
-  message="Activated successfully!"
-  type="success"
-/>
-<LuckyToast
-  show={doneDeactivate}
-  message="De-activated successfully!"
-  type="success"
-/>
-<LuckyToast show={doneDelete} message="Deleted successfully!" type="success" />
-
 <div class="grid-wrapper p-4 bg-[#2a3042] rounded-md text-[#a6b0cf]">
   <h1 class="mt-4 mb-2 text-lg">Product List</h1>
   <div class="toolbar flex justify-end bg-[#517acd]">
@@ -409,7 +391,7 @@
       placement="right"
       on:clickAway={() => (openFilter = false)}
     >
-      <div class=" w-full h-full bg-[#222736] ">
+      <div class=" w-full h-full bg-[#222736]">
         <div class="flex justify-between w-full p-4 text-white">
           <p>Filters</p>
           <i
