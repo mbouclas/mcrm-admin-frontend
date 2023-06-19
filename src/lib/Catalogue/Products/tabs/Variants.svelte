@@ -16,8 +16,10 @@
   let model;
   let fields: IDynamicFieldConfigBlueprint[] = [];
 
+  let items = [];
+  let pagination = {};
+
   onMount(async () => {
-    console.log("djole", AppService.getModel("ProductVariantModel"));
     fields = AppService.getModel("ProductVariantModel").fields.filter(
       (f) => f.varName !== "thumb" && !f.hidden
     );
@@ -26,10 +28,17 @@
     if (productId) {
       model = await s.find({});
       console.log(model);
+      items = model?.data;
+      pagination = {
+        total: model.total,
+        skip: model.skip,
+        limit: model.limit,
+        page: model.page,
+      };
     } else {
       model = getModelPrototypeFromFields(fields);
     }
   });
 </script>
 
-<Table {fields} items={model?.data} />
+<Table bind:fields bind:items bind:pagination />
