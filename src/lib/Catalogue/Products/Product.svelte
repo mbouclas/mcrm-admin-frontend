@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Tabs, TabItem, Button } from "flowbite-svelte";
   import General from "./tabs/General.svelte";
+  import Variants from "./tabs/Variants.svelte";
   import SEO from "./tabs/SEO.svelte";
   import Files from "./tabs/Files.svelte";
 
@@ -142,7 +143,7 @@
       {customActiveClass}
       {customInActiveClass}
     >
-      <p class="text-sm text-gray-500 dark:text-gray-400">Tab Content 5</p>
+      <Variants productId={$params.id} />
     </TabItem>
     <TabItem
       title="Properties"
@@ -152,10 +153,6 @@
     >
       <p class="text-sm text-gray-500 dark:text-gray-400">Tab Content 6</p>
     </TabItem>
-
-    <li class="submit-button-wrapper">
-      <Button type="submit" on:click={onNativeSubmit}>Submit</Button>
-    </li>
   </Tabs>
 </Form>
 
