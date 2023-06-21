@@ -8,7 +8,6 @@
     TableSearch,
     Checkbox,
   } from "flowbite-svelte";
-  import { Pagination } from "flowbite-svelte";
   import { createEventDispatcher } from "svelte";
 
   export let items = [];
@@ -17,21 +16,17 @@
 
   let searchTerm = "";
 
+  let activePageName = 1;
   const dispatch = createEventDispatcher();
 
   const generatePages = (currentPage) => {
-    const itemsPerPage = pagination.limit || 10;
-    const totalItems = pagination.total || 0;
-    const numberOfPages = Math.ceil(totalItems / itemsPerPage);
+    let between = [];
 
-    const startPage = Math.max(2, currentPage + 1);
-    const endPage = Math.min(numberOfPages - 1, currentPage + 3);
+    if (currentPage !== 1 && currentPage !== pagination.totalPages) {
+      between = [{ name: currentPage }];
+    }
 
-    const between = Array.from({ length: endPage - startPage + 1 }, (_, i) => ({
-      name: i + startPage,
-    }));
-
-    pages = [{ name: 1 }, ...between, { name: pagination.total }];
+    pages = [{ name: 1 }, ...between, { name: pagination.totalPages }];
   };
 
   $: generatePages(pagination.page || 1);
@@ -45,15 +40,16 @@
     }
   };
   const next = () => {
-    if (pagination.page < pagination.total) {
+    if (pagination.page < pagination.totalPages) {
       pagination.page = pagination.page + 1;
       dispatch("reload", { pagination });
     }
   };
-  const handleClick = (e) => {
-    const clickedPage = parseInt(e.target.innerHTML);
+  const handleClick = (page) => {
+    const clickedPage = page.name;
     if (pagination.page !== clickedPage) {
       pagination.page = clickedPage;
+      console.log("activePageName ", activePageName);
       dispatch("reload", { pagination });
     }
   };
@@ -136,12 +132,37 @@
 </div>
 
 <div class="flex flex-col items-center justify-center">
-  <Pagination
-    {pages}
-    on:previous={previous}
-    on:next={next}
-    on:click={handleClick}
-    classActive="!bg-red-500"
-    table
-  />
+  <nav aria-label="Page navigation example">
+    <ul class="inline-flex -space-x-px">
+      <li on:click={() => previous()}>
+        <a
+          href="#"
+          class="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+          >Previous</a
+        >
+      </li>
+
+      {#each pages as page}
+        <li on:click={() => handleClick(page)}>
+          <a
+            href="#"
+            class={`${
+              pagination.page === page.name
+                ? "dark:bg-gray-700"
+                : "dark:bg-gray-800"
+            } px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white`}
+            >{page.name}</a
+          >
+        </li>
+      {/each}
+      <li on:click={() => next()}>
+        <a
+          aria-current="page"
+          href="#"
+          class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+          >Next</a
+        >
+      </li>
+    </ul>
+  </nav>
 </div>

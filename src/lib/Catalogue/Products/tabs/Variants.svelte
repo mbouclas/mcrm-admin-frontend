@@ -28,6 +28,7 @@
       items = model?.data;
       pagination = {
         total: parseInt(model.total),
+        totalPages: parseInt(model.pages),
         skip: parseInt(model.skip),
         limit: parseInt(model.limit),
         page: parseInt(model.page),
