@@ -21,10 +21,6 @@
   const navigate = useNavigate();
   const dispatch = createEventDispatcher();
 
-  let addedValues = model ? JSON.parse(JSON.stringify(model)) : [];
-
-  $: model = addedValues;
-
   $: allRowsSelected = false;
 
   let selectedRows = [];
@@ -50,7 +46,7 @@
         id,
         active,
         openQuickEditModal: () => {
-          modalValue = addedValues.find((value) => value.uuid === id);
+          modalValue = model.find((value) => value.uuid === id);
           openQuickModal('edit');
         },
       },
@@ -126,7 +122,7 @@
 
   $: activeColumnIndex = columns.findIndex((column) => column.id === 'active');
 
-  $: data = addedValues.map((item, valueIndex) => {
+  $: data = model.map((item, valueIndex) => {
     // Map each field into an array in the correct column order
     return [
       item[columns[1].id] || valueIndex,
@@ -158,7 +154,7 @@
   async function deleteItems() {}
 
   async function deleteItem(itemId) {
-    const valueIndex = addedValues.findIndex((value) => value.uuid === itemId);
+    const valueIndex = model.findIndex((value) => value.uuid === itemId);
     if (valueIndex !== -1) {
       onModelChangeItem({ value: { uuid: itemId }, action: 'delete', name: field.varName });
     }
@@ -169,7 +165,7 @@
       onModelChangeItem({ value: modalValue, action: type, name: field.varName });
     }
     if (type === 'edit') {
-      const valueIndex = addedValues.findIndex((value) => value.uuid === modalValue.uuid);
+      const valueIndex = model.findIndex((value) => value.uuid === modalValue.uuid);
       if (valueIndex !== -1) {
         onModelChangeItem({ value: modalValue, action: type, name: field.varName });
       }

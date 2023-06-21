@@ -24,8 +24,6 @@
       if ($params.id === 'new') {
         model = getModelPrototypeFromFields(fields);
       } else {
-        console.log('reload ', await s.findOne($params.id, ['*']));
-
         model = await s.findOne($params.id, ['*']);
       }
     }
