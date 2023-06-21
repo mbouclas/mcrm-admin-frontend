@@ -158,18 +158,19 @@
   async function deleteItems() {}
 
   async function deleteItem(itemId) {
-    addedValues = addedValues.filter((item) => item.uuid !== itemId);
+    const valueIndex = addedValues.findIndex((value) => value.uuid === itemId);
+    if (valueIndex !== -1) {
+      onModelChangeItem({ value: { uuid: itemId }, action: 'delete', name: field.varName });
+    }
   }
 
   const handleModalConfirm = (type) => {
     if (type === 'add') {
-      addedValues = [...addedValues, { ...modalValue }];
       onModelChangeItem({ value: modalValue, action: type, name: field.varName });
     }
     if (type === 'edit') {
       const valueIndex = addedValues.findIndex((value) => value.uuid === modalValue.uuid);
       if (valueIndex !== -1) {
-        addedValues[valueIndex] = modalValue;
         onModelChangeItem({ value: modalValue, action: type, name: field.varName });
       }
     }

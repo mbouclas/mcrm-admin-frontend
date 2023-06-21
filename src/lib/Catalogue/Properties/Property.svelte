@@ -17,6 +17,19 @@
   export let itemId;
   let relationships: any[] = [];
 
+  const reloadData = async () => {
+    if (itemId) {
+      model = await s.findOne(itemId, ['*']);
+    } else {
+      if ($params.id === 'new') {
+        model = getModelPrototypeFromFields(fields);
+      } else {
+        console.log('reload ', await s.findOne($params.id, ['*']));
+
+        model = await s.findOne($params.id, ['*']);
+      }
+    }
+  };
   onMount(async () => {
     let rawModel = AppService.getModel('PropertyModel');
     fields = rawModel.fields;
@@ -80,16 +93,8 @@
           ];
         });
     }
-    if (itemId) {
-      model = await s.findOne(itemId, ['*']);
-    } else {
-      if ($params.id === 'new') {
-        model = getModelPrototypeFromFields(fields);
-      } else {
-        model = await s.findOne($params.id, ['*']);
-      }
-    }
 
+    reloadData();
     if (!model.seo) {
       model.seo = {
         title: model.title,
@@ -108,6 +113,12 @@
     if (action === 'edit') {
       await s.updatePropertyValue(value);
     }
+
+    if (action === 'delete') {
+      await s.deletePropertyValue(value);
+    }
+
+    await reloadData();
   };
 
   const onSubmit = async (data) => {
@@ -164,7 +175,7 @@
 <Form bind:model {hasError}>
   <Tabs style="underline">
     <TabItem open title="General" tabStyle="custom" {customActiveClass} {customInActiveClass}>
-      <General {fields} {model} {handlePropertyValue} />
+      <General {fields} bind:model {handlePropertyValue} />
     </TabItem>
 
     <li class="submit-button-wrapper">

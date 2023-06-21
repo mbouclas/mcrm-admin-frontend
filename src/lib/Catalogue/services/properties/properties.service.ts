@@ -137,4 +137,20 @@ export class PropertiesService extends BaseHttpService {
       });
     }
   }
+
+  async deletePropertyValue(data: IGenericObject) {
+    try {
+      const res = await super.delete(`property/${data.uuid}/value/${data.propertyValueUuid}`);
+      setNotificationAction({
+        message: 'Created successfully',
+        type: 'success',
+      });
+      return res;
+    } catch (err) {
+      setNotificationAction({
+        message: 'Failed to create',
+        type: 'error',
+      });
+    }
+  }
 }
