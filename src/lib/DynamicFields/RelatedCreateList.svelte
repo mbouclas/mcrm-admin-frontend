@@ -11,70 +11,81 @@
   export let onModelChangeItem;
   export let onReloadData;
 
-  let gridInstance;
-
   let deleteModalOpen = false;
   let editModalOpen = false;
-
-  let modalValue = {};
-  const dispatch = createEventDispatcher();
+  let createModelOpen = false;
 
   let selectedRows = [];
   let pagination = { limit: 10, enabled: true };
 
   const handleAction = (actionType, item) => {
     selectedItem = item;
+
+    if (actionType === 'create') {
+      createModelOpen = true;
+      deleteModalOpen = false;
+      editModalOpen = false;
+    }
+
     if (actionType === 'delete') {
       deleteModalOpen = true;
       editModalOpen = false;
+      createModelOpen = false;
     }
 
     if (actionType === 'edit') {
       editModalOpen = true;
       deleteModalOpen = false;
+      createModelOpen = false;
     }
   };
 
-  async function deleteItem(itemId) {
-    const valueIndex = model.findIndex((value) => value.uuid === itemId);
-    if (valueIndex !== -1) {
-      onModelChangeItem({ value: { uuid: itemId }, action: 'delete', name: field.varName });
-    }
-  }
-
-  const handleModalConfirm = (type) => {
-    if (type === 'add') {
-      onModelChangeItem({ value: modalValue, action: type, name: field.varName });
-    }
-    if (type === 'edit') {
-      const valueIndex = model.findIndex((value) => value.uuid === modalValue.uuid);
-      if (valueIndex !== -1) {
-        onModelChangeItem({ value: modalValue, action: type, name: field.varName });
-      }
-    }
-  };
-
-  const handleModalClose = () => {
-    modalValue = {};
+  const handleModalCancel = () => {
+    selectedItem = {};
   };
 </script>
 
 <Modal title="Confirm delete" bind:open={deleteModalOpen} autoclose outsideclose>
-  <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-    Are you sure you want to delete this variant?
-  </p>
+  <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">Are you sure you want to delete this item?</p>
   <svelte:fragment slot="footer">
-    <Button on:click={() => handleDeleteConfirm()}>Confirm</Button>
-    <Button on:click={() => handleDeleteCancel()} color="alternative">Cancel</Button>
+    <Button on:click={() => onModelChangeItem({ value: selectedItem, action: 'delete', name: field.varName })}
+      >Confirm</Button
+    >
+    <Button on:click={() => handleModalCancel()} color="alternative">Cancel</Button>
   </svelte:fragment>
 </Modal>
 
-<Modal title="Update variant" bind:open={editModalOpen} autoclose outsideclose>
-  <Fields fields={field.fields} bind:model={modalValue} module="Product" itemId={modalValue?.uuid || ''} />
+<Modal title="Update item" bind:open={editModalOpen} autoclose outsideclose>
+  <Fields
+    reloadData={onReloadData}
+    fields={field.fields}
+    bind:model={selectedItem}
+    module="Product"
+    itemId={selectedItem?.uuid || ''}
+  />
 
   <svelte:fragment slot="footer">
-    <Button on:click={() => alert('Handle "success"')}>Confirm</Button>
-    <Button color="alternative">Cancel</Button>
+    <Button on:click={() => onModelChangeItem({ value: selectedItem, action: 'edit', name: field.varName })}
+      >Confirm</Button
+    >
+    <Button on:click={() => handleModalCancel()} color="alternative">Cancel</Button>
+  </svelte:fragment>
+</Modal>
+
+<Modal title="Create item" bind:open={createModelOpen} autoclose outsideclose>
+  <Fields
+    reloadData={onReloadData}
+    fields={field.fields}
+    bind:model={selectedItem}
+    module="Product"
+    itemId={selectedItem?.uuid || ''}
+  />
+
+  <svelte:fragment slot="footer">
+    <Button on:click={() => onModelChangeItem({ value: selectedItem, action: 'create', name: field.varName })}
+      >Confirm</Button
+    >
+    <Button on:click={() => handleModalCancel()} color="alternative">Cancel</Button>
   </svelte:fragment>
 </Modal>
 
@@ -84,7 +95,10 @@
       {field.placeholder}
     </h1>
     <div class="flex justify-center items-center">
-      <i class="fa-solid fa-plus text-white cursor-pointer text-xl p-3 pr-5" on:click={() => openQuickModal('add')} />
+      <i
+        class="fa-solid fa-plus text-white cursor-pointer text-xl p-3 pr-5"
+        on:click={() => handleAction('create', {})}
+      />
       {#if Array.isArray(selectedRows) && selectedRows.length > 0}
         <i class="fa-solid fa-eye text-white cursor-pointer ml-6 mr-2 text-xl p-3" on:click={() => activateRows()} />
         <i

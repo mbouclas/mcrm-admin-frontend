@@ -104,7 +104,7 @@
     }
   });
   const handlePropertyValue = async ({ value, action }) => {
-    if (action === 'add') {
+    if (action === 'create') {
       await s.storePropertyValue(value);
     }
 
