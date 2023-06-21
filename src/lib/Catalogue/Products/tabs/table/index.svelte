@@ -54,6 +54,10 @@
     }
   };
 
+  const handleAction = (actionType, item) => {
+    dispatch("action", { actionType, item });
+  };
+
   $: fields = [
     { varName: "checkbox", label: "Checkbox" },
     ...fields,
@@ -87,16 +91,16 @@
             {#if field.varName === "action"}
               <TableBodyCell
                 ><a
-                  href="/tables"
+                  on:click={() => handleAction("edit", item)}
                   class="font-medium text-blue-600 hover:underline dark:text-blue-500"
                 >
                   Edit
                 </a>
                 <a
-                  href="/tables"
+                  on:click={() => handleAction("delete", item)}
                   class="font-medium text-red-600 hover:underline dark:text-red-500"
                 >
-                  Remove
+                  Delete
                 </a></TableBodyCell
               >
             {:else if field.varName === "checkbox"}

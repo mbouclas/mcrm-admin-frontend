@@ -31,11 +31,24 @@ export class VariantsService extends BaseHttpService {
   }
 
   async deleteRow(itemId: string) {
-    return await super.delete(`variant/${itemId}`);
+    try {
+      const response = await super.delete(`product-variant/${itemId}`);
+      setNotificationAction({
+        message: "Created successfully",
+        type: "success",
+      });
+
+      return response;
+    } catch (e) {
+      setNotificationAction({
+        message: "Failed to create",
+        type: "error",
+      });
+    }
   }
 
   getGridUrl(filters = {}) {
-    return super.getGridUrl("variant", filters, (res) => {
+    return super.getGridUrl("product-variant", filters, (res) => {
       return res.data.map((row) => [
         row.uuid,
         html(`<a href='${row.uuid}'>${row.title}</a>`),
@@ -63,7 +76,7 @@ export class VariantsService extends BaseHttpService {
   }
 
   async update(id: string, data: IGenericObject) {
-    return await this.patch(`variant/${id}`, data);
+    return await this.patch(`product-variant/${id}`, data);
   }
 
   async store(data: IGenericObject) {
