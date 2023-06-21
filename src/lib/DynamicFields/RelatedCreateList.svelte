@@ -1,31 +1,31 @@
 <script lang="ts">
-  import { v4 as uuidv4 } from "uuid";
-  import { h } from "gridjs";
-  import { useParams, useLocation, useNavigate } from "svelte-navigator";
-  import Modals from "../Shared/Modals.svelte";
-  import { RowSelection } from "gridjs/plugins/selection";
+  import { v4 as uuidv4 } from 'uuid';
+  import { h } from 'gridjs';
+  import { useParams, useLocation, useNavigate } from 'svelte-navigator';
+  import Modals from '../Shared/Modals.svelte';
+  import { RowSelection } from 'gridjs/plugins/selection';
 
-  import Grid from "gridjs-svelte";
-  import RelatedQuickModal from "./RelatedQuickModal.svelte";
-  import { openModal } from "svelte-modals";
+  import Grid from 'gridjs-svelte';
+  import RelatedQuickModal from './RelatedQuickModal.svelte';
+  import { openModal } from 'svelte-modals';
+  import { createEventDispatcher } from 'svelte';
+  import ActionList from './grid-actions.svelte';
 
   export let model;
   export let field;
+  export let onModelChangeItem;
 
   let gridInstance;
 
   let modalValue = {};
   const navigate = useNavigate();
+  const dispatch = createEventDispatcher();
 
   let addedValues = model ? JSON.parse(JSON.stringify(model)) : [];
 
   $: model = addedValues;
 
   $: allRowsSelected = false;
-
-  let openFilter = false;
-  let openProductEditModal = false;
-  import ActionList from "./grid-actions.svelte";
 
   let selectedRows = [];
   let pagination = { limit: 10, enabled: true };
@@ -51,33 +51,31 @@
         active,
         openQuickEditModal: () => {
           modalValue = addedValues.find((value) => value.uuid === id);
-          openQuickModal("edit");
+          openQuickModal('edit');
         },
       },
     });
-    e.$on("grid-action", (m) => console.log(m));
-    e.$on("delete-row", (e) => deleteItem(id));
-    e.$on("activate-item", (e) => activateRow(e.detail.id));
-    e.$on("de-activate-item", (e) => de_activateRow(e.detail.id));
+    e.$on('grid-action', (m) => console.log(m));
+    e.$on('delete-row', (e) => deleteItem(id));
+    e.$on('activate-item', (e) => activateRow(e.detail.id));
+    e.$on('de-activate-item', (e) => de_activateRow(e.detail.id));
   }
 
   const firstColumns = [
     {
-      id: "selectRow",
+      id: 'selectRow',
       sort: false,
-      name: h("input", {
-        type: "checkbox",
+      name: h('input', {
+        type: 'checkbox',
         onChange: (e) => {
           allRowsSelected = e.target.checked;
           // Exceptionally hacky. There's no documented method to get the table data and do something with them
           // So we find all the checkboxes on the table and click them
           // There is of course the obvious bug where if there were selected rows, and you click on this
           // only the inverse will happen. This calls for an intermediate action, like on gmail
-          gridInstance.config.tableRef.current.base
-            .querySelectorAll(".gridjs-checkbox")
-            .forEach((checkbox) => {
-              checkbox.click();
-            });
+          gridInstance.config.tableRef.current.base.querySelectorAll('.gridjs-checkbox').forEach((checkbox) => {
+            checkbox.click();
+          });
         },
       }),
       plugin: {
@@ -94,26 +92,25 @@
       },
     },
     {
-      name: "uuid",
-      id: "uuid",
+      name: 'uuid',
+      id: 'uuid',
       hidden: true,
     },
   ];
 
   const lastColumns = [
     {
-      name: "Actions",
+      name: 'Actions',
       formatter: (cell, row, idx) => {
         const id = row.cells[1].data;
 
         const activeIndex = activeColumnIndex !== -1 ? activeColumnIndex : null;
 
-        const active =
-          activeIndex !== null ? row.cells[activeIndex].data : null;
+        const active = activeIndex !== null ? row.cells[activeIndex].data : null;
 
         createActionsButton({ row, active, id });
 
-        return h("div", { id: `action-${row.id}` }, "");
+        return h('div', { id: `action-${row.id}` }, '');
       },
     },
   ];
@@ -127,7 +124,7 @@
     ...lastColumns,
   ];
 
-  $: activeColumnIndex = columns.findIndex((column) => column.id === "active");
+  $: activeColumnIndex = columns.findIndex((column) => column.id === 'active');
 
   $: data = addedValues.map((item, valueIndex) => {
     // Map each field into an array in the correct column order
@@ -165,15 +162,15 @@
   }
 
   const handleModalConfirm = (type) => {
-    if (type === "add") {
+    if (type === 'add') {
       addedValues = [...addedValues, { ...modalValue }];
+      onModelChangeItem({ value: modalValue, action: type, name: field.varName });
     }
-    if (type === "edit") {
-      const valueIndex = addedValues.findIndex(
-        (value) => value.uuid === modalValue.uuid
-      );
+    if (type === 'edit') {
+      const valueIndex = addedValues.findIndex((value) => value.uuid === modalValue.uuid);
       if (valueIndex !== -1) {
         addedValues[valueIndex] = modalValue;
+        onModelChangeItem({ value: modalValue, action: type, name: field.varName });
       }
     }
   };
@@ -184,7 +181,7 @@
 
   function openQuickModal(type) {
     openModal(RelatedQuickModal, {
-      uuid: type === "edit" ? model.uuid : uuidv4(),
+      uuid: type === 'edit' ? model.uuid : uuidv4(),
       fields: field.fields,
       modalValue,
       handleModalConfirm,
@@ -202,15 +199,9 @@
       {field.placeholder}
     </h1>
     <div class="flex justify-center items-center">
-      <i
-        class="fa-solid fa-plus text-white cursor-pointer text-xl p-3 pr-5"
-        on:click={() => openQuickModal("add")}
-      />
+      <i class="fa-solid fa-plus text-white cursor-pointer text-xl p-3 pr-5" on:click={() => openQuickModal('add')} />
       {#if Array.isArray(selectedRows) && selectedRows.length > 0}
-        <i
-          class="fa-solid fa-eye text-white cursor-pointer ml-6 mr-2 text-xl p-3"
-          on:click={() => activateRows()}
-        />
+        <i class="fa-solid fa-eye text-white cursor-pointer ml-6 mr-2 text-xl p-3" on:click={() => activateRows()} />
         <i
           class="fa-solid fa-eye-slash text-[#9f9f9f] cursor-pointer mr-6 texl-xl p-3"
           on:click={() => de_activateRows()}
@@ -220,18 +211,10 @@
   </div>
 </div>
 
-<Grid
-  {columns}
-  bind:instance={gridInstance}
-  {data}
-  {pagination}
-  resizable
-  autoWidth
-  fixedHeader
-/>
+<Grid {columns} bind:instance={gridInstance} {data} {pagination} resizable autoWidth fixedHeader />
 
 <style global>
-  @import "https://cdn.jsdelivr.net/npm/gridjs/dist/theme/mermaid.min.css";
+  @import 'https://cdn.jsdelivr.net/npm/gridjs/dist/theme/mermaid.min.css';
   td,
   th {
     color: #a6b0cf !important;
@@ -263,24 +246,24 @@
     border: 1px solid #32394e !important;
   }
 
-  th[data-column-id="selectRow"] {
+  th[data-column-id='selectRow'] {
     text-align: center;
     border-bottom: 2px solid #32394e !important;
   }
-  th[data-column-id="actions"],
-  td[data-column-id="actions"] {
+  th[data-column-id='actions'],
+  td[data-column-id='actions'] {
     text-align: center;
   }
-  td[data-column-id="actions"] div[data-testid="tooltip"] {
+  td[data-column-id='actions'] div[data-testid='tooltip'] {
     right: 0;
   }
-  td[data-column-id="actions"] div[role="tooltip"] ul {
+  td[data-column-id='actions'] div[role='tooltip'] ul {
     background-color: #222736 !important;
   }
-  td[data-column-id="actions"] div[role="tooltip"] ul > div {
+  td[data-column-id='actions'] div[role='tooltip'] ul > div {
     background-color: #2e3446 !important;
   }
-  td[data-column-id="actions"] div[role="tooltip"] li > div {
+  td[data-column-id='actions'] div[role='tooltip'] li > div {
     color: white;
     display: flex;
     align-items: center;
@@ -288,10 +271,10 @@
     padding-right: 20px;
     opacity: 0.8 !important;
   }
-  td[data-column-id="actions"] div[role="tooltip"] li:hover {
+  td[data-column-id='actions'] div[role='tooltip'] li:hover {
     background-color: #222736 !important;
   }
-  td[data-column-id="actions"] div[role="tooltip"] li > div:hover {
+  td[data-column-id='actions'] div[role='tooltip'] li > div:hover {
     opacity: 1 !important;
   }
 
@@ -304,24 +287,24 @@
     background-color: #2e3446 !important;
     color: #6b7280 !important;
   }
-  td[data-column-id="actions"] button {
+  td[data-column-id='actions'] button {
     margin: auto;
     padding: 5px 15px;
     font-size: 12px;
     border: 1px solid #556ee6;
     background-color: #556ee6;
   }
-  td[data-column-id="actions"] button:hover {
+  td[data-column-id='actions'] button:hover {
     background-color: #485ec4;
   }
-  td[data-column-id="actions"] button:focus {
+  td[data-column-id='actions'] button:focus {
     box-shadow: 0 0 0 0.15rem rgb(111 132 234 / 50%);
   }
   .gridjs-checkbox:not(:checked) {
     background-color: #9daad1;
   }
 
-  .gridjs-th-content input[type="checkbox"]:not(:checked) {
+  .gridjs-th-content input[type='checkbox']:not(:checked) {
     background-color: #9daad1;
   }
   .gridjs-wrapper {
@@ -372,7 +355,7 @@
     background: none !important;
   }
 
-  td[data-column-id="propertyValue"] {
+  td[data-column-id='propertyValue'] {
     width: 300px !important;
     max-width: 300px !important;
   }

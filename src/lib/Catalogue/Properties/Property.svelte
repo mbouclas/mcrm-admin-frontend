@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { Tabs, TabItem, Button } from "flowbite-svelte";
-  import General from "./tabs/General.svelte";
+  import { Tabs, TabItem, Button } from 'flowbite-svelte';
+  import General from './tabs/General.svelte';
 
-  import { useParams } from "svelte-navigator";
-  import Form from "../../DynamicFields/Form.svelte";
-  import { PropertiesService } from "../services/properties/properties.service";
-  import { onMount } from "svelte";
-  import { AppService } from "../../Shared/app.service";
-  import type { IDynamicFieldConfigBlueprint } from "../../DynamicFields/types";
-  import getModelPrototypeFromFields from "../../helpers/model-prototype";
+  import { useParams } from 'svelte-navigator';
+  import Form from '../../DynamicFields/Form.svelte';
+  import { PropertiesService } from '../services/properties/properties.service';
+  import { onMount } from 'svelte';
+  import { AppService } from '../../Shared/app.service';
+  import type { IDynamicFieldConfigBlueprint } from '../../DynamicFields/types';
+  import getModelPrototypeFromFields from '../../helpers/model-prototype';
 
   const s = new PropertiesService();
   const params = useParams();
@@ -18,28 +18,23 @@
   let relationships: any[] = [];
 
   onMount(async () => {
-    let rawModel = AppService.getModel("PropertyModel");
+    let rawModel = AppService.getModel('PropertyModel');
     fields = rawModel.fields;
     relationships = rawModel.relationships;
 
-    const typeIndex = fields.findIndex((field) => field.varName === "type");
+    const typeIndex = fields.findIndex((field) => field.varName === 'type');
 
-    fields[typeIndex].ui.values = fields[typeIndex].ui.defaultValues.map(
-      (value) => ({ label: value, value })
-    );
+    fields[typeIndex].ui.values = fields[typeIndex].ui.defaultValues.map((value) => ({ label: value, value }));
 
-    if ($params.id === "new") {
+    if ($params.id === 'new') {
       Object.keys(relationships)
         .filter(
           (relationshipKey) =>
-            relationships[relationshipKey].tabs &&
-            relationships[relationshipKey].tabs.includes("General")
+            relationships[relationshipKey].tabs && relationships[relationshipKey].tabs.includes('General'),
         )
         .map((relationshipKey) => {
           let relationshipData = relationships[relationshipKey];
-          const relationshipFields = relationshipData.fields.filter(
-            (field) => field.group !== "hidden"
-          );
+          const relationshipFields = relationshipData.fields.filter((field) => field.group !== 'hidden');
 
           const isCollection = relationshipData.isCollection || true;
 
@@ -49,29 +44,26 @@
               varName: relationshipKey,
               label: relationshipData.model,
               placeholder: relationshipKey,
-              type: "related_create",
+              type: 'related_create',
               isSortable: true,
               isCollection,
-              group: "bottom",
+              group: 'bottom',
               fields: relationshipFields,
             },
           ];
         });
     }
 
-    if ($params.id !== "new") {
+    if ($params.id !== 'new') {
       Object.keys(relationships)
         .filter(
           (relationshipKey) =>
-            relationships[relationshipKey].tabs &&
-            relationships[relationshipKey].tabs.includes("General")
+            relationships[relationshipKey].tabs && relationships[relationshipKey].tabs.includes('General'),
         )
         .map((relationshipKey) => {
           let relationshipData = relationships[relationshipKey];
 
-          const relationshipFields = relationshipData.fields.filter(
-            (field) => field.group !== "hidden"
-          );
+          const relationshipFields = relationshipData.fields.filter((field) => field.group !== 'hidden');
 
           fields = [
             ...fields,
@@ -79,22 +71,22 @@
               varName: relationshipData.modelAlias,
               label: relationshipData.model,
               placeholder: relationshipData.model,
-              type: "related_create",
+              type: 'related_create',
               isSortable: true,
               isCollection: relationshipData.isCollection || true,
-              group: "bottom",
+              group: 'bottom',
               fields: relationshipFields,
             },
           ];
         });
     }
     if (itemId) {
-      model = await s.findOne(itemId, ["*"]);
+      model = await s.findOne(itemId, ['*']);
     } else {
-      if ($params.id === "new") {
+      if ($params.id === 'new') {
         model = getModelPrototypeFromFields(fields);
       } else {
-        model = await s.findOne($params.id, ["*"]);
+        model = await s.findOne($params.id, ['*']);
       }
     }
 
@@ -102,15 +94,24 @@
       model.seo = {
         title: model.title,
         description: model.description,
-        keywords: "",
-        og_title: "",
-        og_description: "",
+        keywords: '',
+        og_title: '',
+        og_description: '',
       };
     }
   });
+  const handlePropertyValue = async ({ value, action }) => {
+    if (action === 'add') {
+      await s.storePropertyValue(value);
+    }
+
+    if (action === 'edit') {
+      await s.updatePropertyValue(value);
+    }
+  };
 
   const onSubmit = async (data) => {
-    if ($params.id === "new") {
+    if ($params.id === 'new') {
       await s.store(data);
       return null;
     }
@@ -118,18 +119,18 @@
     await s.update($params.id, data);
   };
 
-  let contentDivClass = "p-4 bg-[#2a3042] rounded-lg dark:bg-gray-800";
+  let contentDivClass = 'p-4 bg-[#2a3042] rounded-lg dark:bg-gray-800';
   let customActiveClass =
-    "inline-block p-4 text-white rounded-t-lg border-b-2 border-white active dark:text-white-500 dark:border-white-500";
+    'inline-block p-4 text-white rounded-t-lg border-b-2 border-white active dark:text-white-500 dark:border-white-500';
   let customInActiveClass =
-    "inline-block p-4 rounded-t-lg border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300";
+    'inline-block p-4 rounded-t-lg border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300';
 
   //We need this to reflect model changes that are not passed down the event bubble
   function handleModelChange(key: string, e) {
     model[key] = e.detail;
   }
 
-  import isEmpty from "../../helpers/isEmpty";
+  import isEmpty from '../../helpers/isEmpty';
 
   let errors = {};
   let hasError = false;
@@ -162,14 +163,8 @@
 
 <Form bind:model {hasError}>
   <Tabs style="underline">
-    <TabItem
-      open
-      title="General"
-      tabStyle="custom"
-      {customActiveClass}
-      {customInActiveClass}
-    >
-      <General {fields} {model} />
+    <TabItem open title="General" tabStyle="custom" {customActiveClass} {customInActiveClass}>
+      <General {fields} {model} {handlePropertyValue} />
     </TabItem>
 
     <li class="submit-button-wrapper">
