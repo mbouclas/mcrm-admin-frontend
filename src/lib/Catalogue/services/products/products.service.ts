@@ -2,9 +2,9 @@ import { BaseHttpService } from "../../../Shared/base-http.service";
 import type { IGenericObject } from "../../../Shared/models/generic";
 import queryString from "query-string";
 import { html } from "gridjs";
+import { setNotificationAction } from "../../../stores";
 
 export class ProductsService extends BaseHttpService {
-
   async activateRows(selectedIds: string[]) {
     // return await super.post('/product/activate', { selectedIds });
     return true;
@@ -31,12 +31,24 @@ export class ProductsService extends BaseHttpService {
   }
 
   async deleteRow(itemId: string) {
-    return await super.delete(`product/${itemId}`);
+    try {
+      const res = await super.delete(`product/${itemId}`);
+      setNotificationAction({
+        message: "Deleted successfully",
+        type: "success",
+      });
+      return res;
+    } catch (err) {
+      setNotificationAction({
+        message: "Failed to delete",
+        type: "error",
+      });
+    }
   }
 
   getGridUrl(filters = {}) {
-    return super.getGridUrl('product', filters, res => {
-      return res.data.map(row => [
+    return super.getGridUrl("product", filters, (res) => {
+      return res.data.map((row) => [
         row.uuid,
         html(`<a href='${row.uuid}'>${row.title}</a>`),
         row.sku,
@@ -44,8 +56,8 @@ export class ProductsService extends BaseHttpService {
         row.createdAt,
         row.updatedAt,
         row.active,
-      ])
-    })
+      ]);
+    });
   }
 
   async findOne(uuid: string, relationships: string[] = []) {
@@ -59,14 +71,38 @@ export class ProductsService extends BaseHttpService {
       qs = queryString.stringify(filters);
     }
 
-    return await this.get(`product${qs ? `?${qs}` : ''}`);
+    return await this.get(`product${qs ? `?${qs}` : ""}`);
   }
 
   async update(id: string, data: IGenericObject) {
-    return await this.post(`product/${id}`, data);
+    try {
+      const res = await this.patch(`product/${id}`, data);
+      setNotificationAction({
+        message: "Updated successfully",
+        type: "success",
+      });
+      return res;
+    } catch (err) {
+      setNotificationAction({
+        message: "Failed to update",
+        type: "error",
+      });
+    }
   }
 
   async store(data: IGenericObject) {
-    return super.post('product/basic', data)
+    try {
+      const res = await super.post("product/basic", data);
+      setNotificationAction({
+        message: "Created successfully",
+        type: "success",
+      });
+      return res;
+    } catch (err) {
+      setNotificationAction({
+        message: "Failed to create",
+        type: "error",
+      });
+    }
   }
 }
