@@ -21,6 +21,7 @@
   export let module;
   export let itemId;
   export let fields: IDynamicFieldConfigBlueprint[] = [];
+  export let onReloadData;
 
   interface Rule {
     type: string;
@@ -137,7 +138,7 @@
 
 {#each sortedFields as field}
   {#if field.type === 'related_create'}
-    <RelatedCreateList {onModelChangeItem} {field} bind:model={model[field.varName]} />
+    <RelatedCreateList {onReloadData} {onModelChangeItem} {field} bind:model={model[field.varName]} />
   {/if}
 
   {#if field.type === 'related'}

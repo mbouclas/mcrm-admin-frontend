@@ -1,157 +1,39 @@
 <script lang="ts">
-  import { v4 as uuidv4 } from 'uuid';
-  import { h } from 'gridjs';
-  import { useParams, useLocation, useNavigate } from 'svelte-navigator';
-  import Modals from '../Shared/Modals.svelte';
-  import { RowSelection } from 'gridjs/plugins/selection';
+  import { Modal, Button } from 'flowbite-svelte';
 
-  import Grid from 'gridjs-svelte';
-  import RelatedQuickModal from './RelatedQuickModal.svelte';
-  import { openModal } from 'svelte-modals';
   import { createEventDispatcher } from 'svelte';
-  import ActionList from './grid-actions.svelte';
+  import Table from './Table.svelte';
+  import Fields from './Renderer.svelte';
 
+  let selectedItem;
   export let model;
   export let field;
   export let onModelChangeItem;
+  export let onReloadData;
 
   let gridInstance;
 
-  let modalValue = {};
-  const navigate = useNavigate();
-  const dispatch = createEventDispatcher();
+  let deleteModalOpen = false;
+  let editModalOpen = false;
 
-  $: allRowsSelected = false;
+  let modalValue = {};
+  const dispatch = createEventDispatcher();
 
   let selectedRows = [];
   let pagination = { limit: 10, enabled: true };
 
-  function createActionsButton(data) {
-    const { row, active, id } = data;
-    const selector = document.querySelector(`#action-${row.id}`);
-    if (!selector) {
-      return;
+  const handleAction = (actionType, item) => {
+    selectedItem = item;
+    if (actionType === 'delete') {
+      deleteModalOpen = true;
+      editModalOpen = false;
     }
 
-    // Avoid duplicates, grid fires more than once
-    if (selector && selector.children && selector.children.length === 1) {
-      return;
+    if (actionType === 'edit') {
+      editModalOpen = true;
+      deleteModalOpen = false;
     }
-
-    const wrapperEl = selector;
-
-    const e = new ActionList({
-      target: wrapperEl,
-      props: {
-        id,
-        active,
-        openQuickEditModal: () => {
-          modalValue = model.find((value) => value.uuid === id);
-          openQuickModal('edit');
-        },
-      },
-    });
-    e.$on('grid-action', (m) => console.log(m));
-    e.$on('delete-row', (e) => deleteItem(id));
-    e.$on('activate-item', (e) => activateRow(e.detail.id));
-    e.$on('de-activate-item', (e) => de_activateRow(e.detail.id));
-  }
-
-  const firstColumns = [
-    {
-      id: 'selectRow',
-      sort: false,
-      name: h('input', {
-        type: 'checkbox',
-        onChange: (e) => {
-          allRowsSelected = e.target.checked;
-          // Exceptionally hacky. There's no documented method to get the table data and do something with them
-          // So we find all the checkboxes on the table and click them
-          // There is of course the obvious bug where if there were selected rows, and you click on this
-          // only the inverse will happen. This calls for an intermediate action, like on gmail
-          gridInstance.config.tableRef.current.base.querySelectorAll('.gridjs-checkbox').forEach((checkbox) => {
-            checkbox.click();
-          });
-        },
-      }),
-      plugin: {
-        // install the RowSelection plugin
-        component: RowSelection,
-        // RowSelection config
-        props: {
-          // use the "uuid" hidden column as the row identifier
-          id: (row) => row.cell(1).data,
-        },
-        onChange: (e) => {
-          console.log(e);
-        },
-      },
-    },
-    {
-      name: 'uuid',
-      id: 'uuid',
-      hidden: true,
-    },
-  ];
-
-  const lastColumns = [
-    {
-      name: 'Actions',
-      formatter: (cell, row, idx) => {
-        const id = row.cells[1].data;
-
-        const activeIndex = activeColumnIndex !== -1 ? activeColumnIndex : null;
-
-        const active = activeIndex !== null ? row.cells[activeIndex].data : null;
-
-        createActionsButton({ row, active, id });
-
-        return h('div', { id: `action-${row.id}` }, '');
-      },
-    },
-  ];
-
-  $: columns = [
-    ...firstColumns,
-    ...field.fields.map((fieldItem) => ({
-      name: fieldItem.placeholder,
-      id: fieldItem.varName,
-    })),
-    ...lastColumns,
-  ];
-
-  $: activeColumnIndex = columns.findIndex((column) => column.id === 'active');
-
-  $: data = model.map((item, valueIndex) => {
-    // Map each field into an array in the correct column order
-    return [
-      item[columns[1].id] || valueIndex,
-      ...columns.slice(2, columns.length - 1).map((column, index) => {
-        return item[column.id];
-      }),
-    ];
-  });
-
-  function handleRowClick(...args) {
-    // console.log("row: " + JSON.stringify(args), args);
-  }
-
-  function handleCellClick(...args) {
-    // console.log('cell: ' + JSON.stringify(args), args)
-  }
-
-  function log(...args) {
-    // console.log(...args);
-  }
-
-  async function activateRows() {}
-
-  async function activateRow(itemId) {}
-
-  async function de_activateRows(selectedRows) {}
-  async function de_activateRow(itemId) {}
-
-  async function deleteItems() {}
+  };
 
   async function deleteItem(itemId) {
     const valueIndex = model.findIndex((value) => value.uuid === itemId);
@@ -175,20 +57,26 @@
   const handleModalClose = () => {
     modalValue = {};
   };
-
-  function openQuickModal(type) {
-    openModal(RelatedQuickModal, {
-      uuid: type === 'edit' ? model.uuid : uuidv4(),
-      fields: field.fields,
-      modalValue,
-      handleModalConfirm,
-      handleModalClose,
-      type,
-    });
-  }
 </script>
 
-<Modals />
+<Modal title="Confirm delete" bind:open={deleteModalOpen} autoclose outsideclose>
+  <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+    Are you sure you want to delete this variant?
+  </p>
+  <svelte:fragment slot="footer">
+    <Button on:click={() => handleDeleteConfirm()}>Confirm</Button>
+    <Button on:click={() => handleDeleteCancel()} color="alternative">Cancel</Button>
+  </svelte:fragment>
+</Modal>
+
+<Modal title="Update variant" bind:open={editModalOpen} autoclose outsideclose>
+  <Fields fields={field.fields} bind:model={modalValue} module="Product" itemId={modalValue?.uuid || ''} />
+
+  <svelte:fragment slot="footer">
+    <Button on:click={() => alert('Handle "success"')}>Confirm</Button>
+    <Button color="alternative">Cancel</Button>
+  </svelte:fragment>
+</Modal>
 
 <div class="grid-wrappe bg-[#2a3042] rounded-md text-[#a6b0cf]">
   <div class="toolbar flex justify-between bg-[#517acd] overflow-hidden">
@@ -208,7 +96,13 @@
   </div>
 </div>
 
-<Grid {columns} bind:instance={gridInstance} {data} {pagination} resizable autoWidth fixedHeader />
+<Table
+  fields={field.fields}
+  items={model}
+  bind:pagination
+  on:reload={(e) => onReloadData()}
+  on:action={(e) => handleAction(e.detail.actionType, e.detail.item)}
+/>
 
 <style global>
   @import 'https://cdn.jsdelivr.net/npm/gridjs/dist/theme/mermaid.min.css';

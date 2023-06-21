@@ -7,6 +7,7 @@
   export let fields: IDynamicFieldConfigBlueprint[] = [];
   export let model;
   export let handlePropertyValue;
+  export let reloadData;
   let mainFields = [];
   let secondaryFields = [];
   let bottomFields = [];
@@ -53,6 +54,7 @@
             handlePropertyValue({ value: { ...value, propertyValueUuid: value.uuid, uuid: model.uuid }, action });
           }
         }}
+        on:reloadData={() => reloadData()}
         fields={bottomFields}
         bind:model
         module="Property"

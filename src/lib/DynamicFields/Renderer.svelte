@@ -7,6 +7,7 @@
   export let module;
   export let itemId;
   export let fields: IDynamicFieldConfigBlueprint[] = [];
+  export let reloadData;
 
   $: rootModel = model;
 
@@ -18,11 +19,16 @@
   function onModelChangeItem({ value, name, action }) {
     dispatch('changeItem', { value, name, action });
   }
+
+  function onReloadData() {
+    dispatch('reloadData');
+  }
 </script>
 
 <RendererRecursive
   {onModelChangeItem}
   {onModelChange}
+  {onReloadData}
   {fields}
   {rootModel}
   bind:model
