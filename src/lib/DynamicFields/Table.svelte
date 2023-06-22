@@ -17,7 +17,11 @@
 <div class="flex flex-col w-full">
   <div class="flex">
     {#each fields as field}
-      <div class="flex-1 p-2 border-b border-gray-500 text-center bg-gray-500 font-bold">
+      <div
+        class={`p-2 border-b border-gray-500 bg-gray-500 font-bold text-left flex-1
+             ${field.varName === 'checkbox' ? 'flex-none w-20' : ''} 
+             ${field.varName === 'action' ? 'flex-none w-40' : ''}`}
+      >
         {#if field.varName === 'checkbox'}
           <Checkbox />
         {:else}
@@ -30,7 +34,11 @@
     {#each items as item}
       <div class="flex">
         {#each fields as field}
-          <div class="flex-1 p-2 border-b border-gray-500 text-center bg-gray-700">
+          <div
+            class={`p-2 border-b border-gray-500  bg-gray-700 text-left flex-1
+             ${field.varName === 'checkbox' ? 'flex-none w-20' : ''} 
+             ${field.varName === 'action' ? 'flex-none w-40' : ''}`}
+          >
             {#if field.varName === 'action'}
               <a
                 on:click={() => handleAction('edit', item)}

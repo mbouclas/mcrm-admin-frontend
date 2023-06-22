@@ -89,8 +89,10 @@
   </svelte:fragment>
 </Modal>
 
-<div class="grid-wrappe bg-[#2a3042] rounded-md text-[#a6b0cf]">
-  <div class="toolbar flex justify-between bg-[#517acd] overflow-hidden">
+<div class="grid-wrappe bg-gray-500 rounded-md text-[#a6b0cf]">
+  <div
+    class="toolbar flex justify-between bg-indigo-500 border-b border-solid border-gray-400 overflow-hidden rounded-t-md"
+  >
     <h1 class="mt-4 mb-2 text-lg justify-self-start pl-2">
       {field.placeholder}
     </h1>
