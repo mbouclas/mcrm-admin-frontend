@@ -18,7 +18,7 @@
   <div class="flex">
     {#each fields as field}
       <div
-        class={`p-2 border-b border-gray-500 bg-gray-500 font-bold text-left flex-1
+        class={`p-2 border-b border-gray-500 bg-gray-600 font-bold text-left flex-1
              ${field.varName === 'checkbox' ? 'flex-none w-20' : ''} 
              ${field.varName === 'action' ? 'flex-none w-40' : ''}`}
       >
@@ -31,11 +31,11 @@
     {/each}
   </div>
   {#if items && items.length}
-    {#each items as item}
-      <div class="flex">
+    {#each items as item, index}
+      <div class={`flex even:bg-gray-700 odd:bg-gray-600 last:rounded-b-md`}>
         {#each fields as field}
           <div
-            class={`p-2 border-b border-gray-500  bg-gray-700 text-left flex-1
+            class={`p-2 text-left flex-1
              ${field.varName === 'checkbox' ? 'flex-none w-20' : ''} 
              ${field.varName === 'action' ? 'flex-none w-40' : ''}`}
           >
