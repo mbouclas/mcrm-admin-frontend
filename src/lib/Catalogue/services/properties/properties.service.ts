@@ -126,7 +126,7 @@ export class PropertiesService extends BaseHttpService {
     try {
       const res = await super.patch(`property/${data.uuid}/value/${data.propertyValueUuid}`, data);
       setNotificationAction({
-        message: 'Created successfully',
+        message: 'Updated successfully',
         type: 'success',
       });
       return res;
@@ -142,7 +142,7 @@ export class PropertiesService extends BaseHttpService {
     try {
       const res = await super.delete(`property/${data.uuid}/value/${data.propertyValueUuid}`);
       setNotificationAction({
-        message: 'Created successfully',
+        message: 'Deleted successfully',
         type: 'success',
       });
       return res;

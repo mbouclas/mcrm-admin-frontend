@@ -42,13 +42,13 @@
             {#if field.varName === 'action'}
               <a
                 on:click={() => handleAction('edit', item)}
-                class="font-medium text-blue-600 hover:underline dark:text-blue-500"
+                class="font-medium text-blue-600 hover:underline dark:text-blue-500 cursor-pointer"
               >
                 Edit
               </a>
               <a
                 on:click={() => handleAction('delete', item)}
-                class="font-medium text-red-600 hover:underline dark:text-red-500"
+                class="font-medium text-red-600 hover:underline dark:text-red-500 cursor-pointer"
               >
                 Delete
               </a>
