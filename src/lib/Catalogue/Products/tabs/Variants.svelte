@@ -2,6 +2,8 @@
   import { AppService } from '../../../Shared/app.service';
 
   import type { IDynamicFieldConfigBlueprint } from '../../../DynamicFields/types';
+  import Fields from '../../../DynamicFields/Renderer.svelte';
+
   import Table from './table/index.svelte';
   import getModelPrototypeFromFields from '../../../helpers/model-prototype';
 
@@ -20,12 +22,14 @@
 
   let items = [];
 
+  let createModalOpen = false;
   let deleteModalOpen = false;
   let editModalOpen = false;
 
   let pagination = {};
 
   const reloadData = async (currentPagination) => {
+    selectedItem = {};
     if (productId) {
       model = await s.find({
         page: currentPagination.page,
@@ -44,26 +48,16 @@
     }
   };
 
-  const handleAction = (actionType, item) => {
-    selectedItem = item;
-    if (actionType === 'delete') {
-      deleteModalOpen = true;
-      editModalOpen = false;
+  const handleConfirm = async ({ value, action }) => {
+    if (action === 'delete') {
+      await s.deleteRow(value.uuid);
     }
 
-    if (actionType === 'edit') {
-      editModalOpen = true;
-      deleteModalOpen = false;
+    if (action === 'edit') {
+      await s.update(value.uuid, value);
     }
-  };
 
-  const handleDeleteConfirm = async () => {
-    await s.deleteRow(selectedItem.uuid);
-    selectedItem = null;
-  };
-
-  const handleDeleteCancel = async () => {
-    selectedItem = null;
+    reloadData({ page: 1, limit: 10 });
   };
 
   onMount(async () => {
@@ -75,21 +69,48 @@
       model = getModelPrototypeFromFields(fields);
     }
   });
+
+  const handleAction = (actionType, item) => {
+    selectedItem = item;
+
+    if (actionType === 'create') {
+      createModalOpen = true;
+      deleteModalOpen = false;
+      editModalOpen = false;
+    }
+
+    if (actionType === 'delete') {
+      deleteModalOpen = true;
+      editModalOpen = false;
+      createModalOpen = false;
+    }
+
+    if (actionType === 'edit') {
+      editModalOpen = true;
+      deleteModalOpen = false;
+      createModalOpen = false;
+    }
+  };
+
+  const handleModalCancel = () => {
+    selectedItem = {};
+  };
 </script>
 
 <Modal title="Confirm delete" bind:open={deleteModalOpen} autoclose outsideclose>
-  <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">Are you sure you want to delet this variant?</p>
+  <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">Are you sure you want to delete this item?</p>
   <svelte:fragment slot="footer">
-    <Button on:click={() => handleDeleteConfirm()}>Confirm</Button>
-    <Button on:click={() => handleDeleteCancel()} color="alternative">Cancel</Button>
+    <Button on:click={() => handleConfirm({ value: selectedItem, action: 'delete' })}>Confirm</Button>
+    <Button on:click={() => handleModalCancel()} color="alternative">Cancel</Button>
   </svelte:fragment>
 </Modal>
 
-<Modal title="Update variant" bind:open={editModalOpen} autoclose outsideclose>
-  <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">Are you sure you want to delet this variant?</p>
+<Modal title="Update item" bind:open={editModalOpen} autoclose outsideclose>
+  <Fields {reloadData} {fields} bind:model={selectedItem} module="Product" itemId={selectedItem?.uuid || ''} />
+
   <svelte:fragment slot="footer">
-    <Button on:click={() => alert('Handle "success"')}>Confirm</Button>
-    <Button color="alternative">Cancel</Button>
+    <Button on:click={() => handleConfirm({ value: selectedItem, action: 'edit' })}>Confirm</Button>
+    <Button on:click={() => handleModalCancel()} color="alternative">Cancel</Button>
   </svelte:fragment>
 </Modal>
 
