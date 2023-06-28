@@ -99,6 +99,7 @@
 
   const handleModalCancel = () => {
     selectedItem = {};
+    propertyValues = [];
   };
 </script>
 
@@ -112,6 +113,29 @@
 
 <Modal size="xl" title="Update item" bind:open={editModalOpen} autoclose outsideclose>
   <Fields {reloadData} {fields} bind:model={selectedItem} module="Product" itemId={selectedItem?.uuid || ''} />
+
+  {#if propertyValues && propertyValues.length}
+    {#each propertyValues as propertyValue, index}
+      <div class={`flex even:bg-gray-700 odd:bg-gray-600 last:rounded-b-md`}>
+        {#each Object.keys(propertyValue) as propertyValueKey}
+          <div class={`p-2 text-left flex-1`}>
+            {#if propertyValueKey === 'image'}
+              <img src={propertyValue.image} alt={`image${index}`} width="100" height="100" />
+            {:else}
+              {propertyValue[propertyValueKey]}
+            {/if}
+          </div>
+        {/each}
+        <Button
+          on:click={() => handleAction('delete', propertyValue)}
+          class="font-medium bg-red-600 text-white rounded p-2 dark:bg-red-500"
+        >
+          Delete
+        </Button>
+      </div>
+    {/each}
+  {/if}
+
   <svelte:fragment slot="footer">
     <Button on:click={() => handleConfirm({ value: selectedItem, action: 'edit' })}>Confirm</Button>
     <Button on:click={() => handleModalCancel()} color="alternative">Cancel</Button>
