@@ -12,12 +12,15 @@
 
   export let productId;
   import { VariantsService } from '../../services/variants/variants.service';
+  import { PropertiesService } from '../../services/properties/properties.service';
   import { Modal, Button } from 'flowbite-svelte';
 
   const s = new VariantsService();
+  const p = new PropertiesService();
   const params = useParams();
   let model;
   let selectedItem;
+  let propertyValues = [];
   let fields: IDynamicFieldConfigBlueprint[] = [];
 
   let items = [];
@@ -70,7 +73,7 @@
     }
   });
 
-  const handleAction = (actionType, item) => {
+  const handleAction = async (actionType, item) => {
     selectedItem = item;
 
     if (actionType === 'create') {
@@ -89,6 +92,8 @@
       editModalOpen = true;
       deleteModalOpen = false;
       createModalOpen = false;
+      propertyValues = await p.findValueByVariantId(item.uuid);
+      console.log(propertyValues);
     }
   };
 
@@ -105,9 +110,8 @@
   </svelte:fragment>
 </Modal>
 
-<Modal title="Update item" bind:open={editModalOpen} autoclose outsideclose>
+<Modal size="xl" title="Update item" bind:open={editModalOpen} autoclose outsideclose>
   <Fields {reloadData} {fields} bind:model={selectedItem} module="Product" itemId={selectedItem?.uuid || ''} />
-
   <svelte:fragment slot="footer">
     <Button on:click={() => handleConfirm({ value: selectedItem, action: 'edit' })}>Confirm</Button>
     <Button on:click={() => handleModalCancel()} color="alternative">Cancel</Button>

@@ -74,6 +74,10 @@ export class PropertiesService extends BaseHttpService {
     return await this.get(`property${qs ? `?${qs}` : ''}`);
   }
 
+  async findValueByVariantId(id: string) {
+    return await this.get(`property/variant/${id}`);
+  }
+
   async update(id: string, data: IGenericObject) {
     try {
       const res = await this.patch(`property/${id}`, data);
