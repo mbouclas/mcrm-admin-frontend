@@ -4,7 +4,6 @@
   import type { IDynamicFieldConfigBlueprint } from '../../../DynamicFields/types';
   import Fields from '../../../DynamicFields/Renderer.svelte';
 
-  import Table from './table/index.svelte';
   import getModelPrototypeFromFields from '../../../helpers/model-prototype';
 
   import { onMount } from 'svelte';
@@ -13,7 +12,17 @@
   export let productId;
   import { VariantsService } from '../../services/variants/variants.service';
   import { PropertiesService } from '../../services/properties/properties.service';
-  import { Modal, Button } from 'flowbite-svelte';
+  import {
+    Modal,
+    Button,
+    Table as TableFlowBite,
+    TableBody,
+    TableBodyCell,
+    TableBodyRow,
+    TableHead,
+    TableHeadCell,
+  } from 'flowbite-svelte';
+  import Table from './table/index.svelte';
 
   const s = new VariantsService();
   const p = new PropertiesService();
@@ -101,6 +110,8 @@
     selectedItem = {};
     propertyValues = [];
   };
+
+  $: console.log(propertyValues);
 </script>
 
 <Modal title="Confirm delete" bind:open={deleteModalOpen} autoclose outsideclose>
@@ -115,25 +126,20 @@
   <Fields {reloadData} {fields} bind:model={selectedItem} module="Product" itemId={selectedItem?.uuid || ''} />
 
   {#if propertyValues && propertyValues.length}
-    {#each propertyValues as propertyValue, index}
-      <div class={`flex even:bg-gray-700 odd:bg-gray-600 last:rounded-b-md`}>
-        {#each Object.keys(propertyValue) as propertyValueKey}
-          <div class={`p-2 text-left flex-1`}>
-            {#if propertyValueKey === 'image'}
-              <img src={propertyValue.image} alt={`image${index}`} width="100" height="100" />
-            {:else}
-              {propertyValue[propertyValueKey]}
-            {/if}
-          </div>
+    <TableFlowBite>
+      <TableHead>
+        <TableHeadCell>Property</TableHeadCell>
+        <TableHeadCell>Value</TableHeadCell>
+      </TableHead>
+      <TableBody>
+        {#each propertyValues as propertyValue}
+          <TableBodyRow>
+            <TableBodyCell>{propertyValue.property.title}</TableBodyCell>
+            <TableBodyCell>{propertyValue.name}</TableBodyCell>
+          </TableBodyRow>
         {/each}
-        <Button
-          on:click={() => handleAction('delete', propertyValue)}
-          class="font-medium bg-red-600 text-white rounded p-2 dark:bg-red-500"
-        >
-          Delete
-        </Button>
-      </div>
-    {/each}
+      </TableBody>
+    </TableFlowBite>
   {/if}
 
   <svelte:fragment slot="footer">
