@@ -1,17 +1,17 @@
 <script lang="ts">
-  import { AppService } from '../../../Shared/app.service';
+  import { AppService } from '../../Shared/app.service';
 
-  import type { IDynamicFieldConfigBlueprint } from '../../../DynamicFields/types';
-  import Fields from '../../../DynamicFields/Renderer.svelte';
+  import type { IDynamicFieldConfigBlueprint } from '../../DynamicFields/types';
+  import Fields from '../../DynamicFields/Renderer.svelte';
 
-  import getModelPrototypeFromFields from '../../../helpers/model-prototype';
+  import getModelPrototypeFromFields from '../../helpers/model-prototype';
 
   import { onMount } from 'svelte';
   import { useParams } from 'svelte-navigator';
 
   export let productId;
-  import { VariantsService } from '../../services/variants/variants.service';
-  import { PropertiesService } from '../../services/properties/properties.service';
+  import { VariantsService } from '../services/variants/variants.service';
+  import { PropertiesService } from '../services/properties/properties.service';
   import {
     Modal,
     Button,
@@ -22,7 +22,8 @@
     TableHead,
     TableHeadCell,
   } from 'flowbite-svelte';
-  import Table from './table/index.svelte';
+  import Table from './VariantsTable.svelte';
+  import GenerateVariants from './GenerateVariants.svelte';
 
   const s = new VariantsService();
   const p = new PropertiesService();
@@ -37,6 +38,7 @@
   let createModalOpen = false;
   let deleteModalOpen = false;
   let editModalOpen = false;
+  let generateVariantsModelOpen = false;
 
   let pagination = {};
 
@@ -82,27 +84,36 @@
     }
   });
 
-  const handleAction = async (actionType, item) => {
+  const handleAction = async (actionType, item = null) => {
     selectedItem = item;
 
     if (actionType === 'create') {
       createModalOpen = true;
       deleteModalOpen = false;
       editModalOpen = false;
+      generateVariantsModelOpen = false;
     }
 
     if (actionType === 'delete') {
       deleteModalOpen = true;
       editModalOpen = false;
       createModalOpen = false;
+      generateVariantsModelOpen = false;
     }
 
     if (actionType === 'edit') {
       editModalOpen = true;
       deleteModalOpen = false;
       createModalOpen = false;
+      generateVariantsModelOpen = false;
       propertyValues = await p.findValueByVariantId(item.uuid);
-      console.log(propertyValues);
+    }
+
+    if (actionType === 'generateVariants') {
+      generateVariantsModelOpen = true;
+      editModalOpen = false;
+      deleteModalOpen = false;
+      createModalOpen = false;
     }
   };
 
@@ -147,6 +158,17 @@
     <Button on:click={() => handleModalCancel()} color="alternative">Cancel</Button>
   </svelte:fragment>
 </Modal>
+
+<Modal size="xl" title="Generate variants" bind:open={generateVariantsModelOpen} autoclose outsideclose>
+  <GenerateVariants />
+
+  <svelte:fragment slot="footer">
+    <Button on:click={() => handleConfirm({ value: selectedItem, action: 'edit' })}>Confirm</Button>
+    <Button on:click={() => handleModalCancel()} color="alternative">Cancel</Button>
+  </svelte:fragment>
+</Modal>
+
+<Button on:click={() => handleAction('generateVariants')}>Generate variants</Button>
 
 <Table
   bind:fields

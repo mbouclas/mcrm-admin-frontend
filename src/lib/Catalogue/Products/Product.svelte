@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Tabs, TabItem, Button } from 'flowbite-svelte';
   import General from './tabs/General.svelte';
-  import Variants from './tabs/Variants.svelte';
+  import Variants from '../Variants/Variants.svelte';
   import SEO from './tabs/SEO.svelte';
   import Files from './tabs/Files.svelte';
 
