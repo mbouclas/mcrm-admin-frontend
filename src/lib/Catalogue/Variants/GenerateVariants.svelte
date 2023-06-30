@@ -48,37 +48,31 @@
   $: console.log(propertyValues);
 </script>
 
-<Search value={searchValue} placeholder="Search property values" />
+<Search value={searchValue} placeholder="Search property values" class="mb-4" />
 
-<div class="container">
-  <div class="left">
+<div class="flex">
+  <div class="w-1/2 border-r-2 border-gray-200 pr-2">
     <ul>
       {#each properties as property, index}
-        <li on:click={() => selectProperty(index)}>{property.title}</li>
+        <li
+          class={`cursor-pointer p-2 ${selectedProperty === property ? 'bg-blue-400' : ''}`}
+          on:click={() => selectProperty(index)}
+        >
+          {property.title}
+        </li>
       {/each}
     </ul>
   </div>
-  <div class="right">
+  <div class="w-1/2 pl-2">
     <ul>
       {#each propertyValues as propertyValue, index}
-        <li on:click={() => selectPropertyValue(index)}>{propertyValue.name}</li>
+        <li
+          class={`cursor-pointer p-2 ${selectedValues.includes(propertyValue) ? 'bg-blue-400' : ''}`}
+          on:click={() => selectPropertyValue(index)}
+        >
+          {propertyValue.name}
+        </li>
       {/each}
     </ul>
   </div>
 </div>
-
-<style>
-  .container {
-    display: flex;
-  }
-
-  .left {
-    width: 45%;
-    border-right: 1px solid black;
-    margin-right: 10px;
-  }
-
-  .right {
-    width: 55%;
-  }
-</style>
