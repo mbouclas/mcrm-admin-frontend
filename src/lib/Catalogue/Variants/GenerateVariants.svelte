@@ -114,7 +114,7 @@
 
 <div class="flex h-[400px]">
   {#if showSelectedValues}
-    <div class="w-full overflow-auto h-[350px]">
+    <div class="w-full overflow-auto h-[400px]">
       <ul>
         {#each selectedValues as propertyValue}
           <li
@@ -133,7 +133,7 @@
       </ul>
     </div>
   {:else if searchValue}
-    <div class="w-full overflow-auto h-[350px]">
+    <div class="w-full overflow-auto h-[400px]">
       <ul>
         {#each propertyValues as propertyValue}
           <li
