@@ -55,7 +55,7 @@
 
   const findValuesByPropertyId = async () => {
     const response = await p.findOne(selectedProperty.uuid, ['*']);
-    propertyValues = response.propertyValue;
+    propertyValues = response.propertyValue.map((value) => ({ ...value, property: { ...selectedProperty } }));
   };
   const selectProperty = (index) => {
     selectedProperty = properties[index];
@@ -118,10 +118,16 @@
       <ul>
         {#each selectedValues as propertyValue}
           <li
-            class={`border-b-2 border-solid border-gray-300 cursor-pointer p-3 bg-blue-700 text-white`}
+            class={`flex border-b-2 border-solid border-gray-300 cursor-pointer p-3 bg-blue-700 text-white`}
             on:click={() => deselctSelectedValue(propertyValue.uuid)}
           >
-            {propertyValue.name}
+            <div>
+              {propertyValue.property.title}
+            </div>
+            <div class="px-3">
+              <ArrowRight />
+            </div>
+            <div>{propertyValue.name}</div>
           </li>
         {/each}
       </ul>
@@ -131,12 +137,18 @@
       <ul>
         {#each propertyValues as propertyValue}
           <li
-            class={`border-b-2 border-solid border-gray-300 cursor-pointer p-3 ${
+            class={`flex border-b-2 border-solid border-gray-300 cursor-pointer p-3 ${
               selectedValues.map((val) => val.uuid).includes(propertyValue.uuid) ? 'bg-blue-700 text-white' : ''
             }`}
             on:click={() => selectPropertyValue(propertyValue.uuid)}
           >
-            {propertyValue.property.title} -> {propertyValue.name}
+            <div>
+              {propertyValue.property.title}
+            </div>
+            <div class="px-3">
+              <ArrowRight />
+            </div>
+            <div>{propertyValue.name}</div>
           </li>
         {/each}
       </ul>
@@ -146,16 +158,16 @@
       <ul>
         {#each properties as property, index}
           <li
-            class={`border-b-2 border-solid border-gray-300 cursor-pointer p-3 ${
+            class={`flex border-b-2 border-solid border-gray-300 cursor-pointer p-3 ${
               selectedProperty?.uuid === property?.uuid ? 'bg-blue-700 text-white' : ''
             }`}
             on:click={() => selectProperty(index)}
           >
-            <div class="flex">
+            <div>
               {property.title}
-              <div class="px-3">
-                <ArrowRight />
-              </div>
+            </div>
+            <div class="px-3">
+              <ArrowRight />
             </div>
           </li>
         {/each}
