@@ -18,6 +18,9 @@
 
   const reloadData = async (searchValue) => {
     if (searchValue) {
+      selectedProperty = null;
+      propertyValues = [];
+
       const response = await p.searchValues(searchValue);
       if (response) {
         propertyValues = response;
@@ -33,7 +36,6 @@
   const findValuesByPropertyId = async (id) => {
     const response = await p.findOne(selectedProperty.uuid, ['*']);
     propertyValues = response.propertyValue;
-    console.log(response);
   };
   const selectProperty = (index) => {
     selectedProperty = properties[index];
@@ -50,12 +52,14 @@
 
 <Search bind:value={searchValue} placeholder="Search property values" class="mb-4" />
 
-<div class="flex">
+<div class="flex h-[350px]">
   {#if searchValue}
     <ul>
       {#each propertyValues as propertyValue, index}
         <li
-          class={`cursor-pointer p-2 ${selectedValues.includes(propertyValue) ? 'bg-blue-400' : ''}`}
+          class={`cursor-pointer p-2 ${
+            selectedValues.map((val) => val.uuid).includes(propertyValue.uuid) ? 'bg-blue-400' : ''
+          }`}
           on:click={() => selectPropertyValue(index)}
         >
           {propertyValue.name} -> {propertyValue.property.title}
