@@ -111,32 +111,41 @@
 
 <div class="flex h-[350px]">
   {#if showSelectedValues}
-    <ul class="w-full">
-      {#each selectedValues as propertyValue}
-        <li class={`cursor-pointer p-2 bg-blue-400`} on:click={() => selectPropertyValue(propertyValue.uuid)}>
-          {propertyValue.name}
-        </li>
-      {/each}
-    </ul>
+    <div class="w-full overflow-auto h-[350px]">
+      <ul class="w-full">
+        {#each selectedValues as propertyValue}
+          <li
+            class={`cursor-pointer p-2 bg-blue-500 text-white`}
+            on:click={() => selectPropertyValue(propertyValue.uuid)}
+          >
+            {propertyValue.name}
+          </li>
+        {/each}
+      </ul>
+    </div>
   {:else if searchValue}
-    <ul>
-      {#each propertyValues as propertyValue}
-        <li
-          class={`cursor-pointer p-2 ${
-            selectedValues.map((val) => val.uuid).includes(propertyValue.uuid) ? 'bg-blue-400' : ''
-          }`}
-          on:click={() => selectPropertyValue(propertyValue.uuid)}
-        >
-          {propertyValue.property.title} -> {propertyValue.name}
-        </li>
-      {/each}
-    </ul>
+    <div class="w-full overflow-auto h-[350px]">
+      <ul>
+        {#each propertyValues as propertyValue}
+          <li
+            class={`cursor-pointer p-2 ${
+              selectedValues.map((val) => val.uuid).includes(propertyValue.uuid) ? 'bg-blue-500 text-white' : ''
+            }`}
+            on:click={() => selectPropertyValue(propertyValue.uuid)}
+          >
+            {propertyValue.property.title} -> {propertyValue.name}
+          </li>
+        {/each}
+      </ul>
+    </div>
   {:else}
     <div class="w-1/2 border-r-2 border-gray-200 pr-2">
       <ul>
         {#each properties as property, index}
           <li
-            class={`cursor-pointer p-2 ${selectedProperty?.uuid === property?.uuid ? 'bg-blue-400' : ''}`}
+            class={`m-2 cursor-pointer p-2 ${
+              selectedProperty?.uuid === property?.uuid ? 'bg-blue-500 text-white' : ''
+            }`}
             on:click={() => selectProperty(index)}
           >
             <div class="flex">
@@ -150,18 +159,20 @@
       </ul>
     </div>
     <div class="w-1/2 pl-2">
-      <ul>
-        {#each propertyValues as propertyValue}
-          <li
-            class={`cursor-pointer p-2 ${
-              selectedValues.map((val) => val.uuid).includes(propertyValue.uuid) ? 'bg-blue-400' : ''
-            }`}
-            on:click={() => selectPropertyValue(propertyValue.uuid)}
-          >
-            {propertyValue.name}
-          </li>
-        {/each}
-      </ul>
+      <div class="w-full overflow-auto h-[350px]">
+        <ul>
+          {#each propertyValues as propertyValue}
+            <li
+              class={`cursor-pointer p-2 ${
+                selectedValues.map((val) => val.uuid).includes(propertyValue.uuid) ? 'bg-blue-500 text-white' : ''
+              }`}
+              on:click={() => selectPropertyValue(propertyValue.uuid)}
+            >
+              {propertyValue.name}
+            </li>
+          {/each}
+        </ul>
+      </div>
     </div>
   {/if}
 </div>
