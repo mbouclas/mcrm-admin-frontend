@@ -14,7 +14,7 @@
   let searchValue = '';
   let showSelectedValues = false;
 
-  $: selectedProperty?.uuid && findValuesByPropertyId(selectedProperty.uuid);
+  $: selectedProperty?.uuid && findValuesByPropertyId();
 
   $: reloadData(searchValue);
 
@@ -22,7 +22,6 @@
     showSelectedValues = false;
 
     if (searchValue) {
-      selectedProperty = null;
       propertyValues = [];
 
       const response = await p.searchValues(searchValue);
@@ -34,11 +33,12 @@
       const response = await p.find();
       if (response.data) {
         properties = response.data;
+        selectedProperty = selectedProperty;
       }
     }
   };
 
-  const findValuesByPropertyId = async (id) => {
+  const findValuesByPropertyId = async () => {
     const response = await p.findOne(selectedProperty.uuid, ['*']);
     propertyValues = response.propertyValue;
   };
@@ -107,7 +107,7 @@
       <ul>
         {#each properties as property, index}
           <li
-            class={`cursor-pointer p-2 ${selectedProperty === property ? 'bg-blue-400' : ''}`}
+            class={`cursor-pointer p-2 ${selectedProperty?.uuid === property?.uuid ? 'bg-blue-400' : ''}`}
             on:click={() => selectProperty(index)}
           >
             <div class="flex">
