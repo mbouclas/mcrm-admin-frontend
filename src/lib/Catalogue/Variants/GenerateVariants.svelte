@@ -46,15 +46,23 @@
     selectedProperty = properties[index];
   };
 
-  const selectPropertyValue = (index) => {
-    const selectedValue = propertyValues[index];
+  const selectPropertyValue = (uuid) => {
+    const selectedValueIndex = propertyValues.findIndex((val) => val.uuid === uuid);
+    if (selectedValueIndex === -1) {
+      return;
+    }
 
+    const selectedValue = propertyValues[selectedValueIndex];
     const valueIsSelected = selectedValues.some((val) => val.uuid === selectedValue.uuid);
 
     if (valueIsSelected) {
       selectedValues = selectedValues.filter((val) => val.uuid !== selectedValue.uuid);
     } else {
       selectedValues = [...selectedValues, selectedValue];
+    }
+
+    if (!selectedValues.length) {
+      showSelectedValues = false;
     }
   };
 
@@ -75,20 +83,20 @@
 <div class="flex h-[350px]">
   {#if showSelectedValues}
     <ul class="w-full">
-      {#each selectedValues as propertyValue, index}
-        <li class={`cursor-pointer p-2 bg-blue-400`} on:click={() => selectPropertyValue(index)}>
+      {#each selectedValues as propertyValue}
+        <li class={`cursor-pointer p-2 bg-blue-400`} on:click={() => selectPropertyValue(propertyValue.uuid)}>
           {propertyValue.name}
         </li>
       {/each}
     </ul>
   {:else if searchValue}
     <ul>
-      {#each propertyValues as propertyValue, index}
+      {#each propertyValues as propertyValue}
         <li
           class={`cursor-pointer p-2 ${
             selectedValues.map((val) => val.uuid).includes(propertyValue.uuid) ? 'bg-blue-400' : ''
           }`}
-          on:click={() => selectPropertyValue(index)}
+          on:click={() => selectPropertyValue(propertyValue.uuid)}
         >
           {propertyValue.property.title} -> {propertyValue.name}
         </li>
@@ -114,12 +122,12 @@
     </div>
     <div class="w-1/2 pl-2">
       <ul>
-        {#each propertyValues as propertyValue, index}
+        {#each propertyValues as propertyValue}
           <li
             class={`cursor-pointer p-2 ${
               selectedValues.map((val) => val.uuid).includes(propertyValue.uuid) ? 'bg-blue-400' : ''
             }`}
-            on:click={() => selectPropertyValue(index)}
+            on:click={() => selectPropertyValue(propertyValue.uuid)}
           >
             {propertyValue.name}
           </li>
