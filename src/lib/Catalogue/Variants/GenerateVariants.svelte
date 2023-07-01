@@ -18,6 +18,21 @@
 
   $: reloadData(searchValue);
 
+  const sortSelected = (data) => {
+    return data.sort((a, b) => {
+      const aIsSelected = selectedValues.some((val) => val.uuid === a.uuid);
+      const bIsSelected = selectedValues.some((val) => val.uuid === b.uuid);
+
+      if (aIsSelected && !bIsSelected) {
+        return -1;
+      }
+      if (!aIsSelected && bIsSelected) {
+        return 1;
+      }
+      return 0;
+    });
+  };
+
   const reloadData = async (searchValue) => {
     showSelectedValues = false;
 
@@ -26,7 +41,7 @@
 
       const response = await p.searchValues(searchValue);
       if (response) {
-        propertyValues = response;
+        propertyValues = sortSelected(response);
       }
     } else {
       propertyValues = [];
@@ -76,8 +91,22 @@
 </script>
 
 <div class="mb-4 flex items-center">
-  <Search bind:value={searchValue} placeholder="Search property values" />
-  <button on:click|stopPropagation={toggleSelectedValues}> View Selected </button>
+  <div class="w-full mr-4">
+    <Search bind:value={searchValue} placeholder="Search property values" />
+  </div>
+  <div class="px-2 relative">
+    <button
+      class="bg-blue-500 hover:bg-blue-900 text-white font-bold rounded-full transition duration-200 ease-in-out"
+      on:click|stopPropagation={toggleSelectedValues}
+    >
+      View Selected
+    </button>
+    {#if selectedValues.length}
+      <span class="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2 text-sm">
+        {selectedValues.length}
+      </span>
+    {/if}
+  </div>
 </div>
 
 <div class="flex h-[350px]">
