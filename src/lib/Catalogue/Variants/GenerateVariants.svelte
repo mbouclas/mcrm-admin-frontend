@@ -99,10 +99,10 @@
   </div>
   <div class="px-2 relative">
     <button
-      class="bg-blue-700 hover:bg-blue-900 text-white font-bold rounded-full transition duration-200 ease-in-out"
+      class="bg-blue-700 hover:bg-blue-900 text-white font-bold rounded-full transition duration-200 ease-in-out text-sm"
       on:click|stopPropagation={toggleSelectedValues}
     >
-      View Selected
+      View selected
     </button>
     {#if selectedValues.length}
       <span class="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2 text-sm">
