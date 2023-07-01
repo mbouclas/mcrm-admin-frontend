@@ -75,7 +75,10 @@
     } else {
       selectedValues = [...selectedValues, selectedValue];
     }
+  };
 
+  const deselctSelectedValue = (uuid) => {
+    selectedValues = selectedValues.filter((val) => val.uuid !== uuid);
     if (!selectedValues.length) {
       showSelectedValues = false;
     }
@@ -115,8 +118,8 @@
       <ul class="w-full">
         {#each selectedValues as propertyValue}
           <li
-            class={`cursor-pointer p-2 bg-blue-500 text-white`}
-            on:click={() => selectPropertyValue(propertyValue.uuid)}
+            class={`m-2 cursor-pointer p-2 bg-blue-500 text-white`}
+            on:click={() => deselctSelectedValue(propertyValue.uuid)}
           >
             {propertyValue.name}
           </li>
@@ -128,7 +131,7 @@
       <ul>
         {#each propertyValues as propertyValue}
           <li
-            class={`cursor-pointer p-2 ${
+            class={`m-2 cursor-pointer p-2 ${
               selectedValues.map((val) => val.uuid).includes(propertyValue.uuid) ? 'bg-blue-500 text-white' : ''
             }`}
             on:click={() => selectPropertyValue(propertyValue.uuid)}
@@ -163,7 +166,7 @@
         <ul>
           {#each propertyValues as propertyValue}
             <li
-              class={`cursor-pointer p-2 ${
+              class={`m-2 cursor-pointer p-2 ${
                 selectedValues.map((val) => val.uuid).includes(propertyValue.uuid) ? 'bg-blue-500 text-white' : ''
               }`}
               on:click={() => selectPropertyValue(propertyValue.uuid)}
