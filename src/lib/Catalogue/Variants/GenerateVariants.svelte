@@ -99,7 +99,7 @@
   </div>
   <div class="px-2 relative">
     <button
-      class="bg-blue-500 hover:bg-blue-900 text-white font-bold rounded-full transition duration-200 ease-in-out"
+      class="bg-blue-700 hover:bg-blue-900 text-white font-bold rounded-full transition duration-200 ease-in-out"
       on:click|stopPropagation={toggleSelectedValues}
     >
       View Selected
@@ -112,13 +112,13 @@
   </div>
 </div>
 
-<div class="flex h-[350px]">
+<div class="flex h-[400px]">
   {#if showSelectedValues}
     <div class="w-full overflow-auto h-[350px]">
-      <ul class="w-full">
+      <ul>
         {#each selectedValues as propertyValue}
           <li
-            class={`m-2 cursor-pointer p-2 bg-blue-500 text-white`}
+            class={`border-b-2 border-solid border-gray-300 cursor-pointer p-3 bg-blue-700 text-white`}
             on:click={() => deselctSelectedValue(propertyValue.uuid)}
           >
             {propertyValue.name}
@@ -131,8 +131,8 @@
       <ul>
         {#each propertyValues as propertyValue}
           <li
-            class={`m-2 cursor-pointer p-2 ${
-              selectedValues.map((val) => val.uuid).includes(propertyValue.uuid) ? 'bg-blue-500 text-white' : ''
+            class={`border-b-2 border-solid border-gray-300 cursor-pointer p-3 ${
+              selectedValues.map((val) => val.uuid).includes(propertyValue.uuid) ? 'bg-blue-700 text-white' : ''
             }`}
             on:click={() => selectPropertyValue(propertyValue.uuid)}
           >
@@ -142,12 +142,12 @@
       </ul>
     </div>
   {:else}
-    <div class="w-1/2 border-r-2 border-gray-200 pr-2">
+    <div class="w-1/2 border-r-2 border-gray-600 pr-2">
       <ul>
         {#each properties as property, index}
           <li
-            class={`m-2 cursor-pointer p-2 ${
-              selectedProperty?.uuid === property?.uuid ? 'bg-blue-500 text-white' : ''
+            class={`border-b-2 border-solid border-gray-300 cursor-pointer p-3 ${
+              selectedProperty?.uuid === property?.uuid ? 'bg-blue-700 text-white' : ''
             }`}
             on:click={() => selectProperty(index)}
           >
@@ -162,12 +162,12 @@
       </ul>
     </div>
     <div class="w-1/2 pl-2">
-      <div class="w-full overflow-auto h-[350px]">
+      <div class="w-full overflow-auto h-[400px]">
         <ul>
           {#each propertyValues as propertyValue}
             <li
-              class={`m-2 cursor-pointer p-2 ${
-                selectedValues.map((val) => val.uuid).includes(propertyValue.uuid) ? 'bg-blue-500 text-white' : ''
+              class={`border-b-2 border-solid border-gray-300 cursor-pointer p-3 ${
+                selectedValues.map((val) => val.uuid).includes(propertyValue.uuid) ? 'bg-blue-700 text-white' : ''
               }`}
               on:click={() => selectPropertyValue(propertyValue.uuid)}
             >
