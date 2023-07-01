@@ -125,7 +125,7 @@
               {propertyValue.property.title}
             </div>
             <div class="px-3">
-              <ArrowRight />
+              <ArrowRight class="outline-none" />
             </div>
             <div>{propertyValue.name}</div>
           </li>
@@ -146,7 +146,7 @@
               {propertyValue.property.title}
             </div>
             <div class="px-3">
-              <ArrowRight />
+              <ArrowRight class="outline-none" />
             </div>
             <div>{propertyValue.name}</div>
           </li>
@@ -167,7 +167,7 @@
               {property.title}
             </div>
             <div class="px-3">
-              <ArrowRight />
+              <ArrowRight class="outline-none" />
             </div>
           </li>
         {/each}
