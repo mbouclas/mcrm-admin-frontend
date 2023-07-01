@@ -2,7 +2,8 @@
   import { onMount } from 'svelte';
 
   import { PropertiesService } from '../services/properties/properties.service';
-  import { Search } from 'flowbite-svelte';
+  import { Search, Button } from 'flowbite-svelte';
+  import { ArrowRight } from 'svelte-heros-v2';
 
   const p = new PropertiesService();
 
@@ -11,12 +12,15 @@
   let selectedValues = [];
   let selectedProperty = null;
   let searchValue = '';
+  let showSelectedValues = false;
 
   $: selectedProperty?.uuid && findValuesByPropertyId(selectedProperty.uuid);
 
   $: reloadData(searchValue);
 
   const reloadData = async (searchValue) => {
+    showSelectedValues = false;
+
     if (searchValue) {
       selectedProperty = null;
       propertyValues = [];
@@ -43,7 +47,19 @@
   };
 
   const selectPropertyValue = (index) => {
-    selectedValues = [...selectedValues, propertyValues[index]];
+    const selectedValue = propertyValues[index];
+
+    const valueIsSelected = selectedValues.some((val) => val.uuid === selectedValue.uuid);
+
+    if (valueIsSelected) {
+      selectedValues = selectedValues.filter((val) => val.uuid !== selectedValue.uuid);
+    } else {
+      selectedValues = [...selectedValues, selectedValue];
+    }
+  };
+
+  const toggleSelectedValues = () => {
+    showSelectedValues = !showSelectedValues;
   };
 
   onMount(async () => {
@@ -51,10 +67,21 @@
   });
 </script>
 
-<Search bind:value={searchValue} placeholder="Search property values" class="mb-4" />
+<div class="mb-4 flex items-center">
+  <Search bind:value={searchValue} placeholder="Search property values" />
+  <button on:click|stopPropagation={toggleSelectedValues}> View Selected </button>
+</div>
 
 <div class="flex h-[350px]">
-  {#if searchValue}
+  {#if showSelectedValues}
+    <ul class="w-full">
+      {#each selectedValues as propertyValue, index}
+        <li class={`cursor-pointer p-2 bg-blue-400`} on:click={() => selectPropertyValue(index)}>
+          {propertyValue.name}
+        </li>
+      {/each}
+    </ul>
+  {:else if searchValue}
     <ul>
       {#each propertyValues as propertyValue, index}
         <li
@@ -75,7 +102,12 @@
             class={`cursor-pointer p-2 ${selectedProperty === property ? 'bg-blue-400' : ''}`}
             on:click={() => selectProperty(index)}
           >
-            {property.title}
+            <div class="flex">
+              {property.title}
+              <div class="px-3">
+                <ArrowRight />
+              </div>
+            </div>
           </li>
         {/each}
       </ul>
