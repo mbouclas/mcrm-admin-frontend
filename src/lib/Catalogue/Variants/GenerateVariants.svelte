@@ -26,6 +26,7 @@
         propertyValues = response;
       }
     } else {
+      propertyValues = [];
       const response = await p.find();
       if (response.data) {
         properties = response.data;
@@ -62,7 +63,7 @@
           }`}
           on:click={() => selectPropertyValue(index)}
         >
-          {propertyValue.name} -> {propertyValue.property.title}
+          {propertyValue.property.title} -> {propertyValue.name}
         </li>
       {/each}
     </ul>
@@ -83,7 +84,9 @@
       <ul>
         {#each propertyValues as propertyValue, index}
           <li
-            class={`cursor-pointer p-2 ${selectedValues.includes(propertyValue) ? 'bg-blue-400' : ''}`}
+            class={`cursor-pointer p-2 ${
+              selectedValues.map((val) => val.uuid).includes(propertyValue.uuid) ? 'bg-blue-400' : ''
+            }`}
             on:click={() => selectPropertyValue(index)}
           >
             {propertyValue.name}
