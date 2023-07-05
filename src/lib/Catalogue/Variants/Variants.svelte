@@ -53,6 +53,7 @@
       model = await s.find({
         page: currentPagination.page,
         limit: currentPagination.limit,
+        product: [$params.id],
       });
       items = model?.data;
       pagination = {
