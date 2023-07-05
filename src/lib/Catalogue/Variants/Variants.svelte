@@ -12,6 +12,7 @@
   export let productId;
   import { VariantsService } from '../services/variants/variants.service';
   import { PropertiesService } from '../services/properties/properties.service';
+  import { ProductsService } from '../services/products/products.service';
   import {
     Modal,
     Button,
@@ -26,8 +27,12 @@
   import GenerateVariants from './GenerateVariants.svelte';
 
   const s = new VariantsService();
+  const productService = new ProductsService();
   const p = new PropertiesService();
   const params = useParams();
+
+  $: console.log('params ', $params);
+  let selectedValues = [];
   let model;
   let selectedItem;
   let propertyValues = [];
@@ -60,6 +65,12 @@
     } else {
       model = getModelPrototypeFromFields(fields);
     }
+  };
+
+  const handleGenerateVariants = async () => {
+    await productService.generateVariants($params.id, { propertyValues: selectedValues.map((value) => value.uuid) });
+
+    reloadData({ page: 1, limit: 10 });
   };
 
   const handleConfirm = async ({ value, action }) => {
@@ -160,10 +171,10 @@
 </Modal>
 
 <Modal size="xl" title="Generate variants" bind:open={generateVariantsModelOpen} autoclose outsideclose>
-  <GenerateVariants />
+  <GenerateVariants bind:selectedValues />
 
   <svelte:fragment slot="footer">
-    <Button on:click={() => handleConfirm({ value: selectedItem, action: 'edit' })}>Confirm</Button>
+    <Button on:click={() => handleGenerateVariants()}>Confirm</Button>
     <Button on:click={() => handleModalCancel()} color="alternative">Cancel</Button>
   </svelte:fragment>
 </Modal>
