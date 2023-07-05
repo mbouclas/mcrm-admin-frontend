@@ -1,45 +1,25 @@
 <script lang="ts">
-  import { Checkbox, Label, Helper } from "flowbite-svelte";
-  import type { IDynamicFieldConfigBlueprint } from "../types";
-
-  export let options: string[] = ["I agree", "Dont agree", "Not sure"];
-  export let field: IDynamicFieldConfigBlueprint =
-    {} as IDynamicFieldConfigBlueprint;
-  export let onChange;
-  export let model;
-  export let label;
-  export let helperText;
-  export let inputId: string;
-  export let classes: string[] = [];
+  import {createEventDispatcher} from "svelte";
+  const dispatch = createEventDispatcher();
+  export let group
+  export let value
+  export let checked = false;
+  export let classes = '';
+  export let name = ''
 </script>
 
-<div class="mb-6">
-  {#if field.label}
-    <Label for="success" class="block mb-2 !text-gray-400">{field.label}</Label>
-  {/if}
 
-  <div class="dynamic-field p-3">
-    {#each options as option, index}
-      <Checkbox
-        class="p-3"
-        bind:name={field.varName}
-        bind:value={model}
-        on:change={(e) => onChange(field.varName, e.currentTarget.value)}
-      >
-        {option}
-      </Checkbox>
-    {/each}
-  </div>
-
-  {#if helperText}
-    <Helper>{helperText}</Helper>
-  {/if}
-</div>
-
-<style global>
-  .dynamic-field label {
-    color: #bfc8e2 !important;
-    user-select: none;
-    cursor: pointer;
-  }
-</style>
+<input
+        type="checkbox"
+        name={name}
+        id={name}
+        bind:checked={checked}
+        value={value}
+        on:change={() => {
+          dispatch("change", value)
+        }}
+        class={`${classes}  w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500`}
+/>
+<label for={name} class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
+<slot></slot>
+</label>

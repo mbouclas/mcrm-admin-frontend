@@ -105,4 +105,8 @@ export class ProductsService extends BaseHttpService {
       });
     }
   }
+
+  async saveProductCategories(productId: string, categories: IGenericObject[]) {
+    const res = await super.patch(`product/${productId}/productCategories`, categories);
+  }
 }

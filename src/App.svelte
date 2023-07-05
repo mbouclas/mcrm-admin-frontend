@@ -5,6 +5,7 @@
   import DefaultLayout from "./lib/layouts/default.svelte";
 
   import { user } from "./lib/stores";
+
 </script>
 
 <Router>
