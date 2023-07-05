@@ -1,8 +1,8 @@
-import { BaseHttpService } from "../../../Shared/base-http.service";
-import type { IGenericObject } from "../../../Shared/models/generic";
-import queryString from "query-string";
-import { html } from "gridjs";
-import { setNotificationAction } from "../../../stores";
+import { BaseHttpService } from '../../../Shared/base-http.service';
+import type { IGenericObject } from '../../../Shared/models/generic';
+import queryString from 'query-string';
+import { html } from 'gridjs';
+import { setNotificationAction } from '../../../stores';
 
 export class VariantsService extends BaseHttpService {
   async activateRows(selectedIds: string[]) {
@@ -34,21 +34,21 @@ export class VariantsService extends BaseHttpService {
     try {
       const response = await super.delete(`product-variant/${itemId}`);
       setNotificationAction({
-        message: "Created successfully",
-        type: "success",
+        message: 'Created successfully',
+        type: 'success',
       });
 
       return response;
     } catch (e) {
       setNotificationAction({
-        message: "Failed to create",
-        type: "error",
+        message: 'Failed to create',
+        type: 'error',
       });
     }
   }
 
   getGridUrl(filters = {}) {
-    return super.getGridUrl("product-variant", filters, (res) => {
+    return super.getGridUrl('product-variant', filters, (res) => {
       return res.data.map((row) => [
         row.uuid,
         html(`<a href='${row.uuid}'>${row.title}</a>`),
@@ -72,7 +72,7 @@ export class VariantsService extends BaseHttpService {
       qs = queryString.stringify(filters);
     }
 
-    return await this.get(`product-variant${qs ? `?${qs}` : ""}`);
+    return await this.get(`product-variant${qs ? `?${qs}` : ''}`);
   }
 
   async update(id: string, data: IGenericObject) {
@@ -81,16 +81,16 @@ export class VariantsService extends BaseHttpService {
 
   async store(data: IGenericObject) {
     try {
-      const res = await super.post("product-variant", data);
+      const res = await super.post('product-variant', data);
       setNotificationAction({
-        message: "Created successfully",
-        type: "success",
+        message: 'Created successfully',
+        type: 'success',
       });
       return res;
     } catch (err) {
       setNotificationAction({
-        message: "Failed to create",
-        type: "error",
+        message: 'Failed to create',
+        type: 'error',
       });
     }
   }

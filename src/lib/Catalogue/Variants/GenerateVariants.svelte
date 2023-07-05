@@ -9,7 +9,7 @@
 
   let propertyValues = [];
   let properties = [];
-  let selectedValues = [];
+  export let selectedValues = [];
   let selectedProperty = null;
   let searchValue = '';
   let showSelectedValues = false;
