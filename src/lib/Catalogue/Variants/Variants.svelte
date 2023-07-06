@@ -71,18 +71,30 @@
 
   const handleGenerateVariants = async () => {
     const propertyValues = selectedValues.map((value) => value.uuid);
+
+    if (duplicateVariants && duplicateVariants.length) {
+      const duplicateVariantsParsed = duplicateVariants.reduce((acc, cur) => {
+        acc[cur.name] = cur.delete;
+        return acc;
+      }, {});
+      await productService.generateVariants($params.id, { propertyValues, duplicateVariants: duplicateVariantsParsed });
+      reloadData({ page: 1, limit: 10 });
+      return null;
+    }
+
     const res = await productService.checkDuplicateVariants($params.id, {
       propertyValues,
     });
-    console.log(res);
-    if (res.duplicateVariantNames) {
+
+    if (res.duplicateVariantNames.length) {
       duplicateVariants = res.duplicateVariantNames.map((name) => ({
         name,
         delete: false,
       }));
       return null;
     }
-    await productService.generateVariants($params.id, { propertyValues });
+
+    await productService.generateVariants($params.id, { propertyValues, duplicateVariants: [] });
     reloadData({ page: 1, limit: 10 });
   };
 

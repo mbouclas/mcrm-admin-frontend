@@ -100,7 +100,7 @@
     <div class="flex items-center justify-between bg-gray-100 rounded-lg p-4 mb-2">
       <span class="font-medium text-gray-800">{duplicateVariant.name}</span>
       <span>
-        <Checkbox class="text-blue-500" bind:value={duplicateVariant.delete} />
+        <Checkbox class="text-blue-500" bind:checked={duplicateVariant.delete} />
       </span>
     </div>
   {/each}

@@ -2,12 +2,20 @@
   import type { IDynamicFieldConfigBlueprint } from "../../../DynamicFields/types";
   import Fields from "../../../DynamicFields/Renderer.svelte";
   import Loading from "../../../Shared/Loading.svelte";
-  import Form from "../../../DynamicFields/Form.svelte";
+  import Input from "../../../DynamicFields/fields/input.svelte";
+  import Number from "../../../DynamicFields/fields/number-input.svelte";
+  import RichText from "../../../DynamicFields/fields/richtext.svelte";
+  import Image from "../../../DynamicFields/fields/image.svelte";
+  import ProductCategorySelector from '../ProductCategorySelector.svelte';
+  import Tags from "svelte-tags-input";
+
+
 
   export let fields: IDynamicFieldConfigBlueprint[] = [];
   export let model;
   let mainFields = [];
   let secondaryFields = [];
+
   // export let onSubmit: (data: any) => void;
 
   // console.log(fields);
@@ -17,34 +25,159 @@
       if (!field.group || field.group === "main") {
         mainFields.push(field);
       }
-      if (field.group === "right") {
+      if (field.group === "extra") {
         secondaryFields.push(field);
       }
 
+      console.log(secondaryFields)
     });
   }
+
+  function getField(name: string) {
+    return fields.find((field) => field.varName === name);
+  }
+
+
+
+  function getSlug(e, value) {
+    model.slug = value.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+
+  }
+
+  function onCategorySelected(e) {
+
+  }
+
+  const countryList = [
+    "Afghanistan",
+    "Albania",
+    "Algeria",
+    "American Samoa",
+    "Andorra",
+    "Angola",
+    "Anguilla",
+    "Antarctica",
+    "Antigua and Barbuda",
+    "Argentina",
+
+  ];
 </script>
 
 {#if !model}<Loading /> {/if}
 {#if model}
-  <div class="block lg:flex">
-    <div class="w-full p-2">
-      <Fields
-        fields={mainFields}
-        bind:model
-        module="Product"
-        itemId={model.uuid}
+  <!--{JSON.stringify(model)}-->
+  <!--{JSON.stringify(model.categories)}-->
+
+
+  <form>
+
+    <div class="grid md:grid-cols-2 md:gap-6">
+    <div class="relative z-0 w-full mb-6 group">
+      <Input  bind:model={model.title} placeholder="Title" label="Title" onChange={getSlug} field={getField('title')} />
+      <div class="grid md:grid-cols-2 md:gap-6">
+        <div class="relative z-0 w-full mb-6 group">
+          <Input  bind:model={model.sku} placeholder="SKU" label="SKU" field={getField('sku')} />
+        </div>
+        <div class="relative z-0 w-full mb-6 group">
+          <Number  bind:model={model.price} placeholder="Price" label="Price" field={getField('price')} />
+        </div>
+      </div>
+      <div class="relative z-0 w-full mb-6 group">
+        <ProductCategorySelector bind:model={model.productCategory}  label="Categories" productId={model.uuid} saveOnSelect={true}
+        on:selection={onCategorySelected}/>
+      </div>
+    </div>
+      <div class="w-full mb-6  ">
+        <div class="flex  justify-center w-full">
+          <Image model={model.thumb} title="Main Image" />
+        </div>
+
+
+
+
+      </div>
+
+    </div>
+    <div class="tags">
+      <Tags
+              autoComplete={countryList}
+              addKeys={[9]}
+              allowBlur={true}
+              onTagClick={tag => alert(tag)}
       />
     </div>
-    <!-- END BLOCK -->
-    <div class="w-full p-2">
-      <Fields
-        fields={secondaryFields}
-        bind:model
-        module="Product"
-        itemId={model.uuid}
-      />
+
+    <div class="relative z-0 w-full mb-6 group">
+      <RichText id="description" bind:model={model.description} field={getField('description')} />
     </div>
-    <!-- END BLOCK -->
+
+    <div class="relative z-0 w-full mb-6 group">
+      <RichText id="description_long" bind:model={model.description_long} field={getField('description_long')} />
+    </div>
+
+
+
+
+    <button type="submit" class="hidden">Submit</button>
+  </form>
+
+
+
+
+  <div class="fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200 dark:bg-gray-700 dark:border-gray-600">
+    <div class="grid h-full max-w-lg grid-cols-1 mx-auto font-medium ">
+
+      <button type="button" class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group">
+
+        <svg class="w-6 h-6 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M21 7v12q0 .825-.588 1.413T19 21H5q-.825 0-1.413-.588T3 19V5q0-.825.588-1.413T5 3h12l4 4Zm-9 11q1.25 0 2.125-.875T15 15q0-1.25-.875-2.125T12 12q-1.25 0-2.125.875T9 15q0 1.25.875 2.125T12 18Zm-6-8h9V6H6v4Z"/></svg>
+        <span class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500">Save</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="w-full p-2 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <Fields
+            fields={secondaryFields}
+            bind:model
+            module="Product"
+            itemId={model.uuid}
+    />
   </div>
 {/if}
+
+<style>
+  .tags :global(.svelte-tags-input-tag) {
+    background:blue;
+  }
+
+  .tags :global(.svelte-tags-input-layout) {
+    background:yellow;
+  }
+
+  .tags :global(.svelte-tags-input-input) {
+    background:red;
+  }
+
+    .tags :global(.svelte-tags-input-tag-remove) {
+        background:green;
+    }
+
+    .tags :global(.svelte-tags-input-tag-text) {
+        background:purple;
+    }
+
+    .tags :global(.svelte-tags-input-tag.focus), .tags :global(.svelte-tags-input:focus) {
+      background:blue;
+    }
+
+  .tags :global(.svelte-tags-input-matchs-parent) {
+    background-color: red;
+    z-index: 9999;
+  }
+
+  .tags :global(.svelte-tags-input-matchs), .tags :global(.svelte-tags-input-matchs-parent) {
+    background-color: red;
+    z-index: 9999;
+  }
+
+</style>
