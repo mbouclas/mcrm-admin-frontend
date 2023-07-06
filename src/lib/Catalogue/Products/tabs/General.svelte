@@ -7,7 +7,7 @@
   import RichText from "../../../DynamicFields/fields/richtext.svelte";
   import Image from "../../../DynamicFields/fields/image.svelte";
   import ProductCategorySelector from '../ProductCategorySelector.svelte';
-  import Tags from "svelte-tags-input";
+  import Tags from "../ProductCategoriesTags.svelte";
 
 
 
@@ -48,19 +48,6 @@
 
   }
 
-  const countryList = [
-    "Afghanistan",
-    "Albania",
-    "Algeria",
-    "American Samoa",
-    "Andorra",
-    "Angola",
-    "Anguilla",
-    "Antarctica",
-    "Antigua and Barbuda",
-    "Argentina",
-
-  ];
 </script>
 
 {#if !model}<Loading /> {/if}
@@ -90,22 +77,23 @@
       <div class="w-full mb-6  ">
         <div class="flex  justify-center w-full">
           <Image model={model.thumb} title="Main Image" />
+
         </div>
 
 
-
+        <div class="pt-6">
+        <h3>Tags</h3>
+          <Tags
+                  bind:model={model.tag}
+                  itemId={model.uuid}
+                  saveOnAction={true}
+          />
+        </div>
 
       </div>
 
     </div>
-    <div class="tags">
-      <Tags
-              autoComplete={countryList}
-              addKeys={[9]}
-              allowBlur={true}
-              onTagClick={tag => alert(tag)}
-      />
-    </div>
+
 
     <div class="relative z-0 w-full mb-6 group">
       <RichText id="description" bind:model={model.description} field={getField('description')} />
@@ -145,39 +133,3 @@
   </div>
 {/if}
 
-<style>
-  .tags :global(.svelte-tags-input-tag) {
-    background:blue;
-  }
-
-  .tags :global(.svelte-tags-input-layout) {
-    background:yellow;
-  }
-
-  .tags :global(.svelte-tags-input-input) {
-    background:red;
-  }
-
-    .tags :global(.svelte-tags-input-tag-remove) {
-        background:green;
-    }
-
-    .tags :global(.svelte-tags-input-tag-text) {
-        background:purple;
-    }
-
-    .tags :global(.svelte-tags-input-tag.focus), .tags :global(.svelte-tags-input:focus) {
-      background:blue;
-    }
-
-  .tags :global(.svelte-tags-input-matchs-parent) {
-    background-color: red;
-    z-index: 9999;
-  }
-
-  .tags :global(.svelte-tags-input-matchs), .tags :global(.svelte-tags-input-matchs-parent) {
-    background-color: red;
-    z-index: 9999;
-  }
-
-</style>
