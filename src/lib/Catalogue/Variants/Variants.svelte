@@ -33,6 +33,7 @@
 
   $: console.log('params ', $params);
   let selectedValues = [];
+  let duplicateVariants;
   let model;
   let selectedItem;
   let propertyValues = [];
@@ -69,8 +70,19 @@
   };
 
   const handleGenerateVariants = async () => {
-    await productService.generateVariants($params.id, { propertyValues: selectedValues.map((value) => value.uuid) });
-
+    const propertyValues = selectedValues.map((value) => value.uuid);
+    const res = await productService.checkDuplicateVariants($params.id, {
+      propertyValues,
+    });
+    console.log(res);
+    if (res.duplicateVariantNames) {
+      duplicateVariants = res.duplicateVariantNames.map((name) => ({
+        name,
+        delete: false,
+      }));
+      return null;
+    }
+    await productService.generateVariants($params.id, { propertyValues });
     reloadData({ page: 1, limit: 10 });
   };
 
@@ -171,13 +183,11 @@
   </svelte:fragment>
 </Modal>
 
-<Modal size="xl" title="Generate variants" bind:open={generateVariantsModelOpen} autoclose outsideclose>
-  <GenerateVariants bind:selectedValues />
+<Modal size="xl" title="Generate variants" bind:open={generateVariantsModelOpen} outsideclose>
+  <GenerateVariants bind:duplicateVariants bind:selectedValues />
 
-  <svelte:fragment slot="footer">
-    <Button on:click={() => handleGenerateVariants()}>Confirm</Button>
-    <Button on:click={() => handleModalCancel()} color="alternative">Cancel</Button>
-  </svelte:fragment>
+  <Button on:click={() => handleGenerateVariants()}>Confirm</Button>
+  <Button on:click={() => handleModalCancel()} color="alternative">Cancel</Button>
 </Modal>
 
 <Button on:click={() => handleAction('generateVariants')}>Generate variants</Button>

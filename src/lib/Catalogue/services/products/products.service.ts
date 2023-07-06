@@ -121,4 +121,19 @@ export class ProductsService extends BaseHttpService {
       });
     }
   }
+
+  async checkDuplicateVariants(productId: string, data) {
+    try {
+      const propertyValues = data.propertyValues.map((val) => `propertyValues[]=${encodeURIComponent(val)}`).join('&');
+
+      const res = await super.get(`product/${productId}/check-duplicate-variants?${propertyValues}`);
+
+      return res;
+    } catch (err) {
+      setNotificationAction({
+        message: 'Failed to check duplicate',
+        type: 'error',
+      });
+    }
+  }
 }
