@@ -96,15 +96,18 @@
 
 {#if duplicateVariants.length}
   <div class="text-lg font-bold text-center mb-4">Duplicated variants. Choose which to delete</div>
+
   {#each duplicateVariants as duplicateVariant (duplicateVariant.name)}
-    <div
-      class={`flex items-center justify-between rounded-lg p-4 mb-2 cursor-pointer
-      ${duplicateVariant.delete ? 'bg-blue-700' : 'bg-white'}`}
-      on:click={() => (duplicateVariant.delete = !duplicateVariant.delete)}
-    >
-      <span class={`font-medium ${duplicateVariant.delete ? 'text-white' : 'text-gray-500'}`}
+    <div class="flex items-center justify-between rounded-lg p-4 mb-2 bg-white">
+      <span class={`font-medium ${duplicateVariant.delete ? 'text-red-500' : 'text-gray-500'}`}
         >{duplicateVariant.name}</span
       >
+      <button
+        class={`px-4 py-2 rounded ${duplicateVariant.delete ? 'bg-red-500 text-white' : 'bg-gray-200 text-gray-500'}`}
+        on:click={() => (duplicateVariant.delete = !duplicateVariant.delete)}
+      >
+        {duplicateVariant.delete ? 'Marked for override' : 'Select to override'}
+      </button>
     </div>
   {/each}
 {:else}
