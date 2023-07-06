@@ -97,7 +97,7 @@
       return null;
     }
 
-    await productService.generateVariants($params.id, { propertyValues, duplicateVariants: [] });
+    await productService.generateVariants($params.id, { propertyValues, duplicateVariants: {} });
     reloadData({ page: 1, limit: 10 });
     generateVariantsModelOpen = false;
     duplicateVariants = [];
