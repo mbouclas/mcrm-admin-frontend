@@ -79,6 +79,9 @@
       }, {});
       await productService.generateVariants($params.id, { propertyValues, duplicateVariants: duplicateVariantsParsed });
       reloadData({ page: 1, limit: 10 });
+      generateVariantsModelOpen = false;
+      duplicateVariants = [];
+      selectedValues = [];
       return null;
     }
 
@@ -96,6 +99,9 @@
 
     await productService.generateVariants($params.id, { propertyValues, duplicateVariants: [] });
     reloadData({ page: 1, limit: 10 });
+    generateVariantsModelOpen = false;
+    duplicateVariants = [];
+    selectedValues = [];
   };
 
   const handleConfirm = async ({ value, action }) => {

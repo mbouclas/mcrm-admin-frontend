@@ -96,12 +96,15 @@
 
 {#if duplicateVariants.length}
   <div class="text-lg font-bold text-center mb-4">Duplicated variants. Choose which to delete</div>
-  {#each duplicateVariants as duplicateVariant}
-    <div class="flex items-center justify-between bg-gray-100 rounded-lg p-4 mb-2">
-      <span class="font-medium text-gray-800">{duplicateVariant.name}</span>
-      <span>
-        <Checkbox class="text-blue-500" bind:checked={duplicateVariant.delete} />
-      </span>
+  {#each duplicateVariants as duplicateVariant (duplicateVariant.name)}
+    <div
+      class={`flex items-center justify-between rounded-lg p-4 mb-2 cursor-pointer
+      ${duplicateVariant.delete ? 'bg-blue-700' : 'bg-white'}`}
+      on:click={() => (duplicateVariant.delete = !duplicateVariant.delete)}
+    >
+      <span class={`font-medium ${duplicateVariant.delete ? 'text-white' : 'text-gray-500'}`}
+        >{duplicateVariant.name}</span
+      >
     </div>
   {/each}
 {:else}
