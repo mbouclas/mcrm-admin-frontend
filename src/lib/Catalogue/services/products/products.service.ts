@@ -122,7 +122,6 @@ export class ProductsService extends BaseHttpService {
     }
   }
 
-<<<<<<< HEAD
   async checkDuplicateVariants(productId: string, data) {
     try {
       const propertyValues = data.propertyValues.map((val) => `propertyValues[]=${encodeURIComponent(val)}`).join('&');
@@ -136,9 +135,9 @@ export class ProductsService extends BaseHttpService {
         type: 'error',
       });
     }
-=======
+  }
+
   async saveProductCategories(productId: string, categories: IGenericObject[]) {
     const res = await super.patch(`product/${productId}/productCategories`, categories);
->>>>>>> c65d654d9c28cc67f8cc281c3ff7104c10c3a03b
   }
 }
