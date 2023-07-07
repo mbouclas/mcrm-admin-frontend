@@ -33,6 +33,14 @@
       }
     }
 
+    if (!model.thumb) {
+      model.thumb = {};
+    }
+
+    if (!model.images) {
+      model.images = [];
+    }
+
     if (!model.seo) {
       model.seo = {
         title: model.title,
@@ -100,7 +108,7 @@
       <General {fields} {model} />
     </TabItem>
     <TabItem title="Gallery" tabStyle="custom" {customActiveClass} {customInActiveClass}>
-      <Gallery model={model.images} />
+      <Gallery model={model.images} itemId={model.uuid} module="Product" />
     </TabItem>
     <TabItem title="SEO" tabStyle="custom" {customActiveClass} {customInActiveClass}>
       <SEO model={model.seo} on:change={handleModelChange.bind(this, 'seo')} />

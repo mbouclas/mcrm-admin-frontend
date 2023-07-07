@@ -29,7 +29,6 @@
         secondaryFields.push(field);
       }
 
-      console.log(secondaryFields)
     });
   }
 
@@ -57,7 +56,7 @@
 
 
   <form>
-
+    {JSON.stringify(model.thumb)}
     <div class="grid md:grid-cols-2 md:gap-6">
     <div class="relative z-0 w-full mb-6 group">
       <Input  bind:model={model.title} placeholder="Title" label="Title" onChange={getSlug} field={getField('title')} />
@@ -76,7 +75,17 @@
     </div>
       <div class="w-full mb-6  ">
         <div class="flex  justify-center w-full">
-          <Image model={model.thumb} title="Main Image" />
+
+          <Image model={model.thumb}
+                 title="Main Image"
+                 maxNumberOfFiles={1}
+                 module="Product"
+                 itemId={model.uuid}
+                 type="main"
+                  on:allUploadsComplete={(e) => {
+                    model.thumb = e.detail;
+                  }}
+          />
 
         </div>
 
