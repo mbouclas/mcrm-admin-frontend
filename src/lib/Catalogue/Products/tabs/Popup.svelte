@@ -64,7 +64,7 @@
   <div class="backdrop" on:click={toggle} />
   <div class="content">
     <h1 class="title">Image Details</h1>
-    <form action="" on:submit={onSave.bind(this, model)}>
+    <form action="" on:submit|preventDefault={onSave.bind(this, model)}>
     <Input  bind:model={model.title} placeholder="Title" label="Title"  field={getField('title')} />
     <Input  bind:model={model.alt} placeholder="Alt" label="Alt"  field={getField('alt')} />
     <TextArea  bind:model={model.description} placeholder="Description" label="Description"  field={getField('description')} />

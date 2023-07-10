@@ -66,6 +66,11 @@
         model[foundIndex] = updatedModel;
         hideModal();
         await (new ImageService()).updateImageDetails(updatedModel.uuid, updatedModel, module, itemId);
+
+        setNotificationAction({
+            message: 'Image details updated successfully',
+            type: 'success',
+        });
     }
 
     /**

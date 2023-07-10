@@ -56,7 +56,7 @@
 
 
   <form>
-    {JSON.stringify(model.thumb)}
+
     <div class="grid md:grid-cols-2 md:gap-6">
     <div class="relative z-0 w-full mb-6 group">
       <Input  bind:model={model.title} placeholder="Title" label="Title" onChange={getSlug} field={getField('title')} />
