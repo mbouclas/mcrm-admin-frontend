@@ -18,7 +18,7 @@
   let hasError = false;
 
   let onValueChange = (key, value) => {
-    if (value === "") {
+    if (value === "" && field.required) {
       hasError = true;
       helperText = "This field is required";
     } else {

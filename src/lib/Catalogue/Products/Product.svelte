@@ -96,6 +96,12 @@
     onSubmit(model);
     //}
   }
+
+  // User selected a new thumbnail, update the model
+  function onThumbnailSet(e) {
+    model.images.push(model.thumb);
+    model.thumb = e.detail;
+  }
 </script>
 
 <!-- {JSON.stringify(model)} -->
@@ -108,7 +114,7 @@
       <General {fields} {model} />
     </TabItem>
     <TabItem title="Gallery" tabStyle="custom" {customActiveClass} {customInActiveClass}>
-      <Gallery model={model.images} itemId={model.uuid} module="Product" />
+      <Gallery model={model.images} itemId={model.uuid} module="Product" on:thumbnailSet={onThumbnailSet} />
     </TabItem>
     <TabItem title="SEO" tabStyle="custom" {customActiveClass} {customInActiveClass}>
       <SEO model={model.seo} on:change={handleModelChange.bind(this, 'seo')} />
