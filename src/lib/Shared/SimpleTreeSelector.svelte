@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ArrowRight, ArrowLeft, Plus, Home, Trash } from 'svelte-heros-v2';
+  import { ArrowsPointingOut, ArrowRight, ArrowLeft, Plus, Home, Trash } from 'svelte-heros-v2';
 
   export let tree = [];
   export let labelKey = 'title';
@@ -50,6 +50,8 @@
             {#if leaf.children && leaf.children.length > 0}
               <button on:click={() => goToNode(leaf)} class="text-gray-500"><ArrowRight color="white" /></button>
             {/if}
+            <button on:click={() => goToNode(leaf)} class="text-gray-500"><ArrowsPointingOut color="white" /></button>
+
             <button on:click={() => goToNode(leaf)} class="text-gray-500"><Trash color="white" /></button>
           </div>
         </li>
