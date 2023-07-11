@@ -1,53 +1,56 @@
 <script lang="ts">
-import {ProductCategoryService} from "../services/products/product-category.service";
-import TreeView from '../../Shared/tree-view.svelte';
-import {onMount} from "svelte";
-import {Button, Dropdown, DropdownDivider, DropdownItem} from "flowbite-svelte";
-import {ChevronDown} from "svelte-heros-v2";
+  import { ProductCategoryService } from '../services/products/product-category.service';
+  import SimpleTreeSelector from '../../Shared/SimpleTreeSelector.svelte';
 
-const service = new ProductCategoryService();
+  import { onMount } from 'svelte';
+  import { Button, Dropdown, DropdownDivider, DropdownItem } from 'flowbite-svelte';
+  import { ChevronDown } from 'svelte-heros-v2';
 
-const promise = service.tree();
-onMount(async () => {
+  export let model = [];
 
-});
+  const service = new ProductCategoryService();
 
-function handleEdit(node){
-    console.log(node.uuid)
-}
+  const promise = service.tree();
+  onMount(async () => {});
 
-function handleDelete(node){
-    console.log(node.uuid)
-}
+  function handleEdit(node) {
+    console.log(node.uuid);
+  }
 
-function handleMove(node){
-    console.log(node.uuid)
-}
+  function handleDelete(node) {
+    console.log(node.uuid);
+  }
 
+  function handleMove(node) {
+    console.log(node.uuid);
+  }
 
-function handleNewAfter(node){
-    console.log(node.uuid)
-}
+  function handleNewAfter(node) {
+    console.log(node.uuid);
+  }
 
-function handleNewBefore(node){
-    console.log(node.uuid)
-}
+  function handleNewBefore(node) {
+    console.log(node.uuid);
+  }
 
+  function handleNewSubCategory(node) {
+    console.log(node.uuid);
+  }
 
-function handleNewSubCategory(node){
-    console.log(node.uuid)
-}
-
-function handleOnTreeViewChangeEvent(e) {
-    const {type, node} = e.detail;
-    console.log(type, node.uuid)
-}
-
+  function handleOnTreeViewChangeEvent(e) {
+    const { type, node } = e.detail;
+    console.log(type, node.uuid);
+  }
 </script>
-{#await promise}
-{:then tree}
-<TreeView {tree} let:node on:change={handleOnTreeViewChangeEvent} />
 
+{#await promise then tree}
+  <SimpleTreeSelector
+    {tree}
+    on:selection={handleOnTreeViewChangeEvent}
+    bind:model
+    title="Categories"
+    addIdsOnly={false}
+  />
 {:catch error}
-    <p style="color: red">{error.message}</p>
+  <p style="color: red">{error.message}</p>
 {/await}
