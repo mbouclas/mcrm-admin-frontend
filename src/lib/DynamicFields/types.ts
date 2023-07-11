@@ -152,3 +152,22 @@ export interface IDynamicFieldModelChangeEvent {
     varName: string;
     lang?: string;
 }
+
+export interface IItemSelectorDisplayLabel {
+    label: string;
+    field: string;
+    type?: 'text' | 'image' | 'boolean' | 'number' | 'date' | 'money';
+    classes?: string;
+}
+
+export interface IItemSelectorConfig {
+    module?: string;
+    apiUrl?: string;
+    labelField?: string;
+    idField?: string;
+    valueField?: string;
+    filters?: IGenericObject;
+    isTree?: boolean;
+    filter?: 'local'|'remote';
+    labels?: IItemSelectorDisplayLabel[];
+}
