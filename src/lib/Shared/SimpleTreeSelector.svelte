@@ -5,7 +5,17 @@
   export let labelKey = 'title';
   export let leafKey = 'uuid';
 
-  let currentTree = tree;
+  $: currentTree = getCurrentTree(tree, path);
+
+  function getCurrentTree(tree, path) {
+    let tempTree = tree;
+    for (let node of path) {
+      const children = tempTree.find((item) => item[leafKey] === node[leafKey]).children;
+      if (children) tempTree = children;
+    }
+    return tempTree;
+  }
+
   let path = [];
   let movingNode = null;
 
@@ -25,13 +35,11 @@
   function goToNode(node) {
     if (node.children && node.children.length > 0) {
       path = [...path, node];
-      currentTree = node.children;
     }
   }
 
   function goToBreadcrumb(index) {
     path = path.slice(0, index + 1);
-    currentTree = path.length > 0 ? path[path.length - 1].children : currentTree;
   }
 
   function startMove(node) {
@@ -43,7 +51,7 @@
   }
 
   function dropIn(node) {
-    const { parent } = findNodeAndParent(currentTree, node);
+    const { parent } = findNodeAndParent(tree, node);
 
     if (parent) {
       parent.children = parent.children.filter((item) => movingNode[leafKey] !== item[leafKey]);
