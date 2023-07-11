@@ -19,6 +19,18 @@
   let path = [];
   let movingNode = null;
 
+  function findNodeInTree(tree, targetLeafKey) {
+    for (let i = 0; i < tree.length; i++) {
+      if (tree[i][leafKey] === targetLeafKey) {
+        return tree[i];
+      } else if (tree[i].children) {
+        const result = findNodeInTree(tree[i].children, targetLeafKey);
+        if (result) return result;
+      }
+    }
+    return null;
+  }
+
   // Helper function to find a node in the tree and return its parent and index
   function findNodeAndParent(tree, nodeToFind, parent = null) {
     for (let i = 0; i < tree.length; i++) {
@@ -56,10 +68,17 @@
     if (parent) {
       parent.children = parent.children.filter((item) => movingNode[leafKey] !== item[leafKey]);
     } else {
-      currentTree = currentTree.filter((item) => movingNode[leafKey] !== item[leafKey]);
+      tree = tree.filter((item) => movingNode[leafKey] !== item[leafKey]);
     }
-    node.children = node.children || [];
-    node.children = [...node.children, movingNode];
+
+    // Find the target node in the whole tree where you want to drop the movingNode
+    const targetNodeInTree = findNodeInTree(tree, node[leafKey]);
+
+    // If targetNodeInTree doesn't have a children property, initialize it with an empty array
+    targetNodeInTree.children = targetNodeInTree.children || [];
+
+    // Add the movingNode to the targetNodeInTree's children
+    targetNodeInTree.children = [...targetNodeInTree.children, movingNode];
 
     endMove();
   }
