@@ -9,7 +9,18 @@
   let path = [];
   let movingNode = null;
 
-  $: console.log(movingNode);
+  // Helper function to find a node in the tree and return its parent and index
+  function findNodeAndParent(tree, nodeToFind, parent = null) {
+    for (let i = 0; i < tree.length; i++) {
+      if (tree[i][leafKey] === nodeToFind[leafKey]) {
+        return { parent, index: i };
+      } else if (tree[i].children) {
+        const result = findNodeAndParent(tree[i].children, nodeToFind, tree[i]);
+        if (result) return result;
+      }
+    }
+    return null;
+  }
 
   function goToNode(node) {
     if (node.children && node.children.length > 0) {
@@ -20,11 +31,11 @@
 
   function goToBreadcrumb(index) {
     path = path.slice(0, index + 1);
-    currentTree = path.length > 0 ? path[path.length - 1].children : tree;
+    currentTree = path.length > 0 ? path[path.length - 1].children : currentTree;
   }
 
   function startMove(node) {
-    movingNode = node;
+    movingNode = { ...node };
   }
 
   function endMove() {
@@ -32,12 +43,17 @@
   }
 
   function dropIn(node) {
-    // Here you should add logic to insert movingNode into node.children and remove it from its old location
-    endMove();
-  }
+    const { parent } = findNodeAndParent(currentTree, node);
 
-  function cancelMove() {
-    movingNode = null;
+    if (parent) {
+      parent.children = parent.children.filter((item) => movingNode[leafKey] !== item[leafKey]);
+    } else {
+      currentTree = currentTree.filter((item) => movingNode[leafKey] !== item[leafKey]);
+    }
+    node.children = node.children || [];
+    node.children = [...node.children, movingNode];
+
+    endMove();
   }
 </script>
 
@@ -62,7 +78,7 @@
 
       <div class="flex items-center space-x-2">
         {#if movingNode}
-          <button class="text-gray-500" on:click={cancelMove}>Cancel moving</button>
+          <button class="text-gray-500" on:click={endMove}>Cancel moving</button>
         {:else}
           <button class="text-gray-500"><Plus size="35px" color="white" /></button>
         {/if}
@@ -84,7 +100,7 @@
               >
               <button on:click={() => goToNode(leaf)} class="text-gray-500"><Trash color="white" /></button>
             {:else}
-              <button on:click={() => startMove(leaf)} class="text-gray-100">Move here</button>
+              <button on:click={() => dropIn(leaf)} class="text-gray-100">Move here</button>
             {/if}
           </div>
         </li>
