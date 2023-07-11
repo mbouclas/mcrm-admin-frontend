@@ -66,20 +66,19 @@
     const { parent } = findNodeAndParent(tree, node);
 
     if (parent) {
+      console.log(parent.children);
       parent.children = parent.children.filter((item) => movingNode[leafKey] !== item[leafKey]);
     } else {
       tree = tree.filter((item) => movingNode[leafKey] !== item[leafKey]);
     }
 
-    // Find the target node in the whole tree where you want to drop the movingNode
     const targetNodeInTree = findNodeInTree(tree, node[leafKey]);
 
-    // If targetNodeInTree doesn't have a children property, initialize it with an empty array
     targetNodeInTree.children = targetNodeInTree.children || [];
 
-    // Add the movingNode to the targetNodeInTree's children
     targetNodeInTree.children = [...targetNodeInTree.children, movingNode];
 
+    tree = tree;
     endMove();
   }
 </script>
@@ -126,8 +125,10 @@
               <button on:click={() => startMove(leaf)} class="text-gray-500"><ArrowsPointingOut color="white" /></button
               >
               <button on:click={() => goToNode(leaf)} class="text-gray-500"><Trash color="white" /></button>
-            {:else}
+            {:else if leaf[leafKey] !== movingNode[leafKey]}
               <button on:click={() => dropIn(leaf)} class="text-gray-100">Move here</button>
+            {:else}
+              <span class="text-gray-100">Not allowed to move here</span>
             {/if}
           </div>
         </li>
