@@ -62,8 +62,7 @@
 
       <div class="flex items-center space-x-2">
         {#if movingNode}
-          <button class="text-gray-500" on:click={cancelMove}>Cancel</button>
-          <button class="text-gray-500" on:click={dropIn}>Apply</button>
+          <button class="text-gray-500" on:click={cancelMove}>Cancel moving</button>
         {:else}
           <button class="text-gray-500"><Plus size="35px" color="white" /></button>
         {/if}
@@ -84,6 +83,8 @@
               <button on:click={() => startMove(leaf)} class="text-gray-500"><ArrowsPointingOut color="white" /></button
               >
               <button on:click={() => goToNode(leaf)} class="text-gray-500"><Trash color="white" /></button>
+            {:else}
+              <button on:click={() => startMove(leaf)} class="text-gray-100">Move here</button>
             {/if}
           </div>
         </li>
