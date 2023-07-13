@@ -5,7 +5,7 @@
   export let tree = [];
   export let labelKey = 'title';
   export let leafKey = 'uuid';
-  export let handleMove;
+  export let movingNode = null;
 
   const dispatch = createEventDispatcher();
 
@@ -21,7 +21,6 @@
   }
 
   let path = [];
-  let movingNode = null;
 
   function goToNode(node) {
     if (node.children && node.children.length > 0) {
@@ -41,16 +40,12 @@
     movingNode = null;
   }
 
-  async function dropIn(node) {
-    const newTree = await handleMove(movingNode, node);
-    tree = newTree;
-    endMove();
+  async function dropIn(parent) {
+    dispatch('handleMove', { node: movingNode, parent });
   }
 
   async function dropInRoot() {
-    const newTree = await handleMove(movingNode);
-    tree = newTree;
-    endMove();
+    dispatch('handleMove', { node: movingNode, parent: null });
   }
 </script>
 

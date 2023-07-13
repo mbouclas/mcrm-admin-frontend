@@ -8,6 +8,7 @@
   const service = new ProductCategoryService();
 
   let tree = [];
+  let movingNode = null;
 
   onMount(async () => {
     tree = await service.tree();
@@ -47,6 +48,13 @@
 <SimpleTreeSelector
   bind:tree
   on:selection={handleOnTreeViewChangeEvent}
+  on:handleMove={async (e) => {
+    const { node, parent } = e.detail;
+    const newTree = await handleMove(node, parent);
+    tree = newTree;
+    movingNode = null;
+  }}
+  bind:movingNode
   {handleMove}
   bind:model
   title="Categories"
