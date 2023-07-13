@@ -179,6 +179,7 @@
 
         await (new ImageService()).setImageAsMain(image.uuid, module, itemId);
         const foundIndex = model.findIndex((item) => item.uuid === image.uuid);
+
         model.splice(foundIndex, 1);
 
         dispatch('thumbnailSet', image);
