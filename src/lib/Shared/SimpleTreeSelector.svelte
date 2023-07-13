@@ -1,10 +1,13 @@
 <script lang="ts">
+  import { createEventDispatcher } from 'svelte';
   import { ArrowsPointingOut, ArrowRight, ArrowLeft, Plus, Home, Trash } from 'svelte-heros-v2';
 
   export let tree = [];
   export let labelKey = 'title';
   export let leafKey = 'uuid';
   export let handleMove;
+
+  const dispatch = createEventDispatcher();
 
   $: currentTree = getCurrentTree(tree, path);
 
@@ -19,31 +22,6 @@
 
   let path = [];
   let movingNode = null;
-
-  function findNodeInTree(tree, targetLeafKey) {
-    for (let i = 0; i < tree.length; i++) {
-      if (tree[i][leafKey] === targetLeafKey) {
-        return tree[i];
-      } else if (tree[i].children) {
-        const result = findNodeInTree(tree[i].children, targetLeafKey);
-        if (result) return result;
-      }
-    }
-    return null;
-  }
-
-  // Helper function to find a node in the tree and return its parent and index
-  function findNodeAndParent(tree, nodeToFind, parent = null) {
-    for (let i = 0; i < tree.length; i++) {
-      if (tree[i][leafKey] === nodeToFind[leafKey]) {
-        return { parent, index: i };
-      } else if (tree[i].children) {
-        const result = findNodeAndParent(tree[i].children, nodeToFind, tree[i]);
-        if (result) return result;
-      }
-    }
-    return null;
-  }
 
   function goToNode(node) {
     if (node.children && node.children.length > 0) {
@@ -64,29 +42,14 @@
   }
 
   async function dropIn(node) {
-    const result = findNodeAndParent(tree, movingNode);
-    await handleMove(movingNode, node);
-    if (result.parent) {
-      result.parent.children = result.parent.children.filter((item) => movingNode[leafKey] !== item[leafKey]);
-    } else {
-      tree = tree.filter((item) => movingNode[leafKey] !== item[leafKey]);
-    }
-
-    const targetNodeInTree = findNodeInTree(tree, node[leafKey]);
-    if (targetNodeInTree) {
-      targetNodeInTree.children = [...(targetNodeInTree.children || []), movingNode];
-    }
-    tree = tree;
+    const newTree = await handleMove(movingNode, node);
+    tree = newTree;
     endMove();
   }
 
   async function dropInRoot() {
-    const result = findNodeAndParent(tree, movingNode);
-    await handleMove(movingNode);
-    if (result.parent) {
-      result.parent.children = result.parent.children.filter((item) => movingNode[leafKey] !== item[leafKey]);
-    }
-    tree = [...tree, movingNode];
+    const newTree = await handleMove(movingNode);
+    tree = newTree;
     endMove();
   }
 </script>

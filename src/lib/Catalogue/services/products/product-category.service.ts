@@ -9,7 +9,6 @@ export class ProductCategoryService extends BaseHttpService {
   async move(uuid: string, newParentUuid?: string) {
     const body = newParentUuid ? { newParentUuid } : {};
 
-    console.log(uuid, body);
     return await this.patch(`product-category/${uuid}/move`, body);
   }
 
