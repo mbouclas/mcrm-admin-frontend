@@ -21,9 +21,10 @@
     console.log(node.uuid);
   }
 
-  function handleMove(node) {
+  const handleMove = async (node, parentNode = null) => {
+    await service.move(node.uuid, parentNode?.uuid || null);
     console.log(node.uuid);
-  }
+  };
 
   function handleNewAfter(node) {
     console.log(node.uuid);
@@ -47,6 +48,7 @@
   <SimpleTreeSelector
     {tree}
     on:selection={handleOnTreeViewChangeEvent}
+    {handleMove}
     bind:model
     title="Categories"
     addIdsOnly={false}

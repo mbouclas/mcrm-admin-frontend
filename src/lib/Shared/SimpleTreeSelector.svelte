@@ -4,6 +4,7 @@
   export let tree = [];
   export let labelKey = 'title';
   export let leafKey = 'uuid';
+  export let handleMove;
 
   $: currentTree = getCurrentTree(tree, path);
 
@@ -62,11 +63,12 @@
     movingNode = null;
   }
 
-  function dropIn(node) {
+  async function dropIn(node) {
     const { parent } = findNodeAndParent(tree, node);
 
+    await handleMove(movingNode, node);
+
     if (parent) {
-      console.log(parent.children);
       parent.children = parent.children.filter((item) => movingNode[leafKey] !== item[leafKey]);
     } else {
       tree = tree.filter((item) => movingNode[leafKey] !== item[leafKey]);
