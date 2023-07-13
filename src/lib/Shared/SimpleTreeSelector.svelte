@@ -64,30 +64,36 @@
   }
 
   async function dropIn(node) {
-    const { parent } = findNodeAndParent(tree, node);
-
+    const result = findNodeAndParent(tree, movingNode);
     await handleMove(movingNode, node);
-
-    if (parent) {
-      parent.children = parent.children.filter((item) => movingNode[leafKey] !== item[leafKey]);
+    if (result.parent) {
+      result.parent.children = result.parent.children.filter((item) => movingNode[leafKey] !== item[leafKey]);
     } else {
       tree = tree.filter((item) => movingNode[leafKey] !== item[leafKey]);
     }
 
     const targetNodeInTree = findNodeInTree(tree, node[leafKey]);
-
-    targetNodeInTree.children = targetNodeInTree.children || [];
-
-    targetNodeInTree.children = [...targetNodeInTree.children, movingNode];
-
+    if (targetNodeInTree) {
+      targetNodeInTree.children = [...(targetNodeInTree.children || []), movingNode];
+    }
     tree = tree;
+    endMove();
+  }
+
+  async function dropInRoot() {
+    const result = findNodeAndParent(tree, movingNode);
+    await handleMove(movingNode);
+    if (result.parent) {
+      result.parent.children = result.parent.children.filter((item) => movingNode[leafKey] !== item[leafKey]);
+    }
+    tree = [...tree, movingNode];
     endMove();
   }
 </script>
 
 <div class="text-base space-y-2">
   <div class="p-6 rounded-lg shadow-md {movingNode ? 'bg-gray-400' : 'bg-gray-700'}">
-    <div class="font-semibold text-xl text-gray-100 mb-4 flex justify-between items-center space-x-2">
+    <div class="font-semibold text-xl text-gray-100 flex justify-between items-center space-x-2">
       <div class="flex items-center space-x-2">
         <button on:click={() => goToBreadcrumb(-1)} class="breadcrumb text-gray-100 hover:underline">
           <Home size="35px" />
@@ -111,6 +117,12 @@
           <button class="text-gray-500"><Plus size="35px" color="white" /></button>
         {/if}
       </div>
+    </div>
+
+    <div class="mb-4">
+      {#if movingNode}
+        <button on:click={() => dropInRoot()} class="text-gray-100 text-sm font-normal">Move to root</button>
+      {/if}
     </div>
 
     <ul class:highlighted={movingNode}>
