@@ -1,7 +1,8 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import Fields from "../../../DynamicFields/Renderer.svelte";
   import type {IDynamicFieldConfigBlueprint} from "../../../DynamicFields/types.js";
+  import Input from "../../../DynamicFields/fields/input.svelte";
+  import TextArea from "../../../DynamicFields/fields/textarea.svelte";
   const dispatch = createEventDispatcher();
   export let hideModal;
   export let showModal;
@@ -12,6 +13,7 @@
       varName: "title",
       label: "Title",
       placeholder: "Title",
+      required: false,
     },
     {
       type: "text",
@@ -24,12 +26,14 @@
       varName: "description",
       label: "Description",
       placeholder: "Description",
+      required: false,
     },
     {
       type: "text",
       varName: "caption",
       label: "Caption",
       placeholder: "Caption",
+      required: false,
     },
   ];
   export let model;
@@ -37,23 +41,40 @@
   function handleChange(e) {
     dispatch('change', model)
   }
-</script>
 
-<div class="modal">
-  <div class="backdrop" on:click={hideModal} />
+  $: {
+    if (showModal) {
+      document.body.classList.add('overflow-hidden');
+    } else {
+      document.body.classList.remove('overflow-hidden');
+    }
+  }
+
+  function toggle() {
+    showModal = !showModal;
+
+    dispatch('close');
+  }
+  function getField(name: string) {
+    return fields.find((field) => field.varName === name);
+  }
+</script>
+{#if showModal}
+<div class="modal z-[999]">
+  <div class="backdrop" on:click={toggle} />
   <div class="content">
     <h1 class="title">Image Details</h1>
+    <form action="" on:submit|preventDefault={onSave.bind(this, model)}>
+    <Input  bind:model={model.title} placeholder="Title" label="Title"  field={getField('title')} />
+    <Input  bind:model={model.alt} placeholder="Alt" label="Alt"  field={getField('alt')} />
+    <TextArea  bind:model={model.description} placeholder="Description" label="Description"  field={getField('description')} />
+    <TextArea  bind:model={model.caption} placeholder="Caption" label="Caption"  field={getField('caption')} />
 
-    <Fields
-            fields={fields}
-            bind:model
-            itemId={model.uuid}
-            on:change={handleChange}
-    />
-    <button class="save-btn" on:click={onSave}> S A V E</button>
+    <button class="save-btn" type="submit">Save</button>
+    </form>
   </div>
 </div>
-
+  {/if}
 <style scoped>
   .modal {
     position: fixed;

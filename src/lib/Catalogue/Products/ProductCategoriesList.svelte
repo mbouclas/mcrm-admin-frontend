@@ -1,53 +1,62 @@
 <script lang="ts">
-import {ProductCategoryService} from "../services/products/product-category.service";
-import TreeView from '../../Shared/tree-view.svelte';
-import {onMount} from "svelte";
-import {Button, Dropdown, DropdownDivider, DropdownItem} from "flowbite-svelte";
-import {ChevronDown} from "svelte-heros-v2";
+  import { ProductCategoryService } from '../services/products/product-category.service';
+  import SimpleTreeSelector from '../../Shared/SimpleTreeSelector.svelte';
 
-const service = new ProductCategoryService();
+  import { onMount } from 'svelte';
+  export let model = [];
 
-const promise = service.tree();
-onMount(async () => {
+  const service = new ProductCategoryService();
 
-});
+  let tree = [];
+  let movingNode = null;
 
-function handleEdit(node){
-    console.log(node.uuid)
-}
+  onMount(async () => {
+    tree = await service.tree();
+  });
 
-function handleDelete(node){
-    console.log(node.uuid)
-}
+  function handleEdit(node) {
+    console.log(node.uuid);
+  }
 
-function handleMove(node){
-    console.log(node.uuid)
-}
+  function handleDelete(node) {
+    console.log(node.uuid);
+  }
 
+  const handleMove = async (node, parentNode = null) => {
+    const result = await service.move(node.uuid, parentNode?.uuid || null);
+    return result;
+  };
 
-function handleNewAfter(node){
-    console.log(node.uuid)
-}
+  function handleNewAfter(node) {
+    console.log(node.uuid);
+  }
 
-function handleNewBefore(node){
-    console.log(node.uuid)
-}
+  function handleNewBefore(node) {
+    console.log(node.uuid);
+  }
 
+  function handleNewSubCategory(node) {
+    console.log(node.uuid);
+  }
 
-function handleNewSubCategory(node){
-    console.log(node.uuid)
-}
-
-function handleOnTreeViewChangeEvent(e) {
-    const {type, node} = e.detail;
-    console.log(type, node.uuid)
-}
-
+  function handleOnTreeViewChangeEvent(e) {
+    const { type, node } = e.detail;
+    console.log(type, node.uuid);
+  }
 </script>
-{#await promise}
-{:then tree}
-<TreeView {tree} let:node on:change={handleOnTreeViewChangeEvent} />
 
-{:catch error}
-    <p style="color: red">{error.message}</p>
-{/await}
+<SimpleTreeSelector
+  bind:tree
+  on:selection={handleOnTreeViewChangeEvent}
+  on:handleMove={async (e) => {
+    const { node, parent } = e.detail;
+    const newTree = await handleMove(node, parent);
+    tree = newTree;
+    movingNode = null;
+  }}
+  bind:movingNode
+  {handleMove}
+  bind:model
+  title="Categories"
+  addIdsOnly={false}
+/>

@@ -1,10 +1,10 @@
 <script lang="ts">
-  import CKEditor from "ckeditor5-svelte";
-  import DecoupledEditor from "@ckeditor/ckeditor5-build-decoupled-document/build/ckeditor";
 
   import type { IDynamicFieldConfigBlueprint } from "../types";
   import { Label, Textarea, Helper } from "flowbite-svelte";
   import { onMount } from "svelte";
+  export let id = 'mytextarea';
+  export let useDarkMode = true;
   export let field: IDynamicFieldConfigBlueprint;
   export let onChange;
   export let model;
@@ -13,56 +13,65 @@
   export let helperText;
   export let inputId: string;
   export let classes: string[] = [];
-  export let editorConfig = {
-    toolbar: {
-      items: [
-        "heading",
-        "|",
-        "fontFamily",
-        "fontSize",
-        "bold",
-        "italic",
-        "underline",
-      ],
-    },
-  };
-
+  export let plugins = 'autoresize preview importcss searchreplace autolink save directionality code visualblocks visualchars fullscreen image link media  codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount charmap quickbars emoticons';
+  export let toolbar =  'undo redo | bold italic underline strikethrough | fontfamily fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media  link anchor codesample';
   let pristine = true;
-  let value = field.value || "";
-
-  let Editor;
 
   let hasError = false;
 
-  let editor = DecoupledEditor;
-  let editorInstance = null;
+  function init() {
+    tinymce.init({
+      selector: `#${id}`,
+      setup: (editor) => {
+        editor.on('init', (e) => {
+          console.log('The Editor has initialized.', `#${id}`);
+        });
+        editor.on('Change', (e) => {
+          model = editor.getContent();
+        });
 
-  function onReady({ detail: editor }) {
-    // Insert the toolbar before the editable area.
-    editorInstance = editor;
-    editor.ui
-      .getEditableElement()
-      .parentElement.insertBefore(
-        editor.ui.view.toolbar.element,
-        editor.ui.getEditableElement()
-      );
-
-    // editor.enableReadOnlyMode("_editor");
+        editor.on('keyup', (e) => {
+          model = editor.getContent();
+        });
+      },
+      toolbar_sticky: true,
+      image_advtab: true,
+      image_caption: true,
+      plugins,
+      toolbar,
+      autosave_ask_before_unload: true,
+      autosave_interval: '30s',
+      autosave_prefix: '{path}{query}-{id}-',
+      autosave_restore_when_empty: false,
+      autosave_retention: '2m',
+      quickbars_selection_toolbar: 'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
+      toolbar_mode: 'sliding',
+      contextmenu: 'link image table',
+      skin: useDarkMode ? 'oxide-dark' : 'oxide',
+      content_css: useDarkMode ? 'dark' : 'default',
+    });
   }
 
-  let onValueChange = (key) => {
-    if (model === "") {
-      hasError = true;
-      helperText = "This field is required";
-    } else {
-      hasError = false;
-      helperText = null;
+
+
+  onMount(() => {
+    let timer;
+    if (typeof tinymce === 'undefined') {
+        setInterval(() => {
+          if (typeof tinymce !== 'undefined') {
+            init();
+            clearInterval(timer);
+          }
+        }, 1000);
+
+
+      return;
     }
-    pristine = false;
-    if (typeof onChange === "function") {
-      onChange(key, model);
-    }
-  };
+
+    init();
+
+  })
+
 </script>
 
 <div class="mb-6">
@@ -72,20 +81,8 @@
     </Label>
   {/if}
 
-  <div class={`dynamic-field ${hasError ? "has-error" : ""}`}>
-    <CKEditor
-      bind:editor
-      on:ready={onReady}
-      bind:config={editorConfig}
-      bind:value={model}
-      bind:placeholder={field.placeholder}
-      on:blur={(e) => {
-        onValueChange(field.varName);
-      }}
-      on:input={(e) => {
-        onValueChange(field.varName);
-      }}
-    />
+  <div class={`${hasError ? "has-error" : ""}`}>
+    <textarea id={id}>{model}</textarea>
   </div>
   {#if helperText}
     <Helper class={hasError ? "helper-text has-error" : "helper-text"}>
@@ -94,30 +91,11 @@
   {/if}
 </div>
 
+
+
 <style global>
-  .dynamic-field {
-    background-color: #2e3446 !important;
-    border: 1px solid #32394e !important;
-    color: #bfc8e2 !important;
-    outline: none !important;
-    box-shadow: none !important;
-  }
+  .tox-promotion {display: none !important;}
+  .tox-statusbar__branding {display: none !important}
 
-  .dynamic-field .ck-toolbar {
-    border: 1px solid #32394e !important;
-    background-color: #00000052;
-  }
 
-  .dynamic-field .ck-content:focus {
-    background-color: #303648 !important;
-    border: 1px solid #32394e !important;
-    color: #bfc8e2 !important;
-    outline: none !important;
-    box-shadow: none !important;
-  }
-
-  .dynamic-field.has-error {
-    background-color: #ff000011 !important;
-    border: 1px solid #970000 !important;
-  }
 </style>

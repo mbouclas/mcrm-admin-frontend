@@ -75,6 +75,10 @@ export class OrderService extends BaseHttpService {
       qs = queryString.stringify(filters);
     }
 
+    if (relationships.length > 0) {
+        qs = qs ? `${qs}&with[]=${relationships.join(",")}` : `with[]=${relationships.join(",")}`;
+    }
+
     return await this.get(`order${qs ? `?${qs}` : ""}`);
   }
 
