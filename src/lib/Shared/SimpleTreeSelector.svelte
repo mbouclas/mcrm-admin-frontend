@@ -5,7 +5,7 @@
 
   enum DeleteType {
     DELETE_WITH_CHILDREN = 'DELETE_WITH_CHILDREN',
-    DELETE_ONLY_THIS = 'DELETE_ONLY_THIS',
+    DELETE_ONLY_SELF = 'DELETE_ONLY_SELF',
   }
 
   export let tree = [];
@@ -30,7 +30,6 @@
     deleteType = DeleteType.DELETE_WITH_CHILDREN; // Reset the delete type after deleting
   }
 
-  // Cancel delete
   function cancelDelete() {
     isDeleteModalOpen = false;
     nodeToDelete = null;
@@ -84,7 +83,7 @@
     <label for="delete-type">Select delete type:</label>
     <select id="delete-type" bind:value={deleteType}>
       <option value={DeleteType.DELETE_WITH_CHILDREN}>Delete with children</option>
-      <option value={DeleteType.DELETE_ONLY_THIS}>Delete only this</option>
+      <option value={DeleteType.DELETE_ONLY_SELF}>Delete only this</option>
       <!-- Add more options here if you have more delete types... -->
     </select>
   </div>

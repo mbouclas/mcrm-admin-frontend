@@ -24,8 +24,9 @@
   };
 
   const handleDelete = async (node, deleteType: string) => {
-    const result = await service.deleteOne(node.uuid, deleteType);
-    return result;
+    const newTree = await service.deleteOne(node.uuid, deleteType);
+    tree = newTree;
+    return null;
   };
 
   function handleNewAfter(node) {
