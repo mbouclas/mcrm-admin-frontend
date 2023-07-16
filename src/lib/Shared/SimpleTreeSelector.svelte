@@ -77,16 +77,38 @@
   }
 </script>
 
-<Modal bind:open={isDeleteModalOpen} autoclose>
+<Modal bind:open={isDeleteModalOpen}>
   <h2 class="flowbite-modal-title">Confirm Delete</h2>
   <p>Are you sure you want to delete {nodeToDelete ? nodeToDelete[labelKey] : ''}?</p>
-  <div>
-    <label for="delete-type">Select delete type:</label>
-    <select id="delete-type" bind:value={deleteType}>
-      <option value={DeleteType.DELETE_CHILDREN}>Delete with children</option>
-      <option value={DeleteType.MOVE_CHILDREN_TO_ROOT}>Delete and move children to root</option>
-      <option value={DeleteType.MOVE_CHILDREN_TO_PARENT}>Delete and move children to parent</option>
-    </select>
+  <div class="space-y-2">
+    <p>Select delete type:</p>
+    <button
+      class="rounded-md block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 {deleteType ===
+      DeleteType.DELETE_CHILDREN
+        ? 'bg-gray-300'
+        : ''}"
+      on:click={() => (deleteType = DeleteType.DELETE_CHILDREN)}
+    >
+      Delete with children
+    </button>
+    <button
+      class="rounded-md block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 {deleteType ===
+      DeleteType.MOVE_CHILDREN_TO_ROOT
+        ? 'bg-gray-300'
+        : ''}"
+      on:click={() => (deleteType = DeleteType.MOVE_CHILDREN_TO_ROOT)}
+    >
+      Delete and move children to root
+    </button>
+    <button
+      class="rounded-md block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 {deleteType ===
+      DeleteType.MOVE_CHILDREN_TO_PARENT
+        ? 'bg-gray-300'
+        : ''}"
+      on:click={() => (deleteType = DeleteType.MOVE_CHILDREN_TO_PARENT)}
+    >
+      Delete and move children to parent
+    </button>
   </div>
   <svelte:fragment slot="footer">
     <Button on:click={confirmDelete}>Confirm</Button>
