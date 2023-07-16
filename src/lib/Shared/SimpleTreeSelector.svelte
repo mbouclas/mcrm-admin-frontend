@@ -1,11 +1,31 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
+  import { Button, Modal } from 'flowbite-svelte';
   import { ArrowsPointingOut, ArrowRight, ArrowLeft, Plus, Home, Trash } from 'svelte-heros-v2';
 
   export let tree = [];
   export let labelKey = 'title';
   export let leafKey = 'uuid';
   export let movingNode = null;
+  let isDeleteModalOpen = false;
+  let nodeToDelete = null;
+
+  function deleteNode(node) {
+    nodeToDelete = node;
+    isDeleteModalOpen = true;
+  }
+
+  async function confirmDelete() {
+    dispatch('handleDelete', { node: nodeToDelete });
+    isDeleteModalOpen = false;
+    nodeToDelete = null;
+  }
+
+  // Cancel delete
+  function cancelDelete() {
+    isDeleteModalOpen = false;
+    nodeToDelete = null;
+  }
 
   const dispatch = createEventDispatcher();
 
@@ -43,11 +63,19 @@
   async function dropIn(parent) {
     dispatch('handleMove', { node: movingNode, parent });
   }
-
-  async function dropInRoot() {
+  function dropInRoot() {
     dispatch('handleMove', { node: movingNode, parent: null });
   }
 </script>
+
+<Modal bind:open={isDeleteModalOpen} autoclose>
+  <h2 class="flowbite-modal-title">Confirm Delete</h2>
+  <p>Are you sure you want to delete {nodeToDelete ? nodeToDelete[labelKey] : ''}?</p>
+  <svelte:fragment slot="footer">
+    <Button on:click={confirmDelete}>Confirm</Button>
+    <Button color="alternative" on:click={cancelDelete}>Cancel</Button>
+  </svelte:fragment>
+</Modal>
 
 <div class="text-base space-y-2">
   <div class="p-6 rounded-lg shadow-md {movingNode ? 'bg-gray-400' : 'bg-gray-700'}">
@@ -96,7 +124,7 @@
             {#if !movingNode}
               <button on:click={() => startMove(leaf)} class="text-gray-500"><ArrowsPointingOut color="white" /></button
               >
-              <button on:click={() => goToNode(leaf)} class="text-gray-500"><Trash color="white" /></button>
+              <button on:click={() => deleteNode(leaf)} class="text-gray-500"><Trash color="white" /></button>
             {:else if leaf[leafKey] !== movingNode[leafKey]}
               <button on:click={() => dropIn(leaf)} class="text-gray-100">Move here</button>
             {:else}
