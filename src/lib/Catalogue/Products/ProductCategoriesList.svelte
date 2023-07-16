@@ -18,12 +18,13 @@
     console.log(node.uuid);
   }
 
-  function handleDelete(node) {
-    console.log(node.uuid);
-  }
-
   const handleMove = async (node, parentNode = null) => {
     const result = await service.move(node.uuid, parentNode?.uuid || null);
+    return result;
+  };
+
+  const handleDelete = async (node, deleteType: string) => {
+    const result = await service.deleteOne(node.uuid, deleteType);
     return result;
   };
 
@@ -54,9 +55,6 @@
     tree = newTree;
     movingNode = null;
   }}
+  {handleDelete}
   bind:movingNode
-  {handleMove}
-  bind:model
-  title="Categories"
-  addIdsOnly={false}
 />

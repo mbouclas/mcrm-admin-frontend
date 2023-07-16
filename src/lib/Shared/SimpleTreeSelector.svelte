@@ -3,12 +3,20 @@
   import { Button, Modal } from 'flowbite-svelte';
   import { ArrowsPointingOut, ArrowRight, ArrowLeft, Plus, Home, Trash } from 'svelte-heros-v2';
 
+  enum DeleteType {
+    DELETE_WITH_CHILDREN = 'DELETE_WITH_CHILDREN',
+    DELETE_ONLY_THIS = 'DELETE_ONLY_THIS',
+  }
+
   export let tree = [];
   export let labelKey = 'title';
   export let leafKey = 'uuid';
+  export let handleDelete;
   export let movingNode = null;
+  export let nodeToDelete = null;
+
   let isDeleteModalOpen = false;
-  let nodeToDelete = null;
+  let deleteType = DeleteType.DELETE_WITH_CHILDREN;
 
   function deleteNode(node) {
     nodeToDelete = node;
@@ -16,9 +24,10 @@
   }
 
   async function confirmDelete() {
-    dispatch('handleDelete', { node: nodeToDelete });
+    await handleDelete(nodeToDelete, deleteType);
     isDeleteModalOpen = false;
     nodeToDelete = null;
+    deleteType = DeleteType.DELETE_WITH_CHILDREN; // Reset the delete type after deleting
   }
 
   // Cancel delete
@@ -71,6 +80,14 @@
 <Modal bind:open={isDeleteModalOpen} autoclose>
   <h2 class="flowbite-modal-title">Confirm Delete</h2>
   <p>Are you sure you want to delete {nodeToDelete ? nodeToDelete[labelKey] : ''}?</p>
+  <div>
+    <label for="delete-type">Select delete type:</label>
+    <select id="delete-type" bind:value={deleteType}>
+      <option value={DeleteType.DELETE_WITH_CHILDREN}>Delete with children</option>
+      <option value={DeleteType.DELETE_ONLY_THIS}>Delete only this</option>
+      <!-- Add more options here if you have more delete types... -->
+    </select>
+  </div>
   <svelte:fragment slot="footer">
     <Button on:click={confirmDelete}>Confirm</Button>
     <Button color="alternative" on:click={cancelDelete}>Cancel</Button>
