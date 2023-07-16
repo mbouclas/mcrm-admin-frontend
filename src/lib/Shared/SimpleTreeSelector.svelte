@@ -4,8 +4,9 @@
   import { ArrowsPointingOut, ArrowRight, ArrowLeft, Plus, Home, Trash } from 'svelte-heros-v2';
 
   enum DeleteType {
-    DELETE_WITH_CHILDREN = 'DELETE_WITH_CHILDREN',
-    DELETE_ONLY_SELF = 'DELETE_ONLY_SELF',
+    DELETE_CHILDREN = 'DELETE_CHILDREN',
+    MOVE_CHILDREN_TO_PARENT = 'MOVE_CHILDREN_TO_PARENT',
+    MOVE_CHILDREN_TO_ROOT = 'MOVE_CHILDREN_TO_ROOT',
   }
 
   export let tree = [];
@@ -16,7 +17,7 @@
   export let nodeToDelete = null;
 
   let isDeleteModalOpen = false;
-  let deleteType = DeleteType.DELETE_WITH_CHILDREN;
+  let deleteType = DeleteType.DELETE_CHILDREN;
 
   function deleteNode(node) {
     nodeToDelete = node;
@@ -27,7 +28,7 @@
     await handleDelete(nodeToDelete, deleteType);
     isDeleteModalOpen = false;
     nodeToDelete = null;
-    deleteType = DeleteType.DELETE_WITH_CHILDREN; // Reset the delete type after deleting
+    deleteType = DeleteType.DELETE_CHILDREN;
   }
 
   function cancelDelete() {
@@ -82,9 +83,9 @@
   <div>
     <label for="delete-type">Select delete type:</label>
     <select id="delete-type" bind:value={deleteType}>
-      <option value={DeleteType.DELETE_WITH_CHILDREN}>Delete with children</option>
-      <option value={DeleteType.DELETE_ONLY_SELF}>Delete only this</option>
-      <!-- Add more options here if you have more delete types... -->
+      <option value={DeleteType.DELETE_CHILDREN}>Delete with children</option>
+      <option value={DeleteType.MOVE_CHILDREN_TO_ROOT}>Delete and move children to root</option>
+      <option value={DeleteType.MOVE_CHILDREN_TO_PARENT}>Delete and move children to parent</option>
     </select>
   </div>
   <svelte:fragment slot="footer">
