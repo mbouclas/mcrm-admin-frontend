@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import { Button, Modal } from 'flowbite-svelte';
+  import { Button, Modal, Input } from 'flowbite-svelte';
   import { ArrowsPointingOut, ArrowRight, ArrowLeft, Plus, Home, Trash } from 'svelte-heros-v2';
 
   enum DeleteType {
@@ -13,8 +13,15 @@
   export let labelKey = 'title';
   export let leafKey = 'uuid';
   export let handleDelete;
+  export let handleCreate;
+
   export let movingNode = null;
   export let nodeToDelete = null;
+
+  let parentCategoryName = 'Root';
+
+  let isCreateModalOpen = false;
+  let newCategoryData = { title: '', description: '', parentUuid: null };
 
   let isDeleteModalOpen = false;
   let deleteType = DeleteType.DELETE_CHILDREN;
@@ -75,6 +82,25 @@
   function dropInRoot() {
     dispatch('handleMove', { node: movingNode, parent: null });
   }
+
+  function openCreateModal(node) {
+    parentCategoryName = node ? node.title : 'Root';
+
+    newCategoryData.parentUuid = node ? node.uuid : null;
+
+    isCreateModalOpen = true;
+  }
+
+  async function confirmCreate() {
+    await handleCreate(newCategoryData);
+    isCreateModalOpen = false;
+    newCategoryData = { title: '', description: '', parentUuid: null };
+  }
+
+  function cancelCreate() {
+    isCreateModalOpen = false;
+    newCategoryData = { title: '', description: '', parentUuid: null };
+  }
 </script>
 
 <Modal bind:open={isDeleteModalOpen}>
@@ -116,6 +142,27 @@
   </svelte:fragment>
 </Modal>
 
+<Modal bind:open={isCreateModalOpen}>
+  <div class="p-4">
+    <h2 class="flowbite-modal-title mb-4">Create Category</h2>
+    <p class="mb-4"><span>Parent Category: </span><span class="font-semibold">{parentCategoryName}</span></p>
+
+    <div class="mb-4">
+      <label for="title" class="block mb-2">Title:</label>
+      <Input id="title" bind:value={newCategoryData.title} required class="w-full" />
+    </div>
+
+    <div class="mb-4">
+      <label for="description" class="block mb-2">Description:</label>
+      <Input id="description" bind:value={newCategoryData.description} class="w-full" />
+    </div>
+  </div>
+  <svelte:fragment slot="footer">
+    <Button on:click={confirmCreate}>Create</Button>
+    <Button color="alternative" on:click={cancelCreate}>Cancel</Button>
+  </svelte:fragment>
+</Modal>
+
 <div class="text-base space-y-2">
   <div class="p-6 rounded-lg shadow-md {movingNode ? 'bg-gray-400' : 'bg-gray-700'}">
     <div class="font-semibold text-xl text-gray-100 flex justify-between items-center space-x-2">
@@ -139,7 +186,9 @@
         {#if movingNode}
           <button class="text-gray-500" on:click={endMove}>Cancel moving</button>
         {:else}
-          <button class="text-gray-500"><Plus size="35px" color="white" /></button>
+          <button class="text-gray-500" on:click={() => openCreateModal(path.length ? path[path.length - 1] : null)}
+            ><Plus size="35px" color="white" /></button
+          >
         {/if}
       </div>
     </div>
@@ -161,6 +210,10 @@
               <button on:click={() => goToNode(leaf)} class="text-gray-500"><ArrowRight color="white" /></button>
             {/if}
             {#if !movingNode}
+              <button on:click={() => openCreateModal(leaf)} class="text-gray-500"
+                ><Plus size="35px" color="white" /></button
+              >
+
               <button on:click={() => startMove(leaf)} class="text-gray-500"><ArrowsPointingOut color="white" /></button
               >
               <button on:click={() => deleteNode(leaf)} class="text-gray-500"><Trash color="white" /></button>

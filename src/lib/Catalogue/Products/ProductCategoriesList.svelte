@@ -29,6 +29,12 @@
     return null;
   };
 
+  const handleCreate = async (data) => {
+    const newTree = await service.store(data);
+    tree = newTree;
+    return null;
+  };
+
   function handleNewAfter(node) {
     console.log(node.uuid);
   }
@@ -56,6 +62,7 @@
     tree = newTree;
     movingNode = null;
   }}
+  {handleCreate}
   {handleDelete}
   bind:movingNode
 />

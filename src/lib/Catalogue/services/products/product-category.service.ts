@@ -12,15 +12,17 @@ export class ProductCategoryService extends BaseHttpService {
     return await this.patch(`product-category/${uuid}/move`, body);
   }
 
-  async findOne(uuid: string) {}
+  async findOne(uuid: string) { }
 
-  async update(uuid: string, data: IGenericObject) {}
+  async update(uuid: string, data: IGenericObject) { }
 
-  async store(data: IGenericObject) {}
+  async store(data: IGenericObject) {
+    return await super.post(`product-category`, data);
+  }
 
   async deleteOne(uuid: string, deleteType: string) {
     return await super.delete(`product-category/${uuid}?deleteType=${deleteType}`);
   }
 
-  async updateTree(tree: IGenericObject) {}
+  async updateTree(tree: IGenericObject) { }
 }
