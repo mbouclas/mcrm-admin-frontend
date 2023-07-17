@@ -14,7 +14,9 @@ export class ProductCategoryService extends BaseHttpService {
 
   async findOne(uuid: string) { }
 
-  async update(uuid: string, data: IGenericObject) { }
+  async update(uuid: string, data: IGenericObject) {
+    return await super.patch(`product-category/${uuid}`, data);
+  }
 
   async store(data: IGenericObject) {
     return await super.post(`product-category`, data);

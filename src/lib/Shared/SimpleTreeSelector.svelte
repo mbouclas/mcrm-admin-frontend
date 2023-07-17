@@ -1,7 +1,8 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import { Button, Modal, Input } from 'flowbite-svelte';
-  import { ArrowsPointingOut, ArrowRight, ArrowLeft, Plus, Home, Trash } from 'svelte-heros-v2';
+  import { ArrowsPointingOut, ArrowRight, ArrowLeft, Plus, Home, Trash, PencilSquare } from 'svelte-heros-v2';
+  import Image from '../DynamicFields/fields/image.svelte';
 
   enum DeleteType {
     DELETE_CHILDREN = 'DELETE_CHILDREN',
@@ -14,6 +15,7 @@
   export let leafKey = 'uuid';
   export let handleDelete;
   export let handleCreate;
+  export let handleUpdate;
 
   export let movingNode = null;
   export let nodeToDelete = null;
@@ -21,7 +23,8 @@
   let parentCategoryName = 'Root';
 
   let isCreateModalOpen = false;
-  let newCategoryData = { title: '', description: '', parentUuid: null };
+  let isUpdateModalOpen = false;
+  let categoryData: any = {};
 
   let isDeleteModalOpen = false;
   let deleteType = DeleteType.DELETE_CHILDREN;
@@ -86,20 +89,43 @@
   function openCreateModal(node) {
     parentCategoryName = node ? node.title : 'Root';
 
-    newCategoryData.parentUuid = node ? node.uuid : null;
+    categoryData.parentUuid = node ? node.uuid : null;
 
     isCreateModalOpen = true;
   }
 
   async function confirmCreate() {
-    await handleCreate(newCategoryData);
+    await handleCreate(categoryData);
     isCreateModalOpen = false;
-    newCategoryData = { title: '', description: '', parentUuid: null };
+    categoryData = { title: '', description: '', parentUuid: null };
   }
 
   function cancelCreate() {
     isCreateModalOpen = false;
-    newCategoryData = { title: '', description: '', parentUuid: null };
+    categoryData = { title: '', description: '', parentUuid: null };
+  }
+
+  function openUpdateModal(node) {
+    console.log('node', node);
+    parentCategoryName = path.length ? path[path.length - 1] : 'Root';
+
+    console.log('here');
+
+    categoryData = node;
+
+    isUpdateModalOpen = true;
+  }
+
+  async function confirmUpdate() {
+    console.log(categoryData);
+    await handleUpdate(categoryData.uuid, categoryData);
+    isUpdateModalOpen = false;
+    categoryData = { title: '', description: '', parentUuid: null };
+  }
+
+  function cancelUpdate() {
+    isUpdateModalOpen = false;
+    categoryData = { title: '', description: '', parentUuid: null };
   }
 </script>
 
@@ -144,22 +170,57 @@
 
 <Modal bind:open={isCreateModalOpen}>
   <div class="p-4">
-    <h2 class="flowbite-modal-title mb-4">Create Category</h2>
+    <h2 class="flowbite-modal-title mb-4 text-xl font-bold">Create Category</h2>
     <p class="mb-4"><span>Parent Category: </span><span class="font-semibold">{parentCategoryName}</span></p>
 
     <div class="mb-4">
       <label for="title" class="block mb-2">Title:</label>
-      <Input id="title" bind:value={newCategoryData.title} required class="w-full" />
+      <Input id="title" bind:value={categoryData.title} required class="w-full" />
     </div>
 
     <div class="mb-4">
       <label for="description" class="block mb-2">Description:</label>
-      <Input id="description" bind:value={newCategoryData.description} class="w-full" />
+      <Input id="description" bind:value={categoryData.description} class="w-full" />
     </div>
   </div>
   <svelte:fragment slot="footer">
     <Button on:click={confirmCreate}>Create</Button>
     <Button color="alternative" on:click={cancelCreate}>Cancel</Button>
+  </svelte:fragment>
+</Modal>
+
+<Modal bind:open={isUpdateModalOpen}>
+  <div class="p-4">
+    <h2 class="flowbite-modal-title mb-4 text-xl font-bold">Update Category</h2>
+    <p class="mb-4"><span>Parent Category: </span><span class="font-semibold">{parentCategoryName}</span></p>
+
+    <div class="mb-4">
+      <label for="title" class="block mb-2">Title:</label>
+      <Input id="title" bind:value={categoryData.title} required class="w-full" />
+    </div>
+
+    <div class="mb-4">
+      <label for="description" class="block mb-2">Description:</label>
+      <Input id="description" bind:value={categoryData.description} class="w-full" />
+    </div>
+
+    <div class="mb-4">
+      <Image
+        model={categoryData?.thumb || ''}
+        title="Category thumbnail"
+        maxNumberOfFiles={1}
+        module="ProductCategory"
+        itemId={categoryData.title}
+        type="main"
+        on:allUploadsComplete={(e) => {
+          //categoryData.thumb = e.detail;
+        }}
+      />
+    </div>
+  </div>
+  <svelte:fragment slot="footer">
+    <Button on:click={confirmUpdate}>Update</Button>
+    <Button color="alternative" on:click={cancelUpdate}>Cancel</Button>
   </svelte:fragment>
 </Modal>
 
@@ -212,6 +273,10 @@
             {#if !movingNode}
               <button on:click={() => openCreateModal(leaf)} class="text-gray-500"
                 ><Plus size="35px" color="white" /></button
+              >
+
+              <button on:click={() => openUpdateModal(leaf)} class="text-gray-500"
+                ><PencilSquare color="white" /></button
               >
 
               <button on:click={() => startMove(leaf)} class="text-gray-500"><ArrowsPointingOut color="white" /></button
