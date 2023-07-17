@@ -1,3 +1,5 @@
+import { setNotificationAction } from '../../../stores';
+
 import { BaseHttpService } from '../../../Shared/base-http.service';
 import type { IGenericObject } from '../../../Shared/models/generic';
 
@@ -7,23 +9,79 @@ export class ProductCategoryService extends BaseHttpService {
   }
 
   async move(uuid: string, newParentUuid?: string) {
-    const body = newParentUuid ? { newParentUuid } : {};
+    try {
+      const body = newParentUuid ? { newParentUuid } : {};
 
-    return await this.patch(`product-category/${uuid}/move`, body);
+      const response = await this.patch(`product-category/${uuid}/move`, body);
+
+      setNotificationAction({
+        message: 'Moved successfully',
+        type: 'success',
+      });
+
+      return response;
+    } catch (e) {
+      setNotificationAction({
+        message: 'Failed to move category',
+        type: 'error',
+      });
+    }
   }
 
   async findOne(uuid: string) { }
 
   async update(uuid: string, data: IGenericObject) {
-    return await super.patch(`product-category/${uuid}`, data);
+    try {
+      const response = await super.patch(`product-category/${uuid}`, data);
+
+      setNotificationAction({
+        message: 'Updated successfully',
+        type: 'success',
+      });
+
+      return response;
+    } catch (e) {
+      setNotificationAction({
+        message: 'Failed to update category',
+        type: 'error',
+      });
+    }
   }
 
   async store(data: IGenericObject) {
-    return await super.post(`product-category`, data);
+    try {
+      const response = await super.post(`product-category`, data);
+
+      setNotificationAction({
+        message: 'Created successfully',
+        type: 'success',
+      });
+
+      return response;
+    } catch (e) {
+      setNotificationAction({
+        message: 'Failed to create category',
+        type: 'error',
+      });
+    }
   }
 
   async deleteOne(uuid: string, deleteType: string) {
-    return await super.delete(`product-category/${uuid}?deleteType=${deleteType}`);
+    try {
+      const response = await super.delete(`product-category/${uuid}?deleteType=${deleteType}`);
+
+      setNotificationAction({
+        message: 'Deleted successfully',
+        type: 'success',
+      });
+
+      return response;
+    } catch (e) {
+      setNotificationAction({
+        message: 'Failed to delete category',
+        type: 'error',
+      });
+    }
   }
 
   async updateTree(tree: IGenericObject) { }
