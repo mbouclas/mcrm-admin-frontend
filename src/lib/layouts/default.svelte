@@ -1,22 +1,23 @@
 <script lang="ts">
-  import { Router, Route, Link, useLocation } from "svelte-navigator";
-  import PrivateRoute from "../Auth/PrivateRoute.svelte";
-  import Header from "../Shared/Header.svelte";
-  import Topbar from "../Shared/Topbar.svelte";
-  import About from "../Dashboard/About.svelte";
-  import Profile from "../User/Profile.svelte";
-  import CatalogueRoutes from "../Catalogue/routes.svelte";
-  import OrderRoutes from "../Order/routes.svelte";
-  import EditableRegions from "../EditableRegions/routes.svelte";
-  import { BootService } from "../Shared/boot.service";
-  import { onMount } from "svelte";
-  import { notificationsStore } from "../stores";
-  import type { INotification } from "../stores";
-  import { fly } from "svelte/transition";
-  import { flip } from "svelte/animate";
+  import { Router, Route, Link, useLocation } from 'svelte-navigator';
+  import PrivateRoute from '../Auth/PrivateRoute.svelte';
+  import Header from '../Shared/Header.svelte';
+  import Topbar from '../Shared/Topbar.svelte';
+  import About from '../Dashboard/About.svelte';
+  import Profile from '../User/Profile.svelte';
+  import CatalogueRoutes from '../Catalogue/routes.svelte';
+  import OrderRoutes from '../Order/routes.svelte';
+  import CustomerRoutes from '../Customer/routes.svelte';
+  import EditableRegions from '../EditableRegions/routes.svelte';
+  import { BootService } from '../Shared/boot.service';
+  import { onMount } from 'svelte';
+  import { notificationsStore } from '../stores';
+  import type { INotification } from '../stores';
+  import { fly } from 'svelte/transition';
+  import { flip } from 'svelte/animate';
 
-  import { v4 } from "uuid";
-  import Toast from "../Shared/Toast.svelte";
+  import { v4 } from 'uuid';
+  import Toast from '../Shared/Toast.svelte';
 
   interface ExtendedINotification extends INotification {
     id: string;
@@ -34,9 +35,7 @@
     showNotifications = [newNotification, ...showNotifications];
 
     const removeNotificationById = (id) => {
-      showNotifications = showNotifications.filter(
-        (notification) => notification.id !== id
-      );
+      showNotifications = showNotifications.filter((notification) => notification.id !== id);
     };
 
     // Set a timeout for the new notification based on its expiration time
@@ -64,18 +63,8 @@
 {#if showNotifications && showNotifications.length !== 0}
   <div class="notificator-wrapper">
     {#each showNotifications as notification, index (notification.id)}
-      <div
-        in:fly={{ x: 500, duration: 500 }}
-        out:fly={{ x: 500, duration: 500 }}
-        animate:flip
-        class="notificator"
-      >
-        <Toast
-          message={notification.message}
-          type={notification.type}
-          position="tr"
-          show
-        />
+      <div in:fly={{ x: 500, duration: 500 }} out:fly={{ x: 500, duration: 500 }} animate:flip class="notificator">
+        <Toast message={notification.message} type={notification.type} position="tr" show />
       </div>
     {/each}
   </div>
@@ -107,6 +96,10 @@
 
           <PrivateRoute path="orders/*" let:location>
             <OrderRoutes />
+          </PrivateRoute>
+
+          <PrivateRoute path="customers/*" let:location>
+            <CustomerRoutes />
           </PrivateRoute>
 
           <PrivateRoute path="editable-regions/*" let:location>
