@@ -24,8 +24,8 @@
   const defaultFilters = {
     limit: 12,
     page: 1,
-    customer: 'createdAt',
     way: 'desc',
+    isCustomer: true,
   };
   let filters: typeof defaultFilters;
   reset();
@@ -40,7 +40,7 @@
     customers.data = [];
 
     loading = true;
-    customers = await service.find(filters, ['*']);
+    customers = await service.find(filters, ['orderCount']);
     loading = false;
   }
 
@@ -99,19 +99,6 @@
             <tr>
               <th
                 scope="col"
-                class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-              >
-                <div class="flex items-center gap-x-3">
-                  <input
-                    type="checkbox"
-                    class="text-blue-500 bcustomer-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:bcustomer-gray-700"
-                  />
-                  <span>#ID</span>
-                </div>
-              </th>
-
-              <th
-                scope="col"
                 class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
                 >Customer
                 <ItemSelectorModal
@@ -133,6 +120,25 @@
                 scope="col"
                 class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
                 >Email
+                <ItemSelectorModal
+                  config={customerSelectorConfig}
+                  on:select={(e) => setFilter('user', e.detail.uuid)}
+                  closeOnSelect={true}
+                  label="Select Customer"
+                  selectMode="single"
+                >
+                  <Button>
+                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+                      ><path fill="currentColor" d="M10 20v-7L2.95 4h18.1L14 13v7h-4Z" /></svg
+                    >
+                  </Button>
+                </ItemSelectorModal>
+              </th>
+
+              <th
+                scope="col"
+                class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+                >Order number
                 <ItemSelectorModal
                   config={customerSelectorConfig}
                   on:select={(e) => setFilter('user', e.detail.uuid)}
@@ -175,23 +181,15 @@
             {/if}
             {#each customers.data as customer}
               <tr>
-                <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                  <div class="inline-flex items-center gap-x-3">
-                    <input
-                      type="checkbox"
-                      class="text-blue-500 bcustomer-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:bcustomer-gray-700"
-                    />
-                    <a href={`/customers/${customer.uuid}`} class="hover:underline">
-                      {customer.uuid}
-                    </a>
-                  </div>
-                </td>
-
                 <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap"
                   >{customer.lastName} {customer.firstName}</td
                 >
 
                 <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{customer.email}</td>
+
+                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap"
+                  >{customer.orderCount}</td
+                >
 
                 <td class="px-4 py-4 text-sm whitespace-nowrap">
                   {formatDate(customer.createdAt)}
