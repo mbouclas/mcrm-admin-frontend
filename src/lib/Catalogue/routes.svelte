@@ -1,7 +1,7 @@
 <script>
   import { Router, Route, Link } from "svelte-navigator";
   import Product from "./Products/Product.svelte";
-  import ProductList from "./Products/ProductList.svelte";
+  import ProductList from "./Products/Products.svelte";
   import ProductCategoriesList from "./Products/ProductCategoriesList.svelte";
   import ProductPropertiesList from "./Products/PropertiesList.svelte";
   import ManufacturersList from "./Products/ManufacturersList.svelte";

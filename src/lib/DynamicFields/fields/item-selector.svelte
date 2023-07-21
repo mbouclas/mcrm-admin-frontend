@@ -36,6 +36,7 @@
     reset();
 
     onMount(async () => {
+        filters = config.filters ? Object.assign({}, defaultFilters, config.filters || {}) : {};
         await search();
     });
 
@@ -164,7 +165,7 @@
 <h2>{label}</h2>
 
 {#if config.isTree}
-<div class="flex space-x-2 py-4">
+<div class="flex space-x-2 py-4 z-50">
 <button on:click={goBackToParent.bind(this, 0)}>
     <svg class="w-5 h-5"
             xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3L2 12h3v8z"/></svg>

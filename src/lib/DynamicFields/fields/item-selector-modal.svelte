@@ -28,7 +28,7 @@
     <Button on:click={() => defaultModal = true}><slot></slot></Button>
     {/if}
 
-<Modal title={label} bind:open={defaultModal} autoclose>
+<Modal title={label} bind:open={defaultModal} >
     <ItemSelector {selectMode} bind:selectedItem={selectedItem} bind:selectedItems={selectedItems}
                   on:select={onSelect} {config} />
     <svelte:fragment slot='footer'>

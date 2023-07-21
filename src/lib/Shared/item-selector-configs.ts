@@ -20,6 +20,29 @@ export const userItemSelectorConfig: IItemSelectorConfig = {
     ]
 };
 
+export const customerItemSelectorConfig: IItemSelectorConfig = {
+    apiUrl: 'user',
+    module: 'User',
+    filters: {
+        isCustomer: true
+    },
+    labels: [
+        {
+            field: 'lastName.firstName',
+            label: 'Name'
+        },
+        {
+            field: 'email',
+            label: 'Email'
+        },
+        {
+            field: 'active',
+            label: 'Active',
+            type: 'boolean'
+        },
+    ]
+};
+
 export const productItemSelectorConfig: IItemSelectorConfig = {
     apiUrl: 'product',
     module: 'Product',

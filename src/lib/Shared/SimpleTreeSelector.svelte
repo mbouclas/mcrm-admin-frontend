@@ -3,6 +3,7 @@
   import { Button, Modal, Input } from 'flowbite-svelte';
   import { ArrowsPointingOut, ArrowRight, ArrowLeft, Plus, Home, Trash, PencilSquare } from 'svelte-heros-v2';
   import Image from '../DynamicFields/fields/image.svelte';
+  import ProductCategoryEdit from "../Catalogue/Products/ProductCategoryEdit.svelte";
 
   enum DeleteType {
     DELETE_CHILDREN = 'DELETE_CHILDREN',
@@ -106,10 +107,7 @@
   }
 
   function openUpdateModal(node) {
-    console.log('node', node);
     parentCategoryName = path.length ? path[path.length - 1] : 'Root';
-
-    console.log('here');
 
     categoryData = node;
 
@@ -117,7 +115,6 @@
   }
 
   async function confirmUpdate() {
-    console.log(categoryData);
     await handleUpdate(categoryData.uuid, categoryData);
     isUpdateModalOpen = false;
     categoryData = { title: '', description: '', parentUuid: null };
@@ -190,34 +187,8 @@
 </Modal>
 
 <Modal bind:open={isUpdateModalOpen}>
-  <div class="p-4">
-    <h2 class="flowbite-modal-title mb-4 text-xl font-bold">Update Category</h2>
-    <p class="mb-4"><span>Parent Category: </span><span class="font-semibold">{parentCategoryName}</span></p>
+  <ProductCategoryEdit uuid={categoryData.uuid} on:change={(e) => categoryData = e.detail} />
 
-    <div class="mb-4">
-      <label for="title" class="block mb-2">Title:</label>
-      <Input id="title" bind:value={categoryData.title} required class="w-full" />
-    </div>
-
-    <div class="mb-4">
-      <label for="description" class="block mb-2">Description:</label>
-      <Input id="description" bind:value={categoryData.description} class="w-full" />
-    </div>
-
-    <div class="mb-4">
-      <Image
-        model={categoryData?.thumb || ''}
-        title="Category thumbnail"
-        maxNumberOfFiles={1}
-        module="ProductCategory"
-        itemId={categoryData.title}
-        type="main"
-        on:allUploadsComplete={(e) => {
-          //categoryData.thumb = e.detail;
-        }}
-      />
-    </div>
-  </div>
   <svelte:fragment slot="footer">
     <Button on:click={confirmUpdate}>Update</Button>
     <Button color="alternative" on:click={cancelUpdate}>Cancel</Button>

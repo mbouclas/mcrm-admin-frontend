@@ -8,10 +8,9 @@ import Paginator from '../../Shared/Paginator.svelte';
 import SortButton from '../../Shared/SortTableHeadButton.svelte';
 import Loading from "../../Shared/Loading.svelte";
 import ItemSelectorModal from '../../DynamicFields/fields/item-selector-modal.svelte';
-import { MenuButton,Button, Dropdown, DropdownItem, DropdownDivider, Search  } from 'flowbite-svelte'
-import type {IItemSelectorConfig} from "../../DynamicFields/types";
-import {productCategoryItemSelectorConfig, userItemSelectorConfig} from "../../Shared/item-selector-configs";
-import ItemSelector from '../../DynamicFields/fields/item-selector.svelte';
+import { MenuButton,Button, Dropdown, DropdownItem  } from 'flowbite-svelte'
+import {customerItemSelectorConfig, userItemSelectorConfig} from "../../Shared/item-selector-configs";
+
 let dropdownOpen = false;
 
 const service = new OrderService();
@@ -23,7 +22,7 @@ let orders = {
 const defaultFilters = {
     limit: 12,
     page: 1,
-    order: 'createdAt',
+    orderBy: 'createdAt',
     way: 'desc'
 };
 let filters: typeof defaultFilters;
@@ -31,7 +30,7 @@ reset();
 
 let statuses = [];
 const statusFiltersShown = [1,2,3,7];
-const customerSelectorConfig = userItemSelectorConfig;
+const customerSelectorConfig = customerItemSelectorConfig;
 
 app.subscribe(state => {
     statuses = state.configs.store.orderStatuses;
@@ -77,11 +76,11 @@ async function deleteOrder(uuid: number) {
 
 async function changeOrderBy(order: string, way: string) {
 
-    if (filters.order === order) {
+    if (filters.orderBy === order) {
         filters.way = filters.way === 'asc' ? 'desc' : 'asc';
     }
 
-    filters.order = order;
+    filters.orderBy = order;
 
     await search();
 }
@@ -144,18 +143,11 @@ async function reset() {
 <div class="flex flex-col mt-6">
     <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-            <div
-                    class="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg"
-            >
-                <table
-                        class="min-w-full divide-y divide-gray-200 dark:divide-gray-700"
-                >
+            <div class="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead class="bg-gray-50 dark:bg-gray-800">
                     <tr>
-                        <th
-                                scope="col"
-                                class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                        >
+                        <th scope="col" class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
                             <div class="flex items-center gap-x-3">
                                 <input
                                         type="checkbox"
@@ -165,57 +157,42 @@ async function reset() {
                             </div>
                         </th>
 
-                        <th
-                                scope="col"
-                                class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                        >
-                            <SortButton name="status" way={filters.way} activeFilter={filters.order}
+                        <th scope="col" class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                            <SortButton name="status" way={filters.way} activeFilter={filters.orderBy}
                                         onChange={changeOrderBy}>Status</SortButton>
 
                         </th>
-                        <th
-                                scope="col"
-                                class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                        >Customer
+                        <th scope="col" class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
                             <ItemSelectorModal config={customerSelectorConfig}
                                                on:select={(e) => setFilter('user', e.detail.uuid)}
                                                closeOnSelect={true}
                                                label="Select Customer"
                                                selectMode="single">
-                                <Button>
+                                <Button> Customer
                                     <svg class="w-5 h-5"
                                          xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M10 20v-7L2.95 4h18.1L14 13v7h-4Z"/></svg>
                                 </Button>
                             </ItemSelectorModal>
                         </th>
 
-                        <th
-                                scope="col"
-                                class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                        >
-                            <SortButton name="total" way={filters.way} activeFilter={filters.order}
+                        <th scope="col" class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                            <SortButton name="total" way={filters.way} activeFilter={filters.orderBy}
                                         onChange={changeOrderBy}>Total</SortButton>
                         </th>
 
 
 
-                        <th
-                                scope="col"
-                                class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                        >
-                            <SortButton name="createdAt" way={filters.way} activeFilter={filters.order}
+                        <th scope="col" class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                            <SortButton name="createdAt" way={filters.way} activeFilter={filters.orderBy}
                                         onChange={changeOrderBy}>Date</SortButton>
-                        </th
-                        >
+                        </th>
 
                         <th scope="col" class="relative py-3.5 px-4">
                             <span class="sr-only">Edit</span>
                         </th>
                     </tr>
                     </thead>
-                    <tbody
-                            class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900"
-                    >
+                    <tbody class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
                     {#if loading}
                         <tr>
                             <td colspan="10" class="text-center py-10">
@@ -225,9 +202,7 @@ async function reset() {
                     {/if}
                     {#each orders.data as order}
                     <tr>
-                        <td
-                                class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap"
-                        >
+                        <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                             <div class="inline-flex items-center gap-x-3">
                                 <input
                                         type="checkbox"
@@ -240,9 +215,7 @@ async function reset() {
 
                             </div>
                         </td>
-                        <td
-                                class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap"
-                        >
+                        <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                             <div
                                     class="inline-flex items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-gray-800"
                             >
@@ -252,12 +225,8 @@ async function reset() {
                             </div>
                         </td>
 
-                        <td
-                                class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap"
-                        >{order.user.lastName} {order.user.firstName}</td>
-                        <td
-                                class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap"
-                        >{moneyFormat(order.total)}</td>
+                        <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{order.user.lastName} {order.user.firstName}</td>
+                        <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{moneyFormat(order.total)}</td>
                         <td class="px-4 py-4 text-sm whitespace-nowrap">
                             {formatDate(order.createdAt)}
                         </td>

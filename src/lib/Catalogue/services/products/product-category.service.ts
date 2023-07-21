@@ -28,7 +28,18 @@ export class ProductCategoryService extends BaseHttpService {
     }
   }
 
-  async findOne(uuid: string) { }
+  async findOne(uuid: string, relationships: string[] = []) {
+    const filters = relationships.length > 0 ? { with: relationships } : {};
+    try {
+      return await super.get(`product-category/${uuid}`, filters);
+
+    } catch (e) {
+      setNotificationAction({
+        message: 'Failed to get category',
+        type: 'error',
+      });
+    }
+  }
 
   async update(uuid: string, data: IGenericObject) {
     try {
