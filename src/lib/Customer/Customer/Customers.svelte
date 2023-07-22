@@ -181,8 +181,10 @@
             {/if}
             {#each customers.data as customer}
               <tr>
-                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap"
-                  >{customer.lastName} {customer.firstName}</td
+                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
+                  <a href={`/customers/${customer.uuid}`} class="hover:underline">
+                    {customer.lastName} {customer.firstName}</a
+                  ></td
                 >
 
                 <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{customer.email}</td>

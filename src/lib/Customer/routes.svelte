@@ -1,7 +1,7 @@
 <script>
   import { Router, Route, Link } from 'svelte-navigator';
   import CustomerList from './Customer/Customers.svelte';
-  import Customer from './Customer/Customer.svelte';
+  import Customer from './Customer/CustomerView.svelte';
 </script>
 
 <Router>
