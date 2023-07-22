@@ -17,6 +17,30 @@
   let relationships: any[] = [];
   export let itemId;
 
+  const statuses = [
+    { id: 1, label: 'started' },
+    { id: 2, label: 'processing' },
+    { id: 3, label: 'shipped' },
+    { id: 4, label: 'completed' },
+    { id: 5, label: 'cancelled' },
+  ];
+
+  const paymentStatuses = [
+    { id: 1, label: 'in-progress' },
+    { id: 2, label: 'failed' },
+    { id: 3, label: 'unconfirmed' },
+    { id: 4, label: 'paid' },
+    { id: 5, label: 'authorized' },
+    { id: 6, label: 'refunded' },
+  ];
+
+  const shippingStatuses = [
+    { id: 1, label: 'in-progress' },
+    { id: 2, label: 'open' },
+    { id: 3, label: 'done' },
+    { id: 4, label: 'cancelled' },
+  ];
+
   onMount(async () => {
     if (itemId) {
       customer = await s.findOne(itemId, ['*']);
@@ -99,32 +123,36 @@
         </div>
       </div>
 
-      <!-- Orders Table -->
       <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
         <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Orders</h2>
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
           <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
-                <th class="px-6 py-3">UUID</th>
-                <th class="px-6 py-3">Street</th>
-                <th class="px-6 py-3">City</th>
-                <th class="px-6 py-3">Region</th>
-                <th class="px-6 py-3">Country</th>
-                <th class="px-6 py-3">Phone</th>
+                <th scope="col" class="px-6 py-3">Order ID</th>
+                <th scope="col" class="px-6 py-3">Total</th>
+                <th scope="col" class="px-6 py-3">Status</th>
+                <th scope="col" class="px-6 py-3">Payment Status</th>
+                <th scope="col" class="px-6 py-3">Shipping Status</th>
+                <th scope="col" class="px-6 py-3">Created At</th>
               </tr>
             </thead>
             <tbody>
-              {#each customer.order as order (order.uuid)}
+              {#each customer.order as order}
                 <tr
                   class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                 >
-                  <td class="px-6 py-4">{order.uuid}</td>
-                  <td class="px-6 py-4">{order.street}</td>
-                  <td class="px-6 py-4">{order.city}</td>
-                  <td class="px-6 py-4">{order.region}</td>
-                  <td class="px-6 py-4">{order.country}</td>
-                  <td class="px-6 py-4">{order.phone}</td>
+                  <td class="px-6 py-4">
+                    <a href={`/orders/${order.uuid}`} class="hover:underline">{order.orderId}</a></td
+                  >
+                  <td class="px-6 py-4">{Number(order.total).toFixed(2)}</td>
+                  <td class="px-6 py-4">{statuses.find((status) => status.id === order.status).label}</td>
+                  <td class="px-6 py-4">{paymentStatuses.find((status) => status.id === order.paymentStatus).label}</td>
+                  <td class="px-6 py-4"
+                    >{shippingStatuses.find((status) => status.id === order.shippingStatus).label}</td
+                  >
+
+                  <td class="px-6 py-4">{new Date(order.createdAt).toLocaleDateString()}</td>
                 </tr>
               {/each}
             </tbody>
