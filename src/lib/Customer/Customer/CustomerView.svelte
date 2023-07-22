@@ -1,6 +1,6 @@
 <script lang="ts">
   import { CustomerService } from '../services/customer/customer.service';
-  import { Button, Select, Label } from 'flowbite-svelte';
+  import { Button, Toggle, Select, Label } from 'flowbite-svelte';
   import Loading from '../../Shared/Loading.svelte';
   import { useParams } from 'svelte-navigator';
   import { onMount } from 'svelte';
@@ -62,23 +62,31 @@
   <section class="bg-white dark:bg-gray-900">
     <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
       <!-- Customer Info Box -->
-      <div class="flex justify-center">
+
+      <div class="flex justify-between items-center">
+        <div class="w-20" />
         <h2 class="mb-4 text-3xl lg:text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
           Customer {customer.firstName}
           {customer.lastName}
         </h2>
+        <div class="flex items-center w-20">
+          <span
+            >{customer.active ? 'Active' : 'Inactive'}<span>
+              <Toggle color="green" bind:checked={customer.active} />
+            </span></span
+          >
+        </div>
       </div>
-
       <div class="flex mb-10">
         <div
           class="flex-1 p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700"
         >
           <div class="flex justify-between items-start">
             <div>
-              <p class="font-light text-gray-500 dark:text-gray-400">{customer.email}</p>
               <p class="font-light text-gray-500 dark:text-gray-400">{customer.uuid}</p>
-              <p class="font-light text-gray-500 dark:text-gray-400">{customer.phone}</p>
-              <p class="font-semibold text-gray-500 dark:text-gray-400">Customer type: {customer.type}</p>
+              <p class="font-light text-gray-500 dark:text-gray-400">{customer.email}</p>
+              <p class="font-light text-gray-500 dark:text-gray-400">{customer.firstName}</p>
+              <p class="font-light text-gray-500 dark:text-gray-400">{customer.lastName}</p>
               <p class="font-semibold text-gray-500 dark:text-gray-400">Active: {customer.active ? 'Yes' : 'No'}</p>
             </div>
             <Button size="sm">Edit</Button>
