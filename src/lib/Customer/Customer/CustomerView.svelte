@@ -119,6 +119,11 @@
     deleteModalOpen = false;
     deleteItemId = null;
   };
+
+  const updateCustomer = async (customer) => {
+    await s.update(customer.uuid, customer);
+    await getCustomer();
+  };
 </script>
 
 <Modal bind:open={isAddressModalOpen}>
@@ -219,7 +224,11 @@
         <div class="flex items-center w-20">
           <span
             >{customer.active ? 'Active' : 'Inactive'}<span>
-              <Toggle color="green" bind:checked={customer.active} />
+              <Toggle
+                on:click={(e) => updateCustomer({ ...customer, active: !customer.active })}
+                color="green"
+                checked={customer.active}
+              />
             </span></span
           >
         </div>
