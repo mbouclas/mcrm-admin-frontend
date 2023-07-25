@@ -27,11 +27,21 @@
     apartment: '',
     type: 'SHIPPING',
   };
+
+  const customerDefault = {
+    uuid: null,
+    email: '',
+    firstName: '',
+    lastName: '',
+  };
+
   const params = useParams();
 
   let addressData = addressDefault;
+  let customerData = customerDefault;
 
   let isAddressModalOpen = false;
+  let isCustomerModalOpen = false;
   let addressAction = '';
   let deleteModalOpen = false;
   let customer;
@@ -77,11 +87,23 @@
     await getCustomer();
   });
 
-  const cancelModal = () => {};
+  const cancelAddressModal = () => {};
+  const cancelCustomerModal = () => {};
 
   const openAddressModal = () => {
     addressAction = 'create';
     isAddressModalOpen = true;
+  };
+
+  const openCustomerModal = () => {
+    isCustomerModalOpen = true;
+    console.log(customer);
+    customerData = {
+      uuid: customer.uuid,
+      email: customer.email,
+      firstName: customer.firstName,
+      lastName: customer.lastName,
+    };
   };
 
   const openUpdateAddressModal = (address) => {
@@ -90,7 +112,7 @@
     addressData = { ...address };
   };
 
-  const confirmModal = async () => {
+  const confirmAddressModal = async () => {
     if (addressAction === 'create') {
       await a.store({
         address: addressData,
@@ -103,6 +125,14 @@
     await getCustomer();
     isAddressModalOpen = false;
     addressData = addressDefault;
+  };
+
+  const confirmCustomerModal = async () => {
+    await s.update(customerData.uuid, customerData);
+
+    await getCustomer();
+    isCustomerModalOpen = false;
+    customerData = customerDefault;
   };
 
   const handleDelete = async () => {
@@ -193,8 +223,34 @@
   </div>
 
   <svelte:fragment slot="footer">
-    <Button on:click={confirmModal}>Create</Button>
-    <Button color="alternative" on:click={cancelModal}>Cancel</Button>
+    <Button on:click={confirmCustomerModal}>Create</Button>
+    <Button color="alternative" on:click={cancelCustomerModal}>Cancel</Button>
+  </svelte:fragment>
+</Modal>
+
+<Modal bind:open={isCustomerModalOpen}>
+  <div class="p-4">
+    <h2 class="flowbite-modal-title mb-4 text-xl font-bold">Update customer info</h2>
+
+    <div class="mb-4">
+      <label for="firstName" class="block mb-2">Email:</label>
+      <Input id="firstName" bind:value={customerData.email} required class="w-full" />
+    </div>
+
+    <div class="mb-4">
+      <label for="firstName" class="block mb-2">First Name:</label>
+      <Input id="firstName" bind:value={customerData.firstName} required class="w-full" />
+    </div>
+
+    <div class="mb-4">
+      <label for="lastName" class="block mb-2">Last Name:</label>
+      <Input id="lastName" bind:value={customerData.lastName} required class="w-full" />
+    </div>
+  </div>
+
+  <svelte:fragment slot="footer">
+    <Button on:click={confirmCustomerModal}>Create</Button>
+    <Button color="alternative" on:click={cancelAddressModal}>Cancel</Button>
   </svelte:fragment>
 </Modal>
 
@@ -245,7 +301,7 @@
               <p class="font-light text-gray-500 dark:text-gray-400">{customer.lastName}</p>
               <p class="font-semibold text-gray-500 dark:text-gray-400">Active: {customer.active ? 'Yes' : 'No'}</p>
             </div>
-            <Button size="sm">Edit</Button>
+            <Button size="md" on:click={() => openCustomerModal()}>Edit</Button>
           </div>
         </div>
       </div>
