@@ -223,8 +223,8 @@
   </div>
 
   <svelte:fragment slot="footer">
-    <Button on:click={confirmCustomerModal}>Create</Button>
-    <Button color="alternative" on:click={cancelCustomerModal}>Cancel</Button>
+    <Button on:click={confirmAddressModal}>Create</Button>
+    <Button color="alternative" on:click={cancelAddressModal}>Cancel</Button>
   </svelte:fragment>
 </Modal>
 
