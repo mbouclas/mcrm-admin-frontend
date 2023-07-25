@@ -1,20 +1,35 @@
 <script lang="ts">
   import { CustomerService } from '../services/customer/customer.service';
-  import { Button, Toggle, Select, Label } from 'flowbite-svelte';
-  import Loading from '../../Shared/Loading.svelte';
+  import { AddressService } from '../services/address/address.service';
+  import { Input, Modal, Button, Toggle, Select, Label } from 'flowbite-svelte';
   import { useParams } from 'svelte-navigator';
   import { onMount } from 'svelte';
   import getModelPrototypeFromFields from '../../helpers/model-prototype';
   import type { IDynamicFieldConfigBlueprint } from '../../DynamicFields/types';
-  import { formatDate } from '../../helpers/dates.js';
-  import { moneyFormat } from '../../helpers/money';
-  import { app, setNotificationAction } from '../../stores';
 
   const s = new CustomerService();
+  const a = new AddressService();
+
+  const addressDefault = {
+    firstName: '',
+    lastName: '',
+    phone: '',
+    street: '',
+    postCode: '',
+    city: '',
+    region: '',
+    country: '',
+    company: '',
+    apartment: '',
+    type: 'SHIPPING',
+  };
   const params = useParams();
+
+  let addressData = addressDefault;
+
+  let isCreateModalOpen = false;
   let customer;
   let fields: IDynamicFieldConfigBlueprint[] = [];
-  let relationships: any[] = [];
   export let itemId;
 
   const statuses = [
@@ -52,7 +67,89 @@
       }
     }
   });
+
+  const cancelCreate = () => {};
+
+  const openCreateModal = () => {
+    isCreateModalOpen = true;
+  };
+
+  const confirmCreate = async () => {
+    await a.store(addressData);
+    isCreateModalOpen = false;
+    addressData = addressDefault;
+  };
 </script>
+
+<Modal bind:open={isCreateModalOpen}>
+  <div class="p-4">
+    <h2 class="flowbite-modal-title mb-4 text-xl font-bold">Create Address</h2>
+
+    <div class="mb-4">
+      <label for="firstName" class="block mb-2">First Name:</label>
+      <Input id="firstName" bind:value={addressData.firstName} required class="w-full" />
+    </div>
+
+    <div class="mb-4">
+      <label for="lastName" class="block mb-2">Last Name:</label>
+      <Input id="lastName" bind:value={addressData.lastName} required class="w-full" />
+    </div>
+
+    <div class="mb-4">
+      <label for="phone" class="block mb-2">Phone Number:</label>
+      <Input id="phone" bind:value={addressData.phone} required class="w-full" />
+    </div>
+
+    <div class="mb-4">
+      <label for="street" class="block mb-2">Street:</label>
+      <Input id="street" bind:value={addressData.street} required class="w-full" />
+    </div>
+
+    <div class="mb-4">
+      <label for="postCode" class="block mb-2">Post Code:</label>
+      <Input id="postCode" bind:value={addressData.postCode} required class="w-full" />
+    </div>
+
+    <div class="mb-4">
+      <label for="city" class="block mb-2">City:</label>
+      <Input id="city" bind:value={addressData.city} required class="w-full" />
+    </div>
+
+    <div class="mb-4">
+      <label for="region" class="block mb-2">Region:</label>
+      <Input id="region" bind:value={addressData.region} required class="w-full" />
+    </div>
+
+    <div class="mb-4">
+      <label for="country" class="block mb-2">Country:</label>
+      <Input id="country" bind:value={addressData.country} required class="w-full" />
+    </div>
+
+    <div class="mb-4">
+      <label for="company" class="block mb-2">Company:</label>
+      <Input id="company" bind:value={addressData.company} required class="w-full" />
+    </div>
+
+    <div class="mb-4">
+      <label for="apartment" class="block mb-2">Apartment:</label>
+      <Input id="apartment" bind:value={addressData.apartment} required class="w-full" />
+    </div>
+
+    <div class="mb-4">
+      <label for="type" class="block mb-2">Address Type:</label>
+      <select id="type" bind:value={addressData.type} required class="w-full">
+        <option value="SHIPPING">Shipping</option>
+        <option value="BILLING">Billing</option>
+        <option value="OTHER">Other</option>
+      </select>
+    </div>
+  </div>
+
+  <svelte:fragment slot="footer">
+    <Button on:click={confirmCreate}>Create</Button>
+    <Button color="alternative" on:click={cancelCreate}>Cancel</Button>
+  </svelte:fragment>
+</Modal>
 
 {#if !customer}
   <div class="w-full text-center items-center h-64">
@@ -77,7 +174,7 @@
           >
         </div>
       </div>
-      <div class="flex mb-10">
+      <div class="flex my-10">
         <div
           class="flex-1 p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700"
         >
@@ -92,15 +189,15 @@
             <Button size="sm">Edit</Button>
           </div>
         </div>
-
-        <div class="flex-1">
-          <!-- Empty div with 50% width -->
-        </div>
       </div>
 
       <!-- Addresses Table -->
+
       <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700 mb-10">
-        <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Addresses</h2>
+        <div class="flex justify-between items-center">
+          <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Addresses</h2>
+          <Button on:click={openCreateModal}>New Address</Button>
+        </div>
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
           <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
