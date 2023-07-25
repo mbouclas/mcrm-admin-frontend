@@ -2,7 +2,7 @@
   import { CustomerService } from '../services/customer/customer.service';
   import { AddressService } from '../services/address/address.service';
   import { Input, Modal, Button, Toggle, Select, Label } from 'flowbite-svelte';
-  import { Trash } from 'svelte-heros-v2';
+  import { Trash, PencilSquare } from 'svelte-heros-v2';
 
   import { useParams } from 'svelte-navigator';
   import { onMount } from 'svelte';
@@ -14,6 +14,7 @@
 
   let deleteItemId = null;
   const addressDefault = {
+    uuid: null,
     firstName: '',
     lastName: '',
     phone: '',
@@ -30,7 +31,8 @@
 
   let addressData = addressDefault;
 
-  let isCreateModalOpen = false;
+  let isAddressModalOpen = false;
+  let addressAction = '';
   let deleteModalOpen = false;
   let customer;
   let fields: IDynamicFieldConfigBlueprint[] = [];
@@ -75,19 +77,31 @@
     await getCustomer();
   });
 
-  const cancelCreate = () => {};
+  const cancelModal = () => {};
 
-  const openCreateModal = () => {
-    isCreateModalOpen = true;
+  const openAddressModal = () => {
+    addressAction = 'create';
+    isAddressModalOpen = true;
   };
 
-  const confirmCreate = async () => {
-    await a.store({
-      address: addressData,
-      userId: $params.id,
-    });
+  const openUpdateAddressModal = (address) => {
+    addressAction = 'update';
+    isAddressModalOpen = true;
+    addressData = { ...address };
+  };
+
+  const confirmModal = async () => {
+    if (addressAction === 'create') {
+      await a.store({
+        address: addressData,
+        userId: $params.id,
+      });
+    } else {
+      await a.update(addressData.uuid, addressData);
+    }
+
     await getCustomer();
-    isCreateModalOpen = false;
+    isAddressModalOpen = false;
     addressData = addressDefault;
   };
 
@@ -107,9 +121,11 @@
   };
 </script>
 
-<Modal bind:open={isCreateModalOpen}>
+<Modal bind:open={isAddressModalOpen}>
   <div class="p-4">
-    <h2 class="flowbite-modal-title mb-4 text-xl font-bold">Create Address</h2>
+    <h2 class="flowbite-modal-title mb-4 text-xl font-bold">
+      {addressAction === 'create' ? 'Create Address' : 'Update address'}
+    </h2>
 
     <div class="mb-4">
       <label for="firstName" class="block mb-2">First Name:</label>
@@ -172,8 +188,8 @@
   </div>
 
   <svelte:fragment slot="footer">
-    <Button on:click={confirmCreate}>Create</Button>
-    <Button color="alternative" on:click={cancelCreate}>Cancel</Button>
+    <Button on:click={confirmModal}>Create</Button>
+    <Button color="alternative" on:click={cancelModal}>Cancel</Button>
   </svelte:fragment>
 </Modal>
 
@@ -230,7 +246,7 @@
       <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700 mb-10">
         <div class="flex justify-between items-center">
           <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Addresses</h2>
-          <Button on:click={openCreateModal}>New Address</Button>
+          <Button on:click={() => openAddressModal()}>New Address</Button>
         </div>
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
           <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -259,6 +275,10 @@
                   <td class="px-6 py-4">{address.country}</td>
                   <td class="px-6 py-4">{address.phone}</td>
                   <td class="px-6 py-4">
+                    <button on:click={() => openUpdateAddressModal(address)} class="text-gray-500"
+                      ><PencilSquare color="white" /></button
+                    >
+
                     <button on:click={() => handleDeleteModalOpen(address.uuid)} class="text-gray-500"
                       ><Trash color="white" /></button
                     >
