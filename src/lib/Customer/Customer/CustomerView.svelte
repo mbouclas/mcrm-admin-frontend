@@ -56,7 +56,7 @@
     { id: 4, label: 'cancelled' },
   ];
 
-  onMount(async () => {
+  const getCustomer = async () => {
     if (itemId) {
       customer = await s.findOne(itemId, ['*']);
     } else {
@@ -66,6 +66,9 @@
         customer = await s.findOne($params.id, ['*']);
       }
     }
+  };
+  onMount(async () => {
+    await getCustomer();
   });
 
   const cancelCreate = () => {};
@@ -75,7 +78,11 @@
   };
 
   const confirmCreate = async () => {
-    await a.store(addressData);
+    await a.store({
+      address: addressData,
+      userId: $params.id,
+    });
+    await getCustomer();
     isCreateModalOpen = false;
     addressData = addressDefault;
   };
