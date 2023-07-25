@@ -2,6 +2,8 @@
   import { CustomerService } from '../services/customer/customer.service';
   import { AddressService } from '../services/address/address.service';
   import { Input, Modal, Button, Toggle, Select, Label } from 'flowbite-svelte';
+  import { Trash } from 'svelte-heros-v2';
+
   import { useParams } from 'svelte-navigator';
   import { onMount } from 'svelte';
   import getModelPrototypeFromFields from '../../helpers/model-prototype';
@@ -10,6 +12,7 @@
   const s = new CustomerService();
   const a = new AddressService();
 
+  let deleteItemId = null;
   const addressDefault = {
     firstName: '',
     lastName: '',
@@ -28,6 +31,7 @@
   let addressData = addressDefault;
 
   let isCreateModalOpen = false;
+  let deleteModalOpen = false;
   let customer;
   let fields: IDynamicFieldConfigBlueprint[] = [];
   export let itemId;
@@ -85,6 +89,21 @@
     await getCustomer();
     isCreateModalOpen = false;
     addressData = addressDefault;
+  };
+
+  const handleDelete = async () => {
+    await a.deleteRow(deleteItemId);
+    await getCustomer();
+    deleteItemId = null;
+  };
+
+  const handleDeleteModalOpen = async (id) => {
+    deleteModalOpen = true;
+    deleteItemId = id;
+  };
+  const handleModalCancel = () => {
+    deleteModalOpen = false;
+    deleteItemId = null;
   };
 </script>
 
@@ -158,6 +177,14 @@
   </svelte:fragment>
 </Modal>
 
+<Modal title="Confirm delete" bind:open={deleteModalOpen} autoclose outsideclose>
+  <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">Are you sure you want to delete this item?</p>
+  <svelte:fragment slot="footer">
+    <Button on:click={() => handleDelete()}>Confirm</Button>
+    <Button on:click={() => handleModalCancel()} color="alternative">Cancel</Button>
+  </svelte:fragment>
+</Modal>
+
 {#if !customer}
   <div class="w-full text-center items-center h-64">
     <p>Loading...</p>
@@ -215,6 +242,9 @@
                 <th class="px-6 py-3">Region</th>
                 <th class="px-6 py-3">Country</th>
                 <th class="px-6 py-3">Phone</th>
+                <th scope="col" class="relative py-3.5 px-4">
+                  <span class="sr-only">Edit</span>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -228,6 +258,11 @@
                   <td class="px-6 py-4">{address.region}</td>
                   <td class="px-6 py-4">{address.country}</td>
                   <td class="px-6 py-4">{address.phone}</td>
+                  <td class="px-6 py-4">
+                    <button on:click={() => handleDeleteModalOpen(address.uuid)} class="text-gray-500"
+                      ><Trash color="white" /></button
+                    >
+                  </td>
                 </tr>
               {/each}
             </tbody>
