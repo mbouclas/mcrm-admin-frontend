@@ -87,13 +87,11 @@
       isSelectable = false;
     }
 
-    const isSelected = selectedValues.some(
-      (selectedValue) =>
-        selectedValue &&
-        date.year === selectedValue.year &&
-        date.month === selectedValue.month &&
-        date.day === selectedValue.day,
-    );
+    const isSelected =
+      minLimitDate &&
+      date.year === minLimitDate.year &&
+      date.month === minLimitDate.month &&
+      date.day === minLimitDate.day;
 
     return {
       date,

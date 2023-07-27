@@ -1,7 +1,7 @@
 <script>
   export let viewDate;
   export let onSelect;
-  export let minLimitDate;
+
   let hovering = false;
 
   const onMouseEnter = () => {
@@ -17,11 +17,6 @@
       onSelect(viewDate.date);
     }
   };
-  $: isMinLimit =
-    minLimitDate &&
-    viewDate.date.year === minLimitDate.year &&
-    viewDate.date.month === minLimitDate.month &&
-    viewDate.date.day === minLimitDate.day;
 </script>
 
 <div
@@ -33,7 +28,6 @@
   class:hoverError={hovering && !viewDate.isSelectable}
   class:day-color={viewDate.isHighlighted}
   class:day-color-faded={!viewDate.isHighlighted}
-  class:day-color-minLimit={isMinLimit}
   class:selected={viewDate.isSelected}
 >
   {viewDate.date.day}
@@ -51,9 +45,6 @@
   .day-color-faded {
     @apply bg-[#0a0a0a];
     opacity: 0.4;
-  }
-  .day-color-minLimit {
-    @apply bg-green-500;
   }
 
   .day-color {
