@@ -41,12 +41,3 @@ export function setNotificationAction(notification: INotification | null) {
     return newArr;
   });
 }
-
-export function updateFilters(filters: IFilters) {
-  filterStore.update((prev) => {
-    return {
-      ...prev,
-      ...filters,
-    };
-  });
-}

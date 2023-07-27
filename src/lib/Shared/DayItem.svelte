@@ -23,8 +23,8 @@
   class={`item day-of-month`}
   class:hoverSuccess={hovering && viewDate.isSelectable}
   class:hoverError={hovering && !viewDate.isSelectable}
-  class:day-color={viewDate.isSelectable}
-  class:day-color-faded={!viewDate.isSelectable}
+  class:day-color={viewDate.isHighlighted}
+  class:day-color-faded={!viewDate.isHighlighted}
   class:selected={viewDate.isSelected}
 >
   {viewDate.date.day}

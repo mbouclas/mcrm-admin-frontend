@@ -5,6 +5,7 @@
 
   export let onSelect;
   export let selectedValues = [];
+  export let minLimitDate;
 
   let month;
   let year;
@@ -54,6 +55,7 @@
   $: viewDates = new Array(42).fill(null).map((item, index) => {
     let date;
     let isSelectable = true;
+    let isHighlighted = true;
 
     let currentDayView = index + 1;
     let firstDayPostion = firstWeekDay === 7 ? 1 : firstWeekDay + 1;
@@ -68,7 +70,7 @@
       });
 
       if (date.month !== dateWithFirstDay.month) {
-        isSelectable = false;
+        isHighlighted = false;
       }
     }
 
@@ -78,11 +80,11 @@
       });
 
       if (date.month !== dateWithFirstDay.month) {
-        isSelectable = false;
+        isHighlighted = false;
       }
     }
 
-    if (date < currentDate) {
+    if (minLimitDate && minLimitDate > currentDate) {
       isSelectable = false;
     }
 
@@ -94,11 +96,11 @@
         date.day === selectedValue.day,
     );
 
-    console.log(date.day, 'datea');
     return {
       date,
       isSelected,
       isSelectable,
+      isHighlighted,
     };
   });
 </script>

@@ -92,7 +92,7 @@
     <Modal bind:showModal={openDatePicker}>
       <div slot="header">Pick Date</div>
       <div slot="content">
-        <DatePicker onSelect={handleDateSelect} />
+        <DatePicker minLimitDate={showDatePicker === 'to' ? fromDate : null} onSelect={handleDateSelect} />
       </div>
     </Modal>
   </div>
