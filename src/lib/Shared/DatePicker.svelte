@@ -93,12 +93,14 @@
         date.day === selectedValue.day,
     );
 
+    console.log(date.day, 'datea');
     return {
       date,
       isSelected,
       isSelectable,
     };
   });
+  $: console.log(viewDates, 'viewdates');
 </script>
 
 <div>

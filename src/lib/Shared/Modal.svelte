@@ -9,29 +9,31 @@
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
-<dialog bind:this={dialog} on:close={() => (showModal = false)} on:click|self={() => dialog.close()}>
-  <div class="bg-[#1b1f2b] text-gray-200" on:click|stopPropagation>
-    {#if $$slots.header}
-      <div class="flex items-center justify-between pb-6 text-3xl">
-        <slot name="header" />
-        <XMark class="cursor-pointer" on:click={() => dialog.close()} />
-      </div>
-      <hr class="mt-2" />
-    {/if}
-    {#if $$slots.content}
-      <div class="pb-6">
-        <slot name="content" />
-      </div>
-    {/if}
-    <div>
-      {#if $$slots.footer}
+{#if showModal}
+  <dialog bind:this={dialog} on:close={() => (showModal = false)} on:click|self={() => dialog.close()}>
+    <div class="bg-[#1b1f2b] text-gray-200" on:click|stopPropagation>
+      {#if $$slots.header}
+        <div class="flex items-center justify-between pb-6 text-3xl">
+          <slot name="header" />
+          <XMark class="cursor-pointer" on:click={() => dialog.close()} />
+        </div>
+        <hr class="mt-2" />
+      {/if}
+      {#if $$slots.content}
         <div class="pb-6">
-          <slot name="footer" />
+          <slot name="content" />
         </div>
       {/if}
+      <div>
+        {#if $$slots.footer}
+          <div class="pb-6">
+            <slot name="footer" />
+          </div>
+        {/if}
+      </div>
     </div>
-  </div>
-</dialog>
+  </dialog>
+{/if}
 
 <style>
   dialog {
