@@ -79,7 +79,7 @@
       if ($params.id === 'new') {
         customer = getModelPrototypeFromFields(fields);
       } else {
-        customer = await s.findOne($params.id, ['*']);
+        customer = await s.findOne($params.id, ['address', 'orders']);
       }
     }
   };
