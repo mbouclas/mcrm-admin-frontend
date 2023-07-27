@@ -60,6 +60,6 @@
   }
 
   .selected {
-    @apply bg-[#0a0a0a] border-gray-300 border-[3px] border-solid;
+    @apply bg-green-600 border-gray-300 border-[3px] border-solid;
   }
 </style>
