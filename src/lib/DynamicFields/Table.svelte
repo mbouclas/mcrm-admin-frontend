@@ -33,7 +33,7 @@
   </div>
   {#if items && items.length}
     {#each items as item, index}
-      <div class={`flex even:bg-gray-700 odd:bg-gray-600 last:rounded-b-md`}>
+      <div class={`flex items-center even:bg-gray-700 odd:bg-gray-600 last:rounded-b-md`}>
         {#each fields as field}
           <div
             class={`p-2 text-left flex-1

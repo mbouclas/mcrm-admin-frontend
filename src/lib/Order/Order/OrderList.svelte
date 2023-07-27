@@ -1,27 +1,32 @@
 <script>
-  import queryString from "query-string";
-  import { useParams, useLocation, useNavigate } from "svelte-navigator";
-  import { OrderService } from "../services/order/order.service";
-  import { onMount } from "svelte";
-  import ActionList from "./grid-actions.svelte";
-  import Grid from "gridjs-svelte";
-  import { h } from "gridjs";
-  import { RowSelection } from "gridjs/plugins/selection";
-  import Drawer from "svelte-drawer-component";
+  // @ts-nocheck
 
-  import { Confirm } from "svelte-confirm";
-  import Modals from "../../Shared/Modals.svelte";
+  import queryString from 'query-string';
+  import { useParams, useLocation, useNavigate } from 'svelte-navigator';
+  import { OrderService } from '../services/order/order.service';
+  import { onMount } from 'svelte';
+  import ActionList from './grid-actions.svelte';
+  import Grid from 'gridjs-svelte';
+  import { h } from 'gridjs';
+  import { RowSelection } from 'gridjs/plugins/selection';
 
-  let openFilter = false;
+  import { Confirm } from 'svelte-confirm';
+  import Modals from '../../Shared/Modals.svelte';
+  import Modal from '../../Shared/Modal.svelte';
+  import OrderFilters from './OrderFilters.svelte';
+  import { filterStore as filterValues, updateFilters } from '../../stores';
+
+  let showModal = false;
   let openProductEditModal = false;
   let itemId;
+  console.log($filterValues, 'vallalala');
 
   const service = new OrderService();
   const params = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const filters = {
-    with: ["user"],
+  $: filters = {
+    with: ['user'],
   };
   let gridInstance;
   $: selectedRows = [];
@@ -45,50 +50,48 @@
       props: { title: `edit ${id}`, id, active },
     });
 
-    e.$on("grid-action", (m) => console.log(m));
-    e.$on("delete-row", (e) => deleteItem(e.detail.id));
-    e.$on("activate-item", (e) => activateRow(e.detail.id));
-    e.$on("de-activate-item", (e) => de_activateRow(e.detail.id));
+    e.$on('grid-action', (m) => console.log(m));
+    e.$on('delete-row', (e) => deleteItem(e.detail.id));
+    e.$on('activate-item', (e) => activateRow(e.detail.id));
+    e.$on('de-activate-item', (e) => de_activateRow(e.detail.id));
   }
-
-  const server = service.getGridUrl(filters);
+  $: filtersApplied = false;
+  $: server = filters ? service.getGridUrl(filters) : service.getGridUrl();
   const pagination = service.getGridPaginationObject();
   const search = service.getGridSearchObject();
   const sort = service.getGridSortObject([
     {
-      id: "title",
+      id: 'title',
       idx: 2,
     },
     {
-      id: "sku",
+      id: 'sku',
       idx: 3,
     },
     {
-      id: "price",
+      id: 'price',
       idx: 4,
     },
     {
-      id: "createdAt",
+      id: 'createdAt',
       idx: 5,
     },
   ]);
   const columns = [
     {
-      id: "selectRow",
+      id: 'selectRow',
       sort: false,
-      name: h("input", {
-        type: "checkbox",
+      name: h('input', {
+        type: 'checkbox',
         onChange: (e) => {
           allRowsSelected = e.target.checked;
           // Exceptionally hacky. There's no documented method to get the table data and do something with them
           // So we find all the checkboxes on the table and click them
           // There is of course the obvious bug where if there were selected rows, and you click on this
           // only the inverse will happen. This calls for an intermediate action, like on gmail
-          gridInstance.config.tableRef.current.base
-            .querySelectorAll(".gridjs-checkbox")
-            .forEach((checkbox) => {
-              checkbox.click();
-            });
+          gridInstance.config.tableRef.current.base.querySelectorAll('.gridjs-checkbox').forEach((checkbox) => {
+            checkbox.click();
+          });
         },
       }),
       plugin: {
@@ -105,53 +108,53 @@
       },
     },
     {
-      name: "uuid",
-      id: "uuid",
+      name: 'uuid',
+      id: 'uuid',
       hidden: true,
     },
     {
-      name: "Date",
-      id: "date",
+      name: 'Date',
+      id: 'date',
       formatter: (cell) => {
-        return new Date(cell).toLocaleString("el-EL", {
-          day: "numeric",
-          month: "short",
-          year: "numeric",
-          hour: "numeric",
-          minute: "numeric",
+        return new Date(cell).toLocaleString('el-EL', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
         });
       },
     },
     {
-      name: "Order Id",
-      id: "orderId",
+      name: 'Order Id',
+      id: 'orderId',
     },
     {
-      name: "Customer",
-      id: "customer",
+      name: 'Customer',
+      id: 'customer',
     },
     {
-      name: "Status",
-      id: "status",
+      name: 'Status',
+      id: 'status',
     },
     {
-      name: "Total",
-      id: "total",
+      name: 'Total',
+      id: 'total',
     },
     {
-      name: "Actions",
+      name: 'Actions',
       formatter: (cell, row, idx) => {
         const id = row.cells[1].data;
         const active = row.cells[7].data;
         createActionsButton({ row, active, id });
 
-        return h("div", { id: `action-${row.id}` }, "");
+        return h('div', { id: `action-${row.id}` }, '');
       },
     },
   ];
   const style = {
     table: {
-      "white-space": "nowrap",
+      'white-space': 'nowrap',
     },
   };
 
@@ -207,16 +210,22 @@
   async function deleteItem(itemId) {
     const res = await service.deleteRow(itemId);
   }
+  function modalToggle() {
+    showModal = true;
+  }
+  function searchByFilters() {
+    filters = {
+      ...filters,
+      ...$filterValues,
+    };
+  }
 </script>
 
 <section class="container px-4 mx-auto">
   <div class="flex items-center gap-x-3">
-    <h2 class="text-lg font-medium text-gray-800 dark:text-white">
-      Team members
-    </h2>
+    <h2 class="text-lg font-medium text-gray-800 dark:text-white">Team members</h2>
 
-    <span
-      class="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400"
+    <span class="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400"
       >100 users</span
     >
   </div>
@@ -224,12 +233,8 @@
   <div class="flex flex-col mt-6">
     <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
       <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-        <div
-          class="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg"
-        >
-          <table
-            class="min-w-full divide-y divide-gray-200 dark:divide-gray-700"
-          >
+        <div class="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
+          <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead class="bg-gray-50 dark:bg-gray-800">
               <tr>
                 <th
@@ -252,12 +257,7 @@
                   <button class="flex items-center gap-x-2">
                     <span>Status</span>
 
-                    <svg
-                      class="h-3"
-                      viewBox="0 0 10 11"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
+                    <svg class="h-3" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path
                         d="M2.13347 0.0999756H2.98516L5.01902 4.79058H3.86226L3.45549 3.79907H1.63772L1.24366 4.79058H0.0996094L2.13347 0.0999756ZM2.54025 1.46012L1.96822 2.92196H3.11227L2.54025 1.46012Z"
                         fill="currentColor"
@@ -321,13 +321,9 @@
                 </th>
               </tr>
             </thead>
-            <tbody
-              class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900"
-            >
+            <tbody class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
               <tr>
-                <td
-                  class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap"
-                >
+                <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                   <div class="inline-flex items-center gap-x-3">
                     <input
                       type="checkbox"
@@ -341,21 +337,13 @@
                         alt=""
                       />
                       <div>
-                        <h2 class="font-medium text-gray-800 dark:text-white">
-                          Arthur Melo
-                        </h2>
-                        <p
-                          class="text-sm font-normal text-gray-600 dark:text-gray-400"
-                        >
-                          @authurmelo
-                        </p>
+                        <h2 class="font-medium text-gray-800 dark:text-white">Arthur Melo</h2>
+                        <p class="text-sm font-normal text-gray-600 dark:text-gray-400">@authurmelo</p>
                       </div>
                     </div>
                   </div>
                 </td>
-                <td
-                  class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap"
-                >
+                <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                   <div
                     class="inline-flex items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-gray-800"
                   >
@@ -364,29 +352,17 @@
                     <h2 class="text-sm font-normal text-emerald-500">Active</h2>
                   </div>
                 </td>
-                <td
-                  class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap"
-                  >Design Director</td
-                >
-                <td
-                  class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap"
+                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">Design Director</td>
+                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap"
                   >authurmelo@example.com</td
                 >
                 <td class="px-4 py-4 text-sm whitespace-nowrap">
                   <div class="flex items-center gap-x-2">
-                    <p
-                      class="px-3 py-1 text-xs text-indigo-500 rounded-full dark:bg-gray-800 bg-indigo-100/60"
-                    >
+                    <p class="px-3 py-1 text-xs text-indigo-500 rounded-full dark:bg-gray-800 bg-indigo-100/60">
                       Design
                     </p>
-                    <p
-                      class="px-3 py-1 text-xs text-blue-500 rounded-full dark:bg-gray-800 bg-blue-100/60"
-                    >
-                      Product
-                    </p>
-                    <p
-                      class="px-3 py-1 text-xs text-pink-500 rounded-full dark:bg-gray-800 bg-pink-100/60"
-                    >
+                    <p class="px-3 py-1 text-xs text-blue-500 rounded-full dark:bg-gray-800 bg-blue-100/60">Product</p>
+                    <p class="px-3 py-1 text-xs text-pink-500 rounded-full dark:bg-gray-800 bg-pink-100/60">
                       Marketing
                     </p>
                   </div>
@@ -435,9 +411,7 @@
               </tr>
 
               <tr>
-                <td
-                  class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap"
-                >
+                <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                   <div class="inline-flex items-center gap-x-3">
                     <input
                       type="checkbox"
@@ -451,21 +425,13 @@
                         alt=""
                       />
                       <div>
-                        <h2 class="font-medium text-gray-800 dark:text-white">
-                          Amelia. Anderson
-                        </h2>
-                        <p
-                          class="text-sm font-normal text-gray-600 dark:text-gray-400"
-                        >
-                          @ameliaanderson
-                        </p>
+                        <h2 class="font-medium text-gray-800 dark:text-white">Amelia. Anderson</h2>
+                        <p class="text-sm font-normal text-gray-600 dark:text-gray-400">@ameliaanderson</p>
                       </div>
                     </div>
                   </div>
                 </td>
-                <td
-                  class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap"
-                >
+                <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                   <div
                     class="inline-flex items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-gray-800"
                   >
@@ -474,29 +440,17 @@
                     <h2 class="text-sm font-normal text-emerald-500">Active</h2>
                   </div>
                 </td>
-                <td
-                  class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap"
-                  >Lead Developer</td
-                >
-                <td
-                  class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap"
+                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">Lead Developer</td>
+                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap"
                   >ameliaanderson@example.com</td
                 >
                 <td class="px-4 py-4 text-sm whitespace-nowrap">
                   <div class="flex items-center gap-x-2">
-                    <p
-                      class="px-3 py-1 text-xs text-indigo-500 rounded-full dark:bg-gray-800 bg-indigo-100/60"
-                    >
+                    <p class="px-3 py-1 text-xs text-indigo-500 rounded-full dark:bg-gray-800 bg-indigo-100/60">
                       Design
                     </p>
-                    <p
-                      class="px-3 py-1 text-xs text-blue-500 rounded-full dark:bg-gray-800 bg-blue-100/60"
-                    >
-                      Product
-                    </p>
-                    <p
-                      class="px-3 py-1 text-xs text-pink-500 rounded-full dark:bg-gray-800 bg-pink-100/60"
-                    >
+                    <p class="px-3 py-1 text-xs text-blue-500 rounded-full dark:bg-gray-800 bg-blue-100/60">Product</p>
+                    <p class="px-3 py-1 text-xs text-pink-500 rounded-full dark:bg-gray-800 bg-pink-100/60">
                       Marketing
                     </p>
                   </div>
@@ -545,9 +499,7 @@
               </tr>
 
               <tr>
-                <td
-                  class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap"
-                >
+                <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                   <div class="inline-flex items-center gap-x-3">
                     <input
                       type="checkbox"
@@ -561,21 +513,13 @@
                         alt=""
                       />
                       <div>
-                        <h2 class="font-medium text-gray-800 dark:text-white">
-                          junior REIS
-                        </h2>
-                        <p
-                          class="text-sm font-normal text-gray-600 dark:text-gray-400"
-                        >
-                          @junior
-                        </p>
+                        <h2 class="font-medium text-gray-800 dark:text-white">junior REIS</h2>
+                        <p class="text-sm font-normal text-gray-600 dark:text-gray-400">@junior</p>
                       </div>
                     </div>
                   </div>
                 </td>
-                <td
-                  class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap"
-                >
+                <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                   <div
                     class="inline-flex items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-gray-800"
                   >
@@ -584,29 +528,15 @@
                     <h2 class="text-sm font-normal text-emerald-500">Active</h2>
                   </div>
                 </td>
-                <td
-                  class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap"
-                  >Products Managers</td
-                >
-                <td
-                  class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap"
-                  >junior@example.com</td
-                >
+                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">Products Managers</td>
+                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">junior@example.com</td>
                 <td class="px-4 py-4 text-sm whitespace-nowrap">
                   <div class="flex items-center gap-x-2">
-                    <p
-                      class="px-3 py-1 text-xs text-indigo-500 rounded-full dark:bg-gray-800 bg-indigo-100/60"
-                    >
+                    <p class="px-3 py-1 text-xs text-indigo-500 rounded-full dark:bg-gray-800 bg-indigo-100/60">
                       Design
                     </p>
-                    <p
-                      class="px-3 py-1 text-xs text-blue-500 rounded-full dark:bg-gray-800 bg-blue-100/60"
-                    >
-                      Product
-                    </p>
-                    <p
-                      class="px-3 py-1 text-xs text-pink-500 rounded-full dark:bg-gray-800 bg-pink-100/60"
-                    >
+                    <p class="px-3 py-1 text-xs text-blue-500 rounded-full dark:bg-gray-800 bg-blue-100/60">Product</p>
+                    <p class="px-3 py-1 text-xs text-pink-500 rounded-full dark:bg-gray-800 bg-pink-100/60">
                       Marketing
                     </p>
                   </div>
@@ -655,9 +585,7 @@
               </tr>
 
               <tr>
-                <td
-                  class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap"
-                >
+                <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                   <div class="inline-flex items-center gap-x-3">
                     <input
                       type="checkbox"
@@ -671,21 +599,13 @@
                         alt=""
                       />
                       <div>
-                        <h2 class="font-medium text-gray-800 dark:text-white">
-                          Olivia Wathan
-                        </h2>
-                        <p
-                          class="text-sm font-normal text-gray-600 dark:text-gray-400"
-                        >
-                          @oliviawathan
-                        </p>
+                        <h2 class="font-medium text-gray-800 dark:text-white">Olivia Wathan</h2>
+                        <p class="text-sm font-normal text-gray-600 dark:text-gray-400">@oliviawathan</p>
                       </div>
                     </div>
                   </div>
                 </td>
-                <td
-                  class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap"
-                >
+                <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                   <div
                     class="inline-flex items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-gray-800"
                   >
@@ -694,29 +614,17 @@
                     <h2 class="text-sm font-normal text-emerald-500">Active</h2>
                   </div>
                 </td>
-                <td
-                  class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap"
-                  >Lead Designer</td
-                >
-                <td
-                  class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap"
+                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">Lead Designer</td>
+                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap"
                   >oliviawathan@example.com</td
                 >
                 <td class="px-4 py-4 text-sm whitespace-nowrap">
                   <div class="flex items-center gap-x-2">
-                    <p
-                      class="px-3 py-1 text-xs text-indigo-500 rounded-full dark:bg-gray-800 bg-indigo-100/60"
-                    >
+                    <p class="px-3 py-1 text-xs text-indigo-500 rounded-full dark:bg-gray-800 bg-indigo-100/60">
                       Design
                     </p>
-                    <p
-                      class="px-3 py-1 text-xs text-blue-500 rounded-full dark:bg-gray-800 bg-blue-100/60"
-                    >
-                      Product
-                    </p>
-                    <p
-                      class="px-3 py-1 text-xs text-pink-500 rounded-full dark:bg-gray-800 bg-pink-100/60"
-                    >
+                    <p class="px-3 py-1 text-xs text-blue-500 rounded-full dark:bg-gray-800 bg-blue-100/60">Product</p>
+                    <p class="px-3 py-1 text-xs text-pink-500 rounded-full dark:bg-gray-800 bg-pink-100/60">
                       Marketing
                     </p>
                   </div>
@@ -765,9 +673,7 @@
               </tr>
 
               <tr>
-                <td
-                  class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap"
-                >
+                <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                   <div class="inline-flex items-center gap-x-3">
                     <input
                       type="checkbox"
@@ -781,21 +687,13 @@
                         alt=""
                       />
                       <div>
-                        <h2 class="font-medium text-gray-800 dark:text-white">
-                          Mia
-                        </h2>
-                        <p
-                          class="text-sm font-normal text-gray-600 dark:text-gray-400"
-                        >
-                          @mia
-                        </p>
+                        <h2 class="font-medium text-gray-800 dark:text-white">Mia</h2>
+                        <p class="text-sm font-normal text-gray-600 dark:text-gray-400">@mia</p>
                       </div>
                     </div>
                   </div>
                 </td>
-                <td
-                  class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap"
-                >
+                <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                   <div
                     class="inline-flex items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-gray-800"
                   >
@@ -804,29 +702,15 @@
                     <h2 class="text-sm font-normal text-emerald-500">Active</h2>
                   </div>
                 </td>
-                <td
-                  class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap"
-                  >Graphic Designer</td
-                >
-                <td
-                  class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap"
-                  >mia@example.com</td
-                >
+                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">Graphic Designer</td>
+                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">mia@example.com</td>
                 <td class="px-4 py-4 text-sm whitespace-nowrap">
                   <div class="flex items-center gap-x-2">
-                    <p
-                      class="px-3 py-1 text-xs text-indigo-500 rounded-full dark:bg-gray-800 bg-indigo-100/60"
-                    >
+                    <p class="px-3 py-1 text-xs text-indigo-500 rounded-full dark:bg-gray-800 bg-indigo-100/60">
                       Design
                     </p>
-                    <p
-                      class="px-3 py-1 text-xs text-blue-500 rounded-full dark:bg-gray-800 bg-blue-100/60"
-                    >
-                      Product
-                    </p>
-                    <p
-                      class="px-3 py-1 text-xs text-pink-500 rounded-full dark:bg-gray-800 bg-pink-100/60"
-                    >
+                    <p class="px-3 py-1 text-xs text-blue-500 rounded-full dark:bg-gray-800 bg-blue-100/60">Product</p>
+                    <p class="px-3 py-1 text-xs text-pink-500 rounded-full dark:bg-gray-800 bg-pink-100/60">
                       Marketing
                     </p>
                   </div>
@@ -893,22 +777,14 @@
         stroke="currentColor"
         class="w-5 h-5 rtl:-scale-x-100"
       >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18"
-        />
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18" />
       </svg>
 
       <span> previous </span>
     </a>
 
     <div class="items-center hidden lg:flex gap-x-3">
-      <a
-        href="#"
-        class="px-2 py-1 text-sm text-blue-500 rounded-md dark:bg-gray-800 bg-blue-100/60"
-        >1</a
-      >
+      <a href="#" class="px-2 py-1 text-sm text-blue-500 rounded-md dark:bg-gray-800 bg-blue-100/60">1</a>
       <a
         href="#"
         class="px-2 py-1 text-sm text-gray-500 rounded-md dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
@@ -955,47 +831,32 @@
         stroke="currentColor"
         class="w-5 h-5 rtl:-scale-x-100"
       >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
-        />
+        <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
       </svg>
     </a>
   </div>
 </section>
 
 <Modals />
+
 <div class="grid-wrapper p-4 bg-[#2a3042] rounded-md text-[#a6b0cf]">
   <h1 class="mt-4 mb-2 text-lg">Order List</h1>
   <div class="toolbar flex justify-end bg-[#517acd]">
     <div class="p-6">
-      <i
-        class="mr-2 text-white cursor-pointer fa-solid fa-bars-filter"
-        on:click={() => (openFilter = true)}
-      />
-      <i
-        class="text-white cursor-pointer fa-solid fa-plus"
-        on:click={() => navigate("/orders/new")}
-      />
+      <Modal bind:showModal>
+        <div slot="header">Filters</div>
+        <div slot="content"><OrderFilters /></div>
+        <div slot="footer">
+          <button class="bg-blue-500 px-2 py-1 rounded" autofocus on:click={searchByFilters}>Search</button>
+        </div>
+      </Modal>
+      <i class="mr-2 text-white cursor-pointer fa-solid fa-bars-filter" on:click={modalToggle} />
+      <i class="text-white cursor-pointer fa-solid fa-plus" on:click={() => navigate('/orders/new')} />
       {#if Array.isArray(selectedRows) && selectedRows.length > 0}
-        <i
-          class="ml-6 mr-2 text-white cursor-pointer fa-solid fa-eye"
-          on:click={() => activateRows()}
-        />
-        <i
-          class="fa-solid fa-eye-slash text-[#9f9f9f] cursor-pointer mr-6"
-          on:click={() => de_activateRows()}
-        />
-        <Confirm
-          confirmTitle="Delete"
-          cancelTitle="Cancel"
-          let:confirm={confirmThis}
-        >
-          <i
-            class="fa-solid fa-trash-can text-[#892626] cursor-pointer"
-            on:click={() => confirmThis(deleteItems)}
-          />
+        <i class="ml-6 mr-2 text-white cursor-pointer fa-solid fa-eye" on:click={() => activateRows()} />
+        <i class="fa-solid fa-eye-slash text-[#9f9f9f] cursor-pointer mr-6" on:click={() => de_activateRows()} />
+        <Confirm confirmTitle="Delete" cancelTitle="Cancel" let:confirm={confirmThis}>
+          <i class="fa-solid fa-trash-can text-[#892626] cursor-pointer" on:click={() => confirmThis(deleteItems)} />
           <span slot="title"> Are you sure? </span>
           <span slot="description"> You won't be able to revert this! </span>
         </Confirm>
@@ -1004,29 +865,6 @@
   </div>
 
   <div class="grid-filter-drawer">
-    <Drawer
-      open={openFilter}
-      size="300px"
-      placement="right"
-      on:clickAway={() => (openFilter = false)}
-    >
-      <div class=" w-full h-full bg-[#222736]">
-        <div class="flex justify-between w-full p-4 text-white">
-          <p>Filters</p>
-          <i
-            class="text-xl cursor-pointer fa-solid fa-xmark"
-            on:click={() => (openFilter = false)}
-          />
-        </div>
-        <div class="w-full">
-          <input
-            type="text"
-            placeholder="filter"
-            class="bg-[#222736] w-full grid-filter-input"
-          />
-        </div>
-      </div>
-    </Drawer>
     <Grid
       {columns}
       bind:instance={gridInstance}
@@ -1048,7 +886,7 @@
 </div>
 
 <style global>
-  @import "https://cdn.jsdelivr.net/npm/gridjs/dist/theme/mermaid.min.css";
+  @import 'https://cdn.jsdelivr.net/npm/gridjs/dist/theme/mermaid.min.css';
   td,
   th {
     color: #a6b0cf !important;
@@ -1080,24 +918,24 @@
     border: 1px solid #32394e !important;
   }
 
-  th[data-column-id="selectRow"] {
+  th[data-column-id='selectRow'] {
     text-align: center;
     border-bottom: 2px solid #32394e !important;
   }
-  th[data-column-id="actions"],
-  td[data-column-id="actions"] {
+  th[data-column-id='actions'],
+  td[data-column-id='actions'] {
     text-align: center;
   }
-  td[data-column-id="actions"] div[data-testid="tooltip"] {
+  td[data-column-id='actions'] div[data-testid='tooltip'] {
     right: 0;
   }
-  td[data-column-id="actions"] div[role="tooltip"] ul {
+  td[data-column-id='actions'] div[role='tooltip'] ul {
     background-color: #222736 !important;
   }
-  td[data-column-id="actions"] div[role="tooltip"] ul > div {
+  td[data-column-id='actions'] div[role='tooltip'] ul > div {
     background-color: #2e3446 !important;
   }
-  td[data-column-id="actions"] div[role="tooltip"] li > div {
+  td[data-column-id='actions'] div[role='tooltip'] li > div {
     color: white;
     display: flex;
     align-items: center;
@@ -1105,10 +943,10 @@
     padding-right: 20px;
     opacity: 0.8 !important;
   }
-  td[data-column-id="actions"] div[role="tooltip"] li:hover {
+  td[data-column-id='actions'] div[role='tooltip'] li:hover {
     background-color: #222736 !important;
   }
-  td[data-column-id="actions"] div[role="tooltip"] li > div:hover {
+  td[data-column-id='actions'] div[role='tooltip'] li > div:hover {
     opacity: 1 !important;
   }
 
@@ -1121,24 +959,24 @@
     background-color: #2e3446 !important;
     color: #6b7280 !important;
   }
-  td[data-column-id="actions"] button {
+  td[data-column-id='actions'] button {
     margin: auto;
     padding: 5px 15px;
     font-size: 12px;
     border: 1px solid #556ee6;
     background-color: #556ee6;
   }
-  td[data-column-id="actions"] button:hover {
+  td[data-column-id='actions'] button:hover {
     background-color: #485ec4;
   }
-  td[data-column-id="actions"] button:focus {
+  td[data-column-id='actions'] button:focus {
     box-shadow: 0 0 0 0.15rem rgb(111 132 234 / 50%);
   }
   .gridjs-checkbox:not(:checked) {
     background-color: #9daad1;
   }
 
-  .gridjs-th-content input[type="checkbox"]:not(:checked) {
+  .gridjs-th-content input[type='checkbox']:not(:checked) {
     background-color: #9daad1;
   }
   .gridjs-wrapper {

@@ -12,10 +12,12 @@
 
   import { Confirm } from 'svelte-confirm';
   import Modals from '../../Shared/Modals.svelte';
+  import Modal from '../../Shared/Modal.svelte';
 
   let openFilter = false;
   let openProductEditModal = false;
   let itemId;
+  let showModal = false;
 
   const service = new ProductsService();
   const params = useParams();
@@ -252,6 +254,9 @@
   function onRowReady(row) {
     console.log('row ready', row);
   }
+  function modalToggle() {
+    showModal = !showModal;
+  }
 </script>
 
 <Table>
@@ -340,17 +345,18 @@
   </div>
 
   <div class="grid-filter-drawer">
-    <Drawer open={openFilter} size="300px" placement="right" on:clickAway={() => (openFilter = false)}>
-      <div class=" w-full h-full bg-[#222736]">
-        <div class="flex justify-between w-full p-4 text-white">
-          <p>Filters</p>
-          <i class="text-xl cursor-pointer fa-solid fa-xmark" on:click={() => (openFilter = false)} />
-        </div>
-        <div class="w-full">
-          <input type="text" placeholder="filter" class="bg-[#222736] w-full grid-filter-input" />
-        </div>
+    <Modal bind:showModal>
+      <div slot="header">Some title</div>
+      <div slot="content">
+        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's
+        standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make
+        a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,
+        remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing
+        Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions
+        of Lorem Ipsum.
       </div>
-    </Drawer>
+    </Modal>
+    <button on:click={modalToggle}>Open me</button>
     <Grid
       {columns}
       bind:instance={gridInstance}
