@@ -1,19 +1,28 @@
 <script>
   import { Range, Label, Select, NumberInput } from 'flowbite-svelte';
   import DatePicker from '../../Shared/DatePicker.svelte';
-  import { filterStore, updateFilters } from '../../stores';
-  import { onMount } from 'svelte';
+  import { filterStore } from '../../stores';
+  import { onMount, createEventDispatcher } from 'svelte';
   import Modal from '../../Shared/Modal.svelte';
+
+  const dispatch = createEventDispatcher();
 
   $: statusValue = '';
 
   let fromPriceValue = 1;
+  $: fromPriceValue && dispatch('change', { key: 'priceFrom', value: fromPriceValue });
+
   let toPriceValue = 100;
+  $: toPriceValue && dispatch('change', { key: 'priceTo', value: toPriceValue });
 
   let showDatePicker = null;
   let openDatePicker = false;
+
   let fromDate = null;
+  $: fromDate && dispatch('change', { key: 'createdAtFrom', value: fromDate });
+
   let toDate = null;
+  $: toDate && dispatch('change', { key: 'createdAtTo', value: toDate });
 
   const handleSelect = (e) => {
     const type = e.target.name;
@@ -34,7 +43,6 @@
     openDatePicker = false;
     showDatePicker = null;
   };
-  $: updateFilters({ total: 10 });
 </script>
 
 <div class="flex items-start gap-10 py-10">
@@ -68,14 +76,14 @@
       <p>
         {#if fromDate}
           <div class="bg-gray-700 rounded p-1 text-center">
-            {new Date(fromDate).toDateString()}
+            From: {new Date(fromDate).toDateString()}
           </div>
         {/if}
       </p>
       <p>
         {#if toDate}
           <div class="bg-gray-700 rounded p-1 text-center">
-            {new Date(toDate).toDateString()}
+            To: {new Date(toDate).toDateString()}
           </div>
         {/if}
       </p>

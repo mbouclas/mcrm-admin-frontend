@@ -14,6 +14,7 @@
         filters;
 
     fillArrayOfPages(totalPages);
+
     let pages = pageNumbers(totalPages, currentPage);
     let next = (currentPage === totalPages) ? null : currentPage + 1;
     let previous = (currentPage === 1) ? null : currentPage - 1;

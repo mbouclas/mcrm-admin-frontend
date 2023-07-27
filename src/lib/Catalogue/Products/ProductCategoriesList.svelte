@@ -18,13 +18,27 @@
     console.log(node.uuid);
   }
 
-  function handleDelete(node) {
-    console.log(node.uuid);
-  }
-
   const handleMove = async (node, parentNode = null) => {
     const result = await service.move(node.uuid, parentNode?.uuid || null);
     return result;
+  };
+
+  const handleDelete = async (node, deleteType: string) => {
+    const newTree = await service.deleteOne(node.uuid, deleteType);
+    tree = newTree;
+    return null;
+  };
+
+  const handleCreate = async (data) => {
+    const newTree = await service.store(data);
+    tree = newTree;
+    return null;
+  };
+
+  const handleUpdate = async (uuid, data) => {
+    const newTree = await service.update(uuid, data);
+    tree = newTree;
+    return null;
   };
 
   function handleNewAfter(node) {
@@ -54,9 +68,8 @@
     tree = newTree;
     movingNode = null;
   }}
+  {handleCreate}
+  {handleUpdate}
+  {handleDelete}
   bind:movingNode
-  {handleMove}
-  bind:model
-  title="Categories"
-  addIdsOnly={false}
 />

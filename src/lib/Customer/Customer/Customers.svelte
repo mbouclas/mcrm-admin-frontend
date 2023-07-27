@@ -1,22 +1,21 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { OrderService } from '../services/order/order.service';
-  import { app, filterStore } from '../../stores';
+  import { CustomerService } from '../services/customer/customer.service';
+  import { app } from '../../stores';
   import { moneyFormat } from '../../helpers/money';
   import { formatDate } from '../../helpers/dates';
   import Paginator from '../../Shared/Paginator.svelte';
   import SortButton from '../../Shared/SortTableHeadButton.svelte';
   import Loading from '../../Shared/Loading.svelte';
   import ItemSelectorModal from '../../DynamicFields/fields/item-selector-modal.svelte';
-  import { MenuButton, Button, Dropdown, DropdownItem } from 'flowbite-svelte';
-  import { customerItemSelectorConfig, userItemSelectorConfig } from '../../Shared/item-selector-configs';
-  import Modal from '../../Shared/Modal.svelte';
-  import OrderFilters from './OrderFilters.svelte';
-
+  import { MenuButton, Button, Dropdown, DropdownItem, DropdownDivider, Search } from 'flowbite-svelte';
+  import type { IItemSelectorConfig } from '../../DynamicFields/types';
+  import { productCategoryItemSelectorConfig, userItemSelectorConfig } from '../../Shared/item-selector-configs';
+  import ItemSelector from '../../DynamicFields/fields/item-selector.svelte';
   let dropdownOpen = false;
 
-  const service = new OrderService();
-  let orders = {
+  const service = new CustomerService();
+  let customers = {
       page: 1,
       data: [],
       total: 0,
@@ -25,36 +24,24 @@
   const defaultFilters = {
     limit: 12,
     page: 1,
-    orderBy: 'createdAt',
     way: 'desc',
+    isCustomer: true,
   };
   let filters: typeof defaultFilters;
   reset();
 
-  let statuses = [];
-  const statusFiltersShown = [1, 2, 3, 7];
-  const customerSelectorConfig = customerItemSelectorConfig;
-
-  let showModal = false;
-
-  app.subscribe((state) => {
-    statuses = state.configs.store.orderStatuses;
-  });
+  const customerSelectorConfig = userItemSelectorConfig;
 
   onMount(async () => {
     await search();
   });
 
   async function search() {
-    orders.data = [];
+    customers.data = [];
 
     loading = true;
-    orders = await service.find(filters, ['*']);
+    customers = await service.find(filters, ['orderCount']);
     loading = false;
-  }
-
-  function getStatus(id: number) {
-    return statuses.find((s) => s.id === id);
   }
 
   async function handlePageChange(e) {
@@ -62,7 +49,7 @@
     await search();
   }
 
-  async function viewOrder(uuid: number) {
+  async function viewCustomer(uuid: number) {
     // await service.edit(id);
   }
 
@@ -70,20 +57,20 @@
     // await service.edit(id);
   }
 
-  async function editOrder(uuid: number) {
+  async function editCustomer(uuid: number) {
     // await service.edit(id);
   }
 
-  async function deleteOrder(uuid: number) {
+  async function deleteCustomer(uuid: number) {
     // await service.edit(id);
   }
 
-  async function changeOrderBy(order: string, way: string) {
-    if (filters.orderBy === order) {
+  async function changeCustomerBy(customer: string, way: string) {
+    if (filters.customer === customer) {
       filters.way = filters.way === 'asc' ? 'desc' : 'asc';
     }
 
-    filters.orderBy = order;
+    filters.customer = customer;
 
     await search();
   }
@@ -98,100 +85,22 @@
     filters = Object.assign({}, defaultFilters);
     await search();
   }
-  async function searchByFilters() {
-    showModal = false;
-    await search();
-  }
 </script>
 
-<Modal bind:showModal>
-  <div slot="header">Filters</div>
-  <div slot="content">
-    <OrderFilters
-      on:change={(e) => {
-        filters[e.detail.key] = e.detail.value;
-      }}
-    />
-  </div>
-  <div slot="footer">
-    <button class="bg-blue-500 px-2 py-1 rounded" autofocus on:click={searchByFilters}>Search</button>
-  </div>
-</Modal>
-<div
-  class="text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 overflow-y-hidden overflow-x-auto"
->
-  <ul class="flex space-x-4 -mb-px w-full">
-    <li>
-      <a
-        href="#"
-        on:click|preventDefault={setFilter.bind(this, 'status', undefined)}
-        class:border-blue-700={typeof filters.status === 'undefined' || !filters.status}
-        class:text-blue-600={typeof filters.status === 'undefined' || !filters.status}
-        class:border-transparent={filters.status}
-        class="inline-block p-4 border-b-2 rounded-t-lg hover:text-blue-600 hover:border-blue-700">All</a
-      >
-    </li>
-    {#each statuses.filter((s) => statusFiltersShown.includes(s.id)) as status}
-      <li>
-        <a
-          href="#"
-          on:click|preventDefault={setFilter.bind(this, 'status', status.id)}
-          class:border-blue-700={filters.status === status.id}
-          class:text-blue-600={filters.status === status.id}
-          class:border-transparent={filters.status !== status.id}
-          class="inline-block p-4 border-b-2 rounded-t-lg hover:text-blue-600 hover:border-blue-700">{status.label}</a
-        >
-      </li>
-    {/each}
-
-    <li>
-      <MenuButton size="lg" class="dots-menu dark:text-white" vertical />
-
-      <Dropdown bind:open={dropdownOpen}>
-        {#each statuses.filter((s) => !statusFiltersShown.includes(s.id)) as status}
-          <DropdownItem on:click={setFilter.bind(this, 'status', status.id)}>{status.label}</DropdownItem>
-        {/each}
-      </Dropdown>
-    </li>
-  </ul>
-</div>
-
-<div class="flex items-center justify-between flex-col gap-2 justify-center p-4">
-  <button on:click={() => (showModal = true)} class="bg-blue-500 w-1/12 rounded p-2">Filters</button>
-  <button on:click={reset} class="bg-red-500 w-1/12 rounded p-2">Reset Filters</button>
+<div class="flex items-center justify-center p-4">
+  <button on:click={reset}>Reset Filters</button>
 </div>
 <div class="flex flex-col mt-6">
   <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
     <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-      <div class="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
+      <div class="overflow-hidden bcustomer bcustomer-gray-200 dark:bcustomer-gray-700 md:rounded-lg">
         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead class="bg-gray-50 dark:bg-gray-800">
             <tr>
               <th
                 scope="col"
-                class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-              >
-                <div class="flex items-center gap-x-3">
-                  <input
-                    type="checkbox"
-                    class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
-                  />
-                  <span>#ID</span>
-                </div>
-              </th>
-
-              <th
-                scope="col"
-                class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-              >
-                <SortButton name="status" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
-                  >Status</SortButton
-                >
-              </th>
-              <th
-                scope="col"
                 class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-              >
+                >Customer
                 <ItemSelectorModal
                   config={customerSelectorConfig}
                   on:select={(e) => setFilter('user', e.detail.uuid)}
@@ -200,7 +109,44 @@
                   selectMode="single"
                 >
                   <Button>
-                    Customer
+                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+                      ><path fill="currentColor" d="M10 20v-7L2.95 4h18.1L14 13v7h-4Z" /></svg
+                    >
+                  </Button>
+                </ItemSelectorModal>
+              </th>
+
+              <th
+                scope="col"
+                class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+                >Email
+                <ItemSelectorModal
+                  config={customerSelectorConfig}
+                  on:select={(e) => setFilter('user', e.detail.uuid)}
+                  closeOnSelect={true}
+                  label="Select Customer"
+                  selectMode="single"
+                >
+                  <Button>
+                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+                      ><path fill="currentColor" d="M10 20v-7L2.95 4h18.1L14 13v7h-4Z" /></svg
+                    >
+                  </Button>
+                </ItemSelectorModal>
+              </th>
+
+              <th
+                scope="col"
+                class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+                >Order number
+                <ItemSelectorModal
+                  config={customerSelectorConfig}
+                  on:select={(e) => setFilter('user', e.detail.uuid)}
+                  closeOnSelect={true}
+                  label="Select Customer"
+                  selectMode="single"
+                >
+                  <Button>
                     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
                       ><path fill="currentColor" d="M10 20v-7L2.95 4h18.1L14 13v7h-4Z" /></svg
                     >
@@ -212,17 +158,11 @@
                 scope="col"
                 class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
               >
-                <SortButton name="total" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
-                  >Total</SortButton
-                >
-              </th>
-
-              <th
-                scope="col"
-                class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-              >
-                <SortButton name="createdAt" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
-                  >Date</SortButton
+                <SortButton
+                  name="createdAt"
+                  way={filters.way}
+                  activeFilter={filters.customer}
+                  onChange={changeCustomerBy}>Date</SortButton
                 >
               </th>
 
@@ -239,48 +179,28 @@
                 </td>
               </tr>
             {/if}
-            {#each orders.data as order}
+            {#each customers.data as customer}
               <tr>
-                <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                  <div class="inline-flex items-center gap-x-3">
-                    <input
-                      type="checkbox"
-                      class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
-                    />
-                    <a href={`/orders/${order.uuid}`} class="hover:underline">
-                      {order.orderId}
-                    </a>
-                  </div>
-                </td>
-                <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                  <div
-                    class="inline-flex items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-gray-800"
-                  >
-                    <span
-                      class="h-1.5 w-1.5 rounded-full"
-                      style={`background-color: ${getStatus(order.status).color}`}
-                    />
+                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
+                  <a href={`/customers/${customer.uuid}`} class="hover:underline">
+                    {customer.lastName} {customer.firstName}</a
+                  ></td
+                >
 
-                    <h2 style={`color: ${getStatus(order.status).color}`} class="text-sm font-normal">
-                      {getStatus(order.status).label}
-                    </h2>
-                  </div>
-                </td>
+                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{customer.email}</td>
 
                 <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap"
-                  >{order.user.lastName} {order.user.firstName}</td
+                  >{customer.orderCount}</td
                 >
-                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap"
-                  >{moneyFormat(order.total)}</td
-                >
+
                 <td class="px-4 py-4 text-sm whitespace-nowrap">
-                  {formatDate(order.createdAt)}
+                  {formatDate(customer.createdAt)}
                 </td>
                 <td class="px-4 py-4 text-sm whitespace-nowrap">
                   <div class="flex items-center gap-x-6">
                     <button
-                      title="View Order"
-                      on:click={viewOrder.bind(this, order.uuid)}
+                      title="View Customer"
+                      on:click={viewCustomer.bind(this, customer.uuid)}
                       class="text-gray-500 transition-colors duration-200 dark:hover:text-red-500 dark:text-gray-300 hover:text-red-500 focus:outline-none"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
@@ -295,8 +215,8 @@
                       >
                     </button>
                     <button
-                      title="Edit Order"
-                      on:click={editOrder.bind(this, order.uuid)}
+                      title="Edit Customer"
+                      on:click={editCustomer.bind(this, customer.uuid)}
                       type="button"
                       class="text-gray-500 transition-colors duration-200 dark:hover:text-yellow-500 dark:text-gray-300 hover:text-yellow-500 focus:outline-none"
                     >
@@ -317,8 +237,8 @@
                     </button>
 
                     <button
-                      title="Delete Order"
-                      on:click={deleteOrder.bind(this, order.uuid)}
+                      title="Delete Customer"
+                      on:click={deleteCustomer.bind(this, customer.uuid)}
                       class="text-gray-500 transition-colors duration-200 dark:hover:text-red-500 dark:text-gray-300 hover:text-red-500 focus:outline-none"
                     >
                       <svg
@@ -345,10 +265,10 @@
       </div>
 
       <Paginator
-        totalPages={parseInt(orders.pages)}
-        baseURL={`/orders`}
-        total={parseInt(orders.total)}
-        currentPage={parseInt(orders.page)}
+        totalPages={parseInt(customers.pages)}
+        baseURL={`/customers`}
+        total={parseInt(customers.total)}
+        currentPage={parseInt(customers.page)}
         on:pageChange={handlePageChange}
       />
     </div>

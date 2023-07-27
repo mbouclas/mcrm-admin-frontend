@@ -76,7 +76,7 @@ export class OrderService extends BaseHttpService {
     }
 
     if (relationships.length > 0) {
-        qs = qs ? `${qs}&with[]=${relationships.join(",")}` : `with[]=${relationships.join(",")}`;
+        qs = qs ? `${qs}&${relationships.map(r => `with[]=${r}`).join('&')}` : relationships.map(r => `with[]=${r}`).join('&');
     }
 
     return await this.get(`order${qs ? `?${qs}` : ""}`);
@@ -109,6 +109,22 @@ export class OrderService extends BaseHttpService {
     } catch (err) {
       setNotificationAction({
         message: "Failed to create",
+        type: "error",
+      });
+    }
+  }
+
+  async updateOrderStatus(uuid: string, status: number) {
+    try {
+      const res = super.patch(`order/${uuid}/status`, { status });
+      setNotificationAction({
+        message: "Order status updated successfully",
+        type: "success",
+      });
+      return res;
+    } catch (err) {
+      setNotificationAction({
+        message: "Failed to update",
         type: "error",
       });
     }

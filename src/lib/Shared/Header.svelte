@@ -1,5 +1,5 @@
 <script>
-  import { Link, useNavigate } from "svelte-navigator";
+  import { Link, useNavigate } from 'svelte-navigator';
   import {
     SidebarGroup,
     Sidebar,
@@ -7,19 +7,12 @@
     SidebarDropdownItem,
     SidebarDropdownWrapper,
     SidebarItem,
-  } from "flowbite-svelte";
+  } from 'flowbite-svelte';
 
-  import {
-    ChartPie,
-    ShoppingCart,
-    Squares2x2,
-    InboxArrowDown,
-    Cog,
-    ArrowRightOnRectangle,
-  } from "svelte-heros-v2";
-  import Drawer from "svelte-drawer-component";
+  import { ChartPie, ShoppingCart, Squares2x2, InboxArrowDown, Cog, ArrowRightOnRectangle } from 'svelte-heros-v2';
+  import Drawer from 'svelte-drawer-component';
 
-  import { user } from "../stores";
+  import { user } from '../stores';
 
   const navigate = useNavigate();
   function handleLogout(e) {
@@ -29,16 +22,16 @@
   }
 
   let site = {
-    name: "Flowbite-Svelte",
-    href: "/",
-    img: "/images/flowbite-svelte-icon-logo.svg",
+    name: 'Flowbite-Svelte',
+    href: '/',
+    img: '/images/flowbite-svelte-icon-logo.svg',
   };
 
-  let spanClass = "flex-1 ml-3 whitespace-nowrap";
+  let spanClass = 'flex-1 ml-3 whitespace-nowrap';
   const aClass =
-    "flex items-center p-2 text-base font-normal text-[#a6b0cf] hover:text-white rounded-lg dark:text-white bg-[#2a3042] dark:hover:bg-gray-700";
+    'flex items-center p-2 text-base font-normal text-[#a6b0cf] hover:text-white rounded-lg dark:text-white bg-[#2a3042] dark:hover:bg-gray-700';
   const btnClass =
-    "flex items-center p-2 w-full text-base font-normal hover:text-white text-[#a6b0cf] rounded-lg transition duration-75 group dark:text-white dark:hover:bg-gray-700";
+    'flex items-center p-2 w-full text-base font-normal hover:text-white text-[#a6b0cf] rounded-lg transition duration-75 group dark:text-white dark:hover:bg-gray-700';
 
   export let open = false;
 </script>
@@ -57,55 +50,51 @@
     </div>
     <SidebarWrapper class="rounded-none !bg-[#2a3042]">
       <SidebarGroup>
-        <SidebarDropdownWrapper
-          {btnClass}
-          label="Catalogue"
-          icon={{ name: Squares2x2 }}
-        >
+        <SidebarDropdownWrapper {btnClass} label="Catalogue" icon={{ name: Squares2x2 }}>
           <SidebarDropdownItem
-            aClass={btnClass + " pl-11"}
+            aClass={btnClass + ' pl-11'}
             label="Products"
             href="/catalogue/products/list"
             on:click={(e) => {
               e.preventDefault();
-              navigate("/catalogue/products/list");
+              navigate('/catalogue/products/list');
             }}
           />
           <SidebarDropdownItem
-            aClass={btnClass + " pl-11"}
+            aClass={btnClass + ' pl-11'}
             label="Categories"
             href="/catalogue/products/categories"
             on:click={(e) => {
               e.preventDefault();
-              navigate("/catalogue/products/categories");
+              navigate('/catalogue/products/categories');
             }}
           />
           <SidebarDropdownItem
-            aClass={btnClass + " pl-11"}
+            aClass={btnClass + ' pl-11'}
             label="Properties"
             href="/catalogue/properties/list"
             on:click={(e) => {
               e.preventDefault();
-              navigate("/catalogue/properties/list");
+              navigate('/catalogue/properties/list');
             }}
           />
           <SidebarDropdownItem
-            aClass={btnClass + " pl-11"}
+            aClass={btnClass + ' pl-11'}
             label="Manufacturers"
             href="/catalogue/manufacturers"
             on:click={(e) => {
               e.preventDefault();
-              navigate("/catalogue/manufacturers");
+              navigate('/catalogue/manufacturers');
             }}
           />
 
           <SidebarDropdownItem
-            aClass={btnClass + " pl-11"}
+            aClass={btnClass + ' pl-11'}
             label="Import"
             href="/catalogue/products/import"
             on:click={(e) => {
               e.preventDefault();
-              navigate("/catalogue/products/import");
+              navigate('/catalogue/products/import');
             }}
           />
         </SidebarDropdownWrapper>
@@ -118,7 +107,7 @@
           href="/orders"
           on:click={(e) => {
             e.preventDefault();
-            navigate("/orders");
+            navigate('/orders');
           }}
         />
         <SidebarItem
@@ -129,51 +118,47 @@
           href="/customers"
           on:click={(e) => {
             e.preventDefault();
-            navigate("/customers");
+            navigate('/customers');
           }}
         />
 
-        <SidebarDropdownWrapper
-          {btnClass}
-          label="CMS"
-          icon={{ name: ShoppingCart }}
-        >
+        <SidebarDropdownWrapper {btnClass} label="CMS" icon={{ name: ShoppingCart }}>
           <SidebarDropdownItem
-            aClass={btnClass + " pl-11"}
+            aClass={btnClass + ' pl-11'}
             label="Pages"
             href="/cms/pages"
             on:click={(e) => {
               e.preventDefault();
-              navigate("/cms/pages");
+              navigate('/cms/pages');
             }}
           />
           <SidebarDropdownItem
-            aClass={btnClass + " pl-11"}
+            aClass={btnClass + ' pl-11'}
             label="Categories"
             href="/cms/categories"
             on:click={(e) => {
               e.preventDefault();
-              navigate("/cms/categories");
+              navigate('/cms/categories');
             }}
           />
           <SidebarDropdownItem
-            aClass={btnClass + " pl-11"}
+            aClass={btnClass + ' pl-11'}
             label="Settings"
             href="/cms/settings"
             on:click={(e) => {
               e.preventDefault();
-              navigate("/cms/settings");
+              navigate('/cms/settings');
             }}
           />
         </SidebarDropdownWrapper>
         <SidebarItem
-                {aClass}
-                label="Editable Regions"
-                icon={{ name: Cog }}
-                href="/editable-regions"
-                on:click={(e) => {
+          {aClass}
+          label="Editable Regions"
+          icon={{ name: Cog }}
+          href="/editable-regions"
+          on:click={(e) => {
             e.preventDefault();
-            navigate("/editable-regions");
+            navigate('/editable-regions');
           }}
         />
         <SidebarItem
@@ -183,7 +168,7 @@
           href="/settings"
           on:click={(e) => {
             e.preventDefault();
-            navigate("/settings");
+            navigate('/settings');
           }}
         />
       </SidebarGroup>
@@ -212,55 +197,51 @@
   </div>
   <SidebarWrapper class="rounded-none !bg-[#2a3042]">
     <SidebarGroup>
-      <SidebarDropdownWrapper
-        {btnClass}
-        label="Catalogue"
-        icon={{ name: Squares2x2 }}
-      >
+      <SidebarDropdownWrapper {btnClass} label="Catalogue" icon={{ name: Squares2x2 }}>
         <SidebarDropdownItem
-          aClass={btnClass + " pl-11"}
+          aClass={btnClass + ' pl-11'}
           label="Products"
           href="/catalogue/products/list"
           on:click={(e) => {
             e.preventDefault();
-            navigate("/catalogue/products/list");
+            navigate('/catalogue/products/list');
           }}
         />
         <SidebarDropdownItem
-          aClass={btnClass + " pl-11"}
+          aClass={btnClass + ' pl-11'}
           label="Categories"
           href="/catalogue/products/categories"
           on:click={(e) => {
             e.preventDefault();
-            navigate("/catalogue/products/categories");
+            navigate('/catalogue/products/categories');
           }}
         />
         <SidebarDropdownItem
-          aClass={btnClass + " pl-11"}
+          aClass={btnClass + ' pl-11'}
           label="Properties"
           href="/catalogue/properties/list"
           on:click={(e) => {
             e.preventDefault();
-            navigate("/catalogue/properties/list");
+            navigate('/catalogue/properties/list');
           }}
         />
         <SidebarDropdownItem
-          aClass={btnClass + " pl-11"}
+          aClass={btnClass + ' pl-11'}
           label="Manufacturers"
           href="/catalogue/manufacturers"
           on:click={(e) => {
             e.preventDefault();
-            navigate("/catalogue/manufacturers");
+            navigate('/catalogue/manufacturers');
           }}
         />
 
         <SidebarDropdownItem
-          aClass={btnClass + " pl-11"}
+          aClass={btnClass + ' pl-11'}
           label="Import"
           href="/catalogue/products/import"
           on:click={(e) => {
             e.preventDefault();
-            navigate("/catalogue/products/import");
+            navigate('/catalogue/products/import');
           }}
         />
       </SidebarDropdownWrapper>
@@ -273,7 +254,7 @@
         href="/orders/list"
         on:click={(e) => {
           e.preventDefault();
-          navigate("/orders/list");
+          navigate('/orders/list');
         }}
       />
       <SidebarItem
@@ -281,55 +262,51 @@
         label="Customers"
         {spanClass}
         icon={{ name: InboxArrowDown }}
-        href="/customers"
+        href="/customers/list"
         on:click={(e) => {
           e.preventDefault();
-          navigate("/customers");
+          navigate('/customers/list');
         }}
       />
 
-      <SidebarDropdownWrapper
-        {btnClass}
-        label="CMS"
-        icon={{ name: ShoppingCart }}
-      >
+      <SidebarDropdownWrapper {btnClass} label="CMS" icon={{ name: ShoppingCart }}>
         <SidebarDropdownItem
-          aClass={btnClass + " pl-11"}
+          aClass={btnClass + ' pl-11'}
           label="Pages"
           href="/cms/pages"
           on:click={(e) => {
             e.preventDefault();
-            navigate("/cms/pages");
+            navigate('/cms/pages');
           }}
         />
         <SidebarDropdownItem
-          aClass={btnClass + " pl-11"}
+          aClass={btnClass + ' pl-11'}
           label="Categories"
           href="/cms/categories"
           on:click={(e) => {
             e.preventDefault();
-            navigate("/cms/categories");
+            navigate('/cms/categories');
           }}
         />
         <SidebarDropdownItem
-          aClass={btnClass + " pl-11"}
+          aClass={btnClass + ' pl-11'}
           label="Settings"
           href="/cms/settings"
           on:click={(e) => {
             e.preventDefault();
-            navigate("/cms/settings");
+            navigate('/cms/settings');
           }}
         />
       </SidebarDropdownWrapper>
       <SidebarItem
-              {aClass}
-              label="Editable Regions"
-              icon={{ name: Cog }}
-              href="/editable-regions"
-              on:click={(e) => {
-            e.preventDefault();
-            navigate("/editable-regions");
-          }}
+        {aClass}
+        label="Editable Regions"
+        icon={{ name: Cog }}
+        href="/editable-regions"
+        on:click={(e) => {
+          e.preventDefault();
+          navigate('/editable-regions');
+        }}
       />
       <SidebarItem
         {aClass}
@@ -338,7 +315,7 @@
         href="/settings"
         on:click={(e) => {
           e.preventDefault();
-          navigate("/settings");
+          navigate('/settings');
         }}
       />
     </SidebarGroup>

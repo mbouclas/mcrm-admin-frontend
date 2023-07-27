@@ -65,10 +65,14 @@ export class ProductsService extends BaseHttpService {
     return await this.get(`product/${uuid}`, filters);
   }
 
-  async find(filters: IGenericObject = {}) {
+  async find(filters: IGenericObject = {}, relationships: string[] = []) {
     let qs;
     if (Object.keys(filters).length > 0) {
       qs = queryString.stringify(filters);
+    }
+
+    if (relationships.length > 0) {
+      qs = qs ? `${qs}&${relationships.map(r => `with[]=${r}`).join('&')}` : relationships.map(r => `with[]=${r}`).join('&');
     }
 
     return await this.get(`product${qs ? `?${qs}` : ''}`);

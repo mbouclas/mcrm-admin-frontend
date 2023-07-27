@@ -2,7 +2,7 @@
   import { Router, Route, Link } from "svelte-navigator";
   // import OrderList from "./Order/OrderList.svelte";
   import OrderList from "./Order/Orders.svelte";
-  import Order from "./Order/Order.svelte";
+  import Order from "./Order/OrderView.svelte";
 </script>
 
 <Router>

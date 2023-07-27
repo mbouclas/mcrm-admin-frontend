@@ -1,6 +1,7 @@
 <script>
   import { DateTime, Info } from 'luxon';
   import DayItem from './DayItem.svelte';
+  import { Chevron, ChevronLeft, ChevronRight } from 'flowbite-svelte';
 
   export let onSelect;
   export let selectedValues = [];
@@ -100,7 +101,6 @@
       isSelectable,
     };
   });
-  $: console.log(viewDates, 'viewdates');
 </script>
 
 <div>
@@ -108,18 +108,26 @@
     <div class="head">
       <div class="head-item">
         <div class="year">
-          <div class="control-date" on:click={() => previousYear()} />
+          <div class="control-date" on:click={() => previousYear()}>
+            <ChevronLeft />
+          </div>
           <div class="date-item"><span>{year}</span></div>
-          <div class="control-date" on:click={() => nextYear()} />
+          <div class="control-date" on:click={() => nextYear()}>
+            <ChevronRight />
+          </div>
         </div>
       </div>
       <div class="head-item">
         <div class="month">
-          <div class="control-date" on:click={() => previousMonth()} />
+          <div class="control-date" on:click={() => previousMonth()}>
+            <ChevronLeft />
+          </div>
           <div class="date-item">
             <span>{Info.months()[month - 1]}</span>
           </div>
-          <div class="control-date" on:click={() => nextMonth()} />
+          <div class="control-date" on:click={() => nextMonth()}>
+            <ChevronRight />
+          </div>
         </div>
       </div>
     </div>
