@@ -1,7 +1,6 @@
 <script>
   import { Range, Label, Select, NumberInput } from 'flowbite-svelte';
   import DatePicker from '../../Shared/DatePicker.svelte';
-  import { filterStore } from '../../stores';
   import { onMount, createEventDispatcher } from 'svelte';
   import Modal from '../../Shared/Modal.svelte';
 
@@ -50,9 +49,9 @@
   <div>
     <Label class="text-2xl mb-4">Filter by price</Label>
     <NumberInput name="fromPrice" bind:value={fromPriceValue} on:change={handleSelect} />
-    <p class="mb-8">From: {fromPriceValue}$</p>
+    <p class="mb-8">From: {fromPriceValue === null ? '' : fromPriceValue}€</p>
     <NumberInput name="toPrice" min={1} bind:value={toPriceValue} />
-    <p class="mb-8">To: {toPriceValue}$</p>
+    <p class="mb-8">To: {toPriceValue === null ? '' : toPriceValue}€</p>
   </div>
   <div>
     <Label class="mb-2 text-2xl">Choose date</Label>

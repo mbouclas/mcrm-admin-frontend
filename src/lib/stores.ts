@@ -24,7 +24,6 @@ export interface IFilters {
 
 export const gridRowsStore = writable(null);
 export const user = writable(null);
-export const filterStore = writable(null);
 export const app = writable<IAppState>(null);
 export const notificationsStore = writable<INotification[]>([]);
 

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { OrderService } from '../services/order/order.service';
-  import { app, filterStore } from '../../stores';
+  import { app } from '../../stores';
   import { moneyFormat } from '../../helpers/money';
   import { formatDate } from '../../helpers/dates';
   import Paginator from '../../Shared/Paginator.svelte';

@@ -14,7 +14,7 @@
   import Modals from '../../Shared/Modals.svelte';
   import Modal from '../../Shared/Modal.svelte';
   import OrderFilters from './OrderFilters.svelte';
-  import { filterStore as filterValues, updateFilters } from '../../stores';
+  import { updateFilters } from '../../stores';
 
   let showModal = false;
   let openProductEditModal = false;
@@ -212,12 +212,6 @@
   }
   function modalToggle() {
     showModal = true;
-  }
-  function searchByFilters() {
-    filters = {
-      ...filters,
-      ...$filterValues,
-    };
   }
 </script>
 
@@ -843,13 +837,6 @@
   <h1 class="mt-4 mb-2 text-lg">Order List</h1>
   <div class="toolbar flex justify-end bg-[#517acd]">
     <div class="p-6">
-      <Modal bind:showModal>
-        <div slot="header">Filters</div>
-        <div slot="content"><OrderFilters /></div>
-        <div slot="footer">
-          <button class="bg-blue-500 px-2 py-1 rounded" autofocus on:click={searchByFilters}>Search</button>
-        </div>
-      </Modal>
       <i class="mr-2 text-white cursor-pointer fa-solid fa-bars-filter" on:click={modalToggle} />
       <i class="text-white cursor-pointer fa-solid fa-plus" on:click={() => navigate('/orders/new')} />
       {#if Array.isArray(selectedRows) && selectedRows.length > 0}
