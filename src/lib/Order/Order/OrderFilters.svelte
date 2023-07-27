@@ -36,6 +36,7 @@
   const handleDateSelect = (date) => {
     if (showDatePicker === 'from') {
       fromDate = date;
+      toDate = null;
     }
     if (showDatePicker === 'to') {
       toDate = date;

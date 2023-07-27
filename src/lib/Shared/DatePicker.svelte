@@ -83,8 +83,7 @@
         isHighlighted = false;
       }
     }
-
-    if (minLimitDate && minLimitDate > currentDate) {
+    if (minLimitDate && minLimitDate >= date) {
       isSelectable = false;
     }
 
@@ -143,7 +142,7 @@
       <div class="item weekdays">Sat</div>
 
       {#each viewDates as viewDate}
-        <DayItem {onSelect} {viewDate} />
+        <DayItem {minLimitDate} {onSelect} {viewDate} />
       {/each}
     </div>
   </div>
@@ -151,7 +150,7 @@
 
 <style type="text/postcss">
   .wrapper {
-    @apply grid bg-gray-900 border-solid p-4 border-2 border-gray-800 rounded-xl;
+    @apply grid bg-gray-900 border-solid py-6 px-10 border-2 border-gray-800 rounded-xl;
     width: 100%;
   }
 
@@ -167,11 +166,11 @@
 
   .date-item {
     @apply grid justify-center items-center text-lg text-center;
-    width: 100px;
+    width: 120px;
   }
 
   .days {
-    @apply grid text-white gap-y-2;
+    @apply grid text-white gap-2;
     justify-items: center;
     grid-template-columns: repeat(7, 1fr);
     grid-template-rows: repeat(7, 1fr);
