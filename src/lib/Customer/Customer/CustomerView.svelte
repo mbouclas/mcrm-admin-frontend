@@ -97,7 +97,6 @@
 
   const openCustomerModal = () => {
     isCustomerModalOpen = true;
-    console.log(customer);
     customerData = {
       uuid: customer.uuid,
       email: customer.email,

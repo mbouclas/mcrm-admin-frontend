@@ -24,7 +24,7 @@
   let userData = userDefault;
 
   let isUserModalOpen = false;
-  let deleteModalOpen = true;
+  let deleteModalOpen = false;
   let user;
   let fields: IDynamicFieldConfigBlueprint[] = [];
   export let itemId;
@@ -48,7 +48,6 @@
 
   const openUserModal = () => {
     isUserModalOpen = true;
-    console.log(user);
     userData = {
       uuid: user.uuid,
       email: user.email,
@@ -66,14 +65,12 @@
   };
 
   const handleDelete = async () => {
-    await a.deleteRow(deleteItemId);
+    await s.deleteRow($params.id);
     await getUser();
-    deleteItemId = null;
   };
 
-  const handleDeleteModalOpen = async (id) => {
+  const handleDeleteModalOpen = async () => {
     deleteModalOpen = true;
-    deleteItemId = id;
   };
   const handleModalCancel = () => {
     deleteModalOpen = false;
@@ -136,15 +133,7 @@
           {user.lastName}
         </h2>
         <div class="flex items-center w-20">
-          <span
-            >{user.active ? 'Active' : 'Inactive'}<span>
-              <Toggle
-                on:click={(e) => updateUser({ ...user, active: !user.active })}
-                color="green"
-                checked={user.active}
-              />
-            </span></span
-          >
+          <button on:click={() => handleDeleteModalOpen()} class="text-gray-500"><Trash color="white" /></button>
         </div>
       </div>
       <div class="flex my-10">
