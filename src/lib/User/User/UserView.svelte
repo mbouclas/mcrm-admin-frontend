@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { useNavigate } from 'svelte-navigator';
   import { UserService } from '../services/user/user.service';
   import { Input, Modal, Button, Toggle, Select, Label } from 'flowbite-svelte';
   import { Trash, PencilSquare } from 'svelte-heros-v2';
@@ -7,6 +8,8 @@
   import { onMount } from 'svelte';
   import getModelPrototypeFromFields from '../../helpers/model-prototype';
   import type { IDynamicFieldConfigBlueprint } from '../../DynamicFields/types';
+
+  const navigate = useNavigate();
 
   const s = new UserService();
 
@@ -66,7 +69,8 @@
 
   const handleDelete = async () => {
     await s.deleteRow($params.id);
-    await getUser();
+
+    navigate('/users/list');
   };
 
   const handleDeleteModalOpen = async () => {
@@ -74,7 +78,6 @@
   };
   const handleModalCancel = () => {
     deleteModalOpen = false;
-    deleteItemId = null;
   };
 
   const updateUser = async (user) => {
