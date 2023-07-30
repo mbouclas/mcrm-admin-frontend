@@ -13,7 +13,15 @@
 
   const s = new UserService();
 
-  let deleteItemId = null;
+  const roleDefault = {
+    uuid: null,
+    name: '',
+    description: '',
+    level: 0,
+    createdAt: null,
+  };
+
+  let deleteRoleId = null;
 
   const userDefault = {
     uuid: null,
@@ -39,7 +47,7 @@
       if ($params.id === 'new') {
         user = getModelPrototypeFromFields(fields);
       } else {
-        user = await s.findOne($params.id, ['address', 'orders']);
+        user = await s.findOne($params.id, ['role']);
       }
     }
   };
@@ -80,10 +88,22 @@
     deleteModalOpen = false;
   };
 
-  const updateUser = async (user) => {
-    await s.update(user.uuid, user);
+  const roleHandleDelete = async () => {
+    await s.deleteRow(deleteRoleId);
     await getUser();
+    deleteRoleId = null;
   };
+
+  const roleHandleDeleteModalOpen = async (id) => {
+    deleteModalOpen = true;
+    deleteRoleId = id;
+  };
+  const roleHandleModalCancel = () => {
+    deleteModalOpen = false;
+    deleteRoleId = null;
+  };
+
+  const openRoleModal = () => {};
 </script>
 
 <Modal bind:open={isUserModalOpen}>
@@ -153,6 +173,47 @@
             </div>
             <Button size="md" on:click={() => openUserModal()}>Edit</Button>
           </div>
+        </div>
+      </div>
+
+      <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700 mb-10">
+        <div class="flex justify-between items-center">
+          <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Roles</h2>
+          <Button on:click={() => openRoleModal()}>Assign role</Button>
+        </div>
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+          <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+              <tr>
+                <th class="px-6 py-3">UUID</th>
+                <th class="px-6 py-3">Name</th>
+                <th class="px-6 py-3">Description</th>
+                <th class="px-6 py-3">Level</th>
+                <th class="px-6 py-3">Created at</th>
+                <th scope="col" class="relative py-3.5 px-4">
+                  <span class="sr-only">Edit</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {#each user.role as role (role.uuid)}
+                <tr
+                  class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                >
+                  <td class="px-6 py-4">{role.uuid}</td>
+                  <td class="px-6 py-4">{role.name}</td>
+                  <td class="px-6 py-4">{role.description}</td>
+                  <td class="px-6 py-4">{role.level}</td>
+                  <td class="px-6 py-4">{role.createdAt}</td>
+                  <td class="px-6 py-4">
+                    <button on:click={() => roleHandleDeleteModalOpen(role.uuid)} class="text-gray-500"
+                      ><Trash color="white" /></button
+                    >
+                  </td>
+                </tr>
+              {/each}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
