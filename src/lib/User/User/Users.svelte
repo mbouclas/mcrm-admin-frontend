@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { CustomerService } from '../services/customer/customer.service';
+  import { UserService } from '../services/user/user.service';
   import { formatDate } from '../../helpers/dates';
   import Paginator from '../../Shared/Paginator.svelte';
   import SortButton from '../../Shared/SortTableHeadButton.svelte';
@@ -9,8 +9,8 @@
   import { Button } from 'flowbite-svelte';
   import { userItemSelectorConfig } from '../../Shared/item-selector-configs';
 
-  const service = new CustomerService();
-  let customers = {
+  const service = new UserService();
+  let users = {
       page: 1,
       data: [],
       total: 0,
@@ -20,22 +20,22 @@
     limit: 12,
     page: 1,
     way: 'desc',
-    isCustomer: true,
+    isUser: true,
   };
   let filters: typeof defaultFilters;
   reset();
 
-  const customerSelectorConfig = userItemSelectorConfig;
+  const userSelectorConfig = userItemSelectorConfig;
 
   onMount(async () => {
     await search();
   });
 
   async function search() {
-    customers.data = [];
+    users.data = [];
 
     loading = true;
-    customers = await service.find(filters, ['orderCount']);
+    users = await service.find(filters, ['orderCount']);
     loading = false;
   }
 
@@ -44,7 +44,7 @@
     await search();
   }
 
-  async function viewCustomer(uuid: number) {
+  async function viewUser(uuid: number) {
     // await service.edit(id);
   }
 
@@ -52,20 +52,20 @@
     // await service.edit(id);
   }
 
-  async function editCustomer(uuid: number) {
+  async function editUser(uuid: number) {
     // await service.edit(id);
   }
 
-  async function deleteCustomer(uuid: number) {
+  async function deleteUser(uuid: number) {
     // await service.edit(id);
   }
 
-  async function changeCustomerBy(customer: string, way: string) {
-    if (filters.customer === customer) {
+  async function changeUserBy(user: string, way: string) {
+    if (filters.user === user) {
       filters.way = filters.way === 'asc' ? 'desc' : 'asc';
     }
 
-    filters.customer = customer;
+    filters.user = user;
 
     await search();
   }
@@ -88,19 +88,19 @@
 <div class="flex flex-col mt-6">
   <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
     <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-      <div class="overflow-hidden bcustomer bcustomer-gray-200 dark:bcustomer-gray-700 md:rounded-lg">
+      <div class="overflow-hidden buser buser-gray-200 dark:buser-gray-700 md:rounded-lg">
         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead class="bg-gray-50 dark:bg-gray-800">
             <tr>
               <th
                 scope="col"
                 class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                >Customer
+                >User
                 <ItemSelectorModal
-                  config={customerSelectorConfig}
+                  config={userSelectorConfig}
                   on:select={(e) => setFilter('user', e.detail.uuid)}
                   closeOnSelect={true}
-                  label="Select Customer"
+                  label="Select User"
                   selectMode="single"
                 >
                   <Button>
@@ -116,29 +116,10 @@
                 class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
                 >Email
                 <ItemSelectorModal
-                  config={customerSelectorConfig}
+                  config={userSelectorConfig}
                   on:select={(e) => setFilter('user', e.detail.uuid)}
                   closeOnSelect={true}
-                  label="Select Customer"
-                  selectMode="single"
-                >
-                  <Button>
-                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
-                      ><path fill="currentColor" d="M10 20v-7L2.95 4h18.1L14 13v7h-4Z" /></svg
-                    >
-                  </Button>
-                </ItemSelectorModal>
-              </th>
-
-              <th
-                scope="col"
-                class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                >Order number
-                <ItemSelectorModal
-                  config={customerSelectorConfig}
-                  on:select={(e) => setFilter('user', e.detail.uuid)}
-                  closeOnSelect={true}
-                  label="Select Customer"
+                  label="Select User"
                   selectMode="single"
                 >
                   <Button>
@@ -153,11 +134,8 @@
                 scope="col"
                 class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
               >
-                <SortButton
-                  name="createdAt"
-                  way={filters.way}
-                  activeFilter={filters.customer}
-                  onChange={changeCustomerBy}>Date</SortButton
+                <SortButton name="createdAt" way={filters.way} activeFilter={filters.user} onChange={changeUserBy}
+                  >Date</SortButton
                 >
               </th>
 
@@ -174,28 +152,22 @@
                 </td>
               </tr>
             {/if}
-            {#each customers.data as customer}
+            {#each users.data as user}
               <tr>
                 <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                  <a href={`/customers/${customer.uuid}`} class="hover:underline">
-                    {customer.lastName} {customer.firstName}</a
-                  ></td
+                  <a href={`/users/${user.uuid}`} class="hover:underline"> {user.lastName} {user.firstName}</a></td
                 >
 
-                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{customer.email}</td>
-
-                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap"
-                  >{customer.orderCount}</td
-                >
+                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{user.email}</td>
 
                 <td class="px-4 py-4 text-sm whitespace-nowrap">
-                  {formatDate(customer.createdAt)}
+                  {formatDate(user.createdAt)}
                 </td>
                 <td class="px-4 py-4 text-sm whitespace-nowrap">
                   <div class="flex items-center gap-x-6">
                     <button
-                      title="View Customer"
-                      on:click={viewCustomer.bind(this, customer.uuid)}
+                      title="View User"
+                      on:click={viewUser.bind(this, user.uuid)}
                       class="text-gray-500 transition-colors duration-200 dark:hover:text-red-500 dark:text-gray-300 hover:text-red-500 focus:outline-none"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
@@ -210,8 +182,8 @@
                       >
                     </button>
                     <button
-                      title="Edit Customer"
-                      on:click={editCustomer.bind(this, customer.uuid)}
+                      title="Edit User"
+                      on:click={editUser.bind(this, user.uuid)}
                       type="button"
                       class="text-gray-500 transition-colors duration-200 dark:hover:text-yellow-500 dark:text-gray-300 hover:text-yellow-500 focus:outline-none"
                     >
@@ -232,8 +204,8 @@
                     </button>
 
                     <button
-                      title="Delete Customer"
-                      on:click={deleteCustomer.bind(this, customer.uuid)}
+                      title="Delete User"
+                      on:click={deleteUser.bind(this, user.uuid)}
                       class="text-gray-500 transition-colors duration-200 dark:hover:text-red-500 dark:text-gray-300 hover:text-red-500 focus:outline-none"
                     >
                       <svg
@@ -260,10 +232,10 @@
       </div>
 
       <Paginator
-        totalPages={parseInt(customers.pages)}
-        baseURL={`/customers`}
-        total={parseInt(customers.total)}
-        currentPage={parseInt(customers.page)}
+        totalPages={parseInt(users.pages)}
+        baseURL={`/users`}
+        total={parseInt(users.total)}
+        currentPage={parseInt(users.page)}
         on:pageChange={handlePageChange}
       />
     </div>

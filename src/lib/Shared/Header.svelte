@@ -269,6 +269,18 @@
         }}
       />
 
+      <SidebarItem
+        {aClass}
+        label="Users"
+        {spanClass}
+        icon={{ name: InboxArrowDown }}
+        href="/users/list"
+        on:click={(e) => {
+          e.preventDefault();
+          navigate('/users/list');
+        }}
+      />
+
       <SidebarDropdownWrapper {btnClass} label="CMS" icon={{ name: ShoppingCart }}>
         <SidebarDropdownItem
           aClass={btnClass + ' pl-11'}
