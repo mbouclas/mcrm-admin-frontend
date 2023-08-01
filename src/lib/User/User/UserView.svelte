@@ -2,22 +2,34 @@
   import { useNavigate } from 'svelte-navigator';
   import { UserService } from '../services/user/user.service';
   import { RoleService } from '../services/role/role.service';
-  import { Input, Modal, Button, Toggle, Select, Label } from 'flowbite-svelte';
+  import { Search, Input, Modal, Button, Toggle, Select, Label } from 'flowbite-svelte';
   import { Trash, PencilSquare } from 'svelte-heros-v2';
+  import Paginator from '../../Shared/Paginator.svelte';
 
   import { useParams } from 'svelte-navigator';
   import { onMount } from 'svelte';
   import getModelPrototypeFromFields from '../../helpers/model-prototype';
   import type { IDynamicFieldConfigBlueprint } from '../../DynamicFields/types';
   import { AuthService } from '../../Auth/auth.service';
-
-  const navigate = useNavigate();
+  import type { IPagination } from 'src/lib/Shared/models/generic';
 
   const s = new UserService();
   const r = new RoleService();
 
+  const defaultRoleFilters = {
+    limit: 12,
+    page: 1,
+  };
+
   let deleteRoleItem = null;
-  let assignableRoles = [];
+
+  let assignableRoles = {
+    data: [],
+  } as IPagination<any>;
+
+  let searchRoleText = '';
+
+  $: searchRoles({ name: searchRoleText });
 
   const userDefault = {
     uuid: null,
@@ -77,12 +89,6 @@
     userData = userDefault;
   };
 
-  const handleDelete = async () => {
-    await s.deleteRow($params.id);
-
-    navigate('/users/list');
-  };
-
   const handleDeleteModalOpen = async () => {
     deleteModalOpen = true;
   };
@@ -90,31 +96,28 @@
     deleteModalOpen = false;
   };
 
-  const roleHandleDelete = async () => {
-    await s.deleteRow(deleteRoleItem.uuid);
-    await getUser();
-    deleteRoleItem = null;
-  };
-
   const roleHandleDeleteModalOpen = async (role) => {
     unassignRoleModalOpen = true;
     deleteRoleItem = role;
   };
-  const roleHandleModalCancel = () => {
-    deleteModalOpen = false;
-    deleteRoleItem = null;
-  };
-
   const openAssignRoleModal = async () => {
     assignRoleModalOpen = true;
 
-    const roles = await r.find();
-    assignableRoles = roles.data;
+    await searchRoles();
+  };
+
+  const searchRoles = async (params = {}) => {
+    const roles = await r.find({ ...defaultRoleFilters, ...params });
+    assignableRoles = roles;
   };
 
   const manageRole = async (roleUuid, type) => {
     await r.manageRole(user.uuid, roleUuid, type);
     await getUser();
+  };
+
+  const handleRolePageChange = async (e) => {
+    console.log(e.detail);
   };
 </script>
 
@@ -155,11 +158,32 @@
   </svelte:fragment>
 </Modal>
 
-<Modal title="Assign roles to user" bind:open={assignRoleModalOpen} autoclose outsideclose>
+<Modal
+  style="height: 700px;"
+  size="xl"
+  title="Assign roles to user"
+  bind:open={assignRoleModalOpen}
+  autoclose
+  outsideclose
+>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <div class="my-2">
+      <Search bind:value={searchRoleText} placeholder="Search roles" />
+    </div>
+
     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+          <th class="px-6 py-4">Name</th>
+          <th class="px-6 py-4">Level</th>
+          <th scope="col" class="relative py-3.5 px-4">
+            <span class="sr-only">Edit</span>
+          </th>
+        </tr>
+      </thead>
+
       <tbody>
-        {#each assignableRoles as role (role.uuid)}
+        {#each assignableRoles.data as role (role.uuid)}
           <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
             <td class="px-6 py-4">{role.name}</td>
             <td class="px-6 py-4">{role.level}</td>
@@ -170,6 +194,14 @@
         {/each}
       </tbody>
     </table>
+
+    <Paginator
+      totalPages={parseInt(assignableRoles.pages)}
+      baseURL={`/roles`}
+      total={parseInt(assignableRoles.total)}
+      currentPage={parseInt(assignableRoles.page)}
+      on:pageChange={handleRolePageChange}
+    />
   </div>
 </Modal>
 
