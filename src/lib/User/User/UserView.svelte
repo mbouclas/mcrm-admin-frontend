@@ -16,12 +16,12 @@
   const s = new UserService();
   const r = new RoleService();
 
-  const defaultRoleFilters = {
-    limit: 12,
+  let defaultRoleFilters = {
+    limit: 7,
     page: 1,
   };
 
-  let deleteRoleItem = null;
+  let roleItem = null;
 
   let assignableRoles = {
     data: [],
@@ -45,7 +45,7 @@
   let isUserModalOpen = false;
   let deleteModalOpen = false;
 
-  let unassignRoleModalOpen = false;
+  let manageRoleModalOpen = false;
   let assignRoleModalOpen = false;
   let user;
   let fields: IDynamicFieldConfigBlueprint[] = [];
@@ -96,9 +96,12 @@
     deleteModalOpen = false;
   };
 
-  const roleHandleDeleteModalOpen = async (role) => {
-    unassignRoleModalOpen = true;
-    deleteRoleItem = role;
+  const roleHandleManageModalOpen = async (role, manageType) => {
+    manageRoleModalOpen = true;
+    roleItem = {
+      ...role,
+      manageType,
+    };
   };
   const openAssignRoleModal = async () => {
     assignRoleModalOpen = true;
@@ -117,7 +120,7 @@
   };
 
   const handleRolePageChange = async (e) => {
-    console.log(e.detail);
+    await searchRoles({ page: e.detail });
   };
 </script>
 
@@ -147,63 +150,76 @@
   </svelte:fragment>
 </Modal>
 
-<Modal title="Confirm unassign role" bind:open={unassignRoleModalOpen} autoclose outsideclose>
-  <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-    Are you sure you want to unassign role <span>{deleteRoleItem.name}</span> from
-    <span>{user.firstName} {user.lastName}</span>?
-  </p>
-  <svelte:fragment slot="footer">
-    <Button on:click={() => manageRole(deleteRoleItem.uuid, 'UNASSIGN')}>Confirm</Button>
-    <Button on:click={() => handleModalCancel()} color="alternative">Cancel</Button>
-  </svelte:fragment>
-</Modal>
-
-<Modal style="height: 700px;" size="xl" title="Assign roles to user" bind:open={assignRoleModalOpen} outsideclose>
-  <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+<Modal style="height: 800px;" size="xl" title="Assign roles to user" bind:open={assignRoleModalOpen} outsideclose>
+  <div class="relative flex flex-col h-full overflow-x-auto shadow-md sm:rounded-lg">
     <div class="my-2">
       <Search bind:value={searchRoleText} placeholder="Search roles" />
     </div>
 
-    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-        <tr>
-          <th class="px-6 py-4">Name</th>
-          <th class="px-6 py-4">Level</th>
-          <th scope="col" class="relative py-3.5 px-4">
-            <span class="sr-only">Edit</span>
-          </th>
-        </tr>
-      </thead>
-
-      <tbody>
-        {#each assignableRoles.data as role (role.uuid)}
-          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-            <td class="px-6 py-4">{role.name}</td>
-            <td class="px-6 py-4">{role.level}</td>
-            <td class="px-6 py-4">
-              {#if user.role.some((userRole) => userRole.uuid === role.uuid)}
-                <button on:click={() => manageRole(role.uuid, 'UNASSIGN')} class="bg-red-500 rounded p-2 text-white"
-                  >Unassign</button
-                >
-              {:else}
-                <button on:click={() => manageRole(role.uuid, 'ASSIGN')} class="bg-blue-500 rounded p-2 text-white"
-                  >Assign</button
-                >
-              {/if}
-            </td>
+    <div class="flex-grow">
+      <table class="w-full table-fixed text-sm text-left text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th class="px-6 py-4 w-1/3">Name</th>
+            <th class="px-6 py-4 w-1/3">Level</th>
+            <th scope="col" class="relative py-3.5 px-4 w-1/3">
+              <span class="sr-only">Edit</span>
+            </th>
           </tr>
-        {/each}
-      </tbody>
-    </table>
+        </thead>
 
-    <Paginator
-      totalPages={parseInt(assignableRoles.pages)}
-      baseURL={`/roles`}
-      total={parseInt(assignableRoles.total)}
-      currentPage={parseInt(assignableRoles.page)}
-      on:pageChange={handleRolePageChange}
-    />
+        <tbody>
+          {#each assignableRoles.data as role (role.uuid)}
+            <tr
+              class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 h-16"
+            >
+              <td class="px-6 py-4 w-1/3">{role.name}</td>
+              <td class="px-6 py-4 w-1/3">{role.level}</td>
+              <td class="px-6 py-4 w-1/3">
+                {#if user.role.some((userRole) => userRole.uuid === role.uuid)}
+                  <button
+                    on:click={() => roleHandleManageModalOpen(role, 'UNASSIGN')}
+                    class="bg-red-500 rounded p-2 text-white">Unassign</button
+                  >
+                {:else}
+                  <button
+                    on:click={() => roleHandleManageModalOpen(role, 'ASSIGN')}
+                    class="bg-blue-500 rounded p-2 text-white">Assign</button
+                  >
+                {/if}
+              </td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-auto">
+      <Paginator
+        totalPages={parseInt(assignableRoles.pages)}
+        baseURL={`/roles`}
+        total={parseInt(assignableRoles.total)}
+        currentPage={parseInt(assignableRoles.page)}
+        on:pageChange={handleRolePageChange}
+      />
+    </div>
   </div>
+</Modal>
+
+<Modal title="Confirm unassign role" bind:open={manageRoleModalOpen} autoclose outsideclose>
+  <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+    Are you sure you want to <span class="text-lg font-bold"
+      >{roleItem.manageType === 'ASSIGN' ? 'assign' : 'unassign'}</span
+    >
+    role
+    <span class="text-lg font-bold">{roleItem.name}</span>
+    from
+    <span class="text-lg font-bold">{user.firstName} {user.lastName}</span>?
+  </p>
+  <svelte:fragment slot="footer">
+    <Button on:click={() => manageRole(roleItem.uuid, roleItem.manageType)}>Confirm</Button>
+    <Button on:click={() => handleModalCancel()} color="alternative">Cancel</Button>
+  </svelte:fragment>
 </Modal>
 
 {#if !user}
@@ -277,8 +293,9 @@
                     <td class="px-6 py-4">{role.level}</td>
                     <td class="px-6 py-4">{role.createdAt}</td>
                     <td class="px-6 py-4">
-                      <button on:click={() => roleHandleDeleteModalOpen(role)} class="text-white bg-red-500 rounded p-2"
-                        >Unassign</button
+                      <button
+                        on:click={() => roleHandleManageModalOpen(role, 'UNASSIGN')}
+                        class="text-white bg-red-500 rounded p-2">Unassign</button
                       >
                     </td>
                   </tr>
