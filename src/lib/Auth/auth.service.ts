@@ -1,102 +1,106 @@
-import { BaseHttpService } from "../Shared/base-http.service";
+import { BaseHttpService } from '../Shared/base-http.service';
 export interface IStoredUser {
-    accessToken: string;
-    accessTokenExpiresAt: string;
-    refreshToken: string;
-    refreshTokenExpiresAt: string;
-    client: IClient;
-    user: IUser;
+  accessToken: string;
+  accessTokenExpiresAt: string;
+  refreshToken: string;
+  refreshTokenExpiresAt: string;
+  client: IClient;
+  user: IUser;
 }
 export interface IClient {
-    id: string;
-    grants?: (string)[] | null;
+  id: string;
+  grants?: string[] | null;
 }
 export interface IUser {
-    lastName: string;
-    firstName: string;
-    createdAt: string;
-    active: boolean;
-    uuid: string;
-    email: string;
-    updatedAt: string;
-    role?: (IRole)[] | null;
-    gates?: (IGates)[] | null;
+  lastName: string;
+  firstName: string;
+  createdAt: string;
+  active: boolean;
+  uuid: string;
+  email: string;
+  updatedAt: string;
+  role?: IRole[] | null;
+  gates?: IGates[] | null;
 }
 export interface IRole {
-    createdAt: string;
-    level: number;
-    displayName: string;
-    name: string;
-    description: string;
-    uuid: string;
-    updatedAt: string;
+  createdAt: string;
+  level: number;
+  displayName: string;
+  name: string;
+  description: string;
+  uuid: string;
+  updatedAt: string;
 }
 export interface IGates {
-    uuid: string;
-    gate: string;
-    level: string;
-    name: string;
-    provider: string;
+  uuid: string;
+  gate: string;
+  level: string;
+  name: string;
+  provider: string;
 }
 
-
 export class AuthService extends BaseHttpService {
-    static currentUser() {
-        let storedUser;
-        const storedUserString = localStorage.getItem('user');
-        if (!storedUserString) {return null;}
-
-        return storedUser = JSON.parse(storedUserString) as IStoredUser;
+  static currentUser() {
+    let storedUser;
+    const storedUserString = localStorage.getItem('user');
+    if (!storedUserString) {
+      return null;
     }
 
-    static token() {
-        return AuthService.currentUser().accessToken;
-    }
+    return (storedUser = JSON.parse(storedUserString) as IStoredUser);
+  }
 
-    static user() {
-        return AuthService.currentUser().user;
-    }
+  static token() {
+    return AuthService.currentUser().accessToken;
+  }
 
-    static gates() {
-        return AuthService.currentUser().user.gates;
-    }
+  static user() {
+    return AuthService.currentUser().user;
+  }
 
-    static roles() {
-        return AuthService.currentUser().user.role;
-    }
+  static gates() {
+    return AuthService.currentUser().user.gates;
+  }
 
-    static storeSessionId(id: string) {
-        localStorage.setItem('sessId', id);
-    }
+  static hasGate(gateName: string) {
+    return AuthService.currentUser().user.gates.some((gate) => gate.gate === gateName);
+  }
 
-    static getSessionId() {
-        return localStorage.getItem('sessId');
-    }
+  static roles() {
+    return AuthService.currentUser().user.role;
+  }
 
-    async login(username: string, password: string) {
-        const headers = new Headers();
-        headers.append("Content-Type", "application/x-www-form-urlencoded");
-        headers.append("Authorization", "Basic YWRtaW5BcHA6dG9wU2VjcmV0");
-        headers.append('credentials', 'same-origin');
+  static storeSessionId(id: string) {
+    localStorage.setItem('sessId', id);
+  }
 
-        const urlencoded = new URLSearchParams();
-        urlencoded.append("username", username);
-        urlencoded.append("password", password);
-        urlencoded.append("grant_type", "password");
+  static getSessionId() {
+    return localStorage.getItem('sessId');
+  }
 
-        const requestOptions = {
-            method: 'POST',
-            headers: headers,
-            body: urlencoded,
+  async login(username: string, password: string) {
+    const headers = new Headers();
+    headers.append('Content-Type', 'application/x-www-form-urlencoded');
+    headers.append('Authorization', 'Basic YWRtaW5BcHA6dG9wU2VjcmV0');
+    headers.append('credentials', 'same-origin');
 
-        };
+    const urlencoded = new URLSearchParams();
+    urlencoded.append('username', username);
+    urlencoded.append('password', password);
+    urlencoded.append('grant_type', 'password');
 
-        const res = await fetch(`${import.meta.env.VITE_BASE_URL}oauth/token`, requestOptions);
-        console.log(`${import.meta.env.VITE_BASE_URL}oauth/token`)
-        // const text = await res.text();
-        // console.log(await res.json())
-        AuthService.storeSessionId(res.headers.get('x-sess-id'));
+    const requestOptions = {
+      method: 'POST',
+      headers: headers,
+      body: urlencoded,
+    };
 
-       return await res.json();
-    }
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}oauth/token`, requestOptions);
+    console.log(`${import.meta.env.VITE_BASE_URL}oauth/token`);
+    // const text = await res.text();
+    // console.log(await res.json())
+    AuthService.storeSessionId(res.headers.get('x-sess-id'));
+
+    return await res.json();
+  }
 }

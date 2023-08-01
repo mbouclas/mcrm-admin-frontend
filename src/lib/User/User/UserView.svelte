@@ -8,6 +8,7 @@
   import { onMount } from 'svelte';
   import getModelPrototypeFromFields from '../../helpers/model-prototype';
   import type { IDynamicFieldConfigBlueprint } from '../../DynamicFields/types';
+  import { AuthService } from '../../Auth/auth.service';
 
   const navigate = useNavigate();
 
@@ -21,7 +22,7 @@
     createdAt: null,
   };
 
-  let deleteRoleId = null;
+  let deleteRoleItem = null;
 
   const userDefault = {
     uuid: null,
@@ -36,8 +37,13 @@
 
   let isUserModalOpen = false;
   let deleteModalOpen = false;
+
+  let deleteRoleModalOpen = false;
   let user;
   let fields: IDynamicFieldConfigBlueprint[] = [];
+
+  let hasUserRolesGates = AuthService.hasGate('users.menu.roles');
+
   export let itemId;
 
   const getUser = async () => {
@@ -89,18 +95,18 @@
   };
 
   const roleHandleDelete = async () => {
-    await s.deleteRow(deleteRoleId);
+    await s.deleteRow(deleteRoleItem.uuid);
     await getUser();
-    deleteRoleId = null;
+    deleteRoleItem = null;
   };
 
-  const roleHandleDeleteModalOpen = async (id) => {
-    deleteModalOpen = true;
-    deleteRoleId = id;
+  const roleHandleDeleteModalOpen = async (role) => {
+    deleteRoleModalOpen = true;
+    deleteRoleItem = role;
   };
   const roleHandleModalCancel = () => {
     deleteModalOpen = false;
-    deleteRoleId = null;
+    deleteRoleItem = null;
   };
 
   const openRoleModal = () => {};
@@ -132,8 +138,11 @@
   </svelte:fragment>
 </Modal>
 
-<Modal title="Confirm delete" bind:open={deleteModalOpen} autoclose outsideclose>
-  <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">Are you sure you want to delete this item?</p>
+<Modal title="Confirm unassign role" bind:open={deleteRoleModalOpen} autoclose outsideclose>
+  <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+    Are you sure you want to unassign role <span>{deleteRoleItem.name}</span> from
+    <span>{user.firstName} {user.lastName}</span>?
+  </p>
   <svelte:fragment slot="footer">
     <Button on:click={() => handleDelete()}>Confirm</Button>
     <Button on:click={() => handleModalCancel()} color="alternative">Cancel</Button>
@@ -176,46 +185,48 @@
         </div>
       </div>
 
-      <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700 mb-10">
-        <div class="flex justify-between items-center">
-          <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Roles</h2>
-          <Button on:click={() => openRoleModal()}>Assign role</Button>
-        </div>
-        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-          <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-              <tr>
-                <th class="px-6 py-3">UUID</th>
-                <th class="px-6 py-3">Name</th>
-                <th class="px-6 py-3">Description</th>
-                <th class="px-6 py-3">Level</th>
-                <th class="px-6 py-3">Created at</th>
-                <th scope="col" class="relative py-3.5 px-4">
-                  <span class="sr-only">Edit</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {#each user.role as role (role.uuid)}
-                <tr
-                  class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                >
-                  <td class="px-6 py-4">{role.uuid}</td>
-                  <td class="px-6 py-4">{role.name}</td>
-                  <td class="px-6 py-4">{role.description}</td>
-                  <td class="px-6 py-4">{role.level}</td>
-                  <td class="px-6 py-4">{role.createdAt}</td>
-                  <td class="px-6 py-4">
-                    <button on:click={() => roleHandleDeleteModalOpen(role.uuid)} class="text-gray-500"
-                      ><Trash color="white" /></button
-                    >
-                  </td>
+      {#if hasUserRolesGates}
+        <div
+          class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700 mb-10"
+        >
+          <div class="flex justify-between items-center">
+            <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Roles</h2>
+            <Button on:click={() => openRoleModal()}>Assign role</Button>
+          </div>
+          <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+              <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                  <th class="px-6 py-3">UUID</th>
+                  <th class="px-6 py-3">Name</th>
+                  <th class="px-6 py-3">Description</th>
+                  <th class="px-6 py-3">Level</th>
+                  <th class="px-6 py-3">Created at</th>
+                  <th scope="col" class="relative py-3.5 px-4">
+                    <span class="sr-only">Edit</span>
+                  </th>
                 </tr>
-              {/each}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {#each user.role as role (role.uuid)}
+                  <tr
+                    class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                  >
+                    <td class="px-6 py-4">{role.uuid}</td>
+                    <td class="px-6 py-4">{role.name}</td>
+                    <td class="px-6 py-4">{role.description}</td>
+                    <td class="px-6 py-4">{role.level}</td>
+                    <td class="px-6 py-4">{role.createdAt}</td>
+                    <td class="px-6 py-4">
+                      <button on:click={() => roleHandleDeleteModalOpen(role)} class="text-gray-200">Unassign</button>
+                    </td>
+                  </tr>
+                {/each}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      {/if}
     </div>
   </section>
 {/if}
