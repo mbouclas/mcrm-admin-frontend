@@ -1,6 +1,7 @@
 <script lang="ts">
   import { useNavigate } from 'svelte-navigator';
   import { UserService } from '../services/user/user.service';
+  import { RoleService } from '../services/role/role.service';
   import { Input, Modal, Button, Toggle, Select, Label } from 'flowbite-svelte';
   import { Trash, PencilSquare } from 'svelte-heros-v2';
 
@@ -13,16 +14,10 @@
   const navigate = useNavigate();
 
   const s = new UserService();
-
-  const roleDefault = {
-    uuid: null,
-    name: '',
-    description: '',
-    level: 0,
-    createdAt: null,
-  };
+  const r = new RoleService();
 
   let deleteRoleItem = null;
+  let assignableRoles = [];
 
   const userDefault = {
     uuid: null,
@@ -38,7 +33,8 @@
   let isUserModalOpen = false;
   let deleteModalOpen = false;
 
-  let deleteRoleModalOpen = false;
+  let unassignRoleModalOpen = false;
+  let assignRoleModalOpen = false;
   let user;
   let fields: IDynamicFieldConfigBlueprint[] = [];
 
@@ -101,7 +97,7 @@
   };
 
   const roleHandleDeleteModalOpen = async (role) => {
-    deleteRoleModalOpen = true;
+    unassignRoleModalOpen = true;
     deleteRoleItem = role;
   };
   const roleHandleModalCancel = () => {
@@ -109,7 +105,17 @@
     deleteRoleItem = null;
   };
 
-  const openRoleModal = () => {};
+  const openAssignRoleModal = async () => {
+    assignRoleModalOpen = true;
+
+    const roles = await r.find();
+    assignableRoles = roles.data;
+  };
+
+  const manageRole = async (roleUuid, type) => {
+    await r.manageRole(user.uuid, roleUuid, type);
+    await getUser();
+  };
 </script>
 
 <Modal bind:open={isUserModalOpen}>
@@ -138,15 +144,33 @@
   </svelte:fragment>
 </Modal>
 
-<Modal title="Confirm unassign role" bind:open={deleteRoleModalOpen} autoclose outsideclose>
+<Modal title="Confirm unassign role" bind:open={unassignRoleModalOpen} autoclose outsideclose>
   <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
     Are you sure you want to unassign role <span>{deleteRoleItem.name}</span> from
     <span>{user.firstName} {user.lastName}</span>?
   </p>
   <svelte:fragment slot="footer">
-    <Button on:click={() => handleDelete()}>Confirm</Button>
+    <Button on:click={() => manageRole(deleteRoleItem.uuid, 'UNASSIGN')}>Confirm</Button>
     <Button on:click={() => handleModalCancel()} color="alternative">Cancel</Button>
   </svelte:fragment>
+</Modal>
+
+<Modal title="Assign roles to user" bind:open={assignRoleModalOpen} autoclose outsideclose>
+  <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+      <tbody>
+        {#each assignableRoles as role (role.uuid)}
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+            <td class="px-6 py-4">{role.name}</td>
+            <td class="px-6 py-4">{role.level}</td>
+            <td class="px-6 py-4">
+              <button on:click={() => manageRole(role.uuid, 'ASSIGN')} class="text-gray-200">Assign</button>
+            </td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </Modal>
 
 {#if !user}
@@ -191,7 +215,7 @@
         >
           <div class="flex justify-between items-center">
             <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Roles</h2>
-            <Button on:click={() => openRoleModal()}>Assign role</Button>
+            <Button on:click={() => openAssignRoleModal()}>Assign role</Button>
           </div>
           <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
