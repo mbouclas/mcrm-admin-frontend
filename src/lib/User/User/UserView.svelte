@@ -272,7 +272,6 @@
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
               <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-                  <th class="px-6 py-3">UUID</th>
                   <th class="px-6 py-3">Name</th>
                   <th class="px-6 py-3">Description</th>
                   <th class="px-6 py-3">Level</th>
@@ -287,7 +286,6 @@
                   <tr
                     class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                   >
-                    <td class="px-6 py-4">{role.uuid}</td>
                     <td class="px-6 py-4">{role.name}</td>
                     <td class="px-6 py-4">{role.description}</td>
                     <td class="px-6 py-4">{role.level}</td>
