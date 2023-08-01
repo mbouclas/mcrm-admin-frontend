@@ -158,14 +158,7 @@
   </svelte:fragment>
 </Modal>
 
-<Modal
-  style="height: 700px;"
-  size="xl"
-  title="Assign roles to user"
-  bind:open={assignRoleModalOpen}
-  autoclose
-  outsideclose
->
+<Modal style="height: 700px;" size="xl" title="Assign roles to user" bind:open={assignRoleModalOpen} outsideclose>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
     <div class="my-2">
       <Search bind:value={searchRoleText} placeholder="Search roles" />
@@ -188,7 +181,15 @@
             <td class="px-6 py-4">{role.name}</td>
             <td class="px-6 py-4">{role.level}</td>
             <td class="px-6 py-4">
-              <button on:click={() => manageRole(role.uuid, 'ASSIGN')} class="text-gray-200">Assign</button>
+              {#if user.role.some((userRole) => userRole.uuid === role.uuid)}
+                <button on:click={() => manageRole(role.uuid, 'UNASSIGN')} class="bg-red-500 rounded p-2 text-white"
+                  >Unassign</button
+                >
+              {:else}
+                <button on:click={() => manageRole(role.uuid, 'ASSIGN')} class="bg-blue-500 rounded p-2 text-white"
+                  >Assign</button
+                >
+              {/if}
             </td>
           </tr>
         {/each}
@@ -247,7 +248,9 @@
         >
           <div class="flex justify-between items-center">
             <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Roles</h2>
-            <Button on:click={() => openAssignRoleModal()}>Assign role</Button>
+            <button class="text-white bg-blue-500 rounded p-2 my-2" on:click={() => openAssignRoleModal()}
+              >Assign role</button
+            >
           </div>
           <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -274,7 +277,9 @@
                     <td class="px-6 py-4">{role.level}</td>
                     <td class="px-6 py-4">{role.createdAt}</td>
                     <td class="px-6 py-4">
-                      <button on:click={() => roleHandleDeleteModalOpen(role)} class="text-gray-200">Unassign</button>
+                      <button on:click={() => roleHandleDeleteModalOpen(role)} class="text-white bg-red-500 rounded p-2"
+                        >Unassign</button
+                      >
                     </td>
                   </tr>
                 {/each}
