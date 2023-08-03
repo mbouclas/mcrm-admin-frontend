@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { useNavigate } from 'svelte-navigator';
   import { UserService } from '../services/user/user.service';
   import { RoleService } from '../services/role/role.service';
   import { Search, Input, Modal, Button, Toggle, Select, Label } from 'flowbite-svelte';
@@ -36,6 +35,7 @@
     email: '',
     firstName: '',
     lastName: '',
+    password: '',
   };
 
   const params = useParams();
@@ -47,10 +47,12 @@
 
   let manageRoleModalOpen = false;
   let assignRoleModalOpen = false;
+  let changePasswordModalOpen = false;
   let user;
   let fields: IDynamicFieldConfigBlueprint[] = [];
 
   let hasUserRolesGates = AuthService.hasGate('users.menu.roles');
+  let hasUserPasswordUpdateGate = AuthService.hasGate('mcms.user.password.update');
 
   export let itemId;
 
@@ -122,7 +124,38 @@
   const handleRolePageChange = async (e) => {
     await searchRoles({ page: e.detail });
   };
+
+  const handleChangePasswordModal = () => {
+    changePasswordModalOpen = true;
+  };
+
+  const confirmChangePasswordModal = async () => {
+    await s.changePassword(user.uuid, userData.password);
+    await getUser();
+    closeChangePasswordModal();
+  };
+
+  const closeChangePasswordModal = async () => {
+    userData = userDefault;
+    changePasswordModalOpen = false;
+  };
 </script>
+
+<Modal bind:open={changePasswordModalOpen}>
+  <div class="p-4">
+    <h2 class="flowbite-modal-title mb-4 text-xl font-bold">Change user password</h2>
+
+    <div class="mb-4">
+      <label for="firstName" class="block mb-2">New password :</label>
+      <Input id="firstName" bind:value={userData.password} required class="w-full" />
+    </div>
+  </div>
+
+  <svelte:fragment slot="footer">
+    <Button on:click={confirmChangePasswordModal}>Change</Button>
+    <Button color="alternative" on:click={closeChangePasswordModal}>Cancel</Button>
+  </svelte:fragment>
+</Modal>
 
 <Modal bind:open={isUserModalOpen}>
   <div class="p-4">
@@ -238,6 +271,9 @@
           {user.lastName}
         </h2>
         <div class="flex items-center w-20">
+          {#if hasUserPasswordUpdateGate}
+            <button on:click={() => handleChangePasswordModal()} class="text-gray-500">Change password</button>
+          {/if}
           <button on:click={() => handleDeleteModalOpen()} class="text-gray-500"><Trash color="white" /></button>
         </div>
       </div>

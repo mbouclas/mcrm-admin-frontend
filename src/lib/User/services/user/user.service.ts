@@ -21,6 +21,24 @@ export class UserService extends BaseHttpService {
     }
   }
 
+  async changePassword(userId: string, password: string) {
+    try {
+      const res = await super.post(`user/${userId}/change-password`, {
+        password,
+      });
+      setNotificationAction({
+        message: 'Password changed successfully',
+        type: 'success',
+      });
+      return res;
+    } catch (err) {
+      setNotificationAction({
+        message: 'Failed to change password',
+        type: 'error',
+      });
+    }
+  }
+
   getGridUrl(filters = {}) {
     return super.getGridUrl('user', filters, (res) => {
       return res.data.map((row) => {
