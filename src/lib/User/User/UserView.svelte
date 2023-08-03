@@ -265,12 +265,12 @@
       <!-- User Info Box -->
 
       <div class="flex justify-between items-center">
-        <div class="w-20" />
+        <div class="w-40" />
         <h2 class="mb-4 text-3xl lg:text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
           User {user.firstName}
           {user.lastName}
         </h2>
-        <div class="flex items-center w-20">
+        <div class="flex items-center w-40">
           {#if hasUserPasswordUpdateGate}
             <button on:click={() => handleChangePasswordModal()} class="text-gray-500">Change password</button>
           {/if}
