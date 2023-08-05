@@ -1,9 +1,10 @@
 <script lang="ts">
   import { UserService } from '../services/user/user.service';
   import { RoleService } from '../services/role/role.service';
-  import { Search, Input, Modal, Button, Toggle, Select, Label } from 'flowbite-svelte';
-  import { Trash, PencilSquare } from 'svelte-heros-v2';
+  import { Search, Input, Modal, Button } from 'flowbite-svelte';
+  import { Trash } from 'svelte-heros-v2';
   import Paginator from '../../Shared/Paginator.svelte';
+  import { navigate } from 'svelte-navigator';
 
   import { useParams } from 'svelte-navigator';
   import { onMount } from 'svelte';
@@ -43,7 +44,7 @@
   let userData = userDefault;
 
   let isUserModalOpen = false;
-  let deleteModalOpen = false;
+  let deleteUserModalOpen = false;
 
   let manageRoleModalOpen = false;
   let assignRoleModalOpen = false;
@@ -53,6 +54,7 @@
 
   let hasUserRolesGates = AuthService.hasGate('users.menu.roles');
   let hasUserPasswordUpdateGate = AuthService.hasGate('mcms.user.password.update');
+  let hasUserDeleteGate = AuthService.hasGate('users.delete');
 
   export let itemId;
 
@@ -92,10 +94,7 @@
   };
 
   const handleDeleteModalOpen = async () => {
-    deleteModalOpen = true;
-  };
-  const handleModalCancel = () => {
-    deleteModalOpen = false;
+    deleteUserModalOpen = true;
   };
 
   const roleHandleManageModalOpen = async (role, manageType) => {
@@ -119,6 +118,11 @@
   const manageRole = async (roleUuid, type) => {
     await r.manageRole(user.uuid, roleUuid, type);
     await getUser();
+  };
+
+  const deleteUser = async () => {
+    await s.delete(user.uuid);
+    navigate('/users/list');
   };
 
   const handleRolePageChange = async (e) => {
@@ -251,7 +255,19 @@
   </p>
   <svelte:fragment slot="footer">
     <Button on:click={() => manageRole(roleItem.uuid, roleItem.manageType)}>Confirm</Button>
-    <Button on:click={() => handleModalCancel()} color="alternative">Cancel</Button>
+    <Button color="alternative">Cancel</Button>
+  </svelte:fragment>
+</Modal>
+
+<Modal title="Confirm delete user" bind:open={deleteUserModalOpen} autoclose outsideclose>
+  <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+    Are you sure you want to <span class="text-lg font-bold">permanently delete</span>
+    user
+    <span class="text-lg font-bold">{user.firstName} {user.lastName}</span>?
+  </p>
+  <svelte:fragment slot="footer">
+    <Button on:click={() => deleteUser()}>Confirm</Button>
+    <Button color="alternative">Cancel</Button>
   </svelte:fragment>
 </Modal>
 
@@ -274,7 +290,9 @@
           {#if hasUserPasswordUpdateGate}
             <button on:click={() => handleChangePasswordModal()} class="text-gray-500">Change password</button>
           {/if}
-          <button on:click={() => handleDeleteModalOpen()} class="text-gray-500"><Trash color="white" /></button>
+          {#if hasUserDeleteGate}
+            <button on:click={() => handleDeleteModalOpen()} class="text-gray-500"><Trash color="white" /></button>
+          {/if}
         </div>
       </div>
       <div class="flex my-10">

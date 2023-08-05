@@ -5,9 +5,9 @@ import { html } from 'gridjs';
 import { setNotificationAction } from '../../../stores';
 
 export class UserService extends BaseHttpService {
-  async deleteRow(itemId: string) {
+  async delete(userId: string) {
     try {
-      const res = await super.delete(`user/${itemId}`);
+      const res = await super.delete(`user/${userId}`);
       setNotificationAction({
         message: 'Deleted successfully',
         type: 'success',
