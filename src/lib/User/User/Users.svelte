@@ -6,10 +6,21 @@
   import SortButton from '../../Shared/SortTableHeadButton.svelte';
   import Loading from '../../Shared/Loading.svelte';
   import ItemSelectorModal from '../../DynamicFields/fields/item-selector-modal.svelte';
-  import { Button } from 'flowbite-svelte';
+  import { Button, Modal, Input } from 'flowbite-svelte';
   import { userItemSelectorConfig } from '../../Shared/item-selector-configs';
 
+  let isUserModalOpen = false;
   const service = new UserService();
+
+  const userDefault = {
+    uuid: null,
+    email: '',
+    firstName: '',
+    lastName: '',
+    password: '',
+  };
+  let userData = userDefault;
+
   let users = {
       page: 1,
       data: [],
@@ -80,14 +91,52 @@
     filters = Object.assign({}, defaultFilters);
     await search();
   }
+
+  const confirmAddUserModal = () => {};
+  const openAddUserModal = () => {
+    isUserModalOpen = true;
+  };
+
+  const cancelAddUserModal = () => {};
 </script>
+
+<Modal bind:open={isUserModalOpen}>
+  <div class="p-4">
+    <h2 class="flowbite-modal-title mb-4 text-xl font-bold">Add new user</h2>
+
+    <div class="mb-4">
+      <label for="firstName" class="block mb-2">Email:</label>
+      <Input id="firstName" bind:value={userData.email} required class="w-full" />
+    </div>
+
+    <div class="mb-4">
+      <label for="firstName" class="block mb-2">First Name:</label>
+      <Input id="firstName" bind:value={userData.firstName} required class="w-full" />
+    </div>
+
+    <div class="mb-4">
+      <label for="lastName" class="block mb-2">Last Name:</label>
+      <Input id="lastName" bind:value={userData.lastName} required class="w-full" />
+    </div>
+
+    <div class="mb-4">
+      <label for="lastName" class="block mb-2">Password:</label>
+      <Input id="lastName" bind:value={userData.password} required class="w-full" />
+    </div>
+  </div>
+
+  <svelte:fragment slot="footer">
+    <Button on:click={confirmAddUserModal}>Create</Button>
+    <Button color="alternative" on:click={cancelAddUserModal}>Cancel</Button>
+  </svelte:fragment>
+</Modal>
 
 <div
   class="text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 overflow-y-hidden overflow-x-auto"
 >
   <ul class="flex space-x-4 items-center -mb-px w-full py-2">
     <li>
-      <button on:click={() => {}} class="bg-green-500 rounded p-2">Add user</button>
+      <button on:click={() => openAddUserModal()} class="bg-green-500 rounded p-2">Add user</button>
     </li>
 
     <li>
