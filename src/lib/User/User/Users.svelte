@@ -82,9 +82,23 @@
   }
 </script>
 
-<div class="flex items-center justify-center p-4">
-  <button on:click={reset}>Reset Filters</button>
+<div
+  class="text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 overflow-y-hidden overflow-x-auto"
+>
+  <ul class="flex space-x-4 items-center -mb-px w-full py-2">
+    <li>
+      <button on:click={() => {}} class="bg-green-500 rounded p-2">Add user</button>
+    </li>
+
+    <li>
+      <button on:click={() => {}} class="bg-blue-500 rounded p-2">Filters</button>
+    </li>
+    <li>
+      <button on:click={reset} class="bg-red-500 rounded p-2">Reset Filters</button>
+    </li>
+  </ul>
 </div>
+
 <div class="flex flex-col mt-6">
   <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
     <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
