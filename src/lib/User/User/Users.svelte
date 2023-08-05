@@ -8,6 +8,7 @@
   import ItemSelectorModal from '../../DynamicFields/fields/item-selector-modal.svelte';
   import { Button, Modal, Input } from 'flowbite-svelte';
   import { userItemSelectorConfig } from '../../Shared/item-selector-configs';
+  import { navigate } from 'svelte-navigator';
 
   let isUserModalOpen = false;
   const service = new UserService();
@@ -92,7 +93,14 @@
     await search();
   }
 
-  const confirmAddUserModal = () => {};
+  const confirmAddUserModal = async () => {
+    const create = await service.create(userData);
+
+    if (create) {
+      navigate(`/users/${create.uuid}`);
+    }
+  };
+
   const openAddUserModal = () => {
     isUserModalOpen = true;
   };

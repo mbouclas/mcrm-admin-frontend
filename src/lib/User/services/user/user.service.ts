@@ -5,6 +5,23 @@ import { html } from 'gridjs';
 import { setNotificationAction } from '../../../stores';
 
 export class UserService extends BaseHttpService {
+  async create(data) {
+    try {
+      const res = await super.post(`user/create`, data);
+      setNotificationAction({
+        message: 'Created successfully',
+        type: 'success',
+      });
+      console.log(res);
+      return res;
+    } catch (err) {
+      setNotificationAction({
+        message: 'Failed to create user',
+        type: 'error',
+      });
+    }
+  }
+
   async delete(userId: string) {
     try {
       const res = await super.delete(`user/${userId}`);
