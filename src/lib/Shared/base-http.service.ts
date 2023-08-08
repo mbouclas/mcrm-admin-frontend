@@ -1,8 +1,6 @@
 import type { IGenericObject } from './models/generic';
 import { AuthService } from '../Auth/auth.service';
 import queryString from 'query-string';
-import { RequestErrorException } from '../helpers/helperErrors';
-import errors from '../helpers/errors';
 import { convertServerErrorToRequestError } from '../helpers/helperErrors';
 
 export class BaseHttpService {
@@ -51,9 +49,8 @@ export class BaseHttpService {
         const serverError = await rawResponse.json();
         convertServerErrorToRequestError(serverError);
       }
-
       const res = await rawResponse.json();
-      if (typeof res.success !== 'undefined' && !res.success) {
+      if (typeof res.success !== undefined && !res.success) {
         throw res;
       }
       return res;
@@ -81,10 +78,10 @@ export class BaseHttpService {
         body: JSON.stringify(body),
       });
       if (!rawResponse.ok) {
-        throw new Error(await rawResponse.json());
+        throw new Error('Bad request');
       }
       const res = await rawResponse.json();
-      if (typeof res.success !== 'undefined' && !res.success) {
+      if (typeof res.success !== undefined && !res.success) {
         throw res;
       }
       return res;
@@ -109,10 +106,10 @@ export class BaseHttpService {
         headers,
       });
       if (!rawResponse.ok) {
-        throw new Error(await rawResponse.json());
+        throw new Error('Bad request');
       }
       const res = await rawResponse.json();
-      if (typeof res.success !== 'undefined' && !res.success) {
+      if (typeof res.success !== undefined && !res.success) {
         throw res;
       }
       return res;
