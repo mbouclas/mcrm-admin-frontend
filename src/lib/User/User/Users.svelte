@@ -4,9 +4,10 @@
   import { formatDate } from '../../helpers/dates';
   import Paginator from '../../Shared/Paginator.svelte';
   import SortButton from '../../Shared/SortTableHeadButton.svelte';
+  import Input from '../../Shared/Input.svelte';
   import Loading from '../../Shared/Loading.svelte';
   import ItemSelectorModal from '../../DynamicFields/fields/item-selector-modal.svelte';
-  import { Button, Modal, Input } from 'flowbite-svelte';
+  import { Button, Modal } from 'flowbite-svelte';
   import { userItemSelectorConfig } from '../../Shared/item-selector-configs';
   import { navigate } from 'svelte-navigator';
   import { RequestErrorException, handleValidationErrors } from '../../helpers/helperErrors';
@@ -139,23 +140,19 @@
     <h2 class="flowbite-modal-title mb-4 text-xl font-bold">Add new user</h2>
 
     <div class="mb-4">
-      <label for="firstName" class="block mb-2">Email:</label>
-      <Input id="firstName" bind:value={userData.email} required class="w-full" />
+      <Input label="Email" bind:errors={userStatus.email.errors} bind:value={userData.email} required />
     </div>
 
     <div class="mb-4">
-      <label for="firstName" class="block mb-2">First Name:</label>
-      <Input id="firstName" bind:value={userData.firstName} required class="w-full" />
+      <Input label="First name" bind:errors={userStatus.firstName.errors} bind:value={userData.firstName} required />
     </div>
 
     <div class="mb-4">
-      <label for="lastName" class="block mb-2">Last Name:</label>
-      <Input id="lastName" bind:value={userData.lastName} required class="w-full" />
+      <Input label="Last name" bind:errors={userStatus.lastName.errors} bind:value={userData.lastName} required />
     </div>
 
     <div class="mb-4">
-      <label for="lastName" class="block mb-2">Password:</label>
-      <Input id="lastName" bind:value={userData.password} required class="w-full" />
+      <Input label="Password" bind:errors={userStatus.lastName.errors} bind:value={userData.password} required />
     </div>
   </div>
 

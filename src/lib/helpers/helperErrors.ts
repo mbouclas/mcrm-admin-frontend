@@ -84,7 +84,8 @@ export const handleValidationErrors = (
   const newDataStatus = { ...dataStatus };
 
   validationErrors.forEach((validationError) => {
-    const field = renameRules[validationError.field] || validationError.field;
+    const field =
+      renameRules && renameRules[validationError.field] ? renameRules[validationError.field] : validationError.field;
 
     if (newDataStatus[field]) {
       newDataStatus[field].errors = [...newDataStatus[field].errors, validationError.message];

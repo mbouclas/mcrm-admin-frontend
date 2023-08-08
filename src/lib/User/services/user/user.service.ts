@@ -7,7 +7,7 @@ import errors from '../../../helpers/errors';
 import { validateClientData } from '../../../helpers/helperErrors';
 
 const userSchema = z.object({
-  name: z.string().min(1, errors['400.21']),
+  email: z.string().min(1, errors['400.21']).email(errors['400.21']),
   firstName: z.string().min(1, errors['400.22']),
   lastName: z.string().min(1, errors['400.23']),
   password: z.string().min(1, errors['400.24']),
@@ -20,13 +20,13 @@ export class UserService extends BaseHttpService {
     } catch (e) {
       throw e;
     }
+
     try {
       const res = await super.post(`user/create`, data);
       setNotificationAction({
         message: 'Created successfully',
         type: 'success',
       });
-      console.log(res);
       return res;
     } catch (err) {
       setNotificationAction({
