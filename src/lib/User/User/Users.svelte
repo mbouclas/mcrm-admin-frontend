@@ -39,7 +39,9 @@
     },
   };
 
-  let userStatus = { ...defaultUserStatus };
+  let userStatus = defaultUserStatus;
+
+  $: hasUserErrors = Object.values(userStatus).some((field) => field.errors.length > 0);
 
   let users = {
       page: 1,
@@ -153,12 +155,12 @@
     </div>
 
     <div class="mb-4">
-      <Input label="Password" bind:errors={userStatus.lastName.errors} bind:value={userData.password} required />
+      <Input label="Password" bind:errors={userStatus.password.errors} bind:value={userData.password} required />
     </div>
   </div>
 
   <svelte:fragment slot="footer">
-    <Button on:click={confirmAddUserModal}>Create</Button>
+    <Button disabled={hasUserErrors} on:click={confirmAddUserModal}>Create</Button>
     <Button color="alternative" on:click={cancelAddUserModal}>Cancel</Button>
   </svelte:fragment>
 </Modal>
