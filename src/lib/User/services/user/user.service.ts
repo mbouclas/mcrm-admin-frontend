@@ -1,11 +1,25 @@
 import { BaseHttpService } from '../../../Shared/base-http.service';
 import type { IGenericObject } from '../../../Shared/models/generic';
 import queryString from 'query-string';
-import { html } from 'gridjs';
 import { setNotificationAction } from '../../../stores';
+import { z } from 'zod';
+import errors from '../../../helpers/errors';
+import { validateClientData } from '../../../helpers/helperErrors';
+
+const userSchema = z.object({
+  name: z.string().min(1, errors['400.21']),
+  firstName: z.string().min(1, errors['400.22']),
+  lastName: z.string().min(1, errors['400.23']),
+  password: z.string().min(1, errors['400.24']),
+});
 
 export class UserService extends BaseHttpService {
   async create(data) {
+    try {
+      validateClientData(userSchema, data);
+    } catch (e) {
+      throw e;
+    }
     try {
       const res = await super.post(`user/create`, data);
       setNotificationAction({

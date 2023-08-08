@@ -9,6 +9,7 @@
   import { Button, Modal, Input } from 'flowbite-svelte';
   import { userItemSelectorConfig } from '../../Shared/item-selector-configs';
   import { navigate } from 'svelte-navigator';
+  import { RequestErrorException, handleValidationErrors } from '../../helpers/helperErrors';
 
   let isUserModalOpen = false;
   const service = new UserService();
@@ -21,6 +22,24 @@
     password: '',
   };
   let userData = userDefault;
+
+  let defaultUserStatus = {
+    email: {
+      errors: [],
+    },
+    firstName: {
+      errors: [],
+    },
+    lastName: {
+      errors: [],
+    },
+    password: {
+      errors: [],
+    },
+  };
+  $: console.log(userStatus);
+
+  let userStatus = defaultUserStatus;
 
   let users = {
       page: 1,
@@ -94,10 +113,17 @@
   }
 
   const confirmAddUserModal = async () => {
-    const create = await service.create(userData);
+    try {
+      const create = await service.create(userData);
 
-    if (create) {
-      navigate(`/users/${create.uuid}`);
+      if (create) {
+        navigate(`/users/${create.uuid}`);
+      }
+    } catch (e) {
+      if (e instanceof RequestErrorException) {
+        userStatus = handleValidationErrors(e.details.validationErrors, userStatus);
+        return null;
+      }
     }
   };
 
