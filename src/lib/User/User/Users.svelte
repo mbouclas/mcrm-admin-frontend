@@ -24,7 +24,7 @@
   };
   let userData = userDefault;
 
-  let defaultUserStatus = {
+  const defaultUserStatus = {
     email: {
       errors: [],
     },
@@ -38,9 +38,8 @@
       errors: [],
     },
   };
-  $: console.log(userStatus);
 
-  let userStatus = defaultUserStatus;
+  let userStatus = { ...defaultUserStatus };
 
   let users = {
       page: 1,
@@ -48,6 +47,7 @@
       total: 0,
     },
     loading = false;
+
   const defaultFilters = {
     limit: 12,
     page: 1,

@@ -41,7 +41,10 @@ export const transformErrors = (zodError: z.ZodError): ValidationError[] => {
   zodError.issues.forEach((issue) => {
     const field = issue.path.join('.');
     const message = issue.message;
-    customErrors.push({ field, message });
+
+    if (!customErrors.some((customError) => customError.message === message)) {
+      customErrors.push({ field, message });
+    }
   });
 
   return customErrors;
@@ -81,7 +84,7 @@ export const handleValidationErrors = (
   dataStatus: { [field: string]: { errors: string[] } },
   renameRules: { [field: string]: string },
 ): { [field: string]: { errors: string[] } } => {
-  const newDataStatus = { ...dataStatus };
+  const newDataStatus = JSON.parse(JSON.stringify(dataStatus));
 
   validationErrors.forEach((validationError) => {
     const field =

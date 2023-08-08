@@ -6,6 +6,7 @@
   export let value;
   export let errors;
   export let required = false;
+  export let placeholder = `Enter ${label}`;
 </script>
 
 {#if label}
@@ -16,6 +17,7 @@
   on:input={() => {
     errors = [];
   }}
+  {placeholder}
   required
   color={errors.length ? 'red' : 'base'}
   id={label}
