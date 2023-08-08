@@ -1,6 +1,9 @@
 import type { IGenericObject } from './models/generic';
 import { AuthService } from '../Auth/auth.service';
 import queryString from 'query-string';
+import { RequestErrorException } from '../helpers/helperErrors';
+import errors from '../helpers/errors';
+import { convertServerErrorToRequestError } from '../helpers/helperErrors';
 
 export class BaseHttpService {
   protected apiUrl = import.meta.env.VITE_API_URL;
@@ -45,8 +48,10 @@ export class BaseHttpService {
         body: JSON.stringify(body),
       });
       if (!rawResponse.ok) {
-        throw new Error('Bad request');
+        const serverError = await rawResponse.json();
+        convertServerErrorToRequestError(serverError);
       }
+
       const res = await rawResponse.json();
       if (typeof res.success !== 'undefined' && !res.success) {
         throw res;
@@ -76,7 +81,7 @@ export class BaseHttpService {
         body: JSON.stringify(body),
       });
       if (!rawResponse.ok) {
-        throw new Error('Bad request');
+        throw new Error(await rawResponse.json());
       }
       const res = await rawResponse.json();
       if (typeof res.success !== 'undefined' && !res.success) {
@@ -104,7 +109,7 @@ export class BaseHttpService {
         headers,
       });
       if (!rawResponse.ok) {
-        throw new Error('Bad request');
+        throw new Error(await rawResponse.json());
       }
       const res = await rawResponse.json();
       if (typeof res.success !== 'undefined' && !res.success) {

@@ -4,7 +4,7 @@ import queryString from 'query-string';
 import { setNotificationAction } from '../../../stores';
 import { z } from 'zod';
 import errors from '../../../helpers/errors';
-import { validateClientData, convertServerErrorToRequestError, ServerError } from '../../../helpers/helperErrors';
+import { validateClientData, convertServerErrorToRequestError, type ServerError } from '../../../helpers/helperErrors';
 
 const userSchema = z.object({
   email: z.string().min(1, errors['400.21']).email(errors['400.21']),
@@ -28,7 +28,7 @@ export class UserService extends BaseHttpService {
         message: 'Failed to create user',
         type: 'error',
       });
-      convertServerErrorToRequestError(err?.response?.data as ServerError);
+      throw err;
     }
   }
 
