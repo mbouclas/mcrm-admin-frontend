@@ -101,3 +101,13 @@ export const handleValidationErrors = (
 
   return newDataStatus;
 };
+
+export const clearErrors = (statusObj: any) => {
+  const result = { ...statusObj };
+  for (const key in result) {
+    if (result[key].errors) {
+      result[key].errors = [];
+    }
+  }
+  return result;
+};

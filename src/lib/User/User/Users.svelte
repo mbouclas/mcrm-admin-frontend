@@ -10,7 +10,7 @@
   import { Button, Modal } from 'flowbite-svelte';
   import { userItemSelectorConfig } from '../../Shared/item-selector-configs';
   import { navigate } from 'svelte-navigator';
-  import { RequestErrorException, handleValidationErrors } from '../../helpers/helperErrors';
+  import { RequestErrorException, handleValidationErrors, clearErrors } from '../../helpers/helperErrors';
 
   let isUserModalOpen = false;
   const service = new UserService();
@@ -117,7 +117,7 @@
 
   const confirmAddUserModal = async () => {
     try {
-      userStatus = defaultUserStatus;
+      userStatus = clearErrors(userStatus);
       const create = await service.create(userData);
 
       if (create) {
