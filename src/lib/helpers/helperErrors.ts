@@ -65,8 +65,8 @@ export const validateClientData = <T>(schema: ZodSchema<T>, data: any): T | neve
   }
 };
 
-export const convertServerErrorToRequestError = (serverError: ServerError): RequestError => {
-  return {
+export const convertServerErrorToRequestError = (serverError: ServerError): never => {
+  throw new RequestErrorException('ServerValidationError', {
     error: serverError.error,
     code: serverError.code,
     statusCode: serverError.statusCode,
@@ -76,7 +76,7 @@ export const convertServerErrorToRequestError = (serverError: ServerError): Requ
         message: errors[validationError.code] || 'Unknown error',
       };
     }),
-  };
+  });
 };
 
 export const handleValidationErrors = (
