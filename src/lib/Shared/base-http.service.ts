@@ -1,7 +1,7 @@
 import type { IGenericObject } from './models/generic';
 import { AuthService } from '../Auth/auth.service';
 import queryString from 'query-string';
-import { convertServerErrorToRequestError } from '../helpers/helperErrors';
+import { convertServerErrorToRequestError, RequestErrorException } from '../helpers/helperErrors';
 
 export class BaseHttpService {
   protected apiUrl = import.meta.env.VITE_API_URL;
@@ -28,35 +28,42 @@ export class BaseHttpService {
   }
 
   async post(url: string, body: IGenericObject = {}, extraHeaders: IGenericObject = {}) {
-    try {
-      const headers = this.getAuthHeaders();
+    const headers = this.getAuthHeaders();
 
-      Object.keys(extraHeaders).forEach((header) => {
-        headers.append(header, extraHeaders[header]);
-      });
+    Object.keys(extraHeaders).forEach((header) => {
+      headers.append(header, extraHeaders[header]);
+    });
 
-      const contentType = headers.get('Content-Type');
-      if (!contentType) {
-        headers.append('Content-Type', 'application/json');
-      }
+    const contentType = headers.get('Content-Type');
+    if (!contentType) {
+      headers.append('Content-Type', 'application/json');
+    }
 
-      const rawResponse = await fetch(`${this.apiUrl}${url}`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(body),
-      });
-      if (!rawResponse.ok) {
-        const serverError = await rawResponse.json();
-        convertServerErrorToRequestError(serverError);
-      }
-      const res = await rawResponse.json();
-      if (typeof res.success !== undefined && !res.success) {
+    const rawResponse = await fetch(`${this.apiUrl}${url}`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body),
+    });
+
+    const res = await rawResponse.json();
+
+    if (!rawResponse.ok) {
+      try {
+        convertServerErrorToRequestError(res);
+      } catch (e) {
+        if (e instanceof RequestErrorException) {
+          throw e;
+        }
+
         throw res;
       }
-      return res;
-    } catch (err) {
-      throw err;
     }
+
+    if (res.success === false) {
+      throw res;
+    }
+
+    return res;
   }
 
   async patch(url: string, body: IGenericObject = {}, extraHeaders: IGenericObject = {}) {
