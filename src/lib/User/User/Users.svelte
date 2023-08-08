@@ -115,6 +115,7 @@
 
   const confirmAddUserModal = async () => {
     try {
+      userStatus = defaultUserStatus;
       const create = await service.create(userData);
 
       if (create) {
