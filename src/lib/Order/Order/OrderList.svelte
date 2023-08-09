@@ -12,14 +12,6 @@
 
   import { Confirm } from 'svelte-confirm';
   import Modals from '../../Shared/Modals.svelte';
-  import Modal from '../../Shared/Modal.svelte';
-  import OrderFilters from './OrderFilters.svelte';
-  import { updateFilters } from '../../stores';
-
-  let showModal = false;
-  let openProductEditModal = false;
-  let itemId;
-  console.log($filterValues, 'vallalala');
 
   const service = new OrderService();
   const params = useParams();

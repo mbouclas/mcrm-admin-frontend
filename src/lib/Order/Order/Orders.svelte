@@ -11,7 +11,7 @@
   import { MenuButton, Button, Dropdown, DropdownItem, Li } from 'flowbite-svelte';
   import { customerItemSelectorConfig, userItemSelectorConfig } from '../../Shared/item-selector-configs';
   import Modal from '../../Shared/Modal.svelte';
-  import OrderFilters from './OrderFilters.svelte';
+  import CustomFilters from '../../Shared/CustomFilters.svelte';
 
   let dropdownOpen = false;
 
@@ -107,7 +107,7 @@
 <Modal bind:showModal>
   <div slot="header">Filters</div>
   <div slot="content">
-    <OrderFilters
+    <CustomFilters
       on:change={(e) => {
         filters[e.detail.key] = e.detail.value;
       }}

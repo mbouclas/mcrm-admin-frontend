@@ -11,7 +11,7 @@
   import Paginator from '../../Shared/Paginator.svelte';
   import { moneyFormat } from '../../helpers/money';
   import Modal from '../../Shared/Modal.svelte';
-  import OrderFilters from '../../Order/Order/OrderFilters.svelte';
+  import CustomFilters from '../../Shared/CustomFilters.svelte';
 
   let showModal = false;
 
@@ -89,7 +89,7 @@
 <Modal bind:showModal>
   <div slot="header">Filters</div>
   <div slot="content">
-    <OrderFilters
+    <CustomFilters
       on:change={(e) => {
         filters[e.detail.key] = e.detail.value;
       }}

@@ -1,5 +1,5 @@
 import { BaseHttpService } from '../Shared/base-http.service';
-import {AuthService} from "../Auth/auth.service";
+import { AuthService } from '../Auth/auth.service';
 
 export class UserService extends BaseHttpService {
   async login(username: string, password: string) {
@@ -14,5 +14,4 @@ export class UserService extends BaseHttpService {
 
     return AuthService.currentUser();
   }
-
 }

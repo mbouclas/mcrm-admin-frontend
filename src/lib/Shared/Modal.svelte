@@ -38,7 +38,6 @@
 <style>
   dialog {
     z-index: 999;
-
     max-width: 70em;
     border-radius: 0.2em;
     border: none;
