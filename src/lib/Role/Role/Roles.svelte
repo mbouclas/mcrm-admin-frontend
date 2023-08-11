@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { UserService } from '../services/user/user.service';
+  import { RoleService } from '../services/role/role.service';
   import { formatDate } from '../../helpers/dates';
   import Paginator from '../../Shared/Paginator.svelte';
   import SortButton from '../../Shared/SortTableHeadButton.svelte';
@@ -12,38 +12,34 @@
   import { navigate } from 'svelte-navigator';
   import { RequestErrorException, handleValidationErrors, clearErrors } from '../../helpers/helperErrors';
 
-  let isUserModalOpen = false;
-  const service = new UserService();
+  let isRoleModalOpen = false;
+  const service = new RoleService();
 
-  const userDefault = {
+  const roleDefault = {
     uuid: null,
-    email: '',
-    firstName: '',
-    lastName: '',
-    password: '',
+    name: '',
+    level: 0,
+    description: '',
   };
-  let userData = userDefault;
+  let roleData = roleDefault;
 
-  const defaultUserStatus = {
-    email: {
+  const defaultRoleStatus = {
+    name: {
       errors: [],
     },
-    firstName: {
+    level: {
       errors: [],
     },
-    lastName: {
-      errors: [],
-    },
-    password: {
+    description: {
       errors: [],
     },
   };
 
-  let userStatus = defaultUserStatus;
+  let roleStatus = defaultRoleStatus;
 
-  $: hasUserErrors = Object.values(userStatus).some((field) => field.errors.length > 0);
+  $: hasRoleErrors = Object.values(roleStatus).some((field) => field.errors.length > 0);
 
-  let users = {
+  let roles = {
       page: 1,
       data: [],
       total: 0,
@@ -54,22 +50,22 @@
     limit: 12,
     page: 1,
     way: 'desc',
-    isUser: true,
+    isRole: true,
   };
   let filters: typeof defaultFilters;
   reset();
 
-  const userSelectorConfig = userItemSelectorConfig;
+  const roleSelectorConfig = userItemSelectorConfig;
 
   onMount(async () => {
     await search();
   });
 
   async function search() {
-    users.data = [];
+    roles.data = [];
 
     loading = true;
-    users = await service.find(filters, ['orderCount']);
+    roles = await service.find(filters, ['orderCount']);
     loading = false;
   }
 
@@ -78,7 +74,7 @@
     await search();
   }
 
-  async function viewUser(uuid: number) {
+  async function viewRole(uuid: number) {
     // await service.edit(id);
   }
 
@@ -86,20 +82,20 @@
     // await service.edit(id);
   }
 
-  async function editUser(uuid: number) {
+  async function editRole(uuid: number) {
     // await service.edit(id);
   }
 
-  async function deleteUser(uuid: number) {
+  async function deleteRole(uuid: number) {
     // await service.edit(id);
   }
 
-  async function changeUserBy(user: string, way: string) {
-    if (filters.user === user) {
+  async function changeRoleBy(role: string, way: string) {
+    if (filters.role === role) {
       filters.way = filters.way === 'asc' ? 'desc' : 'asc';
     }
 
-    filters.user = user;
+    filters.role = role;
 
     await search();
   }
@@ -115,53 +111,54 @@
     await search();
   }
 
-  const confirmAddUserModal = async () => {
+  const confirmAddRoleModal = async () => {
     try {
-      userStatus = clearErrors(userStatus);
-      const create = await service.create(userData);
+      roleStatus = clearErrors(roleStatus);
+      const create = await service.create(roleData);
 
       if (create) {
-        navigate(`/users/${create.uuid}`);
+        navigate(`/roles/${create.uuid}`);
       }
     } catch (e) {
       if (e instanceof RequestErrorException) {
-        userStatus = handleValidationErrors(e.details.validationErrors, userStatus);
+        roleStatus = handleValidationErrors(e.details.validationErrors, roleStatus);
         return null;
       }
     }
   };
 
-  const openAddUserModal = () => {
-    isUserModalOpen = true;
+  const openAddRoleModal = () => {
+    isRoleModalOpen = true;
   };
 
-  const cancelAddUserModal = () => {};
+  const cancelAddRoleModal = () => {};
 </script>
 
-<Modal bind:open={isUserModalOpen}>
+<Modal bind:open={isRoleModalOpen}>
   <div class="p-4">
-    <h2 class="flowbite-modal-title mb-4 text-xl font-bold">Add new user</h2>
+    <h2 class="flowbite-modal-title mb-4 text-xl font-bold">Add new role</h2>
 
     <div class="mb-4">
-      <Input label="Email" bind:errors={userStatus.email.errors} bind:value={userData.email} required />
+      <Input label="Name" bind:errors={roleStatus.name.errors} bind:value={roleData.name} required />
     </div>
 
     <div class="mb-4">
-      <Input label="First name" bind:errors={userStatus.firstName.errors} bind:value={userData.firstName} required />
+      <Input label="Level" bind:errors={roleStatus.level.errors} bind:value={roleData.level} required />
     </div>
 
     <div class="mb-4">
-      <Input label="Last name" bind:errors={userStatus.lastName.errors} bind:value={userData.lastName} required />
-    </div>
-
-    <div class="mb-4">
-      <Input label="Password" bind:errors={userStatus.password.errors} bind:value={userData.password} required />
+      <Input
+        label="Description"
+        bind:errors={roleStatus.description.errors}
+        bind:value={roleData.description}
+        required
+      />
     </div>
   </div>
 
   <svelte:fragment slot="footer">
-    <Button disabled={hasUserErrors} on:click={confirmAddUserModal}>Create</Button>
-    <Button color="alternative" on:click={cancelAddUserModal}>Cancel</Button>
+    <Button disabled={hasRoleErrors} on:click={confirmAddRoleModal}>Create</Button>
+    <Button color="alternative" on:click={cancelAddRoleModal}>Cancel</Button>
   </svelte:fragment>
 </Modal>
 
@@ -170,7 +167,7 @@
 >
   <ul class="flex space-x-4 items-center -mb-px w-full py-2">
     <li>
-      <button on:click={() => openAddUserModal()} class="bg-green-500 rounded p-2">Add user</button>
+      <button on:click={() => openAddRoleModal()} class="bg-green-500 rounded p-2">Add role</button>
     </li>
 
     <li>
@@ -185,19 +182,19 @@
 <div class="flex flex-col mt-6">
   <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
     <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-      <div class="overflow-hidden buser buser-gray-200 dark:buser-gray-700 md:rounded-lg">
+      <div class="overflow-hidden brole brole-gray-200 dark:brole-gray-700 md:rounded-lg">
         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead class="bg-gray-50 dark:bg-gray-800">
             <tr>
               <th
                 scope="col"
                 class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                >User
+                >Role
                 <ItemSelectorModal
-                  config={userSelectorConfig}
-                  on:select={(e) => setFilter('user', e.detail.uuid)}
+                  config={roleSelectorConfig}
+                  on:select={(e) => setFilter('role', e.detail.uuid)}
                   closeOnSelect={true}
-                  label="Select User"
+                  label="Select Role"
                   selectMode="single"
                 >
                   <Button>
@@ -211,12 +208,31 @@
               <th
                 scope="col"
                 class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                >Email
+                >Level
                 <ItemSelectorModal
-                  config={userSelectorConfig}
-                  on:select={(e) => setFilter('user', e.detail.uuid)}
+                  config={roleSelectorConfig}
+                  on:select={(e) => setFilter('role', e.detail.uuid)}
                   closeOnSelect={true}
-                  label="Select User"
+                  label="Select Role"
+                  selectMode="single"
+                >
+                  <Button>
+                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+                      ><path fill="currentColor" d="M10 20v-7L2.95 4h18.1L14 13v7h-4Z" /></svg
+                    >
+                  </Button>
+                </ItemSelectorModal>
+              </th>
+
+              <th
+                scope="col"
+                class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+                >Description
+                <ItemSelectorModal
+                  config={roleSelectorConfig}
+                  on:select={(e) => setFilter('role', e.detail.uuid)}
+                  closeOnSelect={true}
+                  label="Select Role"
                   selectMode="single"
                 >
                   <Button>
@@ -231,7 +247,7 @@
                 scope="col"
                 class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
               >
-                <SortButton name="createdAt" way={filters.way} activeFilter={filters.user} onChange={changeUserBy}
+                <SortButton name="createdAt" way={filters.way} activeFilter={filters.role} onChange={changeRoleBy}
                   >Date</SortButton
                 >
               </th>
@@ -249,22 +265,24 @@
                 </td>
               </tr>
             {/if}
-            {#each users.data as user}
+            {#each roles.data as role}
               <tr>
                 <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                  <a href={`/users/${user.uuid}`} class="hover:underline"> {user.lastName} {user.firstName}</a></td
+                  <a href={`/roles/${role.uuid}`} class="hover:underline">{role.displayName}</a></td
                 >
 
-                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{user.email}</td>
+                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{role.level}</td>
+
+                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{role.description}</td>
 
                 <td class="px-4 py-4 text-sm whitespace-nowrap">
-                  {formatDate(user.createdAt)}
+                  {formatDate(role.createdAt)}
                 </td>
                 <td class="px-4 py-4 text-sm whitespace-nowrap">
                   <div class="flex items-center gap-x-6">
                     <button
-                      title="View User"
-                      on:click={viewUser.bind(this, user.uuid)}
+                      title="View Role"
+                      on:click={viewRole.bind(this, role.uuid)}
                       class="text-gray-500 transition-colors duration-200 dark:hover:text-red-500 dark:text-gray-300 hover:text-red-500 focus:outline-none"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
@@ -279,8 +297,8 @@
                       >
                     </button>
                     <button
-                      title="Edit User"
-                      on:click={editUser.bind(this, user.uuid)}
+                      title="Edit Role"
+                      on:click={editRole.bind(this, role.uuid)}
                       type="button"
                       class="text-gray-500 transition-colors duration-200 dark:hover:text-yellow-500 dark:text-gray-300 hover:text-yellow-500 focus:outline-none"
                     >
@@ -301,8 +319,8 @@
                     </button>
 
                     <button
-                      title="Delete User"
-                      on:click={deleteUser.bind(this, user.uuid)}
+                      title="Delete Role"
+                      on:click={deleteRole.bind(this, role.uuid)}
                       class="text-gray-500 transition-colors duration-200 dark:hover:text-red-500 dark:text-gray-300 hover:text-red-500 focus:outline-none"
                     >
                       <svg
@@ -329,10 +347,10 @@
       </div>
 
       <Paginator
-        totalPages={parseInt(users.pages)}
-        baseURL={`/users`}
-        total={parseInt(users.total)}
-        currentPage={parseInt(users.page)}
+        totalPages={parseInt(roles.pages)}
+        baseURL={`/roles`}
+        total={parseInt(roles.total)}
+        currentPage={parseInt(roles.page)}
         on:pageChange={handlePageChange}
       />
     </div>
