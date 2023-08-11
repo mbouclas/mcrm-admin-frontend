@@ -281,6 +281,18 @@
         }}
       />
 
+      <SidebarItem
+        {aClass}
+        label="Roles"
+        {spanClass}
+        icon={{ name: InboxArrowDown }}
+        href="/roles/list"
+        on:click={(e) => {
+          e.preventDefault();
+          navigate('/roles/list');
+        }}
+      />
+
       <SidebarDropdownWrapper {btnClass} label="CMS" icon={{ name: ShoppingCart }}>
         <SidebarDropdownItem
           aClass={btnClass + ' pl-11'}

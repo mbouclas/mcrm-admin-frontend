@@ -9,6 +9,7 @@
   import OrderRoutes from '../Order/routes.svelte';
   import CustomerRoutes from '../Customer/routes.svelte';
   import UserRoutes from '../User/routes.svelte';
+  import RoleRoutes from '../Role/routes.svelte';
   import EditableRegions from '../EditableRegions/routes.svelte';
   import { BootService } from '../Shared/boot.service';
   import { onMount } from 'svelte';
@@ -105,6 +106,10 @@
 
           <PrivateRoute path="users/*" let:location>
             <UserRoutes />
+          </PrivateRoute>
+
+          <PrivateRoute path="roles/*" let:location>
+            <RoleRoutes />
           </PrivateRoute>
 
           <PrivateRoute path="editable-regions/*" let:location>
