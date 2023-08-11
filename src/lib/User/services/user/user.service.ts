@@ -4,7 +4,7 @@ import queryString from 'query-string';
 import { setNotificationAction } from '../../../stores';
 import { z } from 'zod';
 import errors from '../../../helpers/errors';
-import { validateClientData, convertServerErrorToRequestError, type ServerError } from '../../../helpers/helperErrors';
+import { validateClientData } from '../../../helpers/helperErrors';
 
 const userSchema = z.object({
   email: z.string().min(1, errors['400.21']).email(errors['400.21']),

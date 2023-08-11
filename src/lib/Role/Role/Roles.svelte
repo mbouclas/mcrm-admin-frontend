@@ -18,7 +18,7 @@
   const roleDefault = {
     uuid: null,
     name: '',
-    level: 0,
+    level: 1,
     description: '',
   };
   let roleData = roleDefault;

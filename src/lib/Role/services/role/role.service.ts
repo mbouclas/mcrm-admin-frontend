@@ -4,6 +4,16 @@ import queryString from 'query-string';
 import { html } from 'gridjs';
 import { setNotificationAction } from '../../../stores';
 
+import { z } from 'zod';
+import errors from '../../../helpers/errors';
+import { validateClientData } from '../../../helpers/helperErrors';
+
+const roleSchema = z.object({
+  name: z.string().min(1, errors['400.56']),
+  level: z.number().min(1, errors['400.55']).max(99, errors['400.55']),
+  description: z.string().min(1, errors['400.57']),
+});
+
 export class RoleService extends BaseHttpService {
   async deleteRow(itemId: string) {
     try {
@@ -62,6 +72,25 @@ export class RoleService extends BaseHttpService {
       });
     }
   }
+
+  async create(data) {
+    validateClientData(roleSchema, data);
+
+    try {
+      const res = await this.post(`role`, data);
+      setNotificationAction({
+        message: 'Created successfully',
+        type: 'success',
+      });
+      return res;
+    } catch (err) {
+      setNotificationAction({
+        message: 'Failed to create',
+        type: 'error',
+      });
+    }
+  }
+
   async manageRole(userUuid, roleUuid, type) {
     try {
       const res = await this.post(`user/${userUuid}/manage-role`, { roleUuid, type });
@@ -73,21 +102,6 @@ export class RoleService extends BaseHttpService {
     } catch (err) {
       setNotificationAction({
         message: 'Failed to update',
-        type: 'error',
-      });
-    }
-  }
-  async store(data: IGenericObject) {
-    try {
-      const res = super.post('role/basic', data);
-      setNotificationAction({
-        message: 'Created successfully',
-        type: 'success',
-      });
-      return res;
-    } catch (err) {
-      setNotificationAction({
-        message: 'Failed to create',
         type: 'error',
       });
     }
