@@ -58,6 +58,8 @@ export class RoleService extends BaseHttpService {
   }
 
   async update(id, data) {
+    validateClientData(roleSchema, data);
+
     try {
       const res = await this.patch(`role/${id}`, data);
       setNotificationAction({

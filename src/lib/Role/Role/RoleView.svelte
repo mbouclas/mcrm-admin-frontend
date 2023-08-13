@@ -1,12 +1,15 @@
 <script lang="ts">
   import { RoleService } from '../services/role/role.service';
-  import { Input, Modal, Button } from 'flowbite-svelte';
+  import { Modal, Button } from 'flowbite-svelte';
   import { Trash } from 'svelte-heros-v2';
   import { navigate } from 'svelte-navigator';
 
   import { useParams } from 'svelte-navigator';
   import { onMount } from 'svelte';
   import { AuthService } from '../../Auth/auth.service';
+  import { RequestErrorException, handleValidationErrors, clearErrors } from '../../helpers/helperErrors';
+
+  import Input from '../../Shared/Input.svelte';
 
   const r = new RoleService();
 
@@ -21,6 +24,22 @@
 
   let roleData = roleDefault;
 
+  const defaultRoleStatus = {
+    name: {
+      errors: [],
+    },
+    level: {
+      errors: [],
+    },
+    description: {
+      errors: [],
+    },
+  };
+
+  let roleStatus = defaultRoleStatus;
+
+  $: hasRoleErrors = Object.values(roleStatus).some((field) => field.errors.length > 0);
+
   let isRoleModalOpen = false;
   let deleteRoleModalOpen = false;
 
@@ -29,7 +48,8 @@
   let hasRoleDeleteGate = AuthService.hasGate('mcms.admin.role.delete');
 
   const getRole = async () => {
-    role = await r.findOne($params.id, ['*']);
+    const response = await r.findOne($params.id, ['*']);
+    role = { ...response, level: parseInt(response.level) };
   };
   onMount(async () => {
     await getRole();
@@ -48,11 +68,18 @@
   };
 
   const confirmRoleModal = async () => {
-    await r.update(roleData.uuid, roleData);
+    try {
+      await r.update(roleData.uuid, { ...roleData, level: parseInt(roleData.level) });
 
-    await getRole();
-    isRoleModalOpen = false;
-    roleData = roleDefault;
+      await getRole();
+      isRoleModalOpen = false;
+      roleData = roleDefault;
+    } catch (e) {
+      if (e instanceof RequestErrorException) {
+        roleStatus = handleValidationErrors(e.details.validationErrors, roleStatus);
+        return null;
+      }
+    }
   };
 
   const handleDeleteModalOpen = async () => {
@@ -70,23 +97,25 @@
     <h2 class="flowbite-modal-title mb-4 text-xl font-bold">Update role info</h2>
 
     <div class="mb-4">
-      <label for="firstName" class="block mb-2">Name:</label>
-      <Input id="firstName" bind:value={roleData.name} required class="w-full" />
+      <Input label="Name" bind:errors={roleStatus.name.errors} bind:value={roleData.name} required />
     </div>
 
     <div class="mb-4">
-      <label for="firstName" class="block mb-2">Level:</label>
-      <Input id="firstName" bind:value={roleData.level} required class="w-full" />
+      <Input type="number" label="Level" bind:errors={roleStatus.level.errors} bind:value={roleData.level} required />
     </div>
 
     <div class="mb-4">
-      <label for="lastName" class="block mb-2">Description:</label>
-      <Input id="lastName" bind:value={roleData.description} required class="w-full" />
+      <Input
+        label="Description"
+        bind:errors={roleStatus.description.errors}
+        bind:value={roleData.description}
+        required
+      />
     </div>
   </div>
 
   <svelte:fragment slot="footer">
-    <Button on:click={confirmRoleModal}>Create</Button>
+    <Button disabled={hasRoleErrors} on:click={confirmRoleModal}>Update</Button>
     <Button color="alternative" on:click={cancelAddressModal}>Cancel</Button>
   </svelte:fragment>
 </Modal>
