@@ -72,6 +72,7 @@ export class RoleService extends BaseHttpService {
         message: 'Failed to update',
         type: 'error',
       });
+      throw err;
     }
   }
 

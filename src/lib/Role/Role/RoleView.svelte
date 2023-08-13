@@ -69,6 +69,7 @@
 
   const confirmRoleModal = async () => {
     try {
+      roleStatus = clearErrors(roleStatus);
       await r.update(roleData.uuid, { ...roleData, level: parseInt(roleData.level) });
 
       await getRole();
