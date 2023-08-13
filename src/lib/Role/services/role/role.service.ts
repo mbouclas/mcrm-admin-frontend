@@ -68,7 +68,6 @@ export class RoleService extends BaseHttpService {
       });
       return res;
     } catch (err) {
-      console.log('err ', err);
       setNotificationAction({
         message: 'Failed to update',
         type: 'error',

@@ -87,7 +87,7 @@
   };
 
   const deleteRole = async () => {
-    await r.delete(role.uuid);
+    await r.deleteRow(role.uuid);
     navigate('/roles/list');
   };
 </script>
