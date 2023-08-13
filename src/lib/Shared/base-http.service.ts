@@ -84,13 +84,25 @@ export class BaseHttpService {
         headers,
         body: JSON.stringify(body),
       });
-      if (!rawResponse.ok) {
-        throw new Error('Bad request');
-      }
+
       const res = await rawResponse.json();
-      if (typeof res.success !== undefined && !res.success) {
+
+      if (!rawResponse.ok) {
+        try {
+          convertServerErrorToRequestError(res);
+        } catch (e) {
+          if (e instanceof RequestErrorException) {
+            throw e;
+          }
+
+          throw res;
+        }
+      }
+
+      if (res.success === false) {
         throw res;
       }
+
       return res;
     } catch (err) {
       throw err;
