@@ -1,12 +1,8 @@
 import { BaseHttpService } from '../../../Shared/base-http.service';
 import type { IGenericObject } from '../../../Shared/models/generic';
 import queryString from 'query-string';
-import { html } from 'gridjs';
-import { setNotificationAction } from '../../../stores';
-
 import { z } from 'zod';
 import errors from '../../../helpers/errors';
-import { validateClientData } from '../../../helpers/helperErrors';
 
 const roleSchema = z.object({
   name: z.string().min(1, errors['400.56']),
@@ -16,26 +12,9 @@ const roleSchema = z.object({
 
 export class RoleService extends BaseHttpService {
   async deleteRow(itemId: string) {
-    try {
-      const res = await super.delete(`role/${itemId}`);
-      setNotificationAction({
-        message: 'Deleted successfully',
-        type: 'success',
-      });
-      return res;
-    } catch (err) {
-      setNotificationAction({
-        message: 'Failed to delete',
-        type: 'error',
-      });
-    }
-  }
-
-  getGridUrl(filters = {}) {
-    return super.getGridUrl('role', filters, (res) => {
-      return res.data.map((row) => {
-        return [row.uuid, row.createdAt, row.firstName, row.lastName, row.email, row.active];
-      });
+    return await super.delete(`role/${itemId}`, {
+      successMessage: 'Deleted successfully',
+      errorMessage: 'Failed to delete',
     });
   }
 
@@ -58,22 +37,11 @@ export class RoleService extends BaseHttpService {
   }
 
   async update(id, data) {
-    validateClientData(roleSchema, data);
-
-    try {
-      const res = await this.patch(`role/${id}`, data);
-      setNotificationAction({
-        message: 'Updated successfully',
-        type: 'success',
-      });
-      return res;
-    } catch (err) {
-      setNotificationAction({
-        message: 'Failed to update',
-        type: 'error',
-      });
-      throw err;
-    }
+    return await this.patch(`role/${id}`, data, {
+      successMessage: 'Updated successfully',
+      errorMessage: 'Failed to update',
+      schema: roleSchema,
+    });
   }
 
   async create(data) {
@@ -85,18 +53,13 @@ export class RoleService extends BaseHttpService {
   }
 
   async manageRole(userUuid, roleUuid, type) {
-    try {
-      const res = await this.post(`user/${userUuid}/manage-role`, { roleUuid, type });
-      setNotificationAction({
-        message: 'Updated successfully',
-        type: 'success',
-      });
-      return res;
-    } catch (err) {
-      setNotificationAction({
-        message: 'Failed to update',
-        type: 'error',
-      });
-    }
+    return await this.post(
+      `user/${userUuid}/manage-role`,
+      { roleUuid, type },
+      {
+        successMessage: 'Updated successfully',
+        errorMessage: 'Failed to update',
+      },
+    );
   }
 }
