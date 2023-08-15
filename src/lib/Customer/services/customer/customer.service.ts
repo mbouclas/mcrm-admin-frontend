@@ -1,24 +1,13 @@
 import { BaseHttpService } from '../../../Shared/base-http.service';
 import type { IGenericObject } from '../../../Shared/models/generic';
 import queryString from 'query-string';
-import { html } from 'gridjs';
-import { setNotificationAction } from '../../../stores';
 
 export class CustomerService extends BaseHttpService {
   async deleteRow(itemId: string) {
-    try {
-      const res = await super.delete(`customer/${itemId}`);
-      setNotificationAction({
-        message: 'Deleted successfully',
-        type: 'success',
-      });
-      return res;
-    } catch (err) {
-      setNotificationAction({
-        message: 'Failed to delete',
-        type: 'error',
-      });
-    }
+    return await super.delete(`customer/${itemId}`, {
+      successMessage: 'Deleted successfully',
+      errorMessage: 'Failed to delete',
+    });
   }
 
   getGridUrl(filters = {}) {
@@ -48,34 +37,16 @@ export class CustomerService extends BaseHttpService {
   }
 
   async update(id, data) {
-    try {
-      const res = await this.patch(`customer/${id}`, data);
-      setNotificationAction({
-        message: 'Updated successfully',
-        type: 'success',
-      });
-      return res;
-    } catch (err) {
-      setNotificationAction({
-        message: 'Failed to update',
-        type: 'error',
-      });
-    }
+    return await this.patch(`customer/${id}`, data, {
+      successMessage: 'Updated successfully',
+      errorMessage: 'Failed to update',
+    });
   }
 
   async store(data: IGenericObject) {
-    try {
-      const res = super.post('customer/basic', data);
-      setNotificationAction({
-        message: 'Created successfully',
-        type: 'success',
-      });
-      return res;
-    } catch (err) {
-      setNotificationAction({
-        message: 'Failed to create',
-        type: 'error',
-      });
-    }
+    return await super.post('customer/basic', data, {
+      successMessage: 'Created successfully',
+      errorMessage: 'Failed to create',
+    });
   }
 }
