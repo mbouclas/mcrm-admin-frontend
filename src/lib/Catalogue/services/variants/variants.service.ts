@@ -2,7 +2,6 @@ import { BaseHttpService } from '../../../Shared/base-http.service';
 import type { IGenericObject } from '../../../Shared/models/generic';
 import queryString from 'query-string';
 import { html } from 'gridjs';
-import { setNotificationAction } from '../../../stores';
 
 export class VariantsService extends BaseHttpService {
   async activateRows(selectedIds: string[]) {
@@ -31,20 +30,10 @@ export class VariantsService extends BaseHttpService {
   }
 
   async deleteRow(itemId: string) {
-    try {
-      const response = await super.delete(`product-variant/${itemId}`);
-      setNotificationAction({
-        message: 'Created successfully',
-        type: 'success',
-      });
-
-      return response;
-    } catch (e) {
-      setNotificationAction({
-        message: 'Failed to create',
-        type: 'error',
-      });
-    }
+    return await super.delete(`product-variant/${itemId}`, {
+      successMessage: 'Created successfully',
+      errorMessage: 'Failed to create',
+    });
   }
 
   getGridUrl(filters = {}) {
@@ -80,18 +69,9 @@ export class VariantsService extends BaseHttpService {
   }
 
   async store(data: IGenericObject) {
-    try {
-      const res = await super.post('product-variant', data);
-      setNotificationAction({
-        message: 'Created successfully',
-        type: 'success',
-      });
-      return res;
-    } catch (err) {
-      setNotificationAction({
-        message: 'Failed to create',
-        type: 'error',
-      });
-    }
+    return await super.post('product-variant', data, {
+      successMessage: 'Created successfully',
+      errorMessage: 'Failed to create',
+    });
   }
 }

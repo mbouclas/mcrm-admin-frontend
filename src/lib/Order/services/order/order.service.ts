@@ -1,8 +1,6 @@
-import { BaseHttpService } from "../../../Shared/base-http.service";
-import type { IGenericObject } from "../../../Shared/models/generic";
-import queryString from "query-string";
-import { html } from "gridjs";
-import { setNotificationAction } from "../../../stores";
+import { BaseHttpService } from '../../../Shared/base-http.service';
+import type { IGenericObject } from '../../../Shared/models/generic';
+import queryString from 'query-string';
 
 export class OrderService extends BaseHttpService {
   async activateRows(selectedIds: string[]) {
@@ -31,31 +29,20 @@ export class OrderService extends BaseHttpService {
   }
 
   async deleteRow(itemId: string) {
-    try {
-      const res = await super.delete(`order/${itemId}`);
-      setNotificationAction({
-        message: "Deleted successfully",
-        type: "success",
-      });
-      return res;
-    } catch (err) {
-      setNotificationAction({
-        message: "Failed to delete",
-        type: "error",
-      });
-    }
+    return await super.delete(`order/${itemId}`, {
+      successMessage: 'Deleted successfully',
+      errorMessage: 'Failed to delete',
+    });
   }
 
   getGridUrl(filters = {}) {
-    return super.getGridUrl("order", filters, (res) => {
+    return super.getGridUrl('order', filters, (res) => {
       return res.data.map((row) => {
         return [
           row.uuid,
           row.createdAt,
           row.orderId,
-          row.user
-            ? `${row.user.firstName} ${row.user.lastName}`
-            : "No customer",
+          row.user ? `${row.user.firstName} ${row.user.lastName}` : 'No customer',
           row.status,
           row.paymentInfo ? row.paymentInfo.price : row.total,
           row.active,
@@ -76,57 +63,36 @@ export class OrderService extends BaseHttpService {
     }
 
     if (relationships.length > 0) {
-        qs = qs ? `${qs}&${relationships.map(r => `with[]=${r}`).join('&')}` : relationships.map(r => `with[]=${r}`).join('&');
+      qs = qs
+        ? `${qs}&${relationships.map((r) => `with[]=${r}`).join('&')}`
+        : relationships.map((r) => `with[]=${r}`).join('&');
     }
 
-    return await this.get(`order${qs ? `?${qs}` : ""}`);
+    return await this.get(`order${qs ? `?${qs}` : ''}`);
   }
 
   async update(id, data) {
-    try {
-      const res = await this.patch(`order/${id}`, data);
-      setNotificationAction({
-        message: "Updated successfully",
-        type: "success",
-      });
-      return res;
-    } catch (err) {
-      setNotificationAction({
-        message: "Failed to update",
-        type: "error",
-      });
-    }
+    return await this.patch(`order/${id}`, data, {
+      successMessage: 'Updated successfully',
+      errorMessage: 'Failed to update',
+    });
   }
 
   async store(data: IGenericObject) {
-    try {
-      const res = super.post("order/basic", data);
-      setNotificationAction({
-        message: "Created successfully",
-        type: "success",
-      });
-      return res;
-    } catch (err) {
-      setNotificationAction({
-        message: "Failed to create",
-        type: "error",
-      });
-    }
+    return await super.post('order/basic', data, {
+      successMessage: 'Created successfully',
+      errorMessage: 'Failed to create',
+    });
   }
 
   async updateOrderStatus(uuid: string, status: number) {
-    try {
-      const res = super.patch(`order/${uuid}/status`, { status });
-      setNotificationAction({
-        message: "Order status updated successfully",
-        type: "success",
-      });
-      return res;
-    } catch (err) {
-      setNotificationAction({
-        message: "Failed to update",
-        type: "error",
-      });
-    }
+    return super.patch(
+      `order/${uuid}/status`,
+      { status },
+      {
+        successMessage: 'Order status updated successfully',
+        errorMessage: 'Failed to update',
+      },
+    );
   }
 }

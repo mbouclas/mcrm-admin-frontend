@@ -34,12 +34,24 @@ export class BaseHttpService {
     return headers;
   }
 
-  async get(url: string, queryParams?: IGenericObject) {
-    const headers = this.getAuthHeaders();
+  async get(url: string, queryParams?: IGenericObject, options: IRequestOptions = {}) {
+    try {
+      const headers = this.getAuthHeaders();
 
-    const query = queryParams && Object.keys(queryParams).length > 0 ? `?${this.objectToQueryParams(queryParams)}` : '';
-    const res = await fetch(`${this.apiUrl}${url}${query}`, { headers });
-    return await res.json();
+      const query =
+        queryParams && Object.keys(queryParams).length > 0 ? `?${this.objectToQueryParams(queryParams)}` : '';
+      const res = await fetch(`${this.apiUrl}${url}${query}`, { headers });
+      return await res.json();
+    } catch (err) {
+      if (options?.errorMessage) {
+        setNotificationAction({
+          message: options.errorMessage,
+          type: 'error',
+        });
+      }
+
+      throw err;
+    }
   }
 
   async post(url: string, body: IGenericObject = {}, options: IRequestOptions = {}) {
