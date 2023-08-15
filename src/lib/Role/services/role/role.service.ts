@@ -77,21 +77,11 @@ export class RoleService extends BaseHttpService {
   }
 
   async create(data) {
-    validateClientData(roleSchema, data);
-
-    try {
-      const res = await this.post(`role`, data);
-      setNotificationAction({
-        message: 'Created successfully',
-        type: 'success',
-      });
-      return res;
-    } catch (err) {
-      setNotificationAction({
-        message: 'Failed to create',
-        type: 'error',
-      });
-    }
+    return await this.post(`role`, data, {
+      schema: roleSchema,
+      successMessage: 'Created successfully',
+      errorMessage: 'Failed to create',
+    });
   }
 
   async manageRole(userUuid, roleUuid, type) {

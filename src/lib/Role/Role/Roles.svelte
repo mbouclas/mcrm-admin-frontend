@@ -114,7 +114,7 @@
   const confirmAddRoleModal = async () => {
     try {
       roleStatus = clearErrors(roleStatus);
-      const create = await service.create(roleData);
+      const create = await service.create({ ...roleData, level: parseInt(roleData.level) });
 
       if (create) {
         navigate(`/roles/${create.uuid}`);
