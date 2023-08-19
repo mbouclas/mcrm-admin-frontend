@@ -65,7 +65,7 @@
     isGateModalOpen = true;
     gateData = {
       uuid: gate.uuid,
-      name: gate.displayName,
+      name: gate.name,
       level: gate.level,
       gate: gate.gate,
       provider: gate.provider,
