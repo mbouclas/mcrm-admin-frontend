@@ -17,7 +17,8 @@
     uuid: null,
     name: '',
     level: 0,
-    description: '',
+    gate: '',
+    provider: '',
   };
 
   const params = useParams();
@@ -31,7 +32,10 @@
     level: {
       errors: [],
     },
-    description: {
+    gate: {
+      errors: [],
+    },
+    provider: {
       errors: [],
     },
   };
@@ -63,7 +67,8 @@
       uuid: gate.uuid,
       name: gate.displayName,
       level: gate.level,
-      description: gate.description,
+      gate: gate.gate,
+      provider: gate.provider,
     };
   };
 
@@ -106,12 +111,11 @@
     </div>
 
     <div class="mb-4">
-      <Input
-        label="Description"
-        bind:errors={gateStatus.description.errors}
-        bind:value={gateData.description}
-        required
-      />
+      <Input label="Provider" bind:errors={gateStatus.provider.errors} bind:value={gateData.provider} required />
+    </div>
+
+    <div class="mb-4">
+      <Input label="Gate" bind:errors={gateStatus.gate.errors} bind:value={gateData.gate} required />
     </div>
   </div>
 
@@ -143,7 +147,7 @@
       <div class="flex justify-between items-center">
         <div class="w-40" />
         <h2 class="mb-4 text-3xl lg:text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
-          Gate {gate.displayName}
+          Gate {gate.name}
         </h2>
         <div class="flex items-center w-40">
           {#if hasGateDeleteGate}
@@ -160,9 +164,11 @@
               <p class="font-semibold text-gray-600 dark:text-gray-400 mb-1">Uuid:</p>
               <p class="font-light text-gray-500 dark:text-gray-400 mb-3">{gate.uuid}</p>
               <p class="font-semibold text-gray-600 dark:text-gray-400 mb-1">Name:</p>
-              <p class="font-light text-gray-500 dark:text-gray-400 mb-3">{gate.displayName}</p>
-              <p class="font-semibold text-gray-600 dark:text-gray-400 mb-1">Description:</p>
-              <p class="font-light text-gray-500 dark:text-gray-400 mb-3">{gate.description}</p>
+              <p class="font-light text-gray-500 dark:text-gray-400 mb-3">{gate.name}</p>
+              <p class="font-semibold text-gray-600 dark:text-gray-400 mb-1">Gate:</p>
+              <p class="font-light text-gray-500 dark:text-gray-400 mb-3">{gate.gate}</p>
+              <p class="font-semibold text-gray-600 dark:text-gray-400 mb-1">Provider:</p>
+              <p class="font-light text-gray-500 dark:text-gray-400 mb-3">{gate.provider}</p>
               <p class="font-semibold text-gray-600 dark:text-gray-400 mb-1">Level:</p>
               <p class="font-light text-gray-500 dark:text-gray-400">{gate.level}</p>
             </div>

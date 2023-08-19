@@ -7,7 +7,8 @@ import errors from '../../../helpers/errors';
 const gateSchema = z.object({
   name: z.string().min(1, errors['400.56']),
   level: z.number().min(1, errors['400.55']).max(99, errors['400.55']),
-  description: z.string().min(1, errors['400.57']),
+  provider: z.string().min(1, errors['400.57']),
+  gate: z.string().min(1, errors['400.57']),
 });
 
 export class GateService extends BaseHttpService {

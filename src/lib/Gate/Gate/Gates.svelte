@@ -19,7 +19,8 @@
     uuid: null,
     name: '',
     level: 1,
-    description: '',
+    gate: '',
+    provider: '',
   };
   let gateData = gateDefault;
 
@@ -30,7 +31,11 @@
     level: {
       errors: [],
     },
-    description: {
+    gate: {
+      errors: [],
+    },
+
+    provider: {
       errors: [],
     },
   };
@@ -147,12 +152,11 @@
     </div>
 
     <div class="mb-4">
-      <Input
-        label="Description"
-        bind:errors={gateStatus.description.errors}
-        bind:value={gateData.description}
-        required
-      />
+      <Input label="Gate" bind:errors={gateStatus.gate.errors} bind:value={gateData.gate} required />
+    </div>
+
+    <div class="mb-4">
+      <Input label="Provider" bind:errors={gateStatus.provider.errors} bind:value={gateData.provider} required />
     </div>
   </div>
 
@@ -227,7 +231,26 @@
               <th
                 scope="col"
                 class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                >Description
+                >Provider
+                <ItemSelectorModal
+                  config={gateSelectorConfig}
+                  on:select={(e) => setFilter('gate', e.detail.uuid)}
+                  closeOnSelect={true}
+                  label="Select Gate"
+                  selectMode="single"
+                >
+                  <Button>
+                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+                      ><path fill="currentColor" d="M10 20v-7L2.95 4h18.1L14 13v7h-4Z" /></svg
+                    >
+                  </Button>
+                </ItemSelectorModal>
+              </th>
+
+              <th
+                scope="col"
+                class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+                >Gate
                 <ItemSelectorModal
                   config={gateSelectorConfig}
                   on:select={(e) => setFilter('gate', e.detail.uuid)}
@@ -268,12 +291,14 @@
             {#each gates.data as gate}
               <tr>
                 <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                  <a href={`/gates/${gate.uuid}`} class="hover:underline">{gate.displayName}</a></td
+                  <a href={`/gates/${gate.uuid}`} class="hover:underline">{gate.name}</a></td
                 >
 
                 <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{gate.level}</td>
 
-                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{gate.description}</td>
+                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{gate.provider}</td>
+
+                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{gate.gate}</td>
 
                 <td class="px-4 py-4 text-sm whitespace-nowrap">
                   {formatDate(gate.createdAt)}
