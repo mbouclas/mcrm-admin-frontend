@@ -5,10 +5,16 @@ import { z } from 'zod';
 import errors from '../../../helpers/errors';
 
 const gateSchema = z.object({
-  name: z.string().min(1, errors['400.56']),
-  level: z.number().min(1, errors['400.55']).max(99, errors['400.55']),
-  provider: z.string().min(1, errors['400.57']),
-  gate: z.string().min(1, errors['400.57']),
+  name: z.string().min(1, errors['GATE.005']),
+  level: z
+    .number({
+      required_error: errors['GATE.006'],
+      invalid_type_error: errors['GATE.006'],
+    })
+    .min(1, errors['GATE.009'])
+    .max(99, errors['GATE.010']),
+  provider: z.string().min(1, errors['GATE.007']),
+  gate: z.string().min(1, errors['GATE.008']),
 });
 
 export class GateService extends BaseHttpService {
