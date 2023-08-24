@@ -248,8 +248,14 @@
             {#each users.data as user}
               <tr>
                 <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                  <a href={`/users/${user.uuid}`} class="hover:underline"> {user.lastName} {user.firstName}</a></td
-                >
+                  <a
+                    href={`/users/${user.uuid}`}
+                    class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer"
+                  >
+                    {user.lastName}
+                    {user.firstName}
+                  </a>
+                </td>
 
                 <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{user.email}</td>
 

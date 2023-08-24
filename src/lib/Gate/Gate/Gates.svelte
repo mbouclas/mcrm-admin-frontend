@@ -287,8 +287,13 @@
             {#each gates.data as gate}
               <tr>
                 <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                  <a href={`/gates/${gate.uuid}`} class="hover:underline">{gate.name}</a></td
-                >
+                  <a
+                    href={`/gates/${gate.uuid}`}
+                    class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer"
+                  >
+                    {gate.name}
+                  </a>
+                </td>
 
                 <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{gate.level}</td>
 

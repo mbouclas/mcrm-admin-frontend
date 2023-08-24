@@ -264,8 +264,13 @@
             {#each roles.data as role}
               <tr>
                 <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                  <a href={`/roles/${role.uuid}`} class="hover:underline">{role.displayName}</a></td
-                >
+                  <a
+                    href={`/roles/${role.uuid}`}
+                    class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer"
+                  >
+                    {role.displayName}
+                  </a>
+                </td>
 
                 <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{role.level}</td>
 
