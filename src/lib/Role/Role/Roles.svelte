@@ -9,11 +9,14 @@
   import ItemSelectorModal from '../../DynamicFields/fields/item-selector-modal.svelte';
   import { Button, Modal } from 'flowbite-svelte';
   import { userItemSelectorConfig } from '../../Shared/item-selector-configs';
-  import { navigate } from 'svelte-navigator';
+  import { navigate, useLocation } from 'svelte-navigator';
   import { RequestErrorException, handleValidationErrors, clearErrors } from '../../helpers/helperErrors';
+  import CustomFilters from '../../Shared/CustomFilters.svelte';
 
   let isRoleModalOpen = false;
   const service = new RoleService();
+  let showModal = false;
+  let searchVal = '';
 
   const roleDefault = {
     uuid: null,
@@ -51,6 +54,7 @@
     page: 1,
     way: 'desc',
     isRole: true,
+    q: '',
   };
   let filters: typeof defaultFilters;
   reset();
@@ -105,9 +109,13 @@
     filters[name] = value;
     await search();
   }
+  const location = useLocation();
+  const currentPath = $location.pathname;
+  const queryParams = new URLSearchParams($location.search);
 
   async function reset() {
     filters = Object.assign({}, defaultFilters);
+    navigate(currentPath);
     await search();
   }
 
@@ -132,8 +140,34 @@
   };
 
   const cancelAddRoleModal = () => {};
+
+  async function searchByFilters() {
+    if (searchVal.trim().length) {
+      queryParams.set('q', searchVal);
+      const newUrl = currentPath + '?' + queryParams.toString();
+      navigate(newUrl);
+      filters.q = searchVal;
+    }
+    await search();
+    showModal = false;
+  }
 </script>
 
+<Modal bind:open={showModal}>
+  <h2>Filters</h2>
+  <div class="text-white">
+    <CustomFilters
+      filterByPrice={false}
+      on:change={(e) => {
+        filters[e.detail.key] = e.detail.value;
+      }}
+      bind:search={searchVal}
+    />
+  </div>
+  <div class="text-white">
+    <button class="bg-blue-500 px-2 py-1 rounded" autofocus on:click={searchByFilters}>Search</button>
+  </div>
+</Modal>
 <Modal bind:open={isRoleModalOpen}>
   <div class="p-4">
     <h2 class="flowbite-modal-title mb-4 text-xl font-bold">Add new role</h2>
@@ -171,7 +205,7 @@
     </li>
 
     <li>
-      <button on:click={() => {}} class="bg-blue-500 rounded p-2">Filters</button>
+      <button on:click={() => (showModal = true)} class="bg-blue-500 rounded p-2">Filters</button>
     </li>
     <li>
       <button on:click={reset} class="bg-red-500 rounded p-2">Reset Filters</button>
