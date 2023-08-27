@@ -1,7 +1,6 @@
 import { BaseHttpService } from '../../../Shared/base-http.service';
 import type { IGenericObject } from '../../../Shared/models/generic';
 import queryString from 'query-string';
-import { html } from 'gridjs';
 import { setNotificationAction } from '../../../stores';
 
 export class CustomerService extends BaseHttpService {

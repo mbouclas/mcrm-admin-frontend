@@ -93,6 +93,7 @@
       on:change={(e) => {
         filters[e.detail.key] = e.detail.value;
       }}
+      filterBySearch={false}
     />
   </div>
   <div slot="footer">

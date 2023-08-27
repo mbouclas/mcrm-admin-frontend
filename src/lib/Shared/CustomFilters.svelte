@@ -1,13 +1,16 @@
 <script>
-  import { Label, NumberInput } from 'flowbite-svelte';
+  import { Label, NumberInput, Search } from 'flowbite-svelte';
   import DatePicker from './DatePicker.svelte';
   import { createEventDispatcher } from 'svelte';
   import Modal from './Modal.svelte';
 
   const dispatch = createEventDispatcher();
 
+  export let filterBySearch = true;
   export let filterByPrice = true;
   export let filterByDate = true;
+
+  export let search = '';
 
   let fromPriceValue = 1;
   $: fromPriceValue && dispatch('change', { key: 'priceFrom', value: fromPriceValue });
@@ -46,7 +49,11 @@
   };
 </script>
 
-<div class="flex justify-between items-start gap-10 py-10">
+<div class="flex flex-col justify-between items-start gap-10 py-10">
+  {#if filterBySearch}
+    <Search bind:value={search} placeholder="Search roles" />
+  {/if}
+
   {#if filterByPrice}
     <div>
       <Label class="text-2xl mb-4">Filter by price</Label>

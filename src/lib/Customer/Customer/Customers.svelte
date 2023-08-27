@@ -6,12 +6,16 @@
   import SortButton from '../../Shared/SortTableHeadButton.svelte';
   import Loading from '../../Shared/Loading.svelte';
   import ItemSelectorModal from '../../DynamicFields/fields/item-selector-modal.svelte';
-  import { Button } from 'flowbite-svelte';
+  import { Button, Search } from 'flowbite-svelte';
   import { userItemSelectorConfig } from '../../Shared/item-selector-configs';
   import Modal from '../../Shared/Modal.svelte';
   import CustomFilters from '../../Shared/CustomFilters.svelte';
+  import { navigate } from 'svelte-navigator';
 
   let showModal = false;
+  let searchVal = '';
+  let queryString = window.location.search;
+  let queryParams = new URLSearchParams(queryString);
 
   const service = new CustomerService();
   let customers = {
@@ -25,6 +29,7 @@
     page: 1,
     way: 'desc',
     isCustomer: true,
+    q: '',
   };
   let filters: typeof defaultFilters;
   reset();
@@ -39,7 +44,7 @@
     customers.data = [];
 
     loading = true;
-    customers = await service.find(filters, ['orderCount']);
+    customers = await service.find(filters, ['*']);
     loading = false;
   }
 
@@ -85,8 +90,16 @@
     await search();
   }
   async function searchByFilters() {
-    showModal = false;
+    if (searchVal.trim().length) {
+      const currentPath = window.location.pathname;
+      const queryParams = new URLSearchParams(window.location.search);
+      queryParams.set('q', searchVal);
+      const newUrl = currentPath + '?' + queryParams.toString();
+      navigate(newUrl);
+      filters.q = searchVal;
+    }
     await search();
+    showModal = false;
   }
 </script>
 
@@ -98,6 +111,7 @@
       on:change={(e) => {
         filters[e.detail.key] = e.detail.value;
       }}
+      bind:search={searchVal}
     />
   </div>
   <div slot="footer">
