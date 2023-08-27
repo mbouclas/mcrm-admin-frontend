@@ -1,26 +1,33 @@
 import { BaseHttpService } from '../../../Shared/base-http.service';
 import type { IGenericObject } from '../../../Shared/models/generic';
 import queryString from 'query-string';
+import { z } from 'zod';
+import errors from '../../../helpers/errors';
 
-export class RoleService extends BaseHttpService {
+const gateSchema = z.object({
+  name: z.string().min(1, errors['GATE.005']),
+  level: z
+    .number({
+      required_error: errors['GATE.006'],
+      invalid_type_error: errors['GATE.006'],
+    })
+    .min(1, errors['GATE.009'])
+    .max(99, errors['GATE.010']),
+  provider: z.string().min(1, errors['GATE.007']),
+  gate: z.string().min(1, errors['GATE.008']),
+});
+
+export class GateService extends BaseHttpService {
   async deleteRow(itemId: string) {
-    return await super.delete(`role/${itemId}`, {
+    return await super.delete(`gate/${itemId}`, {
       successMessage: 'Deleted successfully',
       errorMessage: 'Failed to delete',
     });
   }
 
-  getGridUrl(filters = {}) {
-    return super.getGridUrl('role', filters, (res) => {
-      return res.data.map((row) => {
-        return [row.uuid, row.createdAt, row.firstName, row.lastName, row.email, row.active];
-      });
-    });
-  }
-
   async findOne(uuid: string, relationships: string[] = []) {
     const filters = relationships.length > 0 ? { with: relationships } : {};
-    return await this.get(`role/${uuid}`, filters);
+    return await this.get(`gate/${uuid}`, filters);
   }
 
   async find(filters: IGenericObject = {}, relationships: string[] = []) {
@@ -33,31 +40,33 @@ export class RoleService extends BaseHttpService {
       qs = qs ? `${qs}&with[]=${relationships.join(',')}` : `with[]=${relationships.join(',')}`;
     }
 
-    return await this.get(`role${qs ? `?${qs}` : ''}`);
+    return await this.get(`gate${qs ? `?${qs}` : ''}`);
   }
 
   async update(id, data) {
-    return await this.patch(`role/${id}`, data, {
+    return await this.patch(`gate/${id}`, data, {
       successMessage: 'Updated successfully',
       errorMessage: 'Failed to update',
+      schema: gateSchema,
     });
   }
 
-  async manageRole(userUuid, roleUuid, type) {
+  async create(data) {
+    return await this.post(`gate`, data, {
+      schema: gateSchema,
+      successMessage: 'Created successfully',
+      errorMessage: 'Failed to create',
+    });
+  }
+
+  async manageGate(userUuid, gateUuid, type) {
     return await this.post(
-      `user/${userUuid}/manage-role`,
-      { roleUuid, type },
+      `user/${userUuid}/manage-gate`,
+      { gateUuid, type },
       {
         successMessage: 'Updated successfully',
         errorMessage: 'Failed to update',
       },
     );
-  }
-
-  async store(data: IGenericObject) {
-    return super.post('role/basic', data, {
-      successMessage: 'Created successfully',
-      errorMessage: 'Failed to create',
-    });
   }
 }

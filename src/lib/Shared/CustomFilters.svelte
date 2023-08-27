@@ -51,7 +51,7 @@
 
 <div class="flex flex-col justify-between items-start gap-10 py-10">
   {#if filterBySearch}
-    <Search bind:value={search} placeholder="Search roles" />
+    <Search bind:value={search} placeholder="Search..." />
   {/if}
 
   {#if filterByPrice}

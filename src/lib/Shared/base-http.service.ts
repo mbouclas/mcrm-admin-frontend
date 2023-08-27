@@ -1,7 +1,22 @@
 import type { IGenericObject } from './models/generic';
 import { AuthService } from '../Auth/auth.service';
 import queryString from 'query-string';
-import { convertServerErrorToRequestError, RequestErrorException } from '../helpers/helperErrors';
+import {
+  type ZodSchema,
+  convertServerErrorToRequestError,
+  validateClientData,
+  RequestErrorException,
+} from '../helpers/helperErrors';
+import { setNotificationAction } from '../stores';
+
+interface IRequestOptions {
+  successMessage?: string;
+  errorMessage?: string;
+  schema?: ZodSchema<any>;
+  extraHeaders?: IGenericObject;
+  transformRequest?: (data) => any;
+  renameServerValidationErrors?: { [key: string]: string };
+}
 
 export class BaseHttpService {
   protected apiUrl = import.meta.env.VITE_API_URL;
@@ -19,60 +34,102 @@ export class BaseHttpService {
     return headers;
   }
 
-  async get(url: string, queryParams?: IGenericObject) {
-    const headers = this.getAuthHeaders();
-
-    const query = queryParams && Object.keys(queryParams).length > 0 ? `?${this.objectToQueryParams(queryParams)}` : '';
-    const res = await fetch(`${this.apiUrl}${url}${query}`, { headers });
-    return await res.json();
-  }
-
-  async post(url: string, body: IGenericObject = {}, extraHeaders: IGenericObject = {}) {
-    const headers = this.getAuthHeaders();
-
-    Object.keys(extraHeaders).forEach((header) => {
-      headers.append(header, extraHeaders[header]);
-    });
-
-    const contentType = headers.get('Content-Type');
-    if (!contentType) {
-      headers.append('Content-Type', 'application/json');
-    }
-
-    const rawResponse = await fetch(`${this.apiUrl}${url}`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(body),
-    });
-
-    const res = await rawResponse.json();
-
-    if (!rawResponse.ok) {
-      try {
-        convertServerErrorToRequestError(res);
-      } catch (e) {
-        if (e instanceof RequestErrorException) {
-          throw e;
-        }
-
-        throw res;
-      }
-    }
-
-    if (res.success === false) {
-      throw res;
-    }
-
-    return res;
-  }
-
-  async patch(url: string, body: IGenericObject = {}, extraHeaders: IGenericObject = {}) {
+  async get(url: string, queryParams?: IGenericObject, options: IRequestOptions = {}) {
     try {
       const headers = this.getAuthHeaders();
 
-      Object.keys(extraHeaders).forEach((header) => {
-        headers.append(header, extraHeaders[header]);
+      const query =
+        queryParams && Object.keys(queryParams).length > 0 ? `?${this.objectToQueryParams(queryParams)}` : '';
+      const res = await fetch(`${this.apiUrl}${url}${query}`, { headers });
+      return await res.json();
+    } catch (err) {
+      if (options?.errorMessage) {
+        setNotificationAction({
+          message: options.errorMessage,
+          type: 'error',
+        });
+      }
+
+      throw err;
+    }
+  }
+
+  async post(url: string, body: IGenericObject = {}, options: IRequestOptions = {}) {
+    if (options?.schema) {
+      validateClientData(options.schema, body);
+    }
+
+    try {
+      const headers = this.getAuthHeaders();
+
+      if (options.extraHeaders) {
+        Object.keys(options.extraHeaders).forEach((header) => {
+          headers.append(header, options.extraHeaders[header]);
+        });
+      }
+
+      const contentType = headers.get('Content-Type');
+      if (!contentType) {
+        headers.append('Content-Type', 'application/json');
+      }
+
+      const rawResponse = await fetch(`${this.apiUrl}${url}`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body),
       });
+
+      const res = await rawResponse.json();
+
+      if (!rawResponse.ok) {
+        try {
+          convertServerErrorToRequestError(res);
+        } catch (e) {
+          if (e instanceof RequestErrorException) {
+            throw e;
+          }
+
+          throw res;
+        }
+      }
+
+      if (res.success === false) {
+        throw res;
+      }
+
+      if (options?.successMessage) {
+        setNotificationAction({
+          message: options.successMessage,
+          type: 'success',
+        });
+      }
+
+      return res;
+    } catch (err) {
+      if (options?.errorMessage) {
+        setNotificationAction({
+          message: options.errorMessage,
+          type: 'error',
+        });
+      }
+
+      throw err;
+    }
+  }
+
+  async patch(url: string, body: IGenericObject = {}, options: IRequestOptions = {}) {
+    if (options?.schema) {
+      validateClientData(options.schema, body);
+    }
+
+    try {
+      const headers = this.getAuthHeaders();
+
+      if (options.extraHeaders) {
+        Object.keys(options.extraHeaders).forEach((header) => {
+          headers.append(header, options.extraHeaders[header]);
+        });
+      }
 
       const contentType = headers.get('Content-Type');
       if (!contentType) {
@@ -84,20 +141,46 @@ export class BaseHttpService {
         headers,
         body: JSON.stringify(body),
       });
-      if (!rawResponse.ok) {
-        throw new Error('Bad request');
-      }
+
       const res = await rawResponse.json();
-      if (typeof res.success !== undefined && !res.success) {
+
+      if (!rawResponse.ok) {
+        try {
+          convertServerErrorToRequestError(res);
+        } catch (e) {
+          if (e instanceof RequestErrorException) {
+            throw e;
+          }
+
+          throw res;
+        }
+      }
+
+      if (res.success === false) {
         throw res;
       }
+
+      if (options?.successMessage) {
+        setNotificationAction({
+          message: options.successMessage,
+          type: 'success',
+        });
+      }
+
       return res;
     } catch (err) {
+      if (options?.errorMessage) {
+        setNotificationAction({
+          message: options.errorMessage,
+          type: 'error',
+        });
+      }
+
       throw err;
     }
   }
 
-  async delete(url: string) {
+  async delete(url: string, options: IRequestOptions = {}) {
     try {
       const headers = new Headers();
       headers.append('Authorization', `Bearer ${AuthService.token()}`);
@@ -119,8 +202,23 @@ export class BaseHttpService {
       if (typeof res.success !== undefined && !res.success) {
         throw res;
       }
+
+      if (options?.successMessage) {
+        setNotificationAction({
+          message: options.successMessage,
+          type: 'success',
+        });
+      }
+
       return res;
     } catch (err) {
+      if (options.errorMessage) {
+        setNotificationAction({
+          message: options.errorMessage,
+          type: 'error',
+        });
+      }
+
       throw err;
     }
   }

@@ -74,7 +74,7 @@ export class UserService extends BaseHttpService {
   }
 
   async store(data: IGenericObject) {
-    return await super.post('user/basic', data, {
+    return super.post('user/basic', data, {
       successMessage: 'Created successfully',
       errorMessage: 'Failed to create',
     });

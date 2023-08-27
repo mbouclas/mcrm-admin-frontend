@@ -281,6 +281,30 @@
         }}
       />
 
+      <SidebarItem
+        {aClass}
+        label="Roles"
+        {spanClass}
+        icon={{ name: InboxArrowDown }}
+        href="/roles/list"
+        on:click={(e) => {
+          e.preventDefault();
+          navigate('/roles/list');
+        }}
+      />
+
+      <SidebarItem
+        {aClass}
+        label="Gates"
+        {spanClass}
+        icon={{ name: InboxArrowDown }}
+        href="/gates/list"
+        on:click={(e) => {
+          e.preventDefault();
+          navigate('/gates/list');
+        }}
+      />
+
       <SidebarDropdownWrapper {btnClass} label="CMS" icon={{ name: ShoppingCart }}>
         <SidebarDropdownItem
           aClass={btnClass + ' pl-11'}

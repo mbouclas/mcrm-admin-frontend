@@ -5,4 +5,18 @@ export default {
   '400.23': 'Last name is required',
   '400.24': 'Password is required',
   '400.25': 'User with email already exists',
+  '400.55': 'Role level must be between 1 and 99',
+  '400.56': 'Name is required',
+  '400.57': 'Description is required',
+
+  'GATE.001': 'User exists',
+  'GATE.002': 'User exists',
+  'GATE.003': 'User exists',
+  'GATE.004': 'User exists',
+  'GATE.005': 'Name is required',
+  'GATE.006': 'Level is required',
+  'GATE.007': 'Provider is required',
+  'GATE.008': 'Gate is required',
+  'GATE.009': 'Minimum level value is 1',
+  'GATE.010': 'Maximum level value is 99',
 };

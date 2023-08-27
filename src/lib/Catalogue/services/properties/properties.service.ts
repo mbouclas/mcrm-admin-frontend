@@ -2,7 +2,6 @@ import { BaseHttpService } from '../../../Shared/base-http.service';
 import type { IGenericObject } from '../../../Shared/models/generic';
 import queryString from 'query-string';
 import { html } from 'gridjs';
-import { setNotificationAction } from '../../../stores';
 
 export class PropertiesService extends BaseHttpService {
   async activateRows(selectedIds: string[]) {
@@ -31,19 +30,10 @@ export class PropertiesService extends BaseHttpService {
   }
 
   async deleteRow(itemId: string) {
-    try {
-      const res = await super.delete(`property/${itemId}`);
-      setNotificationAction({
-        message: 'Deleted successfully',
-        type: 'success',
-      });
-      return res;
-    } catch (err) {
-      setNotificationAction({
-        message: 'Failed to delete',
-        type: 'error',
-      });
-    }
+    return await super.delete(`property/${itemId}`, {
+      successMessage: 'Deleted successfully',
+      errorMessage: 'Failed to delete',
+    });
   }
 
   getGridUrl(filters = {}) {
@@ -83,82 +73,37 @@ export class PropertiesService extends BaseHttpService {
   }
 
   async update(id: string, data: IGenericObject) {
-    try {
-      const res = await this.patch(`property/${id}`, data);
-      setNotificationAction({
-        message: 'Updated successfully',
-        type: 'success',
-      });
-      return res;
-    } catch (err) {
-      setNotificationAction({
-        message: 'Failed to update',
-        type: 'error',
-      });
-    }
+    return await this.patch(`property/${id}`, data, {
+      successMessage: 'Updated successfully',
+      errorMessage: 'Failed to update',
+    });
   }
 
   async store(data: IGenericObject) {
-    try {
-      const res = await super.post('property', data);
-      setNotificationAction({
-        message: 'Created successfully',
-        type: 'success',
-      });
-      return res;
-    } catch (err) {
-      setNotificationAction({
-        message: 'Failed to create',
-        type: 'error',
-      });
-    }
+    return await super.post('property', data, {
+      successMessage: 'Created successfully',
+      errorMessage: 'Failed to created',
+    });
   }
 
   async storePropertyValue(data: IGenericObject) {
-    try {
-      const res = await super.post(`property/${data.uuid}/value`, data);
-      setNotificationAction({
-        message: 'Created successfully',
-        type: 'success',
-      });
-      return res;
-    } catch (err) {
-      setNotificationAction({
-        message: 'Failed to create',
-        type: 'error',
-      });
-    }
+    return await super.post(`property/${data.uuid}/value`, data, {
+      successMessage: 'Created successfully',
+      errorMessage: 'Failed to create',
+    });
   }
 
   async updatePropertyValue(data: IGenericObject) {
-    try {
-      const res = await super.patch(`property/${data.uuid}/value/${data.propertyValueUuid}`, data);
-      setNotificationAction({
-        message: 'Updated successfully',
-        type: 'success',
-      });
-      return res;
-    } catch (err) {
-      setNotificationAction({
-        message: 'Failed to create',
-        type: 'error',
-      });
-    }
+    return await super.patch(`property/${data.uuid}/value/${data.propertyValueUuid}`, data, {
+      successMessage: 'Updated successfully',
+      errorMessage: 'Failed to create',
+    });
   }
 
   async deletePropertyValue(data: IGenericObject) {
-    try {
-      const res = await super.delete(`property/${data.uuid}/value/${data.propertyValueUuid}`);
-      setNotificationAction({
-        message: 'Deleted successfully',
-        type: 'success',
-      });
-      return res;
-    } catch (err) {
-      setNotificationAction({
-        message: 'Failed to create',
-        type: 'error',
-      });
-    }
+    return await super.delete(`property/${data.uuid}/value/${data.propertyValueUuid}`, {
+      successMessage: 'Deleted successfully',
+      errorMessage: 'Failed to create',
+    });
   }
 }

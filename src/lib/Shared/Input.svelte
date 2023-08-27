@@ -7,6 +7,7 @@
   export let errors;
   export let required = false;
   export let placeholder = `Enter ${label}`;
+  export let type = 'text';
 </script>
 
 {#if label}
@@ -14,6 +15,7 @@
 {/if}
 
 <Input
+  {type}
   on:input={() => {
     errors = [];
   }}

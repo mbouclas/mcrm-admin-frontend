@@ -33,7 +33,7 @@ export class RequestErrorException extends Error {
   }
 }
 
-type ZodSchema<T> = z.Schema<T>;
+export type ZodSchema<T> = z.Schema<T>;
 
 export const transformErrors = (zodError: z.ZodError): ValidationError[] => {
   const customErrors = [];
@@ -42,7 +42,7 @@ export const transformErrors = (zodError: z.ZodError): ValidationError[] => {
     const field = issue.path.join('.');
     const message = issue.message;
 
-    if (!customErrors.some((customError) => customError.message === message)) {
+    if (!customErrors.some((customError) => customError.field === field && customError.message === message)) {
       customErrors.push({ field, message });
     }
   });

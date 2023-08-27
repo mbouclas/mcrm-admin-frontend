@@ -2,7 +2,6 @@ import { BaseHttpService } from '../../../Shared/base-http.service';
 import type { IGenericObject } from '../../../Shared/models/generic';
 import queryString from 'query-string';
 import { html } from 'gridjs';
-import { setNotificationAction } from '../../../stores';
 
 export class ProductsService extends BaseHttpService {
   async activateRows(selectedIds: string[]) {
@@ -31,19 +30,10 @@ export class ProductsService extends BaseHttpService {
   }
 
   async deleteRow(itemId: string) {
-    try {
-      const res = await super.delete(`product/${itemId}`);
-      setNotificationAction({
-        message: 'Deleted successfully',
-        type: 'success',
-      });
-      return res;
-    } catch (err) {
-      setNotificationAction({
-        message: 'Failed to delete',
-        type: 'error',
-      });
-    }
+    return await super.delete(`product/${itemId}`, {
+      successMessage: 'Deleted successfully',
+      errorMessage: 'Failed to delete',
+    });
   }
 
   getGridUrl(filters = {}) {
@@ -72,73 +62,45 @@ export class ProductsService extends BaseHttpService {
     }
 
     if (relationships.length > 0) {
-      qs = qs ? `${qs}&${relationships.map(r => `with[]=${r}`).join('&')}` : relationships.map(r => `with[]=${r}`).join('&');
+      qs = qs
+        ? `${qs}&${relationships.map((r) => `with[]=${r}`).join('&')}`
+        : relationships.map((r) => `with[]=${r}`).join('&');
     }
 
     return await this.get(`product${qs ? `?${qs}` : ''}`);
   }
 
   async update(id: string, data: IGenericObject) {
-    try {
-      const res = await this.patch(`product/${id}`, data);
-      setNotificationAction({
-        message: 'Updated successfully',
-        type: 'success',
-      });
-      return res;
-    } catch (err) {
-      setNotificationAction({
-        message: 'Failed to update',
-        type: 'error',
-      });
-    }
+    return await this.patch(`product/${id}`, data, {
+      successMessage: 'Updated successfully',
+      errorMessage: 'Failed to update',
+    });
   }
 
   async store(data: IGenericObject) {
-    try {
-      const res = await super.post('product/basic', data);
-      setNotificationAction({
-        message: 'Created successfully',
-        type: 'success',
-      });
-      return res;
-    } catch (err) {
-      setNotificationAction({
-        message: 'Failed to create',
-        type: 'error',
-      });
-    }
+    return await super.post('product/basic', data, {
+      successMessage: 'Created successfully',
+      errorMessage: 'Failed to create',
+    });
   }
 
   async generateVariants(productId: string, data) {
-    try {
-      const res = await super.post(`product/${productId}/generate-variants`, data);
-      setNotificationAction({
-        message: 'Created successfully',
-        type: 'success',
-      });
-      return res;
-    } catch (err) {
-      setNotificationAction({
-        message: 'Failed to create',
-        type: 'error',
-      });
-    }
+    return await super.post(`product/${productId}/generate-variants`, data, {
+      successMessage: 'Created successfully',
+      errorMessage: 'Failed to create',
+    });
   }
 
   async checkDuplicateVariants(productId: string, data) {
-    try {
-      const propertyValues = data.propertyValues.map((val) => `propertyValues[]=${encodeURIComponent(val)}`).join('&');
+    const propertyValues = data.propertyValues.map((val) => `propertyValues[]=${encodeURIComponent(val)}`).join('&');
 
-      const res = await super.get(`product/${productId}/check-duplicate-variants?${propertyValues}`);
-
-      return res;
-    } catch (err) {
-      setNotificationAction({
-        message: 'Failed to check duplicate',
-        type: 'error',
-      });
-    }
+    return await super.get(
+      `product/${productId}/check-duplicate-variants?${propertyValues}`,
+      {},
+      {
+        errorMessage: 'Failed to check duplicate',
+      },
+    );
   }
 
   async saveProductCategories(productId: string, categories: IGenericObject[]) {
