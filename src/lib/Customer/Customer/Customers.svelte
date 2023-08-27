@@ -10,12 +10,10 @@
   import { userItemSelectorConfig } from '../../Shared/item-selector-configs';
   import Modal from '../../Shared/Modal.svelte';
   import CustomFilters from '../../Shared/CustomFilters.svelte';
-  import { navigate } from 'svelte-navigator';
+  import { navigate, useLocation } from 'svelte-navigator';
 
   let showModal = false;
   let searchVal = '';
-  let queryString = window.location.search;
-  let queryParams = new URLSearchParams(queryString);
 
   const service = new CustomerService();
   let customers = {
@@ -84,15 +82,18 @@
     filters[name] = value;
     await search();
   }
+  const location = useLocation();
+  const currentPath = $location.pathname;
+  const queryParams = new URLSearchParams($location.search);
 
   async function reset() {
     filters = Object.assign({}, defaultFilters);
+    navigate(currentPath);
     await search();
   }
+
   async function searchByFilters() {
     if (searchVal.trim().length) {
-      const currentPath = window.location.pathname;
-      const queryParams = new URLSearchParams(window.location.search);
       queryParams.set('q', searchVal);
       const newUrl = currentPath + '?' + queryParams.toString();
       navigate(newUrl);
