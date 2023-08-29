@@ -56,16 +56,16 @@
 
   {#if filterByPrice}
     <div>
-      <Label class="text-2xl mb-4">Filter by price</Label>
+      <Label class="text-2xl mb-4 flowbite-modal-title">Filter by price</Label>
       <NumberInput name="fromPrice" bind:value={fromPriceValue} on:change={handleSelect} />
-      <p class="mb-8">From: {fromPriceValue === null ? '' : fromPriceValue}€</p>
+      <p class="mb-8 flowbite-modal-title">From: {fromPriceValue === null ? '' : fromPriceValue}€</p>
       <NumberInput name="toPrice" min={1} bind:value={toPriceValue} />
-      <p class="mb-8">To: {toPriceValue === null ? '' : toPriceValue}€</p>
+      <p class="mb-8 flowbite-modal-title">To: {toPriceValue === null ? '' : toPriceValue}€</p>
     </div>
   {/if}
   {#if filterByDate}
     <div>
-      <Label class="mb-2 text-2xl">Choose date</Label>
+      <Label class="mb-2 text-2xl flowbite-modal-title">Choose date</Label>
       <div class="flex flex-col gap-1">
         <button
           class="bg-blue-500 rounded p-2"
@@ -82,18 +82,18 @@
           }}>To</button
         >
         {#if fromDate || toDate}
-          <Label class="mb-2 text-2xl">Dates</Label>
+          <Label class="mb-2 text-2xl flowbite-modal-title">Dates</Label>
         {/if}
         <p>
           {#if fromDate}
-            <div class="bg-gray-700 rounded p-1 text-center">
+            <div class="bg-gray-700 rounded p-1 text-center flowbite-modal-title">
               From: {new Date(fromDate).toDateString()}
             </div>
           {/if}
         </p>
         <p>
           {#if toDate}
-            <div class="bg-gray-700 rounded p-1 text-center">
+            <div class="bg-gray-700 rounded p-1 text-center flowbite-modal-title">
               To: {new Date(toDate).toDateString()}
             </div>
           {/if}
@@ -101,7 +101,7 @@
       </div>
 
       <Modal bind:showModal={openDatePicker}>
-        <div slot="header">Pick Date</div>
+        <div class="flowbite-modal-title" slot="header">Pick Date</div>
         <div slot="content">
           <DatePicker minLimitDate={showDatePicker === 'to' ? fromDate : null} onSelect={handleDateSelect} />
         </div>

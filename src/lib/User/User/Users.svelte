@@ -7,13 +7,17 @@
   import Input from '../../Shared/Input.svelte';
   import Loading from '../../Shared/Loading.svelte';
   import ItemSelectorModal from '../../DynamicFields/fields/item-selector-modal.svelte';
-  import { Button, Modal } from 'flowbite-svelte';
+  import { Button } from 'flowbite-svelte';
   import { userItemSelectorConfig } from '../../Shared/item-selector-configs';
-  import { navigate } from 'svelte-navigator';
+  import { navigate, useLocation } from 'svelte-navigator';
   import { RequestErrorException, handleValidationErrors, clearErrors } from '../../helpers/helperErrors';
+  import Modal from '../../Shared/Modal.svelte';
+  import CustomFilters from '../../Shared/CustomFilters.svelte';
 
   let isUserModalOpen = false;
   const service = new UserService();
+  let showModal = false;
+  let searchVal = '';
 
   const userDefault = {
     uuid: null,
@@ -55,6 +59,7 @@
     page: 1,
     way: 'desc',
     isUser: true,
+    q: '',
   };
   let filters: typeof defaultFilters;
   reset();
@@ -110,8 +115,13 @@
     await search();
   }
 
+  const location = useLocation();
+  const currentPath = $location.pathname;
+  const queryParams = new URLSearchParams($location.search);
+
   async function reset() {
     filters = Object.assign({}, defaultFilters);
+    navigate(currentPath);
     await search();
   }
 
@@ -136,12 +146,40 @@
   };
 
   const cancelAddUserModal = () => {};
+
+  async function searchByFilters() {
+    if (searchVal.trim().length) {
+      queryParams.set('q', searchVal);
+      const newUrl = currentPath + '?' + queryParams.toString();
+      navigate(newUrl);
+      filters.q = searchVal;
+    }
+    await search();
+    showModal = false;
+  }
 </script>
 
-<Modal bind:open={isUserModalOpen}>
-  <div class="p-4">
-    <h2 class="flowbite-modal-title mb-4 text-xl font-bold">Add new user</h2>
+<Modal bind:showModal>
+  <div slot="header">Filters</div>
+  <div slot="content">
+    <CustomFilters
+      filterByPrice={false}
+      on:change={(e) => {
+        filters[e.detail.key] = e.detail.value;
+      }}
+      bind:search={searchVal}
+    />
+  </div>
+  <div slot="footer">
+    <button class="bg-blue-500 px-2 py-1 rounded" autofocus on:click={searchByFilters}>Search</button>
+  </div>
+</Modal>
 
+<Modal bind:showModal={isUserModalOpen}>
+  <div slot="header">
+    <h2 class="flowbite-modal-title mb-4 text-xl font-bold">Add new user</h2>
+  </div>
+  <div slot="content">
     <div class="mb-4">
       <Input label="Email" bind:errors={userStatus.email.errors} bind:value={userData.email} required />
     </div>
@@ -159,12 +197,11 @@
     </div>
   </div>
 
-  <svelte:fragment slot="footer">
+  <div slot="footer">
     <Button disabled={hasUserErrors} on:click={confirmAddUserModal}>Create</Button>
     <Button color="alternative" on:click={cancelAddUserModal}>Cancel</Button>
-  </svelte:fragment>
+  </div>
 </Modal>
-
 <div
   class="text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 overflow-y-hidden overflow-x-auto"
 >
@@ -174,7 +211,7 @@
     </li>
 
     <li>
-      <button on:click={() => {}} class="bg-blue-500 rounded p-2">Filters</button>
+      <button on:click={() => (showModal = !showModal)} class="bg-blue-500 rounded p-2">Filters</button>
     </li>
     <li>
       <button on:click={reset} class="bg-red-500 rounded p-2">Reset Filters</button>

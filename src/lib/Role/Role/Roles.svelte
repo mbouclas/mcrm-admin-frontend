@@ -154,7 +154,7 @@
 </script>
 
 <Modal bind:open={showModal}>
-  <h2>Filters</h2>
+  <h2 class="flowbite-modal-title mb-4 text-xl font-bold">Filters</h2>
   <div class="text-white">
     <CustomFilters
       filterByPrice={false}
@@ -165,7 +165,11 @@
     />
   </div>
   <div class="text-white">
-    <button class="bg-blue-500 px-2 py-1 rounded" autofocus on:click={searchByFilters}>Search</button>
+    <button
+      class="flowbite-modal-title mb-4 font-semibold bg-blue-500 px-2 py-1 rounded"
+      autofocus
+      on:click={searchByFilters}>Search</button
+    >
   </div>
 </Modal>
 <Modal bind:open={isRoleModalOpen}>
