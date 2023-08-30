@@ -7,11 +7,12 @@
   import Input from '../../Shared/Input.svelte';
   import Loading from '../../Shared/Loading.svelte';
   import ItemSelectorModal from '../../DynamicFields/fields/item-selector-modal.svelte';
-  import { Button, Modal } from 'flowbite-svelte';
+  import { Button } from 'flowbite-svelte';
   import { userItemSelectorConfig } from '../../Shared/item-selector-configs';
   import { navigate, useLocation } from 'svelte-navigator';
   import { RequestErrorException, handleValidationErrors, clearErrors } from '../../helpers/helperErrors';
   import CustomFilters from '../../Shared/CustomFilters.svelte';
+  import Modal from '../../Shared/Modal.svelte';
 
   let isRoleModalOpen = false;
   const service = new RoleService();
@@ -139,7 +140,9 @@
     isRoleModalOpen = true;
   };
 
-  const cancelAddRoleModal = () => {};
+  const cancelAddRoleModal = () => {
+    isRoleModalOpen = false;
+  };
 
   async function searchByFilters() {
     if (searchVal.trim().length) {
@@ -153,9 +156,9 @@
   }
 </script>
 
-<Modal bind:open={showModal}>
-  <h2 class="flowbite-modal-title mb-4 text-xl font-bold">Filters</h2>
-  <div class="text-white">
+<Modal bind:showModal>
+  <h2 class="flowbite-modal-title text-xl font-bold" slot="header">Filters</h2>
+  <div class="text-white" slot="content">
     <CustomFilters
       filterByPrice={false}
       on:change={(e) => {
@@ -164,7 +167,7 @@
       bind:search={searchVal}
     />
   </div>
-  <div class="text-white">
+  <div class="text-white" slot="footer">
     <button
       class="flowbite-modal-title mb-4 font-semibold bg-blue-500 px-2 py-1 rounded"
       autofocus
@@ -172,10 +175,9 @@
     >
   </div>
 </Modal>
-<Modal bind:open={isRoleModalOpen}>
-  <div class="p-4">
-    <h2 class="flowbite-modal-title mb-4 text-xl font-bold">Add new role</h2>
-
+<Modal bind:showModal={isRoleModalOpen}>
+  <h2 class="flowbite-modal-title text-xl font-bold" slot="header">Add new role</h2>
+  <div class="mt-4" slot="content">
     <div class="mb-4">
       <Input label="Name" bind:errors={roleStatus.name.errors} bind:value={roleData.name} required />
     </div>
@@ -193,11 +195,10 @@
       />
     </div>
   </div>
-
-  <svelte:fragment slot="footer">
+  <div slot="footer">
     <Button disabled={hasRoleErrors} on:click={confirmAddRoleModal}>Create</Button>
     <Button color="alternative" on:click={cancelAddRoleModal}>Cancel</Button>
-  </svelte:fragment>
+  </div>
 </Modal>
 
 <div

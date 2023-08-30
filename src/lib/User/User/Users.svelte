@@ -145,7 +145,9 @@
     isUserModalOpen = true;
   };
 
-  const cancelAddUserModal = () => {};
+  const cancelAddUserModal = () => {
+    isUserModalOpen = false;
+  };
 
   async function searchByFilters() {
     if (searchVal.trim().length) {
@@ -176,10 +178,8 @@
 </Modal>
 
 <Modal bind:showModal={isUserModalOpen}>
-  <div slot="header">
-    <h2 class="flowbite-modal-title mb-4 text-xl font-bold">Add new user</h2>
-  </div>
-  <div slot="content">
+  <h2 class="flowbite-modal-title text-xl font-bold" slot="header">Add new user</h2>
+  <div class="mt-4" slot="content">
     <div class="mb-4">
       <Input label="Email" bind:errors={userStatus.email.errors} bind:value={userData.email} required />
     </div>
