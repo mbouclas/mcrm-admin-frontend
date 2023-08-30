@@ -1,19 +1,22 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { GateService } from '../services/gate/gate.service';
-  import { formatDate } from '../../helpers/dates';
   import Paginator from '../../Shared/Paginator.svelte';
   import SortButton from '../../Shared/SortTableHeadButton.svelte';
   import Input from '../../Shared/Input.svelte';
   import Loading from '../../Shared/Loading.svelte';
   import ItemSelectorModal from '../../DynamicFields/fields/item-selector-modal.svelte';
-  import { Button, Modal } from 'flowbite-svelte';
+  import { Button } from 'flowbite-svelte';
   import { userItemSelectorConfig } from '../../Shared/item-selector-configs';
-  import { navigate } from 'svelte-navigator';
+  import { navigate, useLocation } from 'svelte-navigator';
   import { RequestErrorException, handleValidationErrors, clearErrors } from '../../helpers/helperErrors';
+  import Modal from '../../Shared/Modal.svelte';
+  import CustomFilters from '../../Shared/CustomFilters.svelte';
 
   let isGateModalOpen = false;
   const service = new GateService();
+  let showModal = false;
+  let searchVal = '';
 
   const gateDefault = {
     uuid: null,
@@ -21,6 +24,7 @@
     level: 1,
     gate: '',
     provider: '',
+    q: '',
   };
   let gateData = gateDefault;
 
@@ -104,6 +108,9 @@
 
     await search();
   }
+  const location = useLocation();
+  const currentPath = $location.pathname;
+  const queryParams = new URLSearchParams($location.search);
 
   async function setFilter(name: string, value: any) {
     filters.page = 1;
@@ -113,6 +120,7 @@
 
   async function reset() {
     filters = Object.assign({}, defaultFilters);
+    navigate(currentPath);
     await search();
   }
 
@@ -136,13 +144,39 @@
     isGateModalOpen = true;
   };
 
-  const cancelAddGateModal = () => {};
+  const cancelAddGateModal = () => {
+    isGateModalOpen = false;
+  };
+  async function searchByFilters() {
+    if (searchVal.trim().length) {
+      queryParams.set('q', searchVal);
+      const newUrl = currentPath + '?' + queryParams.toString();
+      navigate(newUrl);
+      filters.q = searchVal;
+    }
+    await search();
+    showModal = false;
+  }
 </script>
 
-<Modal bind:open={isGateModalOpen}>
-  <div class="p-4">
-    <h2 class="flowbite-modal-title mb-4 text-xl font-bold">Add new gate</h2>
-
+<Modal bind:showModal>
+  <div slot="header">Filters</div>
+  <div slot="content">
+    <CustomFilters
+      filterByPrice={false}
+      on:change={(e) => {
+        filters[e.detail.key] = e.detail.value;
+      }}
+      bind:search={searchVal}
+    />
+  </div>
+  <div slot="footer">
+    <Button class="bg-blue-500 px-2 py-1 rounded" autofocus on:click={searchByFilters}>Search</Button>
+  </div>
+</Modal>
+<Modal bind:showModal={isGateModalOpen}>
+  <h2 class="flowbite-modal-title text-xl font-bold" slot="header">Add new gate</h2>
+  <div class="p-4" slot="content">
     <div class="mb-4">
       <Input label="Name" bind:errors={gateStatus.name.errors} bind:value={gateData.name} required />
     </div>
@@ -160,10 +194,10 @@
     </div>
   </div>
 
-  <svelte:fragment slot="footer">
+  <div slot="footer">
     <Button disabled={hasGateErrors} on:click={confirmAddGateModal}>Create</Button>
     <Button color="alternative" on:click={cancelAddGateModal}>Cancel</Button>
-  </svelte:fragment>
+  </div>
 </Modal>
 
 <div
@@ -284,7 +318,7 @@
                 </td>
               </tr>
             {/if}
-            {#each gates.data as gate}
+            <!-- {#each gates.data as gate}
               <tr>
                 <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
                   <a
@@ -305,7 +339,7 @@
                   {formatDate(gate.createdAt)}
                 </td>
               </tr>
-            {/each}
+            {/each} -->
           </tbody>
         </table>
       </div>
