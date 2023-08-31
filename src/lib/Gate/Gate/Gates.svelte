@@ -17,6 +17,9 @@
   const service = new GateService();
   let showModal = false;
   let searchVal = '';
+  const location = useLocation();
+  const currentPath = $location.pathname;
+  const queryParams = new URLSearchParams($location.search);
 
   const gateDefault = {
     uuid: null,
@@ -108,9 +111,6 @@
 
     await search();
   }
-  const location = useLocation();
-  const currentPath = $location.pathname;
-  const queryParams = new URLSearchParams($location.search);
 
   async function setFilter(name: string, value: any) {
     filters.page = 1;
