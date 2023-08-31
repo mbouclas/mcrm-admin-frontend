@@ -21,6 +21,8 @@
   const currentPath = $location.pathname;
   const queryParams = new URLSearchParams($location.search);
 
+  $: console.log('here');
+
   const gateDefault = {
     uuid: null,
     name: '',
