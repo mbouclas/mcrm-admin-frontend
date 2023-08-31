@@ -15,6 +15,8 @@
   let isGateModalOpen = false;
   const service = new GateService();
 
+  $: console.log('here');
+
   const gateDefault = {
     uuid: null,
     name: '',
