@@ -45,7 +45,8 @@
     customers.data = [];
 
     loading = true;
-    customers = await service.find(filters, ['*']);
+    customers = await service.find(filters, ['orderCount']);
+
     loading = false;
   }
 
