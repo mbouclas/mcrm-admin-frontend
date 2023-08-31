@@ -18,6 +18,8 @@
   let showModal = false;
   let searchVal = '';
 
+  $: console.log('here');
+
   const gateDefault = {
     uuid: null,
     name: '',
