@@ -14,6 +14,9 @@
 
   let showModal = false;
   let searchVal = '';
+  const location = useLocation();
+  const currentPath = $location.pathname;
+  const queryParams = new URLSearchParams($location.search);
 
   const service = new CustomerService();
   let customers = {
@@ -42,7 +45,8 @@
     customers.data = [];
 
     loading = true;
-    customers = await service.find(filters, ['*']);
+    customers = await service.find(filters, ['orderCount']);
+
     loading = false;
   }
 
@@ -82,9 +86,6 @@
     filters[name] = value;
     await search();
   }
-  const location = useLocation();
-  const currentPath = $location.pathname;
-  const queryParams = new URLSearchParams($location.search);
 
   async function reset() {
     filters = Object.assign({}, defaultFilters);

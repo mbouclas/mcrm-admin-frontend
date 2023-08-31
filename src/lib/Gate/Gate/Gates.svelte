@@ -12,11 +12,15 @@
   import { RequestErrorException, handleValidationErrors, clearErrors } from '../../helpers/helperErrors';
   import Modal from '../../Shared/Modal.svelte';
   import CustomFilters from '../../Shared/CustomFilters.svelte';
+  import { formatDate } from '../../helpers/dates';
 
   let isGateModalOpen = false;
   const service = new GateService();
   let showModal = false;
   let searchVal = '';
+  const location = useLocation();
+  const currentPath = $location.pathname;
+  const queryParams = new URLSearchParams($location.search);
 
   $: console.log('here');
 
@@ -110,9 +114,6 @@
 
     await search();
   }
-  const location = useLocation();
-  const currentPath = $location.pathname;
-  const queryParams = new URLSearchParams($location.search);
 
   async function setFilter(name: string, value: any) {
     filters.page = 1;
@@ -320,7 +321,7 @@
                 </td>
               </tr>
             {/if}
-            <!-- {#each gates.data as gate}
+            {#each gates.data as gate}
               <tr>
                 <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
                   <a
@@ -341,7 +342,7 @@
                   {formatDate(gate.createdAt)}
                 </td>
               </tr>
-            {/each} -->
+            {/each}
           </tbody>
         </table>
       </div>

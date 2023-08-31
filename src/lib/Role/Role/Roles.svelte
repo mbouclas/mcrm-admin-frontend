@@ -18,6 +18,9 @@
   const service = new RoleService();
   let showModal = false;
   let searchVal = '';
+  const location = useLocation();
+  const currentPath = $location.pathname;
+  const queryParams = new URLSearchParams($location.search);
 
   const roleDefault = {
     uuid: null,
@@ -110,9 +113,6 @@
     filters[name] = value;
     await search();
   }
-  const location = useLocation();
-  const currentPath = $location.pathname;
-  const queryParams = new URLSearchParams($location.search);
 
   async function reset() {
     filters = Object.assign({}, defaultFilters);
