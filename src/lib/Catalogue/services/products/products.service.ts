@@ -107,12 +107,12 @@ export class ProductsService extends BaseHttpService {
     const res = await super.patch(`product/${productId}/productCategories`, categories);
   }
 
-  async relate(sourceUuid: string, destinationUuid: string, type: string) {
+  async relate(sourceUuid: string, destinationUuids: string[], type: string) {
     const res = await super.post(
       `product/manage-relate`,
       {
         sourceUuid,
-        destinationUuid,
+        destinationUuids,
         type,
       },
       { successMessage: 'Related successfully', errorMessage: 'Failed to relate' },

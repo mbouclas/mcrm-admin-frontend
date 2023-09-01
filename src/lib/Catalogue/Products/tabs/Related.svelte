@@ -15,28 +15,31 @@
   const s = new ProductsService();
   let model;
   let loading = false;
+  let selectedUuids = [];
 
   onMount(async () => {
     model = await s.findOne($params.id, ['*']);
   });
 
-  async function relate(name: string, value: any) {
-    await s.relate($params.id, value, 'relate');
+  async function relate() {
+    await s.relate($params.id, selectedUuids, 'relate');
     model = await s.findOne($params.id, ['*']);
+    selectedUuids = [];
   }
 
   async function unrelate(item) {
-    await s.relate($params.id, item.uuid, 'unrelate');
+    await s.relate($params.id, [item.uuid], 'unrelate');
     model = await s.findOne($params.id, ['*']);
   }
 </script>
 
 <ItemSelectorModal
   config={productItemSelectorConfig}
-  on:select={(e) => relate('product', e.detail.uuid)}
-  closeOnSelect={true}
-  label="Select Customer"
-  selectMode="single"
+  on:confirm={() => relate()}
+  on:select={(e) => (selectedUuids = [...selectedUuids, e.detail.uuid])}
+  closeOnSelect={false}
+  label="Select Product"
+  selectMode="multiple"
 >
   <Button
     >Select products
