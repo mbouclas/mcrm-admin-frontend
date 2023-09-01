@@ -38,10 +38,11 @@
 <style>
   dialog {
     z-index: 999;
-    max-width: 70em;
-    border-radius: 0.2em;
+    min-width: 40em;
+    border-radius: 0.3em;
     border: none;
     padding: 0;
+    background: rgba(0, 0, 0, 0.3);
   }
   dialog::backdrop {
     background: rgba(0, 0, 0, 0.3);
