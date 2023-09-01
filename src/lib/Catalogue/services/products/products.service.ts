@@ -106,4 +106,21 @@ export class ProductsService extends BaseHttpService {
   async saveProductCategories(productId: string, categories: IGenericObject[]) {
     const res = await super.patch(`product/${productId}/productCategories`, categories);
   }
+
+  async relate(sourceUuid: string, destinationUuids: string[], type: string) {
+    const successMessage = type === 'relate' ? 'Related successfully' : 'Unrelated successfully';
+    const errorMessage = type !== 'relate' ? 'Failed to relate' : 'Failed to unrelate';
+
+    const res = await super.post(
+      `product/manage-relate`,
+      {
+        sourceUuid,
+        destinationUuids,
+        type,
+      },
+      { successMessage, errorMessage },
+    );
+
+    return res;
+  }
 }

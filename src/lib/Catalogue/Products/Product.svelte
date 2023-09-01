@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Tabs, TabItem, Button } from 'flowbite-svelte';
   import General from './tabs/General.svelte';
+  import Related from './tabs/Related.svelte';
   import Variants from '../Variants/Variants.svelte';
   import SEO from './tabs/SEO.svelte';
   import Files from './tabs/Files.svelte';
@@ -8,7 +9,6 @@
   import { useParams } from 'svelte-navigator';
   import Form from '../../DynamicFields/Form.svelte';
   import { ProductsService } from '../services/products/products.service';
-  import { Datepicker, Label, Helper } from 'flowbite-svelte';
   import { onMount } from 'svelte';
   import { AppService } from '../../Shared/app.service';
   import type { IDynamicFieldConfigBlueprint } from '../../DynamicFields/types';
@@ -131,9 +131,14 @@
     <TabItem title="Properties" tabStyle="custom" {customActiveClass} {customInActiveClass}>
       <p class="text-sm text-gray-500 dark:text-gray-400">Tab Content 6</p>
     </TabItem>
+
+    <TabItem title="Related products" tabStyle="custom" {customActiveClass} {customInActiveClass}>
+      <Related />
+    </TabItem>
   </Tabs>
 </Form>
-<div class="mb-12 pb-6"></div>
+<div class="mb-12 pb-6" />
+
 <style>
   .submit-button-wrapper {
     line-height: 54px;
