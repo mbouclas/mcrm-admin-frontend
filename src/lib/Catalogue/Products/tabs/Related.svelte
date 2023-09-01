@@ -18,11 +18,15 @@
 
   onMount(async () => {
     model = await s.findOne($params.id, ['*']);
-    console.log(model);
   });
 
   async function relate(name: string, value: any) {
-    await s.relate($params.id, value);
+    await s.relate($params.id, value, 'relate');
+    model = await s.findOne($params.id, ['*']);
+  }
+
+  async function unrelate(item) {
+    await s.relate($params.id, item.uuid, 'unrelate');
     model = await s.findOne($params.id, ['*']);
   }
 </script>
@@ -52,14 +56,7 @@
               <th
                 scope="col"
                 class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-              >
-                <div class="flex items-center gap-x-3">
-                  <input
-                    type="checkbox"
-                    class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
-                  />
-                </div>
-              </th>
+              />
               <th
                 scope="col"
                 class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
@@ -78,15 +75,15 @@
               >
                 Status
               </th>
-              <th scope="col" class="relative py-3.5 px-4">
-                <span class="sr-only">Edit</span>
-              </th>
 
               <th
                 scope="col"
                 class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
               >
                 Date
+              </th>
+              <th scope="col" class="relative py-3.5 px-4">
+                <span class="sr-only">Edit</span>
               </th>
             </tr>
           </thead>
@@ -104,10 +101,6 @@
               <tr>
                 <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                   <div class="inline-flex items-center gap-x-3">
-                    <input
-                      type="checkbox"
-                      class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
-                    />
                     <a href={`/catalogue/products/${item.uuid}`} class="h-12 w-12">
                       <img src={item.thumb} />
                     </a>
@@ -124,11 +117,22 @@
                   </a>
                 </td>
 
-                <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap"> {item.status}</td>
+                <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap"
+                  >{item.active ? 'Yes' : 'No'}</td
+                >
+
                 <td class="px-4 py-4 text-sm whitespace-nowrap">
                   {formatDate(item.createdAt)}
                 </td>
-                <td class="px-4 py-4 text-sm whitespace-nowrap" />
+                <td class="px-4 py-4 text-sm whitespace-nowrap">
+                  <button
+                    title="Unrelate"
+                    on:click={() => unrelate(item)}
+                    class="text-gray-500 transition-colors duration-200 dark:hover:text-red-500 dark:text-gray-300 hover:text-red-500 focus:outline-none"
+                  >
+                    Unrelate
+                  </button>
+                </td>
               </tr>
             {/each}
           {/if}
