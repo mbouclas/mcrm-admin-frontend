@@ -108,6 +108,9 @@ export class ProductsService extends BaseHttpService {
   }
 
   async relate(sourceUuid: string, destinationUuids: string[], type: string) {
+    const successMessage = type === 'relate' ? 'Related successfully' : 'Unrelated successfully';
+    const errorMessage = type !== 'relate' ? 'Failed to relate' : 'Failed to unrelate';
+
     const res = await super.post(
       `product/manage-relate`,
       {
@@ -115,7 +118,7 @@ export class ProductsService extends BaseHttpService {
         destinationUuids,
         type,
       },
-      { successMessage: 'Related successfully', errorMessage: 'Failed to relate' },
+      { successMessage, errorMessage },
     );
 
     return res;

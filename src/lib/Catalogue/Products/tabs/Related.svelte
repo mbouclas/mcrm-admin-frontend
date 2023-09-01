@@ -1,6 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { Button } from 'flowbite-svelte';
+  import { Trash } from 'svelte-heros-v2';
+
   import ItemSelectorModal from '../../../DynamicFields/fields/item-selector-modal.svelte';
   import { formatDate } from '../../../helpers/dates';
 
@@ -38,11 +40,11 @@
   on:confirm={() => relate()}
   on:select={(e) => (selectedUuids = [...selectedUuids, e.detail.uuid])}
   closeOnSelect={false}
-  label="Select Product"
+  label="Relate Products"
   selectMode="multiple"
 >
   <Button
-    >Select products
+    >Relate products
     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
       ><path fill="currentColor" d="M10 20v-7L2.95 4h18.1L14 13v7h-4Z" /></svg
     >
@@ -128,13 +130,7 @@
                   {formatDate(item.createdAt)}
                 </td>
                 <td class="px-4 py-4 text-sm whitespace-nowrap">
-                  <button
-                    title="Unrelate"
-                    on:click={() => unrelate(item)}
-                    class="text-gray-500 transition-colors duration-200 dark:hover:text-red-500 dark:text-gray-300 hover:text-red-500 focus:outline-none"
-                  >
-                    Unrelate
-                  </button>
+                  <button on:click={() => unrelate(item)} class="text-gray-500"><Trash color="white" /></button>
                 </td>
               </tr>
             {/each}
