@@ -8,6 +8,7 @@
   export let label = 'Select';
   let defaultModal = false;
   export let selectedItem = {};
+  export let skipUuids = [];
   export let selectedItems = [];
   export let selectMode: 'single' | 'multiple' = 'single';
   export let closeOnSelect = false;
@@ -32,7 +33,7 @@
 {/if}
 
 <Modal title={label} bind:open={defaultModal}>
-  <ItemSelector {selectMode} bind:selectedItem bind:selectedItems on:select={onSelect} {config} />
+  <ItemSelector {selectMode} bind:skipUuids bind:selectedItem bind:selectedItems on:select={onSelect} {config} />
   <svelte:fragment slot="footer">
     <Button on:click={() => onConfirm()}>I accept</Button>
     <Button color="alternative">Decline</Button>

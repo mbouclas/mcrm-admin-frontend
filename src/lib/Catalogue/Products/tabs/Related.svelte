@@ -19,6 +19,8 @@
   let loading = false;
   let selectedUuids = [];
 
+  $: skipUuids = model ? [model.uuid, ...model.related.map((r) => r.uuid)] : [];
+
   onMount(async () => {
     model = await s.findOne($params.id, ['*']);
   });
@@ -37,6 +39,7 @@
 
 <ItemSelectorModal
   config={productItemSelectorConfig}
+  {skipUuids}
   on:confirm={() => relate()}
   on:select={(e) => (selectedUuids = [...selectedUuids, e.detail.uuid])}
   closeOnSelect={false}
