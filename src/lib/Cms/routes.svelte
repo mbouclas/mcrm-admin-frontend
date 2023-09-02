@@ -8,7 +8,7 @@
 <Router>
   <Route path="pages/list" component={PageList} />
 
-  <Route path="pages/categories" component={PageCategoriesList} />
+  <Route path="categories" component={PageCategoriesList} />
 
   <Route path="pages/:id" component={Page} let:params />
 </Router>
