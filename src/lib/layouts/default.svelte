@@ -6,6 +6,7 @@
   import About from '../Dashboard/About.svelte';
   import Profile from '../User/Profile.svelte';
   import CatalogueRoutes from '../Catalogue/routes.svelte';
+  import CmsRoutes from '../Cms/routes.svelte';
   import OrderRoutes from '../Order/routes.svelte';
   import CustomerRoutes from '../Customer/routes.svelte';
   import UserRoutes from '../User/routes.svelte';
@@ -95,6 +96,10 @@
 
           <PrivateRoute path="catalogue/*" let:location>
             <CatalogueRoutes />
+          </PrivateRoute>
+
+          <PrivateRoute path="cms/*" let:location>
+            <CmsRoutes />
           </PrivateRoute>
 
           <PrivateRoute path="orders/*" let:location>

@@ -1,4 +1,4 @@
-import type {IItemSelectorConfig} from "../DynamicFields/types";
+import type { IItemSelectorConfig } from '../DynamicFields/types';
 
 export const userItemSelectorConfig: IItemSelectorConfig = {
     apiUrl: 'user',
@@ -6,41 +6,41 @@ export const userItemSelectorConfig: IItemSelectorConfig = {
     labels: [
         {
             field: 'lastName.firstName',
-            label: 'Name'
+            label: 'Name',
         },
         {
             field: 'email',
-            label: 'Email'
+            label: 'Email',
         },
         {
             field: 'active',
             label: 'Active',
-            type: 'boolean'
+            type: 'boolean',
         },
-    ]
+    ],
 };
 
 export const customerItemSelectorConfig: IItemSelectorConfig = {
     apiUrl: 'user',
     module: 'User',
     filters: {
-        isCustomer: true
+        isCustomer: true,
     },
     labels: [
         {
             field: 'lastName.firstName',
-            label: 'Name'
+            label: 'Name',
         },
         {
             field: 'email',
-            label: 'Email'
+            label: 'Email',
         },
         {
             field: 'active',
             label: 'Active',
-            type: 'boolean'
+            type: 'boolean',
         },
-    ]
+    ],
 };
 
 export const productItemSelectorConfig: IItemSelectorConfig = {
@@ -49,11 +49,11 @@ export const productItemSelectorConfig: IItemSelectorConfig = {
     labels: [
         {
             field: 'title',
-            label: 'Title'
+            label: 'Title',
         },
         {
             field: 'sku',
-            label: 'SKU'
+            label: 'SKU',
         },
         {
             field: 'price',
@@ -63,9 +63,9 @@ export const productItemSelectorConfig: IItemSelectorConfig = {
         {
             field: 'active',
             label: 'Active',
-            type: 'boolean'
+            type: 'boolean',
         },
-    ]
+    ],
 };
 
 /**
@@ -83,14 +83,33 @@ export const productCategoryItemSelectorConfig: IItemSelectorConfig = {
     labels: [
         {
             field: 'title',
-            label: 'Title'
+            label: 'Title',
         },
         {
             field: 'active',
             label: 'Active',
-            type: 'boolean'
+            type: 'boolean',
         },
-    ]
+    ],
+};
+
+export const pageCategoryItemSelectorConfig: IItemSelectorConfig = {
+    apiUrl: 'page-category/tree',
+    module: 'PageCategory',
+    labelField: 'title',
+    filter: 'local',
+    isTree: true,
+    labels: [
+        {
+            field: 'title',
+            label: 'Title',
+        },
+        {
+            field: 'active',
+            label: 'Active',
+            type: 'boolean',
+        },
+    ],
 };
 
 export const manufacturerItemSelectorConfig: IItemSelectorConfig = {
@@ -99,14 +118,14 @@ export const manufacturerItemSelectorConfig: IItemSelectorConfig = {
     labels: [
         {
             field: 'title',
-            label: 'Title'
+            label: 'Title',
         },
         {
             field: 'active',
             label: 'Active',
-            type: 'boolean'
+            type: 'boolean',
         },
-    ]
+    ],
 };
 
 export const pageItemSelectorConfig: IItemSelectorConfig = {
@@ -115,12 +134,12 @@ export const pageItemSelectorConfig: IItemSelectorConfig = {
     labels: [
         {
             field: 'title',
-            label: 'Title'
+            label: 'Title',
         },
         {
             field: 'active',
             label: 'Active',
-            type: 'boolean'
+            type: 'boolean',
         },
-    ]
+    ],
 };
