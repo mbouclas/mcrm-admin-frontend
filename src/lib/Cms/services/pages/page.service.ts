@@ -78,7 +78,7 @@ export class PagesService extends BaseHttpService {
   }
 
   async store(data: IGenericObject) {
-    return await super.post('page/basic', data, {
+    return await super.post('page', data, {
       successMessage: 'Created successfully',
       errorMessage: 'Failed to create',
     });
