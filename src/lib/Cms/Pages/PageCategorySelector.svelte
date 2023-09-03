@@ -1,11 +1,11 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { ProductCategoryService } from '../services/products/product-category.service';
+  import { PageCategoryService } from '../services/pages/page-category.service';
   import TreeView from '../../Shared/Tree-Selector.svelte';
   import Loading from '../../Shared/Loading.svelte';
 
   import { createEventDispatcher } from 'svelte';
-  import { ProductsService } from '../services/products/products.service';
+  import { PagesService } from '../services/pages/page.service';
   const dispatch = createEventDispatcher();
 
   let items = [],
@@ -13,17 +13,17 @@
   export let model = [];
   export let label = 'Categories';
   export let saveOnSelect = false;
-  export let productId;
+  export let pageId;
 
   onMount(async () => {
-    items = await new ProductCategoryService().tree();
+    items = await new PageCategoryService().tree();
   });
 
   async function onCategorySelection(e) {
     model = e.detail;
     dispatch('selection', e.detail);
     if (saveOnSelect) {
-      await new ProductsService().saveProductCategories(productId, model);
+      await new PagesService().savePageCategories(pageId, model);
     }
   }
 </script>
