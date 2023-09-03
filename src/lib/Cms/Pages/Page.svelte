@@ -92,9 +92,11 @@
     <TabItem open title="General" tabStyle="custom" {customActiveClass} {customInActiveClass}>
       <General {onSubmit} {fields} {model} />
     </TabItem>
-    <TabItem title="Related products" tabStyle="custom" {customActiveClass} {customInActiveClass}>
-      <Related />
-    </TabItem>
+    {#if $params.id !== 'new'}
+      <TabItem title="Related products" tabStyle="custom" {customActiveClass} {customInActiveClass}>
+        <Related />
+      </TabItem>
+    {/if}
   </Tabs>
 </Form>
 <div class="mb-12 pb-6" />

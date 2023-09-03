@@ -129,10 +129,10 @@
           <SidebarDropdownItem
             aClass={btnClass + ' pl-11'}
             label="Pages"
-            href="/cms/pages"
+            href="/cms/pages/list"
             on:click={(e) => {
               e.preventDefault();
-              navigate('/cms/pages');
+              navigate('/cms/pages/list');
             }}
           />
           <SidebarDropdownItem

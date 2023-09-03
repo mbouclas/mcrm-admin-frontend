@@ -23,6 +23,7 @@
 
   onMount(async () => {
     model = await s.findOne($params.id, ['*']);
+    console.log(model);
   });
 
   async function relate() {
@@ -69,12 +70,6 @@
                 scope="col"
                 class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
               >
-                SKU
-              </th>
-              <th
-                scope="col"
-                class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-              >
                 Title
               </th>
               <th
@@ -113,11 +108,6 @@
                       <img src={item.thumb} />
                     </a>
                   </div>
-                </td>
-                <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                  <a href={`/cms/pages/${item.uuid}`} class="hover:underline">
-                    {item.sku}
-                  </a>
                 </td>
                 <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                   <a href={`/cms/pages/${item.uuid}`} class="hover:underline">

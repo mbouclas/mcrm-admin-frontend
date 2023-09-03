@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { IDynamicFieldConfigBlueprint } from '../../../DynamicFields/types';
+  import { Button, Modal } from 'flowbite-svelte';
   import Fields from '../../../DynamicFields/Renderer.svelte';
   import Loading from '../../../Shared/Loading.svelte';
   import Input from '../../../DynamicFields/fields/input.svelte';
@@ -8,11 +9,17 @@
   import Image from '../../../DynamicFields/fields/image.svelte';
   import PageCategorySelector from '../PageCategorySelector.svelte';
   import Tags from '../PageCategoriesTags.svelte';
+  import { Trash } from 'svelte-heros-v2';
+  import { navigate } from 'svelte-navigator';
+  import { PagesService } from '../../services/pages/page.service';
 
   export let fields: IDynamicFieldConfigBlueprint[] = [];
   export let model;
   let mainFields = [];
   let secondaryFields = [];
+  let deletePageModalOpen = false;
+
+  const s = new PagesService();
 
   export let onSubmit: (data: any) => void;
 
@@ -31,6 +38,15 @@
     return fields.find((field) => field.varName === name);
   }
 
+  const handleDeleteModalOpen = () => {
+    deletePageModalOpen = true;
+  };
+
+  const deletePage = async () => {
+    await s.deleteRow(model.uuid);
+    navigate('/cms/pages/list');
+  };
+
   function getSlug(e, value) {
     model.slug = value
       .toLowerCase()
@@ -39,10 +55,28 @@
   }
 </script>
 
+<Modal title="Confirm delete gate" bind:open={deletePageModalOpen} autoclose outsideclose>
+  <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+    Are you sure you want to <span class="text-lg font-bold">permanently delete</span>
+    page
+    <span class="text-lg font-bold">{model.title}</span>?
+  </p>
+  <svelte:fragment slot="footer">
+    <Button on:click={() => deletePage()}>Confirm</Button>
+    <Button color="alternative">Cancel</Button>
+  </svelte:fragment>
+</Modal>
+
 {#if !model}<Loading /> {/if}
 {#if model}
   <!--{JSON.stringify(model)}-->
   <!--{JSON.stringify(model.categories)}-->
+
+  <div class="flex items-center w-40">
+    {#if true}
+      <button on:click={() => handleDeleteModalOpen()} class="text-gray-500"><Trash color="white" /></button>
+    {/if}
+  </div>
 
   <form>
     <div class="grid md:grid-cols-2 md:gap-6">
