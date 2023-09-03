@@ -205,13 +205,13 @@
                     type="checkbox"
                     class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
                   />
-                  <a href={`/catalogue/pages/${item.uuid}`} class="h-12 w-12">
+                  <a href={`/cms/pages/${item.uuid}`} class="h-12 w-12">
                     <img src={item.thumb} />
                   </a>
                 </div>
               </td>
               <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                <a href={`/catalogue/pages/${item.uuid}`} class="hover:underline">
+                <a href={`/cms/pages/${item.uuid}`} class="hover:underline">
                   {item.title}
                 </a>
               </td>

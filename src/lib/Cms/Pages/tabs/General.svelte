@@ -39,8 +39,6 @@
       .replace(/ /g, '-')
       .replace(/[^\w-]+/g, '');
   }
-
-  function onCategorySelected(e) {}
 </script>
 
 {#if !model}<Loading /> {/if}
@@ -63,8 +61,7 @@
             bind:model={model.pageCategory}
             label="Categories"
             pageId={model.uuid}
-            saveOnSelect={true}
-            on:selection={onCategorySelected}
+            saveOnSelect={false}
           />
         </div>
       </div>

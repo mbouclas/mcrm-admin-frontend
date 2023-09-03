@@ -50,7 +50,6 @@
   });
 
   const onSubmit = async (data) => {
-    console.log('evo gaaa');
     if ($params.id === 'new') {
       await s.store(data);
       return null;
