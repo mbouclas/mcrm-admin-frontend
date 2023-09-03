@@ -57,34 +57,12 @@
     await s.update($params.id, data);
   };
 
-  let contentDivClass = 'p-4 bg-[#2a3042] rounded-lg dark:bg-gray-800';
   let customActiveClass =
     'inline-block p-4 text-white rounded-t-lg border-b-2 border-white active dark:text-white-500 dark:border-white-500';
   let customInActiveClass =
     'inline-block p-4 rounded-t-lg border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300';
 
-  //We need this to reflect model changes that are not passed down the event bubble
-  function handleModelChange(key: string, e) {
-    model[key] = e.detail;
-  }
-
-  import isEmpty from '../../helpers/isEmpty';
-
-  let errors = {};
   let hasError = false;
-
-  function validateModel() {
-    Object.keys(model).map((key) => {
-      if (isEmpty(model[key])) {
-        hasError = true;
-        errors[key] = true;
-      } else {
-        errors[key] = false;
-      }
-    });
-
-    return !hasError;
-  }
 </script>
 
 <Form bind:model {hasError}>

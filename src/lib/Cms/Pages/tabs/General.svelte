@@ -69,10 +69,7 @@
 
 {#if !model}<Loading /> {/if}
 {#if model}
-  <!--{JSON.stringify(model)}-->
-  <!--{JSON.stringify(model.categories)}-->
-
-  <div class="flex items-center w-40">
+  <div class="flex w-full pb-5 pr-3 justify-end">
     {#if true}
       <button on:click={() => handleDeleteModalOpen()} class="text-gray-500"><Trash color="white" /></button>
     {/if}
