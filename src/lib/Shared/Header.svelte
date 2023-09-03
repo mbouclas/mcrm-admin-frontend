@@ -13,6 +13,9 @@
   import Drawer from 'svelte-drawer-component';
 
   import { user } from '../stores';
+  import { AuthService } from '../Auth/auth.service';
+
+  let hasGateUsersRole = AuthService.hasGate('users.menu.roles');
 
   const navigate = useNavigate();
   function handleLogout(e) {
@@ -280,18 +283,19 @@
           navigate('/users/list');
         }}
       />
-
-      <SidebarItem
-        {aClass}
-        label="Roles"
-        {spanClass}
-        icon={{ name: InboxArrowDown }}
-        href="/roles/list"
-        on:click={(e) => {
-          e.preventDefault();
-          navigate('/roles/list');
-        }}
-      />
+      {#if hasGateUsersRole}
+        <SidebarItem
+          {aClass}
+          label="Roles"
+          {spanClass}
+          icon={{ name: InboxArrowDown }}
+          href="/roles/list"
+          on:click={(e) => {
+            e.preventDefault();
+            navigate('/roles/list');
+          }}
+        />
+      {/if}
 
       <SidebarItem
         {aClass}
