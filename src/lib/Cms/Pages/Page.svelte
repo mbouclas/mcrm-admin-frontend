@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Tabs, TabItem, Button } from 'flowbite-svelte';
   import General from './tabs/General.svelte';
+  import Related from './tabs/Related.svelte';
 
   import { useParams } from 'svelte-navigator';
   import Form from '../../DynamicFields/Form.svelte';
@@ -107,6 +108,9 @@
   <Tabs tabStyle="underline" class="mb-4">
     <TabItem open title="General" tabStyle="custom" {customActiveClass} {customInActiveClass}>
       <General {fields} {model} />
+    </TabItem>
+    <TabItem title="Related products" tabStyle="custom" {customActiveClass} {customInActiveClass}>
+      <Related />
     </TabItem>
   </Tabs>
 </Form>
