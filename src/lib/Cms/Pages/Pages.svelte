@@ -60,8 +60,11 @@
 
   async function toggleStatus(uuid: string) {
     const foundIndex = items.data.findIndex((i) => i.uuid === uuid);
+    const newActive = !items.data[foundIndex].active;
 
-    items.data[foundIndex].active = !items.data[foundIndex].active;
+    await service.update(uuid, { active: newActive });
+
+    items.data[foundIndex].active = newActive;
   }
 
   async function deleteItem(uuid: string) {}

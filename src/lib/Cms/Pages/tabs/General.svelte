@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { IDynamicFieldConfigBlueprint } from '../../../DynamicFields/types';
-  import { Button, Modal } from 'flowbite-svelte';
+  import { Button, Modal, Toggle } from 'flowbite-svelte';
   import Fields from '../../../DynamicFields/Renderer.svelte';
   import Loading from '../../../Shared/Loading.svelte';
   import Input from '../../../DynamicFields/fields/input.svelte';
@@ -22,6 +22,12 @@
   const s = new PagesService();
 
   export let onSubmit: (data: any) => void;
+
+  async function toggleStatus() {
+    const newActive = !model.active;
+    await s.update(model.uuid, { active: newActive });
+    model.active = newActive;
+  }
 
   $: {
     fields.forEach((field) => {
@@ -70,6 +76,14 @@
 {#if !model}<Loading /> {/if}
 {#if model}
   <div class="flex w-full pb-5 pr-3 justify-end">
+    <div class="flex items-center w-20">
+      <span
+        >{model.active ? 'Active' : 'Inactive'}<span>
+          <Toggle on:click={(e) => toggleStatus()} color="green" checked={model.active} />
+        </span></span
+      >
+    </div>
+
     {#if true}
       <button on:click={() => handleDeleteModalOpen()} class="text-gray-500"><Trash color="white" /></button>
     {/if}
