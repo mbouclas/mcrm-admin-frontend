@@ -9,9 +9,9 @@
   import { Button } from 'flowbite-svelte';
   import { pageCategoryItemSelectorConfig } from '../../Shared/item-selector-configs';
   import Paginator from '../../Shared/Paginator.svelte';
-  import { moneyFormat } from '../../helpers/money';
   import Modal from '../../Shared/Modal.svelte';
   import CustomFilters from '../../Shared/CustomFilters.svelte';
+  import { navigate } from 'svelte-navigator';
 
   let showModal = false;
 
@@ -38,7 +38,7 @@
     items.data = [];
 
     loading = true;
-    items = await service.find(filters, ['category', 'variants']);
+    items = await service.find(filters, ['category']);
 
     loading = false;
   }
@@ -110,6 +110,8 @@
 </div>
 
 <div class="flex items-center justify-center p-4 space-x-4">
+  <button on:click={() => navigate('/cms/pages/new')} class="bg-green-500 rounded p-2">Add page</button>
+
   {#each appliedFilters as filter}
     <button>{filter.name}</button>
   {/each}
@@ -135,14 +137,6 @@
                     class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
                   />
                 </div>
-              </th>
-              <th
-                scope="col"
-                class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-              >
-                <SortButton name="sku" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
-                  >SKU</SortButton
-                >
               </th>
               <th
                 scope="col"
@@ -178,20 +172,6 @@
                     >
                   </Button>
                 </ItemSelectorModal>
-              </th>
-              <th
-                scope="col"
-                class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-              >
-                #Variants
-              </th>
-              <th
-                scope="col"
-                class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-              >
-                <SortButton name="price" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
-                  >Price</SortButton
-                >
               </th>
 
               <th
@@ -229,11 +209,6 @@
                     <img src={item.thumb} />
                   </a>
                 </div>
-              </td>
-              <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                <a href={`/catalogue/pages/${item.uuid}`} class="hover:underline">
-                  {item.sku}
-                </a>
               </td>
               <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                 <a href={`/catalogue/pages/${item.uuid}`} class="hover:underline">
@@ -284,12 +259,6 @@
                     {/if}
                   {/each}
                 </div>
-              </td>
-              <td class="px-4 py-4 text-sm whitespace-nowrap text-center">
-                {item.variants.length}
-              </td>
-              <td class="px-4 py-4 text-sm whitespace-nowrap text-center">
-                {moneyFormat(item.price)}
               </td>
               <td class="px-4 py-4 text-sm whitespace-nowrap">
                 {formatDate(item.createdAt)}
