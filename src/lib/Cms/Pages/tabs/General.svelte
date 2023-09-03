@@ -16,8 +16,6 @@
 
   export let onSubmit: (data: any) => void;
 
-  // console.log(fields);
-
   $: {
     fields.forEach((field) => {
       if (!field.group || field.group === 'main') {
@@ -82,12 +80,10 @@
 
         <div class="pt-6">
           <h3>Tags</h3>
-          <Tags bind:model={model.tag} itemId={model.uuid} saveOnAction={true} />
+          <Tags bind:model={model.tag} itemId={model.uuid} saveOnAction={false} />
         </div>
       </div>
     </div>
-
-    <button type="submit" class="hidden">Submit</button>
   </form>
 
   <div

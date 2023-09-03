@@ -85,24 +85,7 @@
 
     return !hasError;
   }
-
-  function onNativeSubmit(e) {
-    e.preventDefault();
-    //if (e.currentTarget.checkValidity() && onSubmit && validateModel()) {
-    onSubmit(model);
-    //}
-  }
-
-  // User selected a new thumbnail, update the model
-  function onThumbnailSet(e) {
-    model.images.push(model.thumb);
-    model.thumb = e.detail;
-  }
 </script>
-
-<!-- {JSON.stringify(model)} -->
-
-<!-- <Modals /> -->
 
 <Form bind:model {hasError}>
   <Tabs tabStyle="underline" class="mb-4">
@@ -115,10 +98,3 @@
   </Tabs>
 </Form>
 <div class="mb-12 pb-6" />
-
-<style>
-  .submit-button-wrapper {
-    line-height: 54px;
-    margin-left: auto;
-  }
-</style>
