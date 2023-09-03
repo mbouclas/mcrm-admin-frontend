@@ -14,7 +14,7 @@
   let mainFields = [];
   let secondaryFields = [];
 
-  // export let onSubmit: (data: any) => void;
+  export let onSubmit: (data: any) => void;
 
   // console.log(fields);
 
@@ -98,6 +98,7 @@
   >
     <div class="grid h-full max-w-lg grid-cols-1 mx-auto font-medium">
       <button
+        on:click={() => onSubmit(model)}
         type="button"
         class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group"
       >
