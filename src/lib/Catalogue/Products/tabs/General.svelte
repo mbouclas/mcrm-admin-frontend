@@ -70,7 +70,7 @@
 
   const deletePage = async () => {
     await s.deleteRow(model.uuid);
-    navigate('/cms/pages/list');
+    navigate('/catalogue/products/list');
   };
 </script>
 
