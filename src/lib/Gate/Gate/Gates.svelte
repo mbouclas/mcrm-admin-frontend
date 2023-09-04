@@ -212,7 +212,7 @@
     </li>
 
     <li>
-      <button on:click={() => {}} class="bg-blue-500 rounded p-2">Filters</button>
+      <button on:click={() => (showModal = true)} class="bg-blue-500 rounded p-2">Filters</button>
     </li>
     <li>
       <button on:click={reset} class="bg-red-500 rounded p-2">Reset Filters</button>

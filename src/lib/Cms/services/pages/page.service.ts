@@ -3,41 +3,41 @@ import type { IGenericObject } from '../../../Shared/models/generic';
 import queryString from 'query-string';
 import { html } from 'gridjs';
 
-export class ProductsService extends BaseHttpService {
+export class PagesService extends BaseHttpService {
   async activateRows(selectedIds: string[]) {
-    // return await super.post('/product/activate', { selectedIds });
+    // return await super.post('/page/activate', { selectedIds });
     return true;
   }
 
   async activateRow(itemId: string) {
-    // return await super.patch('/product/activate', { itemId });
+    // return await super.patch('/page/activate', { itemId });
     return true;
   }
 
   async de_activateRows(selectedIds: string[]) {
-    // return await super.post('/product/de-activate', { selectedIds });
+    // return await super.post('/page/de-activate', { selectedIds });
     return true;
   }
 
   async de_activateRow(itemId: string) {
-    // return await super.patch('/product/de-activate', { itemId });
+    // return await super.patch('/page/de-activate', { itemId });
     return true;
   }
 
   async deleteRows(selectedIds: string[]) {
-    // return await super.post('/product/delete', { selectedIds });
+    // return await super.post('/page/delete', { selectedIds });
     return true;
   }
 
   async deleteRow(itemId: string) {
-    return await super.delete(`product/${itemId}`, {
+    return await super.delete(`page/${itemId}`, {
       successMessage: 'Deleted successfully',
       errorMessage: 'Failed to delete',
     });
   }
 
   getGridUrl(filters = {}) {
-    return super.getGridUrl('product', filters, (res) => {
+    return super.getGridUrl('page', filters, (res) => {
       return res.data.map((row) => [
         row.uuid,
         html(`<a href='${row.uuid}'>${row.title}</a>`),
@@ -52,7 +52,7 @@ export class ProductsService extends BaseHttpService {
 
   async findOne(uuid: string, relationships: string[] = []) {
     const filters = relationships.length > 0 ? { with: relationships } : {};
-    return await this.get(`product/${uuid}`, filters);
+    return await this.get(`page/${uuid}`, filters);
   }
 
   async find(filters: IGenericObject = {}, relationships: string[] = []) {
@@ -67,11 +67,11 @@ export class ProductsService extends BaseHttpService {
         : relationships.map((r) => `with[]=${r}`).join('&');
     }
 
-    return await this.get(`product${qs ? `?${qs}` : ''}`);
+    return await this.get(`page${qs ? `?${qs}` : ''}`);
   }
 
   async update(id: string, data: IGenericObject) {
-    return await this.patch(`product/${id}`, data, {
+    return await this.patch(`page/${id}`, data, {
       successMessage: 'Updated successfully',
       errorMessage: 'Failed to update',
     });
@@ -79,7 +79,7 @@ export class ProductsService extends BaseHttpService {
 
   async store(data: IGenericObject) {
     return await super.post(
-      'product',
+      'page',
       { ...data, active: true },
       {
         successMessage: 'Created successfully',
@@ -88,18 +88,18 @@ export class ProductsService extends BaseHttpService {
     );
   }
 
-  async generateVariants(productId: string, data) {
-    return await super.post(`product/${productId}/generate-variants`, data, {
+  async generateVariants(pageId: string, data) {
+    return await super.post(`page/${pageId}/generate-variants`, data, {
       successMessage: 'Created successfully',
       errorMessage: 'Failed to create',
     });
   }
 
-  async checkDuplicateVariants(productId: string, data) {
+  async checkDuplicateVariants(pageId: string, data) {
     const propertyValues = data.propertyValues.map((val) => `propertyValues[]=${encodeURIComponent(val)}`).join('&');
 
     return await super.get(
-      `product/${productId}/check-duplicate-variants?${propertyValues}`,
+      `page/${pageId}/check-duplicate-variants?${propertyValues}`,
       {},
       {
         errorMessage: 'Failed to check duplicate',
@@ -107,8 +107,8 @@ export class ProductsService extends BaseHttpService {
     );
   }
 
-  async saveProductCategories(productId: string, categories: IGenericObject[]) {
-    const res = await super.patch(`product/${productId}/productCategories`, categories);
+  async savePageCategories(pageId: string, categories: IGenericObject[]) {
+    const res = await super.patch(`page/${pageId}/pageCategories`, categories);
   }
 
   async relate(sourceUuid: string, destinationUuids: string[], type: string) {
@@ -116,7 +116,7 @@ export class ProductsService extends BaseHttpService {
     const errorMessage = type !== 'relate' ? 'Failed to relate' : 'Failed to unrelate';
 
     const res = await super.post(
-      `product/manage-relate`,
+      `page/manage-relate`,
       {
         sourceUuid,
         destinationUuids,

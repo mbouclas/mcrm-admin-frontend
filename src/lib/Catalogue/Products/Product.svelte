@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Tabs, TabItem, Button } from 'flowbite-svelte';
   import General from './tabs/General.svelte';
+  import Related from './tabs/Related.svelte';
   import Variants from '../Variants/Variants.svelte';
   import SEO from './tabs/SEO.svelte';
   import Files from './tabs/Files.svelte';
@@ -8,7 +9,6 @@
   import { useParams } from 'svelte-navigator';
   import Form from '../../DynamicFields/Form.svelte';
   import { ProductsService } from '../services/products/products.service';
-  import { Datepicker, Label, Helper } from 'flowbite-svelte';
   import { onMount } from 'svelte';
   import { AppService } from '../../Shared/app.service';
   import type { IDynamicFieldConfigBlueprint } from '../../DynamicFields/types';
@@ -31,6 +31,14 @@
       } else {
         model = await s.findOne($params.id, ['*']);
       }
+    }
+
+    if (!model.description) {
+      model.description = '';
+    }
+
+    if (!model.description_long) {
+      model.description_long = '';
     }
 
     if (!model.thumb) {
@@ -71,31 +79,10 @@
     model[key] = e.detail;
   }
 
-  import isEmpty from '../../helpers/isEmpty';
   import Gallery from './tabs/Gallery.svelte';
 
   let errors = {};
   let hasError = false;
-
-  function validateModel() {
-    Object.keys(model).map((key) => {
-      if (isEmpty(model[key])) {
-        hasError = true;
-        errors[key] = true;
-      } else {
-        errors[key] = false;
-      }
-    });
-
-    return !hasError;
-  }
-
-  function onNativeSubmit(e) {
-    e.preventDefault();
-    //if (e.currentTarget.checkValidity() && onSubmit && validateModel()) {
-    onSubmit(model);
-    //}
-  }
 
   // User selected a new thumbnail, update the model
   function onThumbnailSet(e) {
@@ -111,7 +98,7 @@
 <Form bind:model {hasError}>
   <Tabs tabStyle="underline" class="mb-4">
     <TabItem open title="General" tabStyle="custom" {customActiveClass} {customInActiveClass}>
-      <General {fields} {model} />
+      <General {onSubmit} {fields} {model} />
     </TabItem>
     <TabItem title="Gallery" tabStyle="custom" {customActiveClass} {customInActiveClass}>
       <Gallery model={model.images} itemId={model.uuid} module="Product" on:thumbnailSet={onThumbnailSet} />
@@ -131,9 +118,14 @@
     <TabItem title="Properties" tabStyle="custom" {customActiveClass} {customInActiveClass}>
       <p class="text-sm text-gray-500 dark:text-gray-400">Tab Content 6</p>
     </TabItem>
+
+    <TabItem title="Related products" tabStyle="custom" {customActiveClass} {customInActiveClass}>
+      <Related />
+    </TabItem>
   </Tabs>
 </Form>
-<div class="mb-12 pb-6"></div>
+<div class="mb-12 pb-6" />
+
 <style>
   .submit-button-wrapper {
     line-height: 54px;

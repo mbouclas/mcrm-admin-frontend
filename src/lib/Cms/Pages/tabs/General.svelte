@@ -1,19 +1,25 @@
 <script lang="ts">
   import type { IDynamicFieldConfigBlueprint } from '../../../DynamicFields/types';
-  import { Button, Toggle, Modal } from 'flowbite-svelte';
+  import { Button, Modal, Toggle } from 'flowbite-svelte';
+  import RichText from '../../../DynamicFields/fields/richtext.svelte';
   import Fields from '../../../DynamicFields/Renderer.svelte';
   import Loading from '../../../Shared/Loading.svelte';
   import Input from '../../../DynamicFields/fields/input.svelte';
-  import { Trash } from 'svelte-heros-v2';
-  import Number from '../../../DynamicFields/fields/number-input.svelte';
-  import RichText from '../../../DynamicFields/fields/richtext.svelte';
   import Image from '../../../DynamicFields/fields/image.svelte';
-  import ProductCategorySelector from '../ProductCategorySelector.svelte';
-  import Tags from '../ProductCategoriesTags.svelte';
-  import { ProductsService } from '../../services/products/products.service';
+  import PageCategorySelector from '../PageCategorySelector.svelte';
+  import Tags from '../PageCategoriesTags.svelte';
+  import { Trash } from 'svelte-heros-v2';
   import { navigate } from 'svelte-navigator';
+  import { PagesService } from '../../services/pages/page.service';
 
-  const s = new ProductsService();
+  export let fields: IDynamicFieldConfigBlueprint[] = [];
+  export let model;
+  let mainFields = [];
+  let secondaryFields = [];
+  let deletePageModalOpen = false;
+  let loading = false;
+
+  const s = new PagesService();
 
   export let onSubmit: (data: any) => void;
 
@@ -32,16 +38,6 @@
     model.active = newActive;
   }
 
-  export let fields: IDynamicFieldConfigBlueprint[] = [];
-  export let model;
-  let mainFields = [];
-  let secondaryFields = [];
-  let deleteProductModalOpen = false;
-  let loading = false;
-  // export let onSubmit: (data: any) => void;
-
-  // console.log(fields);
-
   $: {
     fields.forEach((field) => {
       if (!field.group || field.group === 'main') {
@@ -57,27 +53,27 @@
     return fields.find((field) => field.varName === name);
   }
 
+  const handleDeleteModalOpen = () => {
+    deletePageModalOpen = true;
+  };
+
+  const deletePage = async () => {
+    await s.deleteRow(model.uuid);
+    navigate('/cms/pages/list');
+  };
+
   function getSlug(e, value) {
     model.slug = value
       .toLowerCase()
       .replace(/ /g, '-')
       .replace(/[^\w-]+/g, '');
   }
-
-  const handleDeleteModalOpen = () => {
-    deleteProductModalOpen = true;
-  };
-
-  const deletePage = async () => {
-    await s.deleteRow(model.uuid);
-    navigate('/catalogue/products/list');
-  };
 </script>
 
-<Modal title="Confirm delete product" bind:open={deleteProductModalOpen} autoclose outsideclose>
+<Modal title="Confirm delete page" bind:open={deletePageModalOpen} autoclose outsideclose>
   <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
     Are you sure you want to <span class="text-lg font-bold">permanently delete</span>
-    product
+    page
     <span class="text-lg font-bold">{model.title}</span>?
   </p>
   <svelte:fragment slot="footer">
@@ -114,19 +110,11 @@
           onChange={getSlug}
           field={getField('title')}
         />
-        <div class="grid md:grid-cols-2 md:gap-6">
-          <div class="relative z-0 w-full mb-6 group">
-            <Input bind:model={model.sku} placeholder="SKU" label="SKU" field={getField('sku')} />
-          </div>
-          <div class="relative z-0 w-full mb-6 group">
-            <Number bind:model={model.price} placeholder="Price" label="Price" field={getField('price')} />
-          </div>
-        </div>
         <div class="relative z-0 w-full mb-6 group">
-          <ProductCategorySelector
-            bind:model={model.productCategory}
+          <PageCategorySelector
+            bind:model={model.pageCategory}
             label="Categories"
-            productId={model.uuid}
+            pageId={model.uuid}
             saveOnSelect={false}
           />
         </div>
@@ -137,7 +125,7 @@
             model={model.thumb}
             title="Main Image"
             maxNumberOfFiles={1}
-            module="Product"
+            module="Page"
             itemId={model.uuid}
             type="main"
             on:allUploadsComplete={(e) => {
@@ -199,6 +187,6 @@
   </div>
 
   <div class="w-full p-2 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <Fields fields={secondaryFields} bind:model module="Product" itemId={model.uuid} />
+    <Fields fields={secondaryFields} bind:model module="Page" itemId={model.uuid} />
   </div>
 {/if}

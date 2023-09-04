@@ -1,15 +1,14 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import type { IPagination } from '../../Shared/models/generic';
-  import { ProductsService } from '../services/products/products.service';
+  import { PagesService } from '../services/pages/page.service';
   import SortButton from '../../Shared/SortTableHeadButton.svelte';
   import Loading from '../../Shared/Loading.svelte';
   import { formatDate } from '../../helpers/dates';
   import ItemSelectorModal from '../../DynamicFields/fields/item-selector-modal.svelte';
   import { Button } from 'flowbite-svelte';
-  import { productCategoryItemSelectorConfig } from '../../Shared/item-selector-configs';
+  import { pageCategoryItemSelectorConfig } from '../../Shared/item-selector-configs';
   import Paginator from '../../Shared/Paginator.svelte';
-  import { moneyFormat } from '../../helpers/money';
   import Modal from '../../Shared/Modal.svelte';
   import CustomFilters from '../../Shared/CustomFilters.svelte';
   import { navigate } from 'svelte-navigator';
@@ -19,7 +18,7 @@
   let items = {
     data: [],
   } as IPagination<any>;
-  const service = new ProductsService();
+  const service = new PagesService();
   const defaultFilters = {
     limit: 12,
     page: 1,
@@ -39,7 +38,7 @@
     items.data = [];
 
     loading = true;
-    items = await service.find(filters, ['productCategory', 'variants']);
+    items = await service.find(filters, ['pageCategory']);
 
     loading = false;
   }
@@ -106,15 +105,15 @@
 </Modal>
 
 <div class="px-4 mx-auto max-w-screen-xl">
-  <div class="mx-auto max-w-screen-sm text-center lg:mb-16 mb-8">
+  <div class="mx-auto max-w-screen-sm text-center lg:mb-16">
     <h2 class="mb-4 text-xl lg:text-2xl tracking-tight font-extrabold text-gray-900 dark:text-white">
-      {items.total} Products
+      {items.total} Pages
     </h2>
   </div>
 </div>
 
-<div class="flex items-center justify-center p-4 space-x-4">
-  <button on:click={() => navigate('/catalogue/products/new')} class="bg-green-500 rounded p-2">Add page</button>
+<div class="flex items-center justify-center space-x-4">
+  <button on:click={() => navigate('/cms/pages/new')} class="bg-green-500 rounded p-2">Add page</button>
 
   {#each appliedFilters as filter}
     <button>{filter.name}</button>
@@ -146,14 +145,6 @@
                 scope="col"
                 class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
               >
-                <SortButton name="sku" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
-                  >SKU</SortButton
-                >
-              </th>
-              <th
-                scope="col"
-                class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-              >
                 <SortButton name="title" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
                   >Title</SortButton
                 >
@@ -171,7 +162,7 @@
                 class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
               >
                 <ItemSelectorModal
-                  config={productCategoryItemSelectorConfig}
+                  config={pageCategoryItemSelectorConfig}
                   on:select={(e) => setFilter('category', e.detail.uuid)}
                   closeOnSelect={true}
                   label="Select Customer"
@@ -184,20 +175,6 @@
                     >
                   </Button>
                 </ItemSelectorModal>
-              </th>
-              <th
-                scope="col"
-                class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-              >
-                #Variants
-              </th>
-              <th
-                scope="col"
-                class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-              >
-                <SortButton name="price" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
-                  >Price</SortButton
-                >
               </th>
 
               <th
@@ -227,21 +204,16 @@
                     type="checkbox"
                     class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
                   />
-                  <a href={`/catalogue/products/${item.uuid}`} class="h-12 w-12">
-                    <img src={item?.thumb?.url || item?.thumb} />
+                  <a href={`/cms/pages/${item.uuid}`} class="h-12 w-12">
+                    <img src={item.thumb.url} />
                   </a>
                 </div>
               </td>
               <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                 <a
-                  href={`/catalogue/products/${item.uuid}`}
                   class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer"
+                  href={`/cms/pages/${item.uuid}`}
                 >
-                  {item.sku}
-                </a>
-              </td>
-              <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                <a href={`/catalogue/products/${item.uuid}`} class="hover:underline">
                   {item.title}
                 </a>
               </td>
@@ -282,19 +254,13 @@
               </td>
               <td class="px-4 py-4 text-sm whitespace-nowrap text-center">
                 <div class="flex items-center gap-x-6">
-                  {#each item.productCategory as category, idx}
+                  {#each item.pageCategory as category, idx}
                     <button on:click={setFilter.bind(this, 'category', category.uuid)}>{category.title}</button>
-                    {#if idx < item.productCategory.length - 1}
+                    {#if idx < item.pageCategory.length - 1}
                       ,
                     {/if}
                   {/each}
                 </div>
-              </td>
-              <td class="px-4 py-4 text-sm whitespace-nowrap text-center">
-                {item.variants.length}
-              </td>
-              <td class="px-4 py-4 text-sm whitespace-nowrap text-center">
-                {moneyFormat(item.price)}
               </td>
               <td class="px-4 py-4 text-sm whitespace-nowrap">
                 {formatDate(item.createdAt)}

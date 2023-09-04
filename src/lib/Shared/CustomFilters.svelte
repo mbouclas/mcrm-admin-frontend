@@ -66,39 +66,39 @@
   {#if filterByDate}
     <div>
       <Label class="mb-2 text-2xl flowbite-modal-title">Choose date</Label>
-      <div class="flex flex-col gap-1">
+      <div class="flex gap-1">
         <button
-          class="bg-blue-500 rounded p-2"
+          class="bg-blue-500 min-w-[100px] rounded p-2"
           on:click={() => {
             openDatePicker = true;
             showDatePicker = 'from';
           }}>From</button
         >
         <button
-          class="bg-blue-500 rounded p-2"
+          class="bg-blue-500 min-w-[100px] rounded p-2"
           on:click={() => {
             openDatePicker = true;
             showDatePicker = 'to';
           }}>To</button
         >
-        {#if fromDate || toDate}
-          <Label class="mb-2 text-2xl flowbite-modal-title">Dates</Label>
-        {/if}
-        <p>
-          {#if fromDate}
-            <div class="bg-gray-700 rounded p-1 text-center flowbite-modal-title">
-              From: {new Date(fromDate).toDateString()}
-            </div>
-          {/if}
-        </p>
-        <p>
-          {#if toDate}
-            <div class="bg-gray-700 rounded p-1 text-center flowbite-modal-title">
-              To: {new Date(toDate).toDateString()}
-            </div>
-          {/if}
-        </p>
       </div>
+      {#if fromDate || toDate}
+        <Label class="my-2 text-2xl flowbite-modal-title">Dates</Label>
+      {/if}
+      <p class="py-1">
+        {#if fromDate}
+          <div class="bg-gray-700 rounded p-1 text-center flowbite-modal-title">
+            From: {new Date(fromDate).toDateString()}
+          </div>
+        {/if}
+      </p>
+      <p class="py-1">
+        {#if toDate}
+          <div class="bg-gray-700 rounded p-1 text-center flowbite-modal-title">
+            To: {new Date(toDate).toDateString()}
+          </div>
+        {/if}
+      </p>
 
       <Modal bind:showModal={openDatePicker}>
         <div class="flowbite-modal-title" slot="header">Pick Date</div>
