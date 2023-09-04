@@ -33,7 +33,6 @@
   $: {
     dispatch('change', category);
   }
-  $: console.log(category);
 
   let fields: IDynamicFieldConfigBlueprint[] = [
     { type: 'text', varName: 'title', label: 'Title', placeholder: 'Title' },
@@ -97,6 +96,7 @@
       />
     </div>
 
+    <p class="mt-5 pb-1 font-bold">SEO</p>
     <Fields {fields} model={category?.seo} module="Product" itemId={category.uuid} on:change={handleSeoChange} />
   </div>
 {/if}

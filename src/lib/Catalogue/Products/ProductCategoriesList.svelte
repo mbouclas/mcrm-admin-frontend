@@ -60,6 +60,7 @@
 </script>
 
 <SimpleTreeSelector
+  module="product"
   bind:tree
   on:selection={handleOnTreeViewChangeEvent}
   on:handleMove={async (e) => {
