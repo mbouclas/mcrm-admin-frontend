@@ -205,7 +205,7 @@
                     class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
                   />
                   <a href={`/cms/pages/${item.uuid}`} class="h-12 w-12">
-                    <img src={item.thumb.url} />
+                    <img src={item?.thumb?.url || item?.thumb} />
                   </a>
                 </div>
               </td>
