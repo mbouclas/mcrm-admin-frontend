@@ -15,7 +15,15 @@
   import { user } from '../stores';
   import { AuthService } from '../Auth/auth.service';
 
-  let hasGateUsersRole = AuthService.hasGate('users.menu.roles');
+  let hasRoleGate = AuthService.hasGate('menu.roles.show');
+  let hasUsersGate = AuthService.hasGate('menu.users.show');
+  let hasGatesGate = AuthService.hasGate('menu.gates.show');
+  let hasCMSGate = AuthService.hasGate('menu.cms.show');
+  let hasCustomersGate = AuthService.hasGate('menu.customers.show');
+  let hasOrdersGate = AuthService.hasGate('menu.orders.show');
+  let hasCatalogueGate = AuthService.hasGate('menu.catalogue.show');
+  let hasEditableRegionsGate = AuthService.hasGate('menu.editableRegions.show');
+  let hasSettingsGate = AuthService.hasGate('menu.settings.show');
 
   const navigate = useNavigate();
   function handleLogout(e) {
@@ -53,6 +61,166 @@
     </div>
     <SidebarWrapper class="rounded-none !bg-[#2a3042]">
       <SidebarGroup>
+        {#if hasCatalogueGate}
+          <SidebarDropdownWrapper {btnClass} label="Catalogue" icon={{ name: Squares2x2 }}>
+            <SidebarDropdownItem
+              aClass={btnClass + ' pl-11'}
+              label="Products"
+              href="/catalogue/products/list"
+              on:click={(e) => {
+                e.preventDefault();
+                navigate('/catalogue/products/list');
+              }}
+            />
+            <SidebarDropdownItem
+              aClass={btnClass + ' pl-11'}
+              label="Categories"
+              href="/catalogue/products/categories"
+              on:click={(e) => {
+                e.preventDefault();
+                navigate('/catalogue/products/categories');
+              }}
+            />
+            <SidebarDropdownItem
+              aClass={btnClass + ' pl-11'}
+              label="Properties"
+              href="/catalogue/properties/list"
+              on:click={(e) => {
+                e.preventDefault();
+                navigate('/catalogue/properties/list');
+              }}
+            />
+            <SidebarDropdownItem
+              aClass={btnClass + ' pl-11'}
+              label="Manufacturers"
+              href="/catalogue/manufacturers"
+              on:click={(e) => {
+                e.preventDefault();
+                navigate('/catalogue/manufacturers');
+              }}
+            />
+
+            <SidebarDropdownItem
+              aClass={btnClass + ' pl-11'}
+              label="Import"
+              href="/catalogue/products/import"
+              on:click={(e) => {
+                e.preventDefault();
+                navigate('/catalogue/products/import');
+              }}
+            />
+          </SidebarDropdownWrapper>
+        {/if}
+        {#if hasOrdersGate}
+          <SidebarItem
+            {aClass}
+            label="Orders"
+            {spanClass}
+            icon={{ name: ShoppingCart }}
+            href="/orders"
+            on:click={(e) => {
+              e.preventDefault();
+              navigate('/orders');
+            }}
+          />
+        {/if}
+        {#if hasCustomersGate}
+          <SidebarItem
+            {aClass}
+            label="Customers"
+            {spanClass}
+            icon={{ name: InboxArrowDown }}
+            href="/customers"
+            on:click={(e) => {
+              e.preventDefault();
+              navigate('/customers');
+            }}
+          />
+        {/if}
+        {#if hasCMSGate}
+          <SidebarDropdownWrapper {btnClass} label="CMS" icon={{ name: ShoppingCart }}>
+            <SidebarDropdownItem
+              aClass={btnClass + ' pl-11'}
+              label="Pages"
+              href="/cms/pages/list"
+              on:click={(e) => {
+                e.preventDefault();
+                navigate('/cms/pages/list');
+              }}
+            />
+            <SidebarDropdownItem
+              aClass={btnClass + ' pl-11'}
+              label="Categories"
+              href="/cms/categories"
+              on:click={(e) => {
+                e.preventDefault();
+                navigate('/cms/categories');
+              }}
+            />
+            {#if hasSettingsGate}
+              <SidebarDropdownItem
+                aClass={btnClass + ' pl-11'}
+                label="Settings"
+                href="/cms/settings"
+                on:click={(e) => {
+                  e.preventDefault();
+                  navigate('/cms/settings');
+                }}
+              />
+            {/if}
+          </SidebarDropdownWrapper>
+        {/if}
+        {#if hasEditableRegionsGate}
+          <SidebarItem
+            {aClass}
+            label="Editable Regions"
+            icon={{ name: Cog }}
+            href="/editable-regions"
+            on:click={(e) => {
+              e.preventDefault();
+              navigate('/editable-regions');
+            }}
+          />
+        {/if}
+        {#if hasSettingsGate}
+          <SidebarItem
+            {aClass}
+            label="Settings"
+            icon={{ name: Cog }}
+            href="/settings"
+            on:click={(e) => {
+              e.preventDefault();
+              navigate('/settings');
+            }}
+          />
+        {/if}
+      </SidebarGroup>
+      <SidebarGroup border class="border-gray-500">
+        <SidebarItem
+          {aClass}
+          label="Logout"
+          icon={{ name: ArrowRightOnRectangle }}
+          href="/logout"
+          on:click={handleLogout}
+        />
+      </SidebarGroup>
+    </SidebarWrapper>
+  </Sidebar>
+</Drawer>
+<Sidebar class="h-screen sidebar !bg-[#2a3042] hidden lg:block">
+  <div class="flex justify-center">
+    <Link to="/" class="nav-brand  py-5 px-10">
+      <img
+        class="w-24 object-fit"
+        src="http://skote-v-dark.svelte.themesbrand.com/assets/images/logo-light.png"
+        alt=""
+        srcset=""
+      />
+    </Link>
+  </div>
+  <SidebarWrapper class="rounded-none !bg-[#2a3042]">
+    <SidebarGroup>
+      {#if hasCatalogueGate}
         <SidebarDropdownWrapper {btnClass} label="Catalogue" icon={{ name: Squares2x2 }}>
           <SidebarDropdownItem
             aClass={btnClass + ' pl-11'}
@@ -101,30 +269,74 @@
             }}
           />
         </SidebarDropdownWrapper>
-
+      {/if}
+      {#if hasOrdersGate}
         <SidebarItem
           {aClass}
           label="Orders"
           {spanClass}
           icon={{ name: ShoppingCart }}
-          href="/orders"
+          href="/orders/list"
           on:click={(e) => {
             e.preventDefault();
-            navigate('/orders');
+            navigate('/orders/list');
           }}
         />
+      {/if}
+      {#if hasCustomersGate}
         <SidebarItem
           {aClass}
           label="Customers"
           {spanClass}
           icon={{ name: InboxArrowDown }}
-          href="/customers"
+          href="/customers/list"
           on:click={(e) => {
             e.preventDefault();
-            navigate('/customers');
+            navigate('/customers/list');
           }}
         />
+      {/if}
+      {#if hasUsersGate}
+        <SidebarItem
+          {aClass}
+          label="Users"
+          {spanClass}
+          icon={{ name: InboxArrowDown }}
+          href="/users/list"
+          on:click={(e) => {
+            e.preventDefault();
+            navigate('/users/list');
+          }}
+        />
+      {/if}
+      {#if hasRoleGate}
+        <SidebarItem
+          {aClass}
+          label="Roles"
+          {spanClass}
+          icon={{ name: InboxArrowDown }}
+          href="/roles/list"
+          on:click={(e) => {
+            e.preventDefault();
+            navigate('/roles/list');
+          }}
+        />
+      {/if}
+      {#if hasGatesGate}
+        <SidebarItem
+          {aClass}
+          label="Gates"
+          {spanClass}
+          icon={{ name: InboxArrowDown }}
+          href="/gates/list"
+          on:click={(e) => {
+            e.preventDefault();
+            navigate('/gates/list');
+          }}
+        />
+      {/if}
 
+      {#if hasCMSGate}
         <SidebarDropdownWrapper {btnClass} label="CMS" icon={{ name: ShoppingCart }}>
           <SidebarDropdownItem
             aClass={btnClass + ' pl-11'}
@@ -154,6 +366,8 @@
             }}
           />
         </SidebarDropdownWrapper>
+      {/if}
+      {#if hasEditableRegionsGate}
         <SidebarItem
           {aClass}
           label="Editable Regions"
@@ -164,6 +378,8 @@
             navigate('/editable-regions');
           }}
         />
+      {/if}
+      {#if hasSettingsGate}
         <SidebarItem
           {aClass}
           label="Settings"
@@ -174,190 +390,7 @@
             navigate('/settings');
           }}
         />
-      </SidebarGroup>
-      <SidebarGroup border class="border-gray-500">
-        <SidebarItem
-          {aClass}
-          label="Logout"
-          icon={{ name: ArrowRightOnRectangle }}
-          href="/logout"
-          on:click={handleLogout}
-        />
-      </SidebarGroup>
-    </SidebarWrapper>
-  </Sidebar>
-</Drawer>
-<Sidebar class="h-screen sidebar !bg-[#2a3042] hidden lg:block">
-  <div class="flex justify-center">
-    <Link to="/" class="nav-brand  py-5 px-10">
-      <img
-        class="w-24 object-fit"
-        src="http://skote-v-dark.svelte.themesbrand.com/assets/images/logo-light.png"
-        alt=""
-        srcset=""
-      />
-    </Link>
-  </div>
-  <SidebarWrapper class="rounded-none !bg-[#2a3042]">
-    <SidebarGroup>
-      <SidebarDropdownWrapper {btnClass} label="Catalogue" icon={{ name: Squares2x2 }}>
-        <SidebarDropdownItem
-          aClass={btnClass + ' pl-11'}
-          label="Products"
-          href="/catalogue/products/list"
-          on:click={(e) => {
-            e.preventDefault();
-            navigate('/catalogue/products/list');
-          }}
-        />
-        <SidebarDropdownItem
-          aClass={btnClass + ' pl-11'}
-          label="Categories"
-          href="/catalogue/products/categories"
-          on:click={(e) => {
-            e.preventDefault();
-            navigate('/catalogue/products/categories');
-          }}
-        />
-        <SidebarDropdownItem
-          aClass={btnClass + ' pl-11'}
-          label="Properties"
-          href="/catalogue/properties/list"
-          on:click={(e) => {
-            e.preventDefault();
-            navigate('/catalogue/properties/list');
-          }}
-        />
-        <SidebarDropdownItem
-          aClass={btnClass + ' pl-11'}
-          label="Manufacturers"
-          href="/catalogue/manufacturers"
-          on:click={(e) => {
-            e.preventDefault();
-            navigate('/catalogue/manufacturers');
-          }}
-        />
-
-        <SidebarDropdownItem
-          aClass={btnClass + ' pl-11'}
-          label="Import"
-          href="/catalogue/products/import"
-          on:click={(e) => {
-            e.preventDefault();
-            navigate('/catalogue/products/import');
-          }}
-        />
-      </SidebarDropdownWrapper>
-
-      <SidebarItem
-        {aClass}
-        label="Orders"
-        {spanClass}
-        icon={{ name: ShoppingCart }}
-        href="/orders/list"
-        on:click={(e) => {
-          e.preventDefault();
-          navigate('/orders/list');
-        }}
-      />
-      <SidebarItem
-        {aClass}
-        label="Customers"
-        {spanClass}
-        icon={{ name: InboxArrowDown }}
-        href="/customers/list"
-        on:click={(e) => {
-          e.preventDefault();
-          navigate('/customers/list');
-        }}
-      />
-
-      <SidebarItem
-        {aClass}
-        label="Users"
-        {spanClass}
-        icon={{ name: InboxArrowDown }}
-        href="/users/list"
-        on:click={(e) => {
-          e.preventDefault();
-          navigate('/users/list');
-        }}
-      />
-      {#if hasGateUsersRole}
-        <SidebarItem
-          {aClass}
-          label="Roles"
-          {spanClass}
-          icon={{ name: InboxArrowDown }}
-          href="/roles/list"
-          on:click={(e) => {
-            e.preventDefault();
-            navigate('/roles/list');
-          }}
-        />
       {/if}
-
-      <SidebarItem
-        {aClass}
-        label="Gates"
-        {spanClass}
-        icon={{ name: InboxArrowDown }}
-        href="/gates/list"
-        on:click={(e) => {
-          e.preventDefault();
-          navigate('/gates/list');
-        }}
-      />
-
-      <SidebarDropdownWrapper {btnClass} label="CMS" icon={{ name: ShoppingCart }}>
-        <SidebarDropdownItem
-          aClass={btnClass + ' pl-11'}
-          label="Pages"
-          href="/cms/pages/list"
-          on:click={(e) => {
-            e.preventDefault();
-            navigate('/cms/pages/list');
-          }}
-        />
-        <SidebarDropdownItem
-          aClass={btnClass + ' pl-11'}
-          label="Categories"
-          href="/cms/categories"
-          on:click={(e) => {
-            e.preventDefault();
-            navigate('/cms/categories');
-          }}
-        />
-        <SidebarDropdownItem
-          aClass={btnClass + ' pl-11'}
-          label="Settings"
-          href="/cms/settings"
-          on:click={(e) => {
-            e.preventDefault();
-            navigate('/cms/settings');
-          }}
-        />
-      </SidebarDropdownWrapper>
-      <SidebarItem
-        {aClass}
-        label="Editable Regions"
-        icon={{ name: Cog }}
-        href="/editable-regions"
-        on:click={(e) => {
-          e.preventDefault();
-          navigate('/editable-regions');
-        }}
-      />
-      <SidebarItem
-        {aClass}
-        label="Settings"
-        icon={{ name: Cog }}
-        href="/settings"
-        on:click={(e) => {
-          e.preventDefault();
-          navigate('/settings');
-        }}
-      />
     </SidebarGroup>
     <SidebarGroup border class="border-gray-500">
       <SidebarItem
