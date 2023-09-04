@@ -20,7 +20,7 @@
   const onSubmitWithLoader = async (data) => {
     try {
       loading = true;
-      onSubmit(data);
+      await onSubmit(data);
     } finally {
       loading = false;
     }
