@@ -4,8 +4,6 @@
   import Fields from '../../../DynamicFields/Renderer.svelte';
   import Loading from '../../../Shared/Loading.svelte';
   import Input from '../../../DynamicFields/fields/input.svelte';
-  import Number from '../../../DynamicFields/fields/number-input.svelte';
-  import RichText from '../../../DynamicFields/fields/richtext.svelte';
   import Image from '../../../DynamicFields/fields/image.svelte';
   import PageCategorySelector from '../PageCategorySelector.svelte';
   import Tags from '../PageCategoriesTags.svelte';
@@ -61,7 +59,7 @@
   }
 </script>
 
-<Modal title="Confirm delete gate" bind:open={deletePageModalOpen} autoclose outsideclose>
+<Modal title="Confirm delete page" bind:open={deletePageModalOpen} autoclose outsideclose>
   <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
     Are you sure you want to <span class="text-lg font-bold">permanently delete</span>
     page

@@ -12,6 +12,7 @@
   import { moneyFormat } from '../../helpers/money';
   import Modal from '../../Shared/Modal.svelte';
   import CustomFilters from '../../Shared/CustomFilters.svelte';
+  import { navigate } from 'svelte-navigator';
 
   let showModal = false;
 
@@ -110,6 +111,8 @@
 </div>
 
 <div class="flex items-center justify-center p-4 space-x-4">
+  <button on:click={() => navigate('/catalogue/products/new')} class="bg-green-500 rounded p-2">Add page</button>
+
   {#each appliedFilters as filter}
     <button>{filter.name}</button>
   {/each}

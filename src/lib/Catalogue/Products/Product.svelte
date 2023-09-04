@@ -71,31 +71,10 @@
     model[key] = e.detail;
   }
 
-  import isEmpty from '../../helpers/isEmpty';
   import Gallery from './tabs/Gallery.svelte';
 
   let errors = {};
   let hasError = false;
-
-  function validateModel() {
-    Object.keys(model).map((key) => {
-      if (isEmpty(model[key])) {
-        hasError = true;
-        errors[key] = true;
-      } else {
-        errors[key] = false;
-      }
-    });
-
-    return !hasError;
-  }
-
-  function onNativeSubmit(e) {
-    e.preventDefault();
-    //if (e.currentTarget.checkValidity() && onSubmit && validateModel()) {
-    onSubmit(model);
-    //}
-  }
 
   // User selected a new thumbnail, update the model
   function onThumbnailSet(e) {
@@ -111,7 +90,7 @@
 <Form bind:model {hasError}>
   <Tabs tabStyle="underline" class="mb-4">
     <TabItem open title="General" tabStyle="custom" {customActiveClass} {customInActiveClass}>
-      <General {fields} {model} />
+      <General {onSubmit} {fields} {model} />
     </TabItem>
     <TabItem title="Gallery" tabStyle="custom" {customActiveClass} {customInActiveClass}>
       <Gallery model={model.images} itemId={model.uuid} module="Product" on:thumbnailSet={onThumbnailSet} />
