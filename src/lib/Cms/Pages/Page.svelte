@@ -38,6 +38,14 @@
       model.images = [];
     }
 
+    if (!model.description) {
+      model.description = '';
+    }
+
+    if (!model.description_long) {
+      model.description_long = '';
+    }
+
     if (!model.seo) {
       model.seo = {
         title: model.title,

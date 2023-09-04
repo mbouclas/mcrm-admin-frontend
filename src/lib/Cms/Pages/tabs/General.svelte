@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { IDynamicFieldConfigBlueprint } from '../../../DynamicFields/types';
   import { Button, Modal, Toggle } from 'flowbite-svelte';
+  import RichText from '../../../DynamicFields/fields/richtext.svelte';
   import Fields from '../../../DynamicFields/Renderer.svelte';
   import Loading from '../../../Shared/Loading.svelte';
   import Input from '../../../DynamicFields/fields/input.svelte';
@@ -138,6 +139,14 @@
           <Tags bind:model={model.tag} itemId={model.uuid} saveOnAction={false} />
         </div>
       </div>
+    </div>
+
+    <div class="relative z-0 w-full mb-6 group">
+      <RichText id="description" bind:model={model.description} field={getField('description')} />
+    </div>
+
+    <div class="relative z-0 w-full mb-6 group">
+      <RichText id="description_long" bind:model={model.description_long} field={getField('description_long')} />
     </div>
   </form>
 

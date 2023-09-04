@@ -160,8 +160,6 @@
     <div class="relative z-0 w-full mb-6 group">
       <RichText id="description_long" bind:model={model.description_long} field={getField('description_long')} />
     </div>
-
-    <button type="submit" class="hidden">Submit</button>
   </form>
 
   <div
