@@ -205,12 +205,15 @@
                     class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
                   />
                   <a href={`/cms/pages/${item.uuid}`} class="h-12 w-12">
-                    <img src={item.thumb.url} />
+                    <img src={item?.thumb?.url || item?.thumb} />
                   </a>
                 </div>
               </td>
               <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                <a href={`/cms/pages/${item.uuid}`} class="hover:underline">
+                <a
+                  class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer"
+                  href={`/cms/pages/${item.uuid}`}
+                >
                   {item.title}
                 </a>
               </td>

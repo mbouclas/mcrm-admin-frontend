@@ -38,6 +38,14 @@
       model.images = [];
     }
 
+    if (!model.description) {
+      model.description = '';
+    }
+
+    if (!model.description_long) {
+      model.description_long = '';
+    }
+
     if (!model.seo) {
       model.seo = {
         title: model.title,
@@ -71,7 +79,7 @@
       <General {onSubmit} {fields} {model} />
     </TabItem>
     {#if $params.id !== 'new'}
-      <TabItem title="Related products" tabStyle="custom" {customActiveClass} {customInActiveClass}>
+      <TabItem title="Related pages" tabStyle="custom" {customActiveClass} {customInActiveClass}>
         <Related />
       </TabItem>
     {/if}

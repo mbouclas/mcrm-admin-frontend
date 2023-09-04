@@ -12,6 +12,7 @@
   import { moneyFormat } from '../../helpers/money';
   import Modal from '../../Shared/Modal.svelte';
   import CustomFilters from '../../Shared/CustomFilters.svelte';
+  import { navigate } from 'svelte-navigator';
 
   let showModal = false;
 
@@ -38,7 +39,7 @@
     items.data = [];
 
     loading = true;
-    items = await service.find(filters, ['category', 'variants']);
+    items = await service.find(filters, ['productCategory', 'variants']);
 
     loading = false;
   }
@@ -60,8 +61,11 @@
 
   async function toggleStatus(uuid: string) {
     const foundIndex = items.data.findIndex((i) => i.uuid === uuid);
+    const newActive = !items.data[foundIndex].active;
 
-    items.data[foundIndex].active = !items.data[foundIndex].active;
+    await service.update(uuid, { active: newActive });
+
+    items.data[foundIndex].active = newActive;
   }
 
   async function deleteItem(uuid: string) {}
@@ -110,6 +114,8 @@
 </div>
 
 <div class="flex items-center justify-center p-4 space-x-4">
+  <button on:click={() => navigate('/catalogue/products/new')} class="bg-green-500 rounded p-2">Add page</button>
+
   {#each appliedFilters as filter}
     <button>{filter.name}</button>
   {/each}
@@ -202,10 +208,6 @@
                   >Date</SortButton
                 >
               </th>
-
-              <th scope="col" class="relative py-3.5 px-4">
-                <span class="sr-only">Edit</span>
-              </th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
@@ -226,12 +228,15 @@
                     class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
                   />
                   <a href={`/catalogue/products/${item.uuid}`} class="h-12 w-12">
-                    <img src={item.thumb} />
+                    <img src={item?.thumb?.url || item?.thumb} />
                   </a>
                 </div>
               </td>
               <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                <a href={`/catalogue/products/${item.uuid}`} class="hover:underline">
+                <a
+                  href={`/catalogue/products/${item.uuid}`}
+                  class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer"
+                >
                   {item.sku}
                 </a>
               </td>
@@ -293,42 +298,6 @@
               </td>
               <td class="px-4 py-4 text-sm whitespace-nowrap">
                 {formatDate(item.createdAt)}
-              </td>
-              <td class="px-4 py-4 text-sm whitespace-nowrap">
-                <div class="flex items-center gap-x-6">
-                  <button
-                    title="Quick Edit Item"
-                    on:click={quickEditItem.bind(this, item.uuid)}
-                    class="text-gray-500 transition-colors duration-200 dark:hover:text-red-500 dark:text-gray-300 hover:text-red-500 focus:outline-none"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
-                      ><path
-                        fill="currentColor"
-                        d="M14 11c0 .55-.45 1-1 1H4c-.55 0-1-.45-1-1s.45-1 1-1h9c.55 0 1 .45 1 1zM3 7c0 .55.45 1 1 1h9c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1zm7 8c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1s.45 1 1 1h5c.55 0 1-.45 1-1zm8.01-2.13l.71-.71a.996.996 0 0 1 1.41 0l.71.71c.39.39.39 1.02 0 1.41l-.71.71l-2.12-2.12zm-.71.71l-5.16 5.16c-.09.09-.14.21-.14.35v1.41c0 .28.22.5.5.5h1.41c.13 0 .26-.05.35-.15l5.16-5.16l-2.12-2.11z"
-                      /></svg
-                    >
-                  </button>
-                  <button
-                    title="Delete Item"
-                    on:click={deleteItem.bind(this, item.uuid)}
-                    class="text-gray-500 transition-colors duration-200 dark:hover:text-red-500 dark:text-gray-300 hover:text-red-500 focus:outline-none"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      class="w-5 h-5"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                      />
-                    </svg>
-                  </button>
-                </div>
               </td>
             </tr>
           {/each}
