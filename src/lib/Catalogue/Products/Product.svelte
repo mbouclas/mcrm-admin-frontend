@@ -68,20 +68,21 @@
     await s.update($params.id, data);
   };
 
-  let contentDivClass = 'p-4 bg-[#2a3042] rounded-lg dark:bg-gray-800';
+  const onSeoSubmit = async () => {
+    await s.update($params.id, model);
+  };
+
   let customActiveClass =
     'inline-block p-4 text-white rounded-t-lg border-b-2 border-white active dark:text-white-500 dark:border-white-500';
   let customInActiveClass =
     'inline-block p-4 rounded-t-lg border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300';
 
-  //We need this to reflect model changes that are not passed down the event bubble
   function handleModelChange(key: string, e) {
     model[key] = e.detail;
   }
 
   import Gallery from './tabs/Gallery.svelte';
 
-  let errors = {};
   let hasError = false;
 
   // User selected a new thumbnail, update the model
@@ -100,28 +101,30 @@
     <TabItem open title="General" tabStyle="custom" {customActiveClass} {customInActiveClass}>
       <General {onSubmit} {fields} {model} />
     </TabItem>
-    <TabItem title="Gallery" tabStyle="custom" {customActiveClass} {customInActiveClass}>
-      <Gallery model={model.images} itemId={model.uuid} module="Product" on:thumbnailSet={onThumbnailSet} />
-    </TabItem>
-    <TabItem title="SEO" tabStyle="custom" {customActiveClass} {customInActiveClass}>
-      <SEO model={model.seo} on:change={handleModelChange.bind(this, 'seo')} />
-    </TabItem>
-    <TabItem title="Files" tabStyle="custom" {customActiveClass} {customInActiveClass}>
-      <Files {model} />
-    </TabItem>
-    <TabItem title="Items" tabStyle="custom" {customActiveClass} {customInActiveClass}>
-      <p class="text-sm text-gray-500 dark:text-gray-400">Tab Content 4</p>
-    </TabItem>
-    <TabItem title="Variants" tabStyle="custom" {customActiveClass} {customInActiveClass}>
-      <Variants productId={$params.id} />
-    </TabItem>
-    <TabItem title="Properties" tabStyle="custom" {customActiveClass} {customInActiveClass}>
-      <p class="text-sm text-gray-500 dark:text-gray-400">Tab Content 6</p>
-    </TabItem>
+    {#if $params.id !== 'new'}
+      <TabItem title="Gallery" tabStyle="custom" {customActiveClass} {customInActiveClass}>
+        <Gallery model={model.images} itemId={model.uuid} module="Product" on:thumbnailSet={onThumbnailSet} />
+      </TabItem>
+      <TabItem title="SEO" tabStyle="custom" {customActiveClass} {customInActiveClass}>
+        <SEO onSubmit={onSeoSubmit} model={model.seo} on:change={handleModelChange.bind(this, 'seo')} />
+      </TabItem>
+      <TabItem title="Files" tabStyle="custom" {customActiveClass} {customInActiveClass}>
+        <Files {model} />
+      </TabItem>
+      <TabItem title="Items" tabStyle="custom" {customActiveClass} {customInActiveClass}>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Tab Content 4</p>
+      </TabItem>
+      <TabItem title="Variants" tabStyle="custom" {customActiveClass} {customInActiveClass}>
+        <Variants productId={$params.id} />
+      </TabItem>
+      <TabItem title="Properties" tabStyle="custom" {customActiveClass} {customInActiveClass}>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Tab Content 6</p>
+      </TabItem>
 
-    <TabItem title="Related products" tabStyle="custom" {customActiveClass} {customInActiveClass}>
-      <Related />
-    </TabItem>
+      <TabItem title="Related products" tabStyle="custom" {customActiveClass} {customInActiveClass}>
+        <Related />
+      </TabItem>
+    {/if}
   </Tabs>
 </Form>
 <div class="mb-12 pb-6" />

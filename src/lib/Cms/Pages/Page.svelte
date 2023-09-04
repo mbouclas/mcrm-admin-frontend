@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { Tabs, TabItem, Button } from 'flowbite-svelte';
+  import { Tabs, TabItem } from 'flowbite-svelte';
   import General from './tabs/General.svelte';
   import Related from './tabs/Related.svelte';
+  import SEO from './tabs/SEO.svelte';
 
   import { useParams } from 'svelte-navigator';
   import Form from '../../DynamicFields/Form.svelte';
@@ -65,6 +66,14 @@
     await s.update($params.id, data);
   };
 
+  const onSeoSubmit = async () => {
+    await s.update($params.id, model);
+  };
+
+  function handleModelChange(key: string, e) {
+    model[key] = e.detail;
+  }
+
   let customActiveClass =
     'inline-block p-4 text-white rounded-t-lg border-b-2 border-white active dark:text-white-500 dark:border-white-500';
   let customInActiveClass =
@@ -79,6 +88,10 @@
       <General {onSubmit} {fields} {model} />
     </TabItem>
     {#if $params.id !== 'new'}
+      <TabItem title="SEO" tabStyle="custom" {customActiveClass} {customInActiveClass}>
+        <SEO onSubmit={onSeoSubmit} model={model.seo} on:change={handleModelChange.bind(this, 'seo')} />
+      </TabItem>
+
       <TabItem title="Related pages" tabStyle="custom" {customActiveClass} {customInActiveClass}>
         <Related />
       </TabItem>
