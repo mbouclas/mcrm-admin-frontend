@@ -71,7 +71,7 @@
       <General {onSubmit} {fields} {model} />
     </TabItem>
     {#if $params.id !== 'new'}
-      <TabItem title="Related products" tabStyle="custom" {customActiveClass} {customInActiveClass}>
+      <TabItem title="Related pages" tabStyle="custom" {customActiveClass} {customInActiveClass}>
         <Related />
       </TabItem>
     {/if}

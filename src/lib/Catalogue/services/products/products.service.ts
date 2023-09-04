@@ -78,7 +78,7 @@ export class ProductsService extends BaseHttpService {
   }
 
   async store(data: IGenericObject) {
-    return await super.post('product/basic', data, {
+    return await super.post('product', data, {
       successMessage: 'Created successfully',
       errorMessage: 'Failed to create',
     });

@@ -73,19 +73,21 @@
 
 {#if !model}<Loading /> {/if}
 {#if model}
-  <div class="flex w-full pb-5 pr-3 justify-end">
-    <div class="flex items-center w-20">
-      <span
-        >{model.active ? 'Active' : 'Inactive'}<span>
-          <Toggle on:click={(e) => toggleStatus()} color="green" checked={model.active} />
-        </span></span
-      >
-    </div>
+  {#if model.uuid}
+    <div class="flex w-full pb-5 pr-3 justify-end">
+      <div class="flex items-center w-20">
+        <span
+          >{model.active ? 'Active' : 'Inactive'}<span>
+            <Toggle on:click={(e) => toggleStatus()} color="green" checked={model.active} />
+          </span></span
+        >
+      </div>
 
-    {#if true}
-      <button on:click={() => handleDeleteModalOpen()} class="text-gray-500"><Trash color="white" /></button>
-    {/if}
-  </div>
+      {#if true}
+        <button on:click={() => handleDeleteModalOpen()} class="text-gray-500"><Trash color="white" /></button>
+      {/if}
+    </div>
+  {/if}
 
   <form>
     <div class="grid md:grid-cols-2 md:gap-6">

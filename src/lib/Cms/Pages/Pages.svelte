@@ -210,7 +210,10 @@
                 </div>
               </td>
               <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                <a href={`/cms/pages/${item.uuid}`} class="hover:underline">
+                <a
+                  class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer"
+                  href={`/cms/pages/${item.uuid}`}
+                >
                   {item.title}
                 </a>
               </td>
