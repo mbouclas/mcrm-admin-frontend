@@ -19,17 +19,23 @@
 
   export let onSubmit: (data: any) => void;
 
-  let manufacturers = [];
+  let manufacturerDropDownOpen = false;
+  let allManufacturers = [];
+
+  let searchManufacturerText = '';
+
+  $: manufacturers = searchManufacturerText
+    ? allManufacturers.filter((item) => item?.title?.includes(searchManufacturerText))
+    : allManufacturers;
 
   const getManufacturers = async () => {
     let data = await m.find();
-    manufacturers = data.data;
+    allManufacturers = data.data;
   };
 
-  const setManufacturer = (uuid) => {
-    model.manufacturer = {
-      uuid,
-    };
+  const setManufacturer = (manufacturer) => {
+    model.manufacturer = manufacturer;
+    manufacturerDropDownOpen = false;
   };
 
   const onSubmitWithLoader = async (data) => {
@@ -169,14 +175,16 @@
         <div class="pt-6">
           <h3>Manufacturer</h3>
 
-          <Button on:click={getManufacturers}>Search manufacturers</Button>
-          <Dropdown class="overflow-y-auto px-3 pb-3 text-sm h-64 z-20">
+          <Button on:click={getManufacturers}
+            ><span class="bg-gray-700 py-1 px-3 rounded-md">{model?.manufacturer?.title || ''}</span></Button
+          >
+          <Dropdown bind:open={manufacturerDropDownOpen} class="overflow-y-auto px-3 pb-3 text-sm h-64 z-20">
             <div slot="header" class="p-3">
-              <Search size="md" />
+              <Search size="md" bind:value={searchManufacturerText} />
             </div>
             {#each manufacturers as manufacturer}
               <li
-                on:click={() => setManufacturer(manufacturer.uuid)}
+                on:click={() => setManufacturer(manufacturer)}
                 class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
                 {manufacturer.title}
