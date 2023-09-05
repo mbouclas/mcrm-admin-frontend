@@ -1,13 +1,15 @@
 <script>
-  import { Router, Route, Link } from "svelte-navigator";
-  import Product from "./Products/Product.svelte";
-  import ProductList from "./Products/Products.svelte";
-  import ProductCategoriesList from "./Products/ProductCategoriesList.svelte";
-  import ProductPropertiesList from "./Products/PropertiesList.svelte";
-  import ManufacturersList from "./Products/ManufacturersList.svelte";
-  import Import from "./Products/Import.svelte";
-  import PropertiesList from "./Properties/PropertiesList.svelte";
-  import Property from "./Properties/Property.svelte";
+  import { Router, Route, Link } from 'svelte-navigator';
+  import Product from './Products/Product.svelte';
+  import ProductList from './Products/Products.svelte';
+  import Manufacturer from './Manufacturers/Manufacturer.svelte';
+  import ManufacturerList from './Manufacturers/Manufacturers.svelte';
+  import ProductCategoriesList from './Products/ProductCategoriesList.svelte';
+  import ProductPropertiesList from './Products/PropertiesList.svelte';
+  import ManufacturersList from './Products/ManufacturersList.svelte';
+  import Import from './Products/Import.svelte';
+  import PropertiesList from './Properties/PropertiesList.svelte';
+  import Property from './Properties/Property.svelte';
 </script>
 
 <Router>
@@ -27,4 +29,8 @@
 
   <!-- <Route path="properties/new" component={Property} let:params /> -->
   <Route path="properties/:id" component={Property} let:params />
+
+  <Route path="manufacturers/list" component={ManufacturerList} />
+  <!-- <Route path="products/new" component={Product} let:params /> -->
+  <Route path="manufacturers/:id" component={Manufacturer} let:params />
 </Router>
