@@ -141,6 +141,18 @@
                     type="checkbox"
                     class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
                   />
+                </div>
+              </th>
+
+              <th
+                scope="col"
+                class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+              >
+                <div class="flex items-center gap-x-3">
+                  <input
+                    type="checkbox"
+                    class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
+                  />
 
                   <SortButton name="title" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
                     >Title</SortButton
@@ -177,6 +189,18 @@
           </tbody>
           {#each items.data as item}
             <tr>
+              <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
+                <div class="inline-flex items-center gap-x-3">
+                  <input
+                    type="checkbox"
+                    class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
+                  />
+                  <a href={`/catalogue/products/${item.uuid}`} class="h-12 w-12">
+                    <img src={item?.thumb?.url || item?.thumb} />
+                  </a>
+                </div>
+              </td>
+
               <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                 <div class="inline-flex items-center gap-x-3">
                   <input

@@ -123,6 +123,7 @@
             itemId={model.uuid}
             type="main"
             on:allUploadsComplete={(e) => {
+              console.log(e.detail);
               model.thumb = e.detail;
             }}
           />

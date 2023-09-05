@@ -6,7 +6,6 @@
   import ManufacturerList from './Manufacturers/Manufacturers.svelte';
   import ProductCategoriesList from './Products/ProductCategoriesList.svelte';
   import ProductPropertiesList from './Products/PropertiesList.svelte';
-  import ManufacturersList from './Products/ManufacturersList.svelte';
   import Import from './Products/Import.svelte';
   import PropertiesList from './Properties/PropertiesList.svelte';
   import Property from './Properties/Property.svelte';
@@ -19,7 +18,6 @@
 
   <Route path="products/properties" component={ProductPropertiesList} />
 
-  <Route path="products/manufacturers" component={ManufacturersList} />
   <Route path="products/import" component={Import} />
 
   <!-- <Route path="products/new" component={Product} let:params /> -->
