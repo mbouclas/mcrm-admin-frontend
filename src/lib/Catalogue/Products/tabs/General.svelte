@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { IDynamicFieldConfigBlueprint } from '../../../DynamicFields/types';
-  import { Button, Toggle, Modal } from 'flowbite-svelte';
+  import { Button, Toggle, Modal, Dropdown, Search, Checkbox, DropdownItem } from 'flowbite-svelte';
   import Fields from '../../../DynamicFields/Renderer.svelte';
   import Loading from '../../../Shared/Loading.svelte';
   import Input from '../../../DynamicFields/fields/input.svelte';
@@ -11,11 +11,26 @@
   import ProductCategorySelector from '../ProductCategorySelector.svelte';
   import Tags from '../ProductCategoriesTags.svelte';
   import { ProductsService } from '../../services/products/products.service';
+  import { ManufacturersService } from '../../services/manufacturers/manufacturers.service';
   import { navigate } from 'svelte-navigator';
 
   const s = new ProductsService();
+  const m = new ManufacturersService();
 
   export let onSubmit: (data: any) => void;
+
+  let manufacturers = [];
+
+  const getManufacturers = async () => {
+    let data = await m.find();
+    manufacturers = data.data;
+  };
+
+  const setManufacturer = (uuid) => {
+    model.manufacturer = {
+      uuid,
+    };
+  };
 
   const onSubmitWithLoader = async (data) => {
     try {
@@ -149,6 +164,25 @@
         <div class="pt-6">
           <h3>Tags</h3>
           <Tags bind:model={model.tag} itemId={model.uuid} saveOnAction={false} />
+        </div>
+
+        <div class="pt-6">
+          <h3>Manufacturer</h3>
+
+          <Button on:click={getManufacturers}>Search manufacturers</Button>
+          <Dropdown class="overflow-y-auto px-3 pb-3 text-sm h-64 z-20">
+            <div slot="header" class="p-3">
+              <Search size="md" />
+            </div>
+            {#each manufacturers as manufacturer}
+              <li
+                on:click={() => setManufacturer(manufacturer.uuid)}
+                class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600"
+              >
+                {manufacturer.title}
+              </li>
+            {/each}
+          </Dropdown>
         </div>
       </div>
     </div>
