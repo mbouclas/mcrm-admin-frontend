@@ -2,6 +2,7 @@
   import { Tabs, TabItem } from 'flowbite-svelte';
   import General from './tabs/General.svelte';
   import Related from './tabs/Related.svelte';
+  import Gallery from './tabs/Gallery.svelte';
   import SEO from './tabs/SEO.svelte';
 
   import { useParams } from 'svelte-navigator';
@@ -80,6 +81,12 @@
     'inline-block p-4 rounded-t-lg border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300';
 
   let hasError = false;
+
+  // User selected a new thumbnail, update the model
+  function onThumbnailSet(e) {
+    model.images.push(model.thumb);
+    model.thumb = e.detail;
+  }
 </script>
 
 <Form bind:model {hasError}>
@@ -88,6 +95,10 @@
       <General {onSubmit} {fields} {model} />
     </TabItem>
     {#if $params.id !== 'new'}
+      <TabItem title="Gallery" tabStyle="custom" {customActiveClass} {customInActiveClass}>
+        <Gallery model={model.images} itemId={model.uuid} module="Page" on:thumbnailSet={onThumbnailSet} />
+      </TabItem>
+
       <TabItem title="SEO" tabStyle="custom" {customActiveClass} {customInActiveClass}>
         <SEO onSubmit={onSeoSubmit} model={model.seo} on:change={handleModelChange.bind(this, 'seo')} />
       </TabItem>
