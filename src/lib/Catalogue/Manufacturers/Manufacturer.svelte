@@ -21,12 +21,12 @@
     fields = AppService.getModel('ManufacturerModel').fields.filter((f) => f.varName !== 'thumb');
 
     if (itemId) {
-      model = await s.findOne(itemId, ['*']);
+      model = await s.findOne(itemId, ['product']);
     } else {
       if ($params.id === 'new') {
         model = getModelPrototypeFromFields(fields);
       } else {
-        model = await s.findOne($params.id, ['*']);
+        model = await s.findOne($params.id, ['product']);
       }
     }
 
