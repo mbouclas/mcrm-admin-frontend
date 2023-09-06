@@ -189,7 +189,7 @@
             {#each manufacturers as manufacturer}
               <li
                 on:click={() => setManufacturer(manufacturer)}
-                class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600"
+                class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
               >
                 {manufacturer.title}
               </li>
