@@ -12,9 +12,14 @@
   import { moneyFormat } from '../../helpers/money';
   import Modal from '../../Shared/Modal.svelte';
   import CustomFilters from '../../Shared/CustomFilters.svelte';
-  import { navigate } from 'svelte-navigator';
+  import { navigate, useLocation } from 'svelte-navigator';
 
   let showModal = false;
+  let searchVal = '';
+
+  const location = useLocation();
+  const currentPath = $location.pathname;
+  const queryParams = new URLSearchParams($location.search);
 
   let items = {
     data: [],
@@ -25,6 +30,7 @@
     page: 1,
     orderBy: 'createdAt',
     way: 'desc',
+    q: '',
   };
   let filters: typeof defaultFilters,
     appliedFilters = [],
@@ -46,6 +52,7 @@
 
   async function reset() {
     filters = Object.assign({}, defaultFilters);
+    navigate(currentPath);
     await search();
   }
 
@@ -85,8 +92,14 @@
   }
 
   async function searchByFilters() {
-    showModal = false;
+    if (searchVal.trim().length) {
+      queryParams.set('q', searchVal);
+      const newUrl = currentPath + '?' + queryParams.toString();
+      navigate(newUrl);
+      filters.q = searchVal;
+    }
     await search();
+    showModal = false;
   }
 </script>
 
@@ -97,7 +110,7 @@
       on:change={(e) => {
         filters[e.detail.key] = e.detail.value;
       }}
-      filterBySearch={false}
+      bind:search={searchVal}
     />
   </div>
   <div slot="footer">
