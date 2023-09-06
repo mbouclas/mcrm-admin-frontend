@@ -4,7 +4,7 @@
   import Fields from '../../../DynamicFields/Renderer.svelte';
   import Loading from '../../../Shared/Loading.svelte';
   import Input from '../../../DynamicFields/fields/input.svelte';
-  import { Trash } from 'svelte-heros-v2';
+  import { Trash, ArrowDown } from 'svelte-heros-v2';
   import Number from '../../../DynamicFields/fields/number-input.svelte';
   import RichText from '../../../DynamicFields/fields/richtext.svelte';
   import Image from '../../../DynamicFields/fields/image.svelte';
@@ -175,9 +175,13 @@
         <div class="pt-6">
           <h3>Manufacturer</h3>
 
-          <Button on:click={getManufacturers}
-            ><span class="bg-gray-700 py-1 px-3 rounded-md">{model?.manufacturer?.title || ''}</span></Button
+          <div
+            class="flex items-center justify-between mt-2 bg-gray-700 py-1 pl-2 pr-10 rounded-md py-3 cursor-pointer hover:bg-gray-600"
+            on:click|preventDefault={getManufacturers}
           >
+            <span class="text-md">{model?.manufacturer?.title || ''}</span>
+            <ArrowDown size="35px" />
+          </div>
           <Dropdown bind:open={manufacturerDropDownOpen} class="overflow-y-auto px-3 pb-3 text-sm h-64 z-20">
             <div slot="header" class="p-3">
               <Search size="md" bind:value={searchManufacturerText} />
