@@ -1,7 +1,9 @@
 <script lang="ts">
-  import { Tabs, TabItem, Button } from 'flowbite-svelte';
+  import { Tabs, TabItem } from 'flowbite-svelte';
   import General from './tabs/General.svelte';
   import Related from './tabs/Related.svelte';
+  import Gallery from './tabs/Gallery.svelte';
+  import SEO from './tabs/SEO.svelte';
 
   import { useParams } from 'svelte-navigator';
   import Form from '../../DynamicFields/Form.svelte';
@@ -65,12 +67,26 @@
     await s.update($params.id, data);
   };
 
+  const onSeoSubmit = async () => {
+    await s.update($params.id, model);
+  };
+
+  function handleModelChange(key: string, e) {
+    model[key] = e.detail;
+  }
+
   let customActiveClass =
     'inline-block p-4 text-white rounded-t-lg border-b-2 border-white active dark:text-white-500 dark:border-white-500';
   let customInActiveClass =
     'inline-block p-4 rounded-t-lg border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300';
 
   let hasError = false;
+
+  // User selected a new thumbnail, update the model
+  function onThumbnailSet(e) {
+    model.images.push(model.thumb);
+    model.thumb = e.detail;
+  }
 </script>
 
 <Form bind:model {hasError}>
@@ -79,6 +95,14 @@
       <General {onSubmit} {fields} {model} />
     </TabItem>
     {#if $params.id !== 'new'}
+      <TabItem title="Gallery" tabStyle="custom" {customActiveClass} {customInActiveClass}>
+        <Gallery model={model.images} itemId={model.uuid} module="Page" on:thumbnailSet={onThumbnailSet} />
+      </TabItem>
+
+      <TabItem title="SEO" tabStyle="custom" {customActiveClass} {customInActiveClass}>
+        <SEO onSubmit={onSeoSubmit} model={model.seo} on:change={handleModelChange.bind(this, 'seo')} />
+      </TabItem>
+
       <TabItem title="Related pages" tabStyle="custom" {customActiveClass} {customInActiveClass}>
         <Related />
       </TabItem>

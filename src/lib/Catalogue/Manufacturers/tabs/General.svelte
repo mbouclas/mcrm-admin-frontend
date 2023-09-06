@@ -1,42 +1,19 @@
 <script lang="ts">
   import type { IDynamicFieldConfigBlueprint } from '../../../DynamicFields/types';
-  import { Button, Toggle, Modal, Dropdown, Search, Checkbox, DropdownItem } from 'flowbite-svelte';
+  import { Button, Toggle, Modal } from 'flowbite-svelte';
   import Fields from '../../../DynamicFields/Renderer.svelte';
   import Loading from '../../../Shared/Loading.svelte';
   import Input from '../../../DynamicFields/fields/input.svelte';
-  import { Trash, ArrowDown } from 'svelte-heros-v2';
+  import { Trash } from 'svelte-heros-v2';
   import Number from '../../../DynamicFields/fields/number-input.svelte';
   import RichText from '../../../DynamicFields/fields/richtext.svelte';
   import Image from '../../../DynamicFields/fields/image.svelte';
-  import ProductCategorySelector from '../ProductCategorySelector.svelte';
-  import Tags from '../ProductCategoriesTags.svelte';
-  import { ProductsService } from '../../services/products/products.service';
   import { ManufacturersService } from '../../services/manufacturers/manufacturers.service';
   import { navigate } from 'svelte-navigator';
 
-  const s = new ProductsService();
-  const m = new ManufacturersService();
+  const s = new ManufacturersService();
 
   export let onSubmit: (data: any) => void;
-
-  let manufacturerDropDownOpen = false;
-  let allManufacturers = [];
-
-  let searchManufacturerText = '';
-
-  $: manufacturers = searchManufacturerText
-    ? allManufacturers.filter((item) => item?.title?.includes(searchManufacturerText))
-    : allManufacturers;
-
-  const getManufacturers = async () => {
-    let data = await m.find();
-    allManufacturers = data.data;
-  };
-
-  const setManufacturer = (manufacturer) => {
-    model.manufacturer = manufacturer;
-    manufacturerDropDownOpen = false;
-  };
 
   const onSubmitWithLoader = async (data) => {
     try {
@@ -57,7 +34,7 @@
   export let model;
   let mainFields = [];
   let secondaryFields = [];
-  let deleteProductModalOpen = false;
+  let deleteManufacturerModalOpen = false;
   let loading = false;
   // export let onSubmit: (data: any) => void;
 
@@ -86,19 +63,19 @@
   }
 
   const handleDeleteModalOpen = () => {
-    deleteProductModalOpen = true;
+    deleteManufacturerModalOpen = true;
   };
 
   const deletePage = async () => {
     await s.deleteRow(model.uuid);
-    navigate('/catalogue/products/list');
+    navigate('/catalogue/manufacturers/list');
   };
 </script>
 
-<Modal title="Confirm delete product" bind:open={deleteProductModalOpen} autoclose outsideclose>
+<Modal title="Confirm delete manufacturer" bind:open={deleteManufacturerModalOpen} autoclose outsideclose>
   <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
     Are you sure you want to <span class="text-lg font-bold">permanently delete</span>
-    product
+    manufacturer
     <span class="text-lg font-bold">{model.title}</span>?
   </p>
   <svelte:fragment slot="footer">
@@ -135,22 +112,6 @@
           onChange={getSlug}
           field={getField('title')}
         />
-        <div class="grid md:grid-cols-2 md:gap-6">
-          <div class="relative z-0 w-full mb-6 group">
-            <Input bind:model={model.sku} placeholder="SKU" label="SKU" field={getField('sku')} />
-          </div>
-          <div class="relative z-0 w-full mb-6 group">
-            <Number bind:model={model.price} placeholder="Price" label="Price" field={getField('price')} />
-          </div>
-        </div>
-        <div class="relative z-0 w-full mb-6 group">
-          <ProductCategorySelector
-            bind:model={model.productCategory}
-            label="Categories"
-            productId={model.uuid}
-            saveOnSelect={false}
-          />
-        </div>
       </div>
       <div class="w-full mb-6">
         <div class="flex justify-center w-full">
@@ -158,43 +119,14 @@
             model={model.thumb}
             title="Main Image"
             maxNumberOfFiles={1}
-            module="Product"
+            module="Manufacturer"
             itemId={model.uuid}
             type="main"
             on:allUploadsComplete={(e) => {
+              console.log(e.detail);
               model.thumb = e.detail;
             }}
           />
-        </div>
-
-        <div class="pt-6">
-          <h3>Tags</h3>
-          <Tags bind:model={model.tag} itemId={model.uuid} saveOnAction={false} />
-        </div>
-
-        <div class="pt-6">
-          <h3>Manufacturer</h3>
-
-          <div
-            class="flex items-center justify-between mt-2 bg-gray-700 py-1 pl-2 pr-10 rounded-md py-3 cursor-pointer hover:bg-gray-600"
-            on:click|preventDefault={getManufacturers}
-          >
-            <span class="text-md">{model?.manufacturer?.title || ''}</span>
-            <ArrowDown size="35px" />
-          </div>
-          <Dropdown bind:open={manufacturerDropDownOpen} class="overflow-y-auto px-3 pb-3 text-sm h-64 z-20">
-            <div slot="header" class="p-3">
-              <Search size="md" bind:value={searchManufacturerText} />
-            </div>
-            {#each manufacturers as manufacturer}
-              <li
-                on:click={() => setManufacturer(manufacturer)}
-                class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
-              >
-                {manufacturer.title}
-              </li>
-            {/each}
-          </Dropdown>
         </div>
       </div>
     </div>
@@ -245,6 +177,6 @@
   </div>
 
   <div class="w-full p-2 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <Fields fields={secondaryFields} bind:model module="Product" itemId={model.uuid} />
+    <Fields fields={secondaryFields} bind:model module="Manufacturer" itemId={model.uuid} />
   </div>
 {/if}

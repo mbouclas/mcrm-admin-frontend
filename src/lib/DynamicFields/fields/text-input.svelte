@@ -1,9 +1,8 @@
 <script lang="ts">
-  import { Input, Label, Helper } from "flowbite-svelte";
-  import type { IDynamicFieldConfigBlueprint } from "../types";
+  import { Input, Label, Helper } from 'flowbite-svelte';
+  import type { IDynamicFieldConfigBlueprint } from '../types';
 
-  export let field: IDynamicFieldConfigBlueprint =
-    {} as IDynamicFieldConfigBlueprint;
+  export let field: IDynamicFieldConfigBlueprint = {} as IDynamicFieldConfigBlueprint;
   export let onChange;
   export let model;
   export let placeholder;
@@ -13,20 +12,20 @@
   export let classes: string[] = [];
 
   let pristine = true;
-  let value = field.value || "";
+  let value = field.value || '';
 
   let hasError = false;
 
   let onValueChange = (key, value) => {
-    if (value === "") {
+    if (value === '' && field.required) {
       hasError = true;
-      helperText = "This field is required";
+      helperText = 'This field is required';
     } else {
       hasError = false;
       helperText = null;
     }
     pristine = false;
-    if (typeof onChange === "function") {
+    if (typeof onChange === 'function') {
       onChange(key, value);
     }
   };
@@ -34,12 +33,10 @@
 
 <div class="mb-6">
   {#if field.label}
-    <Label class={`block mb-2 !text-gray-400 ${hasError ? "has-error" : ""}`}
-      >{field.label}</Label
-    >
+    <Label class={`block mb-2 !text-gray-400 ${hasError ? 'has-error' : ''}`}>{field.label}</Label>
   {/if}
 
-  <div class={`dynamic-field ${hasError ? "has-error" : ""}`}>
+  <div class={`dynamic-field ${hasError ? 'has-error' : ''}`}>
     <Input
       bind:value={model}
       placeholder={field.placeholder}
@@ -52,9 +49,7 @@
     />
   </div>
   {#if helperText}
-    <Helper class={hasError ? "helper-text has-error" : "helper-text"}
-      >{helperText}</Helper
-    >
+    <Helper class={hasError ? 'helper-text has-error' : 'helper-text'}>{helperText}</Helper>
   {/if}
 </div>
 

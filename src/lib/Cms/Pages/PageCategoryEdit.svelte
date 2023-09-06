@@ -1,8 +1,10 @@
 <script lang="ts">
   import Image from '../../DynamicFields/fields/image.svelte';
   import { Input } from 'flowbite-svelte';
+  import Fields from '../../DynamicFields/Renderer.svelte';
   import { PageCategoryService } from '../services/pages/page-category.service';
   import { createEventDispatcher, onMount } from 'svelte';
+  import type { IDynamicFieldConfigBlueprint } from 'src/lib/DynamicFields/types';
 
   const dispatch = createEventDispatcher();
   const service = new PageCategoryService();
@@ -13,6 +15,17 @@
 
   onMount(async () => {
     category = await service.findOne(uuid, ['parent']);
+
+    if (!category.seo) {
+      category.seo = {
+        title: '',
+        description: '',
+        keywords: '',
+        og_title: '',
+        og_description: '',
+      };
+    }
+
     if (category.pageCategoryParent) {
       parentCategoryName = category.pageCategoryParent.title;
     }
@@ -21,6 +34,38 @@
   $: {
     dispatch('change', category);
   }
+
+  let fields: IDynamicFieldConfigBlueprint[] = [
+    { type: 'text', varName: 'title', label: 'Title', placeholder: 'Title' },
+    {
+      type: 'text',
+      varName: 'description',
+      label: 'Description',
+      placeholder: 'Description',
+    },
+    {
+      type: 'text',
+      varName: 'keywords',
+      label: 'Keywords',
+      placeholder: 'Keywords',
+    },
+    {
+      type: 'text',
+      varName: 'og_title',
+      label: 'og_title',
+      placeholder: 'og_title',
+    },
+    {
+      type: 'text',
+      varName: 'og_description',
+      label: 'og_description',
+      placeholder: 'og_description',
+    },
+  ];
+
+  const handleSeoChange = (e) => {
+    category['seo'][e.detail.key] = e.detail.value;
+  };
 </script>
 
 {#if category}
@@ -51,5 +96,8 @@
         }}
       />
     </div>
+
+    <p class="mt-5 pb-1 font-bold">SEO</p>
+    <Fields {fields} model={category?.seo} module="Product" itemId={category.uuid} on:change={handleSeoChange} />
   </div>
 {/if}

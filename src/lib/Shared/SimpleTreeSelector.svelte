@@ -2,8 +2,8 @@
   import { createEventDispatcher } from 'svelte';
   import { Button, Modal, Input } from 'flowbite-svelte';
   import { ArrowsPointingOut, ArrowRight, ArrowLeft, Plus, Home, Trash, PencilSquare } from 'svelte-heros-v2';
-  import Image from '../DynamicFields/fields/image.svelte';
-  import ProductCategoryEdit from "../Catalogue/Products/ProductCategoryEdit.svelte";
+  import ProductCategoryEdit from '../Catalogue/Products/ProductCategoryEdit.svelte';
+  import PageCategoryEdit from '../Cms/Pages/PageCategoryEdit.svelte';
 
   enum DeleteType {
     DELETE_CHILDREN = 'DELETE_CHILDREN',
@@ -12,6 +12,7 @@
   }
 
   export let tree = [];
+  export let module = '';
   export let labelKey = 'title';
   export let leafKey = 'uuid';
   export let handleDelete;
@@ -187,7 +188,13 @@
 </Modal>
 
 <Modal bind:open={isUpdateModalOpen}>
-  <ProductCategoryEdit uuid={categoryData.uuid} on:change={(e) => categoryData = e.detail} />
+  {#if module === 'page'}
+    <PageCategoryEdit uuid={categoryData.uuid} on:change={(e) => (categoryData = e.detail)} />
+  {/if}
+
+  {#if module === 'product'}
+    <ProductCategoryEdit uuid={categoryData.uuid} on:change={(e) => (categoryData = e.detail)} />
+  {/if}
 
   <svelte:fragment slot="footer">
     <Button on:click={confirmUpdate}>Update</Button>

@@ -1,35 +1,32 @@
 <script lang="ts">
   import { Tabs, TabItem, Button } from 'flowbite-svelte';
   import General from './tabs/General.svelte';
-  import Related from './tabs/Related.svelte';
-  import Variants from '../Variants/Variants.svelte';
   import SEO from './tabs/SEO.svelte';
-  import Files from './tabs/Files.svelte';
 
   import { useParams } from 'svelte-navigator';
   import Form from '../../DynamicFields/Form.svelte';
-  import { ProductsService } from '../services/products/products.service';
+  import { ManufacturersService } from '../services/manufacturers/manufacturers.service';
   import { onMount } from 'svelte';
   import { AppService } from '../../Shared/app.service';
   import type { IDynamicFieldConfigBlueprint } from '../../DynamicFields/types';
   import getModelPrototypeFromFields from '../../helpers/model-prototype';
 
-  const s = new ProductsService();
+  const s = new ManufacturersService();
   const params = useParams();
   let model;
   let fields: IDynamicFieldConfigBlueprint[] = [];
   export let itemId;
 
   onMount(async () => {
-    fields = AppService.getModel('ProductModel').fields.filter((f) => f.varName !== 'thumb');
+    fields = AppService.getModel('ManufacturerModel').fields.filter((f) => f.varName !== 'thumb');
 
     if (itemId) {
-      model = await s.findOne(itemId, ['*']);
+      model = await s.findOne(itemId, ['product']);
     } else {
       if ($params.id === 'new') {
         model = getModelPrototypeFromFields(fields);
       } else {
-        model = await s.findOne($params.id, ['*']);
+        model = await s.findOne($params.id, ['product']);
       }
     }
 
@@ -81,15 +78,7 @@
     model[key] = e.detail;
   }
 
-  import Gallery from './tabs/Gallery.svelte';
-
   let hasError = false;
-
-  // User selected a new thumbnail, update the model
-  function onThumbnailSet(e) {
-    model.images.push(model.thumb);
-    model.thumb = e.detail;
-  }
 </script>
 
 <!-- {JSON.stringify(model)} -->
@@ -102,27 +91,8 @@
       <General {onSubmit} {fields} {model} />
     </TabItem>
     {#if $params.id !== 'new'}
-      <TabItem title="Gallery" tabStyle="custom" {customActiveClass} {customInActiveClass}>
-        <Gallery model={model.images} itemId={model.uuid} module="Product" on:thumbnailSet={onThumbnailSet} />
-      </TabItem>
       <TabItem title="SEO" tabStyle="custom" {customActiveClass} {customInActiveClass}>
         <SEO onSubmit={onSeoSubmit} model={model.seo} on:change={handleModelChange.bind(this, 'seo')} />
-      </TabItem>
-      <TabItem title="Files" tabStyle="custom" {customActiveClass} {customInActiveClass}>
-        <Files {model} />
-      </TabItem>
-      <TabItem title="Items" tabStyle="custom" {customActiveClass} {customInActiveClass}>
-        <p class="text-sm text-gray-500 dark:text-gray-400">Tab Content 4</p>
-      </TabItem>
-      <TabItem title="Variants" tabStyle="custom" {customActiveClass} {customInActiveClass}>
-        <Variants productId={$params.id} />
-      </TabItem>
-      <TabItem title="Properties" tabStyle="custom" {customActiveClass} {customInActiveClass}>
-        <p class="text-sm text-gray-500 dark:text-gray-400">Tab Content 6</p>
-      </TabItem>
-
-      <TabItem title="Related products" tabStyle="custom" {customActiveClass} {customInActiveClass}>
-        <Related />
       </TabItem>
     {/if}
   </Tabs>
