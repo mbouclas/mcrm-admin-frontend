@@ -20,6 +20,24 @@
   let fields: IDynamicFieldConfigBlueprint[] = [];
   export let itemId;
 
+  const defaultProductStatus = {
+    title: {
+      errors: [],
+    },
+    sku: {
+      errors: [],
+    },
+    price: {
+      errors: [],
+    },
+
+    description: {
+      errors: [],
+    },
+  };
+
+  let productStatus = defaultProductStatus;
+
   onMount(async () => {
     fields = AppService.getModel('ProductModel').fields.filter((f) => f.varName !== 'thumb');
 
@@ -61,11 +79,20 @@
   });
 
   const onSubmit = async (data) => {
-    if ($params.id === 'new') {
-      await s.store(data);
-      return null;
+    productStatus = clearErrors(productStatus);
+
+    try {
+      if ($params.id === 'new') {
+        await s.store(data);
+        return null;
+      }
+      await s.update($params.id, data);
+    } catch (e) {
+      if (e instanceof RequestErrorException) {
+        productStatus = handleValidationErrors(e.details.validationErrors, productStatus);
+        return null;
+      }
     }
-    await s.update($params.id, data);
   };
 
   const onSeoSubmit = async () => {
@@ -82,6 +109,7 @@
   }
 
   import Gallery from './tabs/Gallery.svelte';
+  import { RequestErrorException, handleValidationErrors, clearErrors } from '../../helpers/helperErrors';
 
   let hasError = false;
 
@@ -99,7 +127,7 @@
 <Form bind:model {hasError}>
   <Tabs tabStyle="underline" class="mb-4">
     <TabItem open title="General" tabStyle="custom" {customActiveClass} {customInActiveClass}>
-      <General {onSubmit} {fields} {model} />
+      <General {onSubmit} status={productStatus} {fields} {model} />
     </TabItem>
     {#if $params.id !== 'new'}
       <TabItem title="Gallery" tabStyle="custom" {customActiveClass} {customInActiveClass}>
