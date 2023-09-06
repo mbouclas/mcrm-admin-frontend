@@ -93,10 +93,10 @@
             <SidebarDropdownItem
               aClass={btnClass + ' pl-11'}
               label="Manufacturers"
-              href="/catalogue/manufacturers"
+              href="/catalogue/manufacturers/list"
               on:click={(e) => {
                 e.preventDefault();
-                navigate('/catalogue/manufacturers');
+                navigate('/catalogue/manufacturers/list');
               }}
             />
 
@@ -252,10 +252,10 @@
           <SidebarDropdownItem
             aClass={btnClass + ' pl-11'}
             label="Manufacturers"
-            href="/catalogue/manufacturers"
+            href="/catalogue/manufacturers/list"
             on:click={(e) => {
               e.preventDefault();
-              navigate('/catalogue/manufacturers');
+              navigate('/catalogue/manufacturers/list');
             }}
           />
 
