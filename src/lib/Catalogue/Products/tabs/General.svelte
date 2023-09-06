@@ -3,7 +3,9 @@
   import { Button, Toggle, Modal, Dropdown, Search, Checkbox, DropdownItem } from 'flowbite-svelte';
   import Fields from '../../../DynamicFields/Renderer.svelte';
   import Loading from '../../../Shared/Loading.svelte';
-  import Input from '../../../DynamicFields/fields/input.svelte';
+  import Input from '../../../Shared/Input.svelte';
+  import ErrorMessage from '../../../Shared/ErrorMessage.svelte';
+
   import { Trash, ArrowDown } from 'svelte-heros-v2';
   import Number from '../../../DynamicFields/fields/number-input.svelte';
   import RichText from '../../../DynamicFields/fields/richtext.svelte';
@@ -18,6 +20,7 @@
   const m = new ManufacturersService();
 
   export let onSubmit: (data: any) => void;
+  export let status: any = {};
 
   let manufacturerDropDownOpen = false;
   let allManufacturers = [];
@@ -128,19 +131,19 @@
   <form>
     <div class="grid md:grid-cols-2 md:gap-6">
       <div class="relative z-0 w-full mb-6 group">
-        <Input
-          bind:model={model.title}
-          placeholder="Title"
-          label="Title"
-          onChange={getSlug}
-          field={getField('title')}
-        />
+        <Input bind:value={model.title} bind:errors={status.title.errors} placeholder="Title" label="Title" />
         <div class="grid md:grid-cols-2 md:gap-6">
           <div class="relative z-0 w-full mb-6 group">
-            <Input bind:model={model.sku} placeholder="SKU" label="SKU" field={getField('sku')} />
+            <Input bind:value={model.sku} bind:errors={status.sku.errors} placeholder="SKU" label="SKU" />
           </div>
           <div class="relative z-0 w-full mb-6 group">
-            <Number bind:model={model.price} placeholder="Price" label="Price" field={getField('price')} />
+            <Input
+              type="number"
+              bind:value={model.price}
+              bind:errors={status.price.errors}
+              placeholder="Price"
+              label="Price"
+            />
           </div>
         </div>
         <div class="relative z-0 w-full mb-6 group">
@@ -201,6 +204,7 @@
 
     <div class="relative z-0 w-full mb-6 group">
       <RichText id="description" bind:model={model.description} field={getField('description')} />
+      <ErrorMessage errors={status.description.errors} />
     </div>
 
     <div class="relative z-0 w-full mb-6 group">

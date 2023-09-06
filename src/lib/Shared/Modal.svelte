@@ -36,9 +36,22 @@
 {/if}
 
 <style>
+  :global(dialog::-webkit-scrollbar) {
+    width: 0.25rem;
+  }
+
+  :global(dialog::-webkit-scrollbar-track) {
+    background: #323232;
+  }
+
+  :global(dialog::-webkit-scrollbar-thumb) {
+    background-color: #b3b3b3;
+  }
   dialog {
     z-index: 999;
     min-width: 40em;
+    max-height: 900px;
+    overflow-y: auto;
     border-radius: 0.3em;
     border: none;
     padding: 0;
