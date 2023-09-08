@@ -68,8 +68,23 @@ export class PropertiesService extends BaseHttpService {
     return await this.get(`property/variant/${id}`);
   }
 
-  async searchValues(q: string) {
-    return await this.get(`property/value/search?q=${q}`);
+  async searchValues(q: string, relationships?: string[] = []) {
+    const filters = relationships?.length > 0 ? { with: relationships } : {};
+
+    return await this.get(`property/value/search?q=${q}`, filters);
+  }
+
+  async findValues(filters: IGenericObject = {}, relationships: string[] = []) {
+    let qs;
+    if (Object.keys(filters).length > 0) {
+      qs = queryString.stringify(filters);
+    }
+
+    if (relationships.length > 0) {
+      qs = qs ? `${qs}&with[]=${relationships.join(',')}` : `with[]=${relationships.join(',')}`;
+    }
+
+    return await this.get(`property/value${qs ? `?${qs}` : ''}`);
   }
 
   async update(id: string, data: IGenericObject) {

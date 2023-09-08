@@ -65,7 +65,7 @@
     items.data = [];
 
     loading = true;
-    items = await service.find(filters, ['']);
+    items = await service.findValues(filters, []);
 
     loading = false;
   }
@@ -216,7 +216,7 @@
 >
   <ul class="flex space-x-4 items-center -mb-px w-full py-2">
     <li>
-      <button on:click={() => openAddPropertyValueModal()} class="bg-green-500 rounded p-2">Add propertyValue</button>
+      <button on:click={() => openAddPropertyValueModal()} class="bg-green-500 rounded p-2">Add Property Value</button>
     </li>
 
     <li>
