@@ -4,6 +4,7 @@
   import Fields from '../../../DynamicFields/Renderer.svelte';
   import Loading from '../../../Shared/Loading.svelte';
   import Input from '../../../Shared/Input.svelte';
+  import DropDown from '../../../Shared/DropDown.svelte';
 
   import { Trash } from 'svelte-heros-v2';
   import { navigate } from 'svelte-navigator';
@@ -20,6 +21,7 @@
   const s = new ConditionsService();
 
   export let onSubmit: (data: any) => void;
+  $: console.log(fields);
 
   const onSubmitWithLoader = async (data) => {
     try {
@@ -104,8 +106,8 @@
         <Input bind:value={model.name} bind:errors placeholder="Name" label="Name" />
       </div>
 
-      <div class="relative z-0 w-full mb-6 group">
-        <Input bind:value={model.type} bind:errors placeholder="Type" label="Type" />
+      <div class="w-full mb-6 group">
+        <DropDown bind:value={model.type} values={fields.find((field) => field.varName === 'type').ui.defaultValues} />
       </div>
 
       <div class="relative z-0 w-full mb-6 group">
@@ -113,7 +115,10 @@
       </div>
 
       <div class="relative z-0 w-full mb-6 group">
-        <Input bind:value={model.operator} bind:errors placeholder="Operator" label="Operator" />
+        <DropDown
+          bind:value={model.target}
+          values={fields.find((field) => field.varName === 'target').ui.defaultValues}
+        />
       </div>
     </div>
   </form>
