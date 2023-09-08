@@ -110,19 +110,21 @@
       <Input label="Name" placeholder="Enter name" bind:value={ruleData.name} required />
     </div>
     <div class="mb-4">
-      <Input label="Value" placeholder="Value" bind:value={ruleData.value} required />
-    </div>
-
-    <div class="mb-4">
       <DropDown placeholder="Select field" label="Field" bind:value={ruleData.field} values={ruleFieldValues} />
     </div>
 
-    <DropDown
-      placeholder="Select operator"
-      label="Operator"
-      bind:value={ruleData.operator}
-      values={ruleOperatorValues}
-    />
+    <div class="mb-4">
+      <DropDown
+        placeholder="Select operator"
+        label="Operator"
+        bind:value={ruleData.operator}
+        values={ruleOperatorValues}
+      />
+    </div>
+
+    <div class="mb-4">
+      <Input label="Value" placeholder="Value" bind:value={ruleData.value} required />
+    </div>
   </div>
   <svelte:fragment slot="footer">
     <Button on:click={confirmRuleAdd}>Add</Button>
@@ -179,7 +181,7 @@
   <form>
     <div class="grid md:grid-cols-2 md:gap-6">
       <div class="relative z-0 w-full mb-6 group">
-        <Input bind:value={model.name} bind:errors placeholder="Name" label="Name" />
+        <Input bind:value={model.title} bind:errors placeholder="Title" label="Title" />
       </div>
 
       <div class="w-full mb-6 group">
