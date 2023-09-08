@@ -104,21 +104,6 @@
       };
     }
   });
-  const handlePropertyValue = async ({ value, action }) => {
-    if (action === 'create') {
-      await s.storePropertyValue(value);
-    }
-
-    if (action === 'edit') {
-      await s.updatePropertyValue(value);
-    }
-
-    if (action === 'delete') {
-      await s.deletePropertyValue(value);
-    }
-
-    await reloadData();
-  };
 
   const onSubmit = async (data) => {
     if ($params.id === 'new') {
@@ -174,12 +159,12 @@
 <Form bind:model {hasError}>
   <Tabs style="underline">
     <TabItem open title="General" tabStyle="custom" {customActiveClass} {customInActiveClass}>
-      <General {fields} bind:model {handlePropertyValue} />
+      <General {fields} bind:model />
     </TabItem>
 
     {#if $params.id !== 'new'}
       <TabItem title="Property values" tabStyle="custom" {customActiveClass} {customInActiveClass}>
-        <PropertyValues {handlePropertyValue} propertyValues={model.propertyValues} />
+        <PropertyValues propertyUuid={$params.id} />
       </TabItem>
     {/if}
 

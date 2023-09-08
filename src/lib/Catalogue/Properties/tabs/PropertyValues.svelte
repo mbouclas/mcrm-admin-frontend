@@ -14,7 +14,10 @@
   import CustomFilters from '../../../Shared/CustomFilters.svelte';
   import type { IPagination } from '../../../Shared/models/generic';
 
+  export let propertyUuid;
+
   let isPropertyValueModalOpen = false;
+  let isDeletePropertyValueModalOpen = false;
   const service = new PropertiesService();
   let showModal = false;
   let searchVal = '';
@@ -51,6 +54,7 @@
     page: 1,
     orderBy: 'createdAt',
     way: 'desc',
+    property: propertyUuid,
     q: '',
   };
   let filters: typeof defaultFilters,
@@ -158,6 +162,19 @@
     await search();
     showModal = false;
   }
+
+  const confirmDeletePropertyValue = async () => {
+    console.log(propertyValueData.uuid);
+    await service.deletePropertyValue({ propertyUuid, propertyValueUuid: propertyValueData.uuid });
+    isDeletePropertyValueModalOpen = false;
+    propertyValueData = null;
+    await search();
+  };
+
+  const deletePropertyValue = async (item) => {
+    propertyValueData = item;
+    isDeletePropertyValueModalOpen = true;
+  };
 </script>
 
 <Modal bind:showModal>
@@ -173,6 +190,21 @@
   </div>
   <div slot="footer">
     <button class="bg-blue-500 px-2 py-1 rounded" autofocus on:click={searchByFilters}>Search</button>
+  </div>
+</Modal>
+
+<Modal bind:showModal={isDeletePropertyValueModalOpen}>
+  <div slot="header">Delete property value</div>
+  <div slot="content">
+    <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+      Are you sure you want to <span class="text-lg font-bold">permanently delete</span>
+      property value
+      <span class="text-lg font-bold">{propertyValueData.name}</span>?
+    </p>
+  </div>
+  <div slot="footer">
+    <Button on:click={() => confirmDeletePropertyValue()}>Confirm</Button>
+    <Button color="alternative">Cancel</Button>
   </div>
 </Modal>
 
@@ -308,7 +340,9 @@
                 </td>
 
                 <td class="px-4 py-4 text-sm whitespace-nowrap">
-                  <button on:click={() => deletePropertyValue()} class="text-gray-500"><Trash color="white" /></button>
+                  <button on:click={() => deletePropertyValue(item)} class="text-gray-500"
+                    ><Trash color="white" /></button
+                  >
                 </td>
               </tr>
             {/each}
