@@ -99,7 +99,7 @@ export class ProductsService extends BaseHttpService {
       'product',
       { ...data, active: true },
       {
-        schema: productSchema,
+        //schema: productSchema,
         successMessage: 'Created successfully',
         errorMessage: 'Failed to create',
       },
