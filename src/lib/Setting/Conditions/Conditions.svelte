@@ -137,7 +137,7 @@
                     class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
                   />
                   <SortButton name="title" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
-                    >Name</SortButton
+                    >Title</SortButton
                   >
                 </div>
               </th>
@@ -204,7 +204,7 @@
                     class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer"
                     href={`/settings/conditions/${item.uuid}`}
                   >
-                    {item.name}
+                    {item.title}
                   </a>
                 </div>
               </td>

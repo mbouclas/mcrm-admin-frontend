@@ -1,237 +1,59 @@
 <script>
   import queryString from 'query-string';
-  import { useParams, useLocation, useNavigate } from 'svelte-navigator';
+  import { useParams, useLocation, navigate } from 'svelte-navigator';
   import { PropertiesService } from '../services/properties/properties.service';
   import { onMount } from 'svelte';
-  import ActionList from './grid-actions.svelte';
-  import Grid from 'gridjs-svelte';
-  import { h } from 'gridjs';
-  import { RowSelection } from 'gridjs/plugins/selection';
-  import Drawer from 'svelte-drawer-component';
 
-  import { Confirm } from 'svelte-confirm';
-  import Modals from '../../Shared/Modals.svelte';
+  import SortButton from '../../Shared/SortTableHeadButton.svelte';
+  import { Label } from 'flowbite-svelte';
+  import Loading from '../../Shared/Loading.svelte';
+  import Paginator from '../../Shared/Paginator.svelte';
+  import Modal from '../../Shared/Modal.svelte';
+  import CustomFilters from '../../Shared/CustomFilters.svelte';
 
-  let openFilter = false;
-  let openProductEditModal = false;
-  let itemId;
+  let showModal = false;
+  let searchVal = '';
+  let loading = false;
+  let items = {
+    data: [],
+  };
+
+  const location = useLocation();
+  const currentPath = $location.pathname;
+  const queryParams = new URLSearchParams($location.search);
 
   const service = new PropertiesService();
   const params = useParams();
-  const location = useLocation();
-  const navigate = useNavigate();
-  const filters = {
+  const defaultFilters = {
     with: ['propertyValues'],
   };
+
+  let filters = {
+    with: ['propertyValues'],
+  };
+  reset();
+
   let gridInstance;
   $: selectedRows = [];
-  $: allRowsSelected = false;
 
-  function createActionsButton(data) {
-    const { row, active, id } = data;
-    const selector = document.querySelector(`#action-${row.id}`);
-    if (!selector) {
-      return;
-    }
+  async function search() {
+    items.data = [];
 
-    // Avoid duplicates, grid fires more than once
-    if (selector && selector.children && selector.children.length === 1) {
-      return;
-    }
-    const wrapperEl = selector;
+    loading = true;
+    items = await service.find(filters);
 
-    const e = new ActionList({
-      target: wrapperEl,
-      props: { title: `edit ${id}`, id, active },
-    });
-
-    e.$on('grid-action', (m) => console.log(m));
-    e.$on('delete-row', (e) => deleteItem(e.detail.id));
-    e.$on('activate-item', (e) => activateRow(e.detail.id));
-    e.$on('de-activate-item', (e) => de_activateRow(e.detail.id));
+    loading = false;
   }
 
-  const server = service.getGridUrl(filters);
-  const pagination = service.getGridPaginationObject();
-  const search = service.getGridSearchObject();
-  const sort = service.getGridSortObject([
-    {
-      id: 'title',
-      idx: 2,
-    },
-    {
-      id: 'description',
-      idx: 3,
-    },
-    {
-      id: 'createdAt',
-      idx: 4,
-    },
-    {
-      id: 'active',
-      idx: 5,
-    },
-  ]);
-  const columns = [
-    {
-      id: 'selectRow',
-      sort: false,
-      name: h('input', {
-        type: 'checkbox',
-        onChange: (e) => {
-          allRowsSelected = e.target.checked;
-          // Exceptionally hacky. There's no documented method to get the table data and do something with them
-          // So we find all the checkboxes on the table and click them
-          // There is of course the obvious bug where if there were selected rows, and you click on this
-          // only the inverse will happen. This calls for an intermediate action, like on gmail
-          gridInstance.config.tableRef.current.base.querySelectorAll('.gridjs-checkbox').forEach((checkbox) => {
-            checkbox.click();
-          });
-        },
-      }),
-      plugin: {
-        // install the RowSelection plugin
-        component: RowSelection,
-        // RowSelection config
-        props: {
-          // use the "uuid" hidden column as the row identifier
-          id: (row) => row.cell(1).data,
-        },
-        onChange: (e) => {
-          console.log(e);
-        },
-      },
-    },
-    {
-      name: 'uuid',
-      id: 'uuid',
-      hidden: true,
-    },
-    {
-      name: 'Title',
-      id: 'title',
-      formatter: (cell, row) => {
-        return h(
-          'p',
-          {
-            // className:
-            //   "py-2 mb-4 px-4 border rounded-md text-white bg-blue-600",
-            onClick: (e) => {
-              e.preventDefault();
-              navigate('/catalogue/properties/' + row.cells[1].data);
-            },
-          },
-          cell,
-        );
-      },
-    },
-    {
-      name: 'Property Values',
-      id: 'propertyValue',
-      formatter: (cell, row) => {
-        if (cell && cell.length) {
-          const names = cell.map((dataItem) => dataItem.name);
-
-          let firstThree = names.slice(0, 3).join(', ');
-          let remainingItems = names.length > 3 ? ` + ${names.length - 3} more` : '';
-
-          let result = firstThree + remainingItems;
-
-          return h(
-            'div',
-            {
-              style: { display: 'block' },
-            },
-            [
-              h(
-                'span', // first span, the items
-                {
-                  style: {
-                    flex: 5,
-                    overflow: 'hidden',
-                    'text-overflow': 'ellipsis',
-                  },
-                },
-                firstThree,
-              ),
-              h(
-                'span', // second span, the "+ X more"
-                {
-                  style: {
-                    flex: 1,
-                  },
-                },
-                remainingItems,
-              ),
-            ],
-          );
-        }
-
-        return h('p', {}, 'No property values');
-      },
-    },
-
-    {
-      name: 'Description',
-      id: 'description',
-    },
-    {
-      name: 'Created',
-      id: 'createdAt',
-      hidden: true,
-      formatter: (cell) => {
-        return new Date(cell).toLocaleString('el-EL', {
-          month: 'short',
-          year: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric',
-        });
-      },
-    },
-    {
-      name: 'Updated',
-      id: 'updatedAt',
-      hidden: true,
-      formatter: (cell) => {
-        return new Date(cell).toLocaleString('el-EL', {
-          month: 'short',
-          year: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric',
-        });
-      },
-    },
-    {
-      name: 'Active',
-      id: 'active',
-      formatter: (cell) => {
-        return cell ? 'Yes' : 'No';
-      },
-      sort: false,
-    },
-    {
-      name: 'Actions',
-      formatter: (cell, row, idx) => {
-        const id = row.cells[1].data;
-        const active = row.cells[7].data;
-        createActionsButton({ row, active, id });
-
-        return h('div', { id: `action-${row.id}` }, '');
-      },
-    },
-  ];
-  const style = {
-    table: {
-      'white-space': 'nowrap',
-    },
-  };
+  onMount(async () => {
+    await search();
+  });
 
   onMount(async () => {
     gridInstance.on('ready', () => {
       const checkboxPlugin = gridInstance.config.plugin.get('selectRow');
       checkboxPlugin.props.store.on('updated', (state) => {
         selectedRows = state.rowIds;
-        // console.log(selectedRows);
       });
     });
   });
@@ -239,96 +61,150 @@
   $: console.log(queryString.parse($location.search));
   $: console.log($params); // -> { id: "123", splat: "pauls-profile" }
 
-  // Go to the service and get the properties
-  // We need a sidebar component to place the filters in
+  async function changeOrderBy(order, way) {
+    if (filters.orderBy === order) {
+      filters.way = filters.way === 'asc' ? 'desc' : 'asc';
+    }
 
-  function handleRowClick(...args) {
-    // console.log("row: " + JSON.stringify(args), args);
+    filters.orderBy = order;
+
+    await search();
+  }
+  async function handlePageChange(e) {
+    filters.page = e.detail;
+    await search();
+  }
+  async function reset() {
+    // filters = Object.assign({}, defaultFilters);
+    navigate(currentPath);
+    await search();
   }
 
-  function handleCellClick(...args) {
-    // console.log('cell: ' + JSON.stringify(args), args)
-  }
-
-  function log(...args) {
-    // console.log(...args);
-  }
-
-  async function activateRows() {
-    const res = await service.activateRows(selectedRows);
-  }
-
-  async function activateRow(itemId) {
-    console.log(itemId);
-    const res = await service.activateRow(itemId);
-  }
-
-  async function de_activateRows(selectedRows) {
-    const res = await service.de_activateRows(selectedRows);
-  }
-  async function de_activateRow(itemId) {
-    console.log(itemId);
-    const res = await service.de_activateRow(itemId);
-  }
-
-  async function deleteItems() {
-    const res = await service.deleteRows(selectedRows);
-  }
-
-  async function deleteItem(itemId) {
-    const res = await service.deleteRow(itemId);
+  async function searchByFilters() {
+    if (searchVal.trim().length) {
+      queryParams.set('q', searchVal);
+      const newUrl = currentPath + '?' + queryParams.toString();
+      navigate(newUrl);
+      filters.q = searchVal;
+    }
+    await search();
+    showModal = false;
   }
 </script>
 
-<Modals />
-<div class="grid-wrapper p-4 bg-[#2a3042] rounded-md text-[#a6b0cf]">
-  <h1 class="mt-4 mb-2 text-lg">Property List</h1>
-  <div class="toolbar flex justify-end bg-[#517acd]">
-    <div class="p-6">
-      <i class="fa-solid fa-bars-filter text-white cursor-pointer mr-2" on:click={() => (openFilter = true)} />
-      <i class="fa-solid fa-plus text-white cursor-pointer" on:click={() => navigate('/catalogue/properties/new')} />
-      {#if Array.isArray(selectedRows) && selectedRows.length > 0}
-        <i class="fa-solid fa-eye text-white cursor-pointer ml-6 mr-2" on:click={() => activateRows()} />
-        <i class="fa-solid fa-eye-slash text-[#9f9f9f] cursor-pointer mr-6" on:click={() => de_activateRows()} />
-        <Confirm confirmTitle="Delete" cancelTitle="Cancel" let:confirm={confirmThis}>
-          <i class="fa-solid fa-trash-can text-[#892626] cursor-pointer" on:click={() => confirmThis(deleteItems)} />
-          <span slot="title"> Are you sure? </span>
-          <span slot="description"> You won't be able to revert this! </span>
-        </Confirm>
-      {/if}
+<Modal bind:showModal>
+  <div slot="header">Filters</div>
+  <div slot="content">
+    <CustomFilters
+      on:change={(e) => {
+        filters[e.detail.key] = e.detail.value;
+      }}
+      bind:search={searchVal}
+    />
+  </div>
+  <div slot="footer">
+    <button class="bg-blue-500 px-2 py-1 rounded" autofocus on:click={searchByFilters}>Search</button>
+  </div>
+</Modal>
+<div class="flex items-center justify-center p-4 space-x-4">
+  <button on:click={() => navigate('/catalogue/properties/new')} class="bg-green-500 rounded p-2">Add property</button>
+
+  <button on:click={() => (showModal = true)} class="bg-blue-500 rounded p-2">Filters</button>
+  <button on:click={reset} class="bg-red-500 rounded p-2">Reset Filters</button>
+</div>
+<div class="flex flex-col mt-6">
+  <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+    <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+      <div class="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead class="bg-gray-50 dark:bg-gray-800">
+            <tr>
+              <th
+                scope="col"
+                class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+              >
+                <div class="flex items-center gap-x-3">
+                  <input
+                    type="checkbox"
+                    class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
+                  />
+                </div>
+              </th>
+
+              <th
+                scope="col"
+                class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+              >
+                <SortButton name="title" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
+                  >Title</SortButton
+                >
+              </th>
+              <th
+                scope="col"
+                class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+              >
+                <Label>Description</Label>
+              </th>
+              <th
+                scope="col"
+                class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+              >
+                <Label>Active</Label>
+              </th>
+              <th
+                scope="col"
+                class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+              >
+                <Label>Actions</Label>
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
+            {#if loading}
+              <tr>
+                <td colspan="10" class="text-center py-10">
+                  <Loading />
+                </td>
+              </tr>
+            {/if}
+          </tbody>
+          {#each items.data as item}
+            <tr>
+              <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
+                <div class="inline-flex items-center gap-x-3">
+                  <input
+                    type="checkbox"
+                    class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
+                  />
+                </div>
+              </td>
+
+              <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
+                <a href={`/catalogue/products/${item.uuid}`} class="hover:underline">
+                  {item.title}
+                </a>
+              </td>
+              <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
+                {item.description}
+              </td>
+              <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
+                {item.active ? 'Yes' : 'No'}
+              </td>
+              <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap"> Dummy edit </td>
+            </tr>
+          {/each}
+        </table>
+      </div>
     </div>
   </div>
 
-  <div class="grid-filter-drawer">
-    <Drawer open={openFilter} size="300px" placement="right" on:clickAway={() => (openFilter = false)}>
-      <div class=" w-full h-full bg-[#222736]">
-        <div class="flex justify-between p-4 text-white w-full">
-          <p>Filters</p>
-          <i class="fa-solid fa-xmark text-xl cursor-pointer" on:click={() => (openFilter = false)} />
-        </div>
-        <div class="w-full">
-          <input type="text" placeholder="filter" class="bg-[#222736] w-full grid-filter-input" />
-        </div>
-      </div>
-    </Drawer>
-    <Grid
-      {columns}
-      bind:instance={gridInstance}
-      {server}
-      {sort}
-      {pagination}
-      {search}
-      {style}
-      resizable
-      autoWidth
-      fixedHeader
-      on:rowClick={handleRowClick}
-      on:cellClick={handleCellClick}
-      on:ready={log}
-      on:beforeLoad={log}
-      on:load={log}
-    />
-  </div>
+  <Paginator
+    totalPages={parseInt(items.pages)}
+    baseURL={`/catalogue/properties`}
+    total={parseInt(items.total)}
+    currentPage={parseInt(items.page)}
+    on:pageChange={handlePageChange}
+  />
 </div>
 
 <style global>
