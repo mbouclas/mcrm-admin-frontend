@@ -17,6 +17,8 @@
   let deletePageModalOpen = false;
   let loading = false;
   let isRuleModalOpen = false;
+  let isEditRuleModalOpen = false;
+  let editRuleIndex;
 
   const ruleFieldValues = ['quantity', 'price', 'subTotal', 'total', 'promo', 'items', 'numberOfItems'];
   const ruleOperatorValues = ['==', '!=', '>', '>=', '<', '<=', 'in', 'not in'];
@@ -75,6 +77,17 @@
   const cancelRuleAdd = () => {
     isRuleModalOpen = false;
   };
+
+  const confirmRuleEdit = () => {
+    model.rules[editRuleIndex] = ruleData;
+    editRuleIndex = null;
+    isEditRuleModalOpen = false;
+  };
+
+  const cancelRuleEdit = () => {
+    editRuleIndex = null;
+    isEditRuleModalOpen = false;
+  };
 </script>
 
 <Modal title="Confirm delete page" bind:open={deletePageModalOpen} autoclose outsideclose>
@@ -114,6 +127,34 @@
   <svelte:fragment slot="footer">
     <Button on:click={confirmRuleAdd}>Add</Button>
     <Button color="alternative" on:click={cancelRuleAdd}>Cancel</Button>
+  </svelte:fragment>
+</Modal>
+
+<Modal bind:open={isEditRuleModalOpen}>
+  <div class="p-4">
+    <h2 class="flowbite-modal-title mb-4 text-xl font-bold">Edit rule</h2>
+
+    <div class="mb-4">
+      <Input label="Name" placeholder="Enter name" bind:value={ruleData.name} required />
+    </div>
+    <div class="mb-4">
+      <Input label="Value" placeholder="Value" bind:value={ruleData.value} required />
+    </div>
+
+    <div class="mb-4">
+      <DropDown placeholder="Select field" label="Field" bind:value={ruleData.field} values={ruleFieldValues} />
+    </div>
+
+    <DropDown
+      placeholder="Select operator"
+      label="Operator"
+      bind:value={ruleData.operator}
+      values={ruleOperatorValues}
+    />
+  </div>
+  <svelte:fragment slot="footer">
+    <Button on:click={confirmRuleEdit}>Save edit</Button>
+    <Button color="alternative" on:click={cancelRuleEdit}>Cancel</Button>
   </svelte:fragment>
 </Modal>
 
@@ -270,24 +311,12 @@
                     <td class="px-4 py-4 text-sm whitespace-nowrap">
                       <div class="flex items-center gap-x-6">
                         <button
-                          title="View Order"
-                          on:click={() => {}}
-                          class="text-gray-500 transition-colors duration-200 dark:hover:text-red-500 dark:text-gray-300 hover:text-red-500 focus:outline-none"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
-                            ><path
-                              fill="currentColor"
-                              d="M12 6.5A9.77 9.77 0 0 0 3.18 12c1.65 3.37 5.02 5.5 8.82 5.5s7.17-2.13 8.82-5.5A9.77 9.77 0 0 0 12 6.5zm0 10c-2.48 0-4.5-2.02-4.5-4.5S9.52 7.5 12 7.5s4.5 2.02 4.5 4.5s-2.02 4.5-4.5 4.5z"
-                              opacity=".3"
-                            /><path
-                              fill="currentColor"
-                              d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 13A9.77 9.77 0 0 1 3.18 12C4.83 8.63 8.21 6.5 12 6.5s7.17 2.13 8.82 5.5A9.77 9.77 0 0 1 12 17.5zm0-10c-2.48 0-4.5 2.02-4.5 4.5s2.02 4.5 4.5 4.5s4.5-2.02 4.5-4.5s-2.02-4.5-4.5-4.5zm0 7a2.5 2.5 0 0 1 0-5a2.5 2.5 0 0 1 0 5z"
-                            /></svg
-                          >
-                        </button>
-                        <button
-                          title="Edit Order"
-                          on:click={() => {}}
+                          title="Edit Rule"
+                          on:click={() => {
+                            isEditRuleModalOpen = true;
+                            ruleData = rule;
+                            editRuleIndex = ruleIndex;
+                          }}
                           type="button"
                           class="text-gray-500 transition-colors duration-200 dark:hover:text-yellow-500 dark:text-gray-300 hover:text-yellow-500 focus:outline-none"
                         >
@@ -308,9 +337,8 @@
                         </button>
 
                         <button
-                          title="Delete Order"
+                          title="Delete Rule"
                           on:click|preventDefault={() => {
-                            console.log(model);
                             model.rules = model.rules.filter((item, index) => index !== ruleIndex);
                           }}
                           class="text-gray-500 transition-colors duration-200 dark:hover:text-red-500 dark:text-gray-300 hover:text-red-500 focus:outline-none"
