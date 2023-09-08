@@ -136,16 +136,34 @@
                     type="checkbox"
                     class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
                   />
+                  <SortButton name="title" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
+                    >Name</SortButton
+                  >
                 </div>
               </th>
+
               <th
                 scope="col"
-                class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+                class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
               >
-                <SortButton name="title" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
-                  >Title</SortButton
-                >
+                <div class="flex items-center gap-x-3">
+                  <SortButton name="title" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
+                    >Type</SortButton
+                  >
+                </div>
               </th>
+
+              <th
+                scope="col"
+                class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+              >
+                <div class="flex items-center gap-x-3">
+                  <SortButton name="title" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
+                    >Target</SortButton
+                  >
+                </div>
+              </th>
+
               <th
                 scope="col"
                 class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
@@ -181,18 +199,26 @@
                     type="checkbox"
                     class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
                   />
-                  <a href={`/cms/pages/${item.uuid}`} class="h-12 w-12">
-                    <img src={item?.thumb?.url || item?.thumb} />
+
+                  <a
+                    class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer"
+                    href={`/settings/conditions/${item.uuid}`}
+                  >
+                    {item.name}
                   </a>
                 </div>
               </td>
+
               <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                <a
-                  class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer"
-                  href={`/cms/pages/${item.uuid}`}
-                >
-                  {item.title}
-                </a>
+                <div>
+                  {item.type}
+                </div>
+              </td>
+
+              <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
+                <div>
+                  {item.target}
+                </div>
               </td>
 
               <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">

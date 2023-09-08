@@ -49,31 +49,20 @@
     });
   }
 
-  function getField(name: string) {
-    return fields.find((field) => field.varName === name);
-  }
-
   const handleDeleteModalOpen = () => {
     deletePageModalOpen = true;
   };
 
   const deletePage = async () => {
     await s.deleteRow(model.uuid);
-    navigate('/cms/pages/list');
+    navigate('/settings/conditions/list');
   };
-
-  function getSlug(e, value) {
-    model.slug = value
-      .toLowerCase()
-      .replace(/ /g, '-')
-      .replace(/[^\w-]+/g, '');
-  }
 </script>
 
 <Modal title="Confirm delete page" bind:open={deletePageModalOpen} autoclose outsideclose>
   <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
     Are you sure you want to <span class="text-lg font-bold">permanently delete</span>
-    page
+    condition
     <span class="text-lg font-bold">{model.name}</span>?
   </p>
   <svelte:fragment slot="footer">
@@ -107,7 +96,11 @@
       </div>
 
       <div class="w-full mb-6 group">
-        <DropDown bind:value={model.type} values={fields.find((field) => field.varName === 'type').ui.defaultValues} />
+        <DropDown
+          label="Type"
+          bind:value={model.type}
+          values={fields.find((field) => field.varName === 'type').ui.defaultValues}
+        />
       </div>
 
       <div class="relative z-0 w-full mb-6 group">
@@ -116,6 +109,7 @@
 
       <div class="relative z-0 w-full mb-6 group">
         <DropDown
+          label="Target"
           bind:value={model.target}
           values={fields.find((field) => field.varName === 'target').ui.defaultValues}
         />
