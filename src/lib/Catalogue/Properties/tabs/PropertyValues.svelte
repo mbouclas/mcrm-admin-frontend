@@ -10,6 +10,7 @@
   import { navigate, useLocation } from 'svelte-navigator';
   import { RequestErrorException, handleValidationErrors, clearErrors } from '../../../helpers/helperErrors';
   import Modal from '../../../Shared/Modal.svelte';
+  import { Trash } from 'svelte-heros-v2';
   import CustomFilters from '../../../Shared/CustomFilters.svelte';
   import type { IPagination } from '../../../Shared/models/generic';
 
@@ -76,16 +77,6 @@
     await search();
   }
 
-  async function changeOrderBy(order: string, way: string) {
-    if (filters.orderBy === order) {
-      filters.way = filters.way === 'asc' ? 'desc' : 'asc';
-    }
-
-    filters.orderBy = order;
-
-    await search();
-  }
-
   let propertyValueStatus = defaultPropertyValueStatus;
 
   $: hasPropertyValueErrors = Object.values(propertyValueStatus).some((field) => field.errors.length > 0);
@@ -117,12 +108,12 @@
     await reloadData();
   };
 
-  async function changePropertyValueBy(propertyValue: string, way: string) {
-    if (filters.propertyValue === propertyValue) {
+  async function changeOrderBy(order: string, way: string) {
+    if (filters.orderBy === order) {
       filters.way = filters.way === 'asc' ? 'desc' : 'asc';
     }
 
-    filters.propertyValue = propertyValue;
+    filters.orderBy = order;
 
     await search();
   }
@@ -136,10 +127,10 @@
   const confirmAddPropertyValueModal = async () => {
     try {
       propertyValueStatus = clearErrors(propertyValueStatus);
-      const create = await service.create(propertyValueData);
+      const create = await service.storePropertyValue(propertyValueData);
 
       if (create) {
-        navigate(`/propertyValues/${create.uuid}`);
+        await search();
       }
     } catch (e) {
       if (e instanceof RequestErrorException) {
@@ -237,6 +228,18 @@
             <tr>
               <th
                 scope="col"
+                class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+              >
+                <div class="flex items-center gap-x-3">
+                  <input
+                    type="checkbox"
+                    class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
+                  />
+                </div>
+              </th>
+
+              <th
+                scope="col"
                 class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
               >
                 <SortButton name="title" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
@@ -255,18 +258,13 @@
 
               <th
                 scope="col"
-                class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-              >
-                <SortButton name="title" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
-                  >Image</SortButton
-                >
-              </th>
-
-              <th
-                scope="col"
                 class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
               >
-                <SortButton name="createdAt" way={filters.way} onChange={changePropertyValueBy}>Date</SortButton>
+                <SortButton name="createdAt" way={filters.way} onChange={changeOrderBy}>Date</SortButton>
+              </th>
+
+              <th scope="col" class="relative py-3.5 px-4">
+                <span class="sr-only">Edit</span>
               </th>
             </tr>
           </thead>
@@ -278,22 +276,30 @@
                 </td>
               </tr>
             {/if}
-            {#each items.data as propertyValue}
+            {#each items.data as item}
               <tr>
-                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap"
-                  >{propertyValue.name}</td
-                >
+                <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
+                  <div class="inline-flex items-center gap-x-3">
+                    <input
+                      type="checkbox"
+                      class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
+                    />
+                    <a href={`/catalogue/properties/${item.uuid}`} class="h-12 w-12">
+                      <img src={item?.image?.url || item?.image} />
+                    </a>
+                  </div>
+                </td>
 
-                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap"
-                  >{propertyValue.icon}</td
-                >
+                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{item.name}</td>
 
-                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap"
-                  >{propertyValue.image}</td
-                >
+                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{item.icon}</td>
 
                 <td class="px-4 py-4 text-sm whitespace-nowrap">
-                  {formatDate(propertyValue.createdAt)}
+                  {formatDate(item.createdAt)}
+                </td>
+
+                <td class="px-4 py-4 text-sm whitespace-nowrap">
+                  <button on:click={() => deletePropertyValue()} class="text-gray-500"><Trash color="white" /></button>
                 </td>
               </tr>
             {/each}
