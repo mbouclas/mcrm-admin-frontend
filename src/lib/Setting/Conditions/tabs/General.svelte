@@ -16,7 +16,17 @@
   let secondaryFields = [];
   let deletePageModalOpen = false;
   let loading = false;
+  let isRuleModalOpen = false;
 
+  const ruleFieldValues = ['quantity', 'price', 'subTotal', 'total', 'promo', 'items', 'numberOfItems'];
+  const ruleOperatorValues = ['==', '!=', '>', '>=', '<', '<=', 'in', 'not in'];
+
+  let ruleData = {
+    name: '',
+    field: '',
+    operator: '',
+    value: '',
+  };
   let errors = [];
   const s = new ConditionsService();
 
@@ -56,6 +66,15 @@
     await s.deleteRow(model.uuid);
     navigate('/settings/conditions/list');
   };
+
+  const confirmRuleAdd = () => {
+    model.rules = [...model.rules, ruleData];
+    isRuleModalOpen = false;
+  };
+
+  const cancelRuleAdd = () => {
+    isRuleModalOpen = false;
+  };
 </script>
 
 <Modal title="Confirm delete page" bind:open={deletePageModalOpen} autoclose outsideclose>
@@ -67,6 +86,34 @@
   <svelte:fragment slot="footer">
     <Button on:click={() => deletePage()}>Confirm</Button>
     <Button color="alternative">Cancel</Button>
+  </svelte:fragment>
+</Modal>
+
+<Modal bind:open={isRuleModalOpen}>
+  <div class="p-4">
+    <h2 class="flowbite-modal-title mb-4 text-xl font-bold">Add rule</h2>
+
+    <div class="mb-4">
+      <Input label="Name" placeholder="Enter name" bind:value={ruleData.name} required />
+    </div>
+    <div class="mb-4">
+      <Input label="Value" placeholder="Value" bind:value={ruleData.value} required />
+    </div>
+
+    <div class="mb-4">
+      <DropDown placeholder="Select field" label="Field" bind:value={ruleData.field} values={ruleFieldValues} />
+    </div>
+
+    <DropDown
+      placeholder="Select operator"
+      label="Operator"
+      bind:value={ruleData.operator}
+      values={ruleOperatorValues}
+    />
+  </div>
+  <svelte:fragment slot="footer">
+    <Button on:click={confirmRuleAdd}>Add</Button>
+    <Button color="alternative" on:click={cancelRuleAdd}>Cancel</Button>
   </svelte:fragment>
 </Modal>
 
@@ -96,7 +143,7 @@
 
       <div class="w-full mb-6 group">
         <DropDown
-          placeholder="Enter type"
+          placeholder="Select type"
           label="Type"
           bind:value={model.type}
           values={fields.find((field) => field.varName === 'type').ui.defaultValues}
@@ -109,11 +156,188 @@
 
       <div class="relative z-0 w-full mb-6 group">
         <DropDown
-          placeholder="Enter target"
+          placeholder="Select target"
           label="Target"
           bind:value={model.target}
           values={fields.find((field) => field.varName === 'target').ui.defaultValues}
         />
+      </div>
+    </div>
+
+    <div class="flex items-center justify-center space-x-4">
+      <button on:click|preventDefault={() => (isRuleModalOpen = true)} class="bg-green-500 rounded p-2">Add rule</button
+      >
+    </div>
+
+    <div class="flex flex-col mt-6">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+          <div class="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead class="bg-gray-50 dark:bg-gray-800">
+                <tr>
+                  <th
+                    scope="col"
+                    class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+                  >
+                    <div class="flex items-center gap-x-3">
+                      <input
+                        type="checkbox"
+                        class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
+                      />
+                      <span>Name</span>
+                    </div>
+                  </th>
+
+                  <th
+                    scope="col"
+                    class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+                  >
+                    <div class="flex items-center gap-x-3">
+                      <span>Field</span>
+                    </div>
+                  </th>
+
+                  <th
+                    scope="col"
+                    class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+                  >
+                    <div class="flex items-center gap-x-3">
+                      <span>Operator</span>
+                    </div>
+                  </th>
+
+                  <th
+                    scope="col"
+                    class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+                  >
+                    <div class="flex items-center gap-x-3">
+                      <span>Value</span>
+                    </div>
+                  </th>
+
+                  <th scope="col" class="relative py-3.5 px-4">
+                    <span class="sr-only">Edit</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
+                {#if loading}
+                  <tr>
+                    <td colspan="10" class="text-center py-10">
+                      <Loading />
+                    </td>
+                  </tr>
+                {/if}
+                {#each model.rules as rule, ruleIndex}
+                  <tr>
+                    <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
+                      <div class="inline-flex items-center gap-x-3">
+                        <input
+                          type="checkbox"
+                          class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
+                        />
+                        <span class="hover:underline">
+                          {rule.name}
+                        </span>
+                      </div>
+                    </td>
+
+                    <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
+                      <div class="inline-flex items-center gap-x-3">
+                        <span class="hover:underline">
+                          {rule.field}
+                        </span>
+                      </div>
+                    </td>
+
+                    <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
+                      <div class="inline-flex items-center gap-x-3">
+                        <span class="hover:underline">
+                          {rule.operator}
+                        </span>
+                      </div>
+                    </td>
+
+                    <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
+                      <div class="inline-flex items-center gap-x-3">
+                        <span class="hover:underline">
+                          {rule.value}
+                        </span>
+                      </div>
+                    </td>
+
+                    <td class="px-4 py-4 text-sm whitespace-nowrap">
+                      <div class="flex items-center gap-x-6">
+                        <button
+                          title="View Order"
+                          on:click={() => {}}
+                          class="text-gray-500 transition-colors duration-200 dark:hover:text-red-500 dark:text-gray-300 hover:text-red-500 focus:outline-none"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+                            ><path
+                              fill="currentColor"
+                              d="M12 6.5A9.77 9.77 0 0 0 3.18 12c1.65 3.37 5.02 5.5 8.82 5.5s7.17-2.13 8.82-5.5A9.77 9.77 0 0 0 12 6.5zm0 10c-2.48 0-4.5-2.02-4.5-4.5S9.52 7.5 12 7.5s4.5 2.02 4.5 4.5s-2.02 4.5-4.5 4.5z"
+                              opacity=".3"
+                            /><path
+                              fill="currentColor"
+                              d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 13A9.77 9.77 0 0 1 3.18 12C4.83 8.63 8.21 6.5 12 6.5s7.17 2.13 8.82 5.5A9.77 9.77 0 0 1 12 17.5zm0-10c-2.48 0-4.5 2.02-4.5 4.5s2.02 4.5 4.5 4.5s4.5-2.02 4.5-4.5s-2.02-4.5-4.5-4.5zm0 7a2.5 2.5 0 0 1 0-5a2.5 2.5 0 0 1 0 5z"
+                            /></svg
+                          >
+                        </button>
+                        <button
+                          title="Edit Order"
+                          on:click={() => {}}
+                          type="button"
+                          class="text-gray-500 transition-colors duration-200 dark:hover:text-yellow-500 dark:text-gray-300 hover:text-yellow-500 focus:outline-none"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="w-5 h-5"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                            />
+                          </svg>
+                        </button>
+
+                        <button
+                          title="Delete Order"
+                          on:click|preventDefault={() => {
+                            console.log(model);
+                            model.rules = model.rules.filter((item, index) => index !== ruleIndex);
+                          }}
+                          class="text-gray-500 transition-colors duration-200 dark:hover:text-red-500 dark:text-gray-300 hover:text-red-500 focus:outline-none"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="w-5 h-5"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                {/each}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </form>

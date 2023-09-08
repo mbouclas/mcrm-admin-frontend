@@ -35,7 +35,7 @@
   {/if}
   <ArrowDown size="20px" />
 </div>
-<Dropdown bind:open={dropDownOpen} class="overflow-y-auto px-3 pb-3 text-sm h-64 z-20">
+<Dropdown bind:open={dropDownOpen} class="overflow-y-auto px-3 pb-3 text-sm h-[300px] z-20">
   <div slot="header" class="p-3">
     <Search size="md" bind:value={searchText} />
   </div>

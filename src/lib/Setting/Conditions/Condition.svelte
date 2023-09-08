@@ -28,9 +28,6 @@
         model = await s.findOne($params.id, ['*']);
       }
     }
-
-    model.rules = '{}';
-    model.attributes = '{}';
   });
 
   const onSubmit = async (data) => {
