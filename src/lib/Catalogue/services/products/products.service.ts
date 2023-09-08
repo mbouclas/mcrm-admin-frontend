@@ -7,7 +7,7 @@ import errors from '../../../helpers/errors';
 
 const productSchema = z.object({
   title: z
-    .string({ required_error: errors['PRODUCT.010'], invalid_type_error: errors['PRODUCT.010 '] })
+    .string({ required_error: errors['PRODUCT.010'], invalid_type_error: errors['PRODUCT.010'] })
     .min(1, errors['PRODUCT.010']),
   sku: z
     .string({ required_error: errors['PRODUCT.011'], invalid_type_error: errors['PRODUCT.011'] })
