@@ -235,6 +235,10 @@
                     type="checkbox"
                     class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
                   />
+
+                  <SortButton name="title" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
+                    >Name</SortButton
+                  >
                 </div>
               </th>
 
@@ -243,7 +247,7 @@
                 class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
               >
                 <SortButton name="title" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
-                  >Name</SortButton
+                  >Icon</SortButton
                 >
               </th>
 
@@ -252,7 +256,7 @@
                 class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
               >
                 <SortButton name="title" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
-                  >Icon</SortButton
+                  >Image</SortButton
                 >
               </th>
 
@@ -284,15 +288,20 @@
                       type="checkbox"
                       class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
                     />
-                    <a href={`/catalogue/properties/${item.uuid}`} class="h-12 w-12">
-                      <img src={item?.image?.url || item?.image} />
-                    </a>
+
+                    <span class="hover:underline">
+                      {item.name}
+                    </span>
                   </div>
                 </td>
 
-                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{item.name}</td>
+                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
+                  <img class="w-20" src={item?.icon?.url || item?.icon} />
+                </td>
 
-                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{item.icon}</td>
+                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
+                  <img class="w-20" src={item?.icon?.image || item?.image} />
+                </td>
 
                 <td class="px-4 py-4 text-sm whitespace-nowrap">
                   {formatDate(item.createdAt)}
