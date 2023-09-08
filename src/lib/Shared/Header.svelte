@@ -380,16 +380,18 @@
         />
       {/if}
       {#if hasSettingsGate}
-        <SidebarItem
-          {aClass}
-          label="Settings"
-          icon={{ name: Cog }}
-          href="/settings"
-          on:click={(e) => {
-            e.preventDefault();
-            navigate('/settings');
-          }}
-        />
+        <SidebarDropdownWrapper {btnClass} label="Settings" icon={{ name: Squares2x2 }}>
+          <SidebarItem
+            {aClass}
+            label="Conditions"
+            icon={{ name: Cog }}
+            href="/settings/conditions/list"
+            on:click={(e) => {
+              e.preventDefault();
+              navigate('/settings/conditions/list');
+            }}
+          />
+        </SidebarDropdownWrapper>
       {/if}
     </SidebarGroup>
     <SidebarGroup border class="border-gray-500">

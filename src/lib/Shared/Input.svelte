@@ -4,7 +4,7 @@
 
   export let label;
   export let value;
-  export let errors;
+  export let errors = [];
   export let required = false;
   export let placeholder = `Enter ${label}`;
   export let type = 'text';

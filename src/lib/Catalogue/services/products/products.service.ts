@@ -2,6 +2,23 @@ import { BaseHttpService } from '../../../Shared/base-http.service';
 import type { IGenericObject } from '../../../Shared/models/generic';
 import queryString from 'query-string';
 import { html } from 'gridjs';
+import { z } from 'zod';
+import errors from '../../../helpers/errors';
+
+const productSchema = z.object({
+  title: z
+    .string({ required_error: errors['PRODUCT.010'], invalid_type_error: errors['PRODUCT.010'] })
+    .min(1, errors['PRODUCT.010']),
+  sku: z
+    .string({ required_error: errors['PRODUCT.011'], invalid_type_error: errors['PRODUCT.011'] })
+    .min(1, errors['PRODUCT.011']),
+  price: z
+    .string({ required_error: errors['PRODUCT.012'], invalid_type_error: errors['PRODUCT.012'] })
+    .min(1, errors['PRODUCT.012']),
+  description: z
+    .string({ required_error: errors['PRODUCT.013'], invalid_type_error: errors['PRODUCT.013'] })
+    .min(1, errors['PRODUCT.013']),
+});
 
 export class ProductsService extends BaseHttpService {
   async activateRows(selectedIds: string[]) {
@@ -82,6 +99,7 @@ export class ProductsService extends BaseHttpService {
       'product',
       { ...data, active: true },
       {
+        schema: productSchema,
         successMessage: 'Created successfully',
         errorMessage: 'Failed to create',
       },
