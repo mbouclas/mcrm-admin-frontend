@@ -75,10 +75,6 @@
     items.data[foundIndex].active = newActive;
   }
 
-  async function deleteItem(uuid: string) {}
-
-  async function quickEditItem(uuid: string) {}
-
   async function setFilter(name: string, value: any) {
     filters.page = 1;
     filters[name] = value;

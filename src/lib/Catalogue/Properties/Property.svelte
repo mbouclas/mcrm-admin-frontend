@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Tabs, TabItem, Button } from 'flowbite-svelte';
   import General from './tabs/General.svelte';
+  import PropertyValues from './tabs/PropertyValues.svelte';
 
   import { useParams } from 'svelte-navigator';
   import Form from '../../DynamicFields/Form.svelte';
@@ -175,6 +176,12 @@
     <TabItem open title="General" tabStyle="custom" {customActiveClass} {customInActiveClass}>
       <General {fields} bind:model {handlePropertyValue} />
     </TabItem>
+
+    {#if $params.id !== 'new'}
+      <TabItem title="Property values" tabStyle="custom" {customActiveClass} {customInActiveClass}>
+        <PropertyValues {handlePropertyValue} propertyValues={model.propertyValues} />
+      </TabItem>
+    {/if}
 
     <li class="submit-button-wrapper">
       <Button type="submit" on:click={onNativeSubmit}>Submit</Button>
