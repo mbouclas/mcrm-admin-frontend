@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import queryString from 'query-string';
   import { useParams, useLocation, navigate } from 'svelte-navigator';
   import { PropertiesService } from '../services/properties/properties.service';
@@ -90,6 +90,15 @@
     await search();
     showModal = false;
   }
+
+  async function toggleStatus(uuid: string) {
+    const foundIndex = items.data.findIndex((i) => i.uuid === uuid);
+    const newActive = !items.data[foundIndex].active;
+
+    await service.update(uuid, { active: newActive });
+
+    items.data[foundIndex].active = newActive;
+  }
 </script>
 
 <Modal bind:showModal>
@@ -145,17 +154,14 @@
               >
                 <Label>Description</Label>
               </th>
+
               <th
                 scope="col"
                 class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
               >
-                <Label>Active</Label>
-              </th>
-              <th
-                scope="col"
-                class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-              >
-                <Label>Actions</Label>
+                <SortButton name="status" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
+                  >Status</SortButton
+                >
               </th>
             </tr>
           </thead>
@@ -180,17 +186,51 @@
               </td>
 
               <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                <a href={`/catalogue/products/${item.uuid}`} class="hover:underline">
+                <a
+                  href={`/catalogue/properties/${item.uuid}`}
+                  class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer"
+                >
                   {item.title}
                 </a>
               </td>
               <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                 {item.description}
               </td>
+
               <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                {item.active ? 'Yes' : 'No'}
+                <button
+                  title="Edit Order"
+                  on:click={toggleStatus.bind(this, item.uuid)}
+                  type="button"
+                  class="text-gray-500 transition-colors duration-200 dark:hover:text-yellow-500 dark:text-gray-300 hover:text-yellow-500 focus:outline-none"
+                >
+                  {#if !item.active}
+                    <svg
+                      class="text-red-500"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="32"
+                      height="32"
+                      viewBox="0 0 24 24"
+                      ><path
+                        fill="currentColor"
+                        d="M17 7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h10c2.76 0 5-2.24 5-5s-2.24-5-5-5zM7 15c-1.66 0-3-1.34-3-3s1.34-3 3-3s3 1.34 3 3s-1.34 3-3 3z"
+                      /></svg
+                    >
+                  {:else}
+                    <svg
+                      class="text-green-500"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="32"
+                      height="32"
+                      viewBox="0 0 24 24"
+                      ><path
+                        fill="currentColor"
+                        d="M17 7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h10c2.76 0 5-2.24 5-5s-2.24-5-5-5zm0 8c-1.66 0-3-1.34-3-3s1.34-3 3-3s3 1.34 3 3s-1.34 3-3 3z"
+                      /></svg
+                    >
+                  {/if}
+                </button>
               </td>
-              <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap"> Dummy edit </td>
             </tr>
           {/each}
         </table>
