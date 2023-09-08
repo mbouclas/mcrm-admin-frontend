@@ -8,6 +8,7 @@
   import Loading from '../../../Shared/Loading.svelte';
   import { Button } from 'flowbite-svelte';
   import { navigate, useLocation } from 'svelte-navigator';
+  import Image from '../../../DynamicFields/fields/image.svelte';
   import { RequestErrorException, handleValidationErrors, clearErrors } from '../../../helpers/helperErrors';
   import Modal from '../../../Shared/Modal.svelte';
   import { Trash } from 'svelte-heros-v2';
@@ -132,9 +133,10 @@
   const confirmAddPropertyValueModal = async () => {
     try {
       propertyValueStatus = clearErrors(propertyValueStatus);
-      const create = await service.storePropertyValue(propertyValueData);
+      const create = await service.storePropertyValue({ ...propertyValueData, uuid: propertyUuid });
 
       if (create) {
+        isPropertyValueModalOpen = false;
         await search();
       }
     } catch (e) {
@@ -231,16 +233,33 @@
       <Input label="Name" bind:errors={propertyValueStatus.name.errors} bind:value={propertyValueData.name} required />
     </div>
 
-    <div class="mb-4">
-      <Input label="Icon" bind:errors={propertyValueStatus.icon.errors} bind:value={propertyValueData.icon} required />
+    <div class="mb-4 z-50">
+      <Image
+        id="icon"
+        model={propertyValueData?.icon || ''}
+        title="Property value icon"
+        maxNumberOfFiles={1}
+        module="PropertyValue"
+        itemId={propertyValueData.uuid}
+        type="main"
+        on:allUploadsComplete={(e) => {
+          propertyValueData.icon = e.detail;
+        }}
+      />
     </div>
 
-    <div class="mb-4">
-      <Input
-        label="Image"
-        bind:errors={propertyValueStatus.image.errors}
-        bind:value={propertyValueData.image}
-        required
+    <div class="mb-4 z-50">
+      <Image
+        id="image"
+        model={propertyValueData?.image || ''}
+        title="Property value image"
+        maxNumberOfFiles={1}
+        module="PropertyValue"
+        itemId={propertyValueData.uuid}
+        type="main"
+        on:allUploadsComplete={(e) => {
+          propertyValueData.image = e.detail;
+        }}
       />
     </div>
   </div>
@@ -258,16 +277,33 @@
       <Input label="Name" bind:errors={propertyValueStatus.name.errors} bind:value={propertyValueData.name} required />
     </div>
 
-    <div class="mb-4">
-      <Input label="Icon" bind:errors={propertyValueStatus.icon.errors} bind:value={propertyValueData.icon} required />
+    <div class="mb-4 z-50">
+      <Image
+        id="icon"
+        model={propertyValueData?.icon || ''}
+        title="Property value icon"
+        maxNumberOfFiles={1}
+        module="PropertyValue"
+        itemId={propertyValueData.uuid}
+        type="main"
+        on:allUploadsComplete={(e) => {
+          propertyValueData.icon = e.detail;
+        }}
+      />
     </div>
 
-    <div class="mb-4">
-      <Input
-        label="Image"
-        bind:errors={propertyValueStatus.image.errors}
-        bind:value={propertyValueData.image}
-        required
+    <div class="mb-4 z-50">
+      <Image
+        id="image"
+        model={propertyValueData?.image || ''}
+        title="Property value image"
+        maxNumberOfFiles={1}
+        module="PropertyValue"
+        itemId={propertyValueData.uuid}
+        type="main"
+        on:allUploadsComplete={(e) => {
+          propertyValueData.image = e.detail;
+        }}
       />
     </div>
   </div>
@@ -375,7 +411,7 @@
                 </td>
 
                 <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                  <img class="w-20" src={item?.icon?.image || item?.image} />
+                  <img class="w-20" src={item?.image?.url || item?.image} />
                 </td>
 
                 <td class="px-4 py-4 text-sm whitespace-nowrap">

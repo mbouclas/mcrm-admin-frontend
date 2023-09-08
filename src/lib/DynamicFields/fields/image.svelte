@@ -88,7 +88,7 @@
   <div class=" items-center text-center">
     <div class="flex items-center justify-center">
       <FileUploader
-        id="product-upload-button"
+        {id}
         on:uploadComplete={uploadComplete}
         on:allUploadsComplete={onAllUploadsComplete}
         on:uploadFailed={onUploadFailed}
@@ -103,7 +103,7 @@
         <div class="w-full h-16 bg-white border-t border-gray-200 dark:bg-gray-700 dark:border-gray-600">
           <div class="grid h-full max-w-lg grid-cols-3 mx-auto font-medium">
             <button
-              id="product-upload-button"
+              {id}
               type="button"
               class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group"
             >
