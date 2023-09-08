@@ -21,7 +21,6 @@
   const s = new ConditionsService();
 
   export let onSubmit: (data: any) => void;
-  $: console.log(fields);
 
   const onSubmitWithLoader = async (data) => {
     try {
@@ -97,6 +96,7 @@
 
       <div class="w-full mb-6 group">
         <DropDown
+          placeholder="Enter type"
           label="Type"
           bind:value={model.type}
           values={fields.find((field) => field.varName === 'type').ui.defaultValues}
@@ -109,6 +109,7 @@
 
       <div class="relative z-0 w-full mb-6 group">
         <DropDown
+          placeholder="Enter target"
           label="Target"
           bind:value={model.target}
           values={fields.find((field) => field.varName === 'target').ui.defaultValues}
