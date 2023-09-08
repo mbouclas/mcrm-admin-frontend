@@ -28,6 +28,9 @@
         model.attributes = {};
       } else {
         model = await s.findOne($params.id, ['*']);
+        if (!model?.rules?.length) {
+          model.rules = [];
+        }
       }
     }
   });
