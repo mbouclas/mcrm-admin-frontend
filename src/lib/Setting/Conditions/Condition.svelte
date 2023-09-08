@@ -24,6 +24,8 @@
     } else {
       if ($params.id === 'new') {
         model = getModelPrototypeFromFields(fields);
+        model.rules = [];
+        model.attributes = {};
       } else {
         model = await s.findOne($params.id, ['*']);
       }
