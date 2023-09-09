@@ -11,7 +11,6 @@
   import Image from '../../../DynamicFields/fields/image.svelte';
   import { RequestErrorException, handleValidationErrors, clearErrors } from '../../../helpers/helperErrors';
   import Modal from '../../../Shared/Modal.svelte';
-  import { Trash } from 'svelte-heros-v2';
   import CustomFilters from '../../../Shared/CustomFilters.svelte';
   import type { IPagination } from '../../../Shared/models/generic';
 
@@ -97,22 +96,6 @@
     filters.page = e.detail;
     await search();
   }
-
-  const handlePropertyValue = async ({ value, action }) => {
-    if (action === 'create') {
-      await service.storePropertyValue(value);
-    }
-
-    if (action === 'edit') {
-      await service.updatePropertyValue(value);
-    }
-
-    if (action === 'delete') {
-      await service.deletePropertyValue(value);
-    }
-
-    await reloadData();
-  };
 
   async function changeOrderBy(order: string, way: string) {
     if (filters.orderBy === order) {

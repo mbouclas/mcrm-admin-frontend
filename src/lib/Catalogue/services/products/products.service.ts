@@ -145,4 +145,23 @@ export class ProductsService extends BaseHttpService {
 
     return res;
   }
+
+  async manageCartCondition(sourceUuid: string, destinationUuids: string[], type: string) {
+    const successMessage =
+      type === 'attachCondition' ? 'Cart condition attached successfully' : 'Cart condition unattached successfully';
+    const errorMessage =
+      type !== 'attachCondition' ? 'Cart condition failed to attach' : 'Cart condition failed to unattach';
+
+    const res = await super.post(
+      `product/manage-cart-condition`,
+      {
+        sourceUuid,
+        destinationUuids,
+        type,
+      },
+      { successMessage, errorMessage },
+    );
+
+    return res;
+  }
 }
