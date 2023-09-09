@@ -110,6 +110,7 @@
 
   import Gallery from './tabs/Gallery.svelte';
   import { RequestErrorException, handleValidationErrors, clearErrors } from '../../helpers/helperErrors';
+  import AdvancedPricing from './tabs/AdvancedPricing.svelte';
 
   let hasError = false;
 
@@ -148,9 +149,11 @@
       <TabItem title="Properties" tabStyle="custom" {customActiveClass} {customInActiveClass}>
         <p class="text-sm text-gray-500 dark:text-gray-400">Tab Content 6</p>
       </TabItem>
-
       <TabItem title="Related products" tabStyle="custom" {customActiveClass} {customInActiveClass}>
         <Related />
+      </TabItem>
+      <TabItem title="Advanced pricing" tabStyle="custom" {customActiveClass} {customInActiveClass}>
+        <AdvancedPricing />
       </TabItem>
     {/if}
   </Tabs>
