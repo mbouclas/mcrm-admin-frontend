@@ -101,15 +101,15 @@
   </div>
 </Modal>
 
-<div class="px-4 mx-auto max-w-screen-xl">
-  <div class="mx-auto max-w-screen-sm text-center lg:mb-16">
+<div class="max-w-screen-xl">
+  <div class="max-w-screen-sm">
     <h2 class="mb-4 text-xl lg:text-2xl tracking-tight font-extrabold text-gray-900 dark:text-white">
-      {items.total} Conditions
+      <span class="text-blue-400"> {items.total}</span> Conditions
     </h2>
   </div>
 </div>
 
-<div class="flex items-center justify-center space-x-4">
+<div class="flex items-center space-x-4">
   <button on:click={() => navigate('/settings/conditions/new')} class="bg-green-500 rounded p-2">Add condition</button>
 
   {#each appliedFilters as filter}

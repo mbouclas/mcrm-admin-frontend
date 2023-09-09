@@ -5,15 +5,17 @@
   import SortButton from '../../Shared/SortTableHeadButton.svelte';
   import Loading from '../../Shared/Loading.svelte';
   import { formatDate } from '../../helpers/dates';
-  import ItemSelectorModal from '../../DynamicFields/fields/item-selector-modal.svelte';
-  import { Button } from 'flowbite-svelte';
   import Paginator from '../../Shared/Paginator.svelte';
-  import { moneyFormat } from '../../helpers/money';
   import Modal from '../../Shared/Modal.svelte';
   import CustomFilters from '../../Shared/CustomFilters.svelte';
-  import { navigate } from 'svelte-navigator';
+  import { navigate, useLocation } from 'svelte-navigator';
 
   let showModal = false;
+  let searchVal = '';
+
+  const location = useLocation();
+  const currentPath = $location.pathname;
+  const queryParams = new URLSearchParams($location.search);
 
   let items = {
     data: [],
@@ -24,6 +26,7 @@
     page: 1,
     orderBy: 'createdAt',
     way: 'desc',
+    q: '',
   };
   let filters: typeof defaultFilters,
     appliedFilters = [],
@@ -45,6 +48,7 @@
 
   async function reset() {
     filters = Object.assign({}, defaultFilters);
+    navigate(currentPath);
     await search();
   }
 
@@ -84,8 +88,14 @@
   }
 
   async function searchByFilters() {
-    showModal = false;
+    if (searchVal.trim().length) {
+      queryParams.set('q', searchVal);
+      const newUrl = currentPath + '?' + queryParams.toString();
+      navigate(newUrl);
+      filters.q = searchVal;
+    }
     await search();
+    showModal = false;
   }
 </script>
 
@@ -96,7 +106,8 @@
       on:change={(e) => {
         filters[e.detail.key] = e.detail.value;
       }}
-      filterBySearch={false}
+      filterByPrice={false}
+      bind:search={searchVal}
     />
   </div>
   <div slot="footer">
@@ -104,15 +115,15 @@
   </div>
 </Modal>
 
-<div class="px-4 mx-auto max-w-screen-xl">
-  <div class="mx-auto max-w-screen-sm text-center lg:mb-16 mb-8">
+<div class="max-w-screen-xl">
+  <div class="max-w-screen-sm">
     <h2 class="mb-4 text-xl lg:text-2xl tracking-tight font-extrabold text-gray-900 dark:text-white">
-      {items.total} Manufacturers
+      <span class="text-blue-400"> {items.total}</span> Manufacturers
     </h2>
   </div>
 </div>
 
-<div class="flex items-center justify-center p-4 space-x-4">
+<div class="flex items-center space-x-4">
   <button on:click={() => navigate('/catalogue/manufacturers/new')} class="bg-green-500 rounded p-2"
     >Add manufacturer</button
   >
@@ -187,75 +198,77 @@
               </tr>
             {/if}
           </tbody>
-          {#each items.data as item}
-            <tr>
-              <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                <div class="inline-flex items-center gap-x-3">
-                  <input
-                    type="checkbox"
-                    class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
-                  />
-                  <a href={`/catalogue/products/${item.uuid}`} class="h-12 w-12">
-                    <img src={item?.thumb?.url || item?.thumb} />
-                  </a>
-                </div>
-              </td>
+          {#if items.data}
+            {#each items.data as item}
+              <tr>
+                <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
+                  <div class="inline-flex items-center gap-x-3">
+                    <input
+                      type="checkbox"
+                      class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
+                    />
+                    <a href={`/catalogue/products/${item.uuid}`} class="h-12 w-12">
+                      <img src={item?.thumb?.url || item?.thumb} />
+                    </a>
+                  </div>
+                </td>
 
-              <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                <div class="inline-flex items-center gap-x-3">
-                  <input
-                    type="checkbox"
-                    class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
-                  />
+                <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
+                  <div class="inline-flex items-center gap-x-3">
+                    <input
+                      type="checkbox"
+                      class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
+                    />
 
-                  <a
-                    href={`/catalogue/manufacturers/${item.uuid}`}
-                    class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer"
+                    <a
+                      href={`/catalogue/manufacturers/${item.uuid}`}
+                      class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer"
+                    >
+                      {item.title}
+                    </a>
+                  </div>
+                </td>
+
+                <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
+                  <button
+                    title="Edit Order"
+                    on:click={toggleStatus.bind(this, item.uuid)}
+                    type="button"
+                    class="text-gray-500 transition-colors duration-200 dark:hover:text-yellow-500 dark:text-gray-300 hover:text-yellow-500 focus:outline-none"
                   >
-                    {item.title}
-                  </a>
-                </div>
-              </td>
-
-              <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                <button
-                  title="Edit Order"
-                  on:click={toggleStatus.bind(this, item.uuid)}
-                  type="button"
-                  class="text-gray-500 transition-colors duration-200 dark:hover:text-yellow-500 dark:text-gray-300 hover:text-yellow-500 focus:outline-none"
-                >
-                  {#if !item.active}
-                    <svg
-                      class="text-red-500"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="32"
-                      height="32"
-                      viewBox="0 0 24 24"
-                      ><path
-                        fill="currentColor"
-                        d="M17 7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h10c2.76 0 5-2.24 5-5s-2.24-5-5-5zM7 15c-1.66 0-3-1.34-3-3s1.34-3 3-3s3 1.34 3 3s-1.34 3-3 3z"
-                      /></svg
-                    >
-                  {:else}
-                    <svg
-                      class="text-green-500"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="32"
-                      height="32"
-                      viewBox="0 0 24 24"
-                      ><path
-                        fill="currentColor"
-                        d="M17 7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h10c2.76 0 5-2.24 5-5s-2.24-5-5-5zm0 8c-1.66 0-3-1.34-3-3s1.34-3 3-3s3 1.34 3 3s-1.34 3-3 3z"
-                      /></svg
-                    >
-                  {/if}
-                </button>
-              </td>
-              <td class="px-4 py-4 text-sm whitespace-nowrap">
-                {formatDate(item.createdAt)}
-              </td>
-            </tr>
-          {/each}
+                    {#if !item.active}
+                      <svg
+                        class="text-red-500"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="32"
+                        height="32"
+                        viewBox="0 0 24 24"
+                        ><path
+                          fill="currentColor"
+                          d="M17 7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h10c2.76 0 5-2.24 5-5s-2.24-5-5-5zM7 15c-1.66 0-3-1.34-3-3s1.34-3 3-3s3 1.34 3 3s-1.34 3-3 3z"
+                        /></svg
+                      >
+                    {:else}
+                      <svg
+                        class="text-green-500"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="32"
+                        height="32"
+                        viewBox="0 0 24 24"
+                        ><path
+                          fill="currentColor"
+                          d="M17 7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h10c2.76 0 5-2.24 5-5s-2.24-5-5-5zm0 8c-1.66 0-3-1.34-3-3s1.34-3 3-3s3 1.34 3 3s-1.34 3-3 3z"
+                        /></svg
+                      >
+                    {/if}
+                  </button>
+                </td>
+                <td class="px-4 py-4 text-sm whitespace-nowrap">
+                  {formatDate(item.createdAt)}
+                </td>
+              </tr>
+            {/each}
+          {/if}
         </table>
       </div>
     </div>

@@ -24,9 +24,6 @@
 
   const service = new PropertiesService();
   const params = useParams();
-  const defaultFilters = {
-    with: ['propertyValues'],
-  };
 
   let filters = {
     with: ['propertyValues'],
@@ -109,13 +106,23 @@
         filters[e.detail.key] = e.detail.value;
       }}
       bind:search={searchVal}
+      filterByPrice={false}
     />
   </div>
   <div slot="footer">
     <button class="bg-blue-500 px-2 py-1 rounded" autofocus on:click={searchByFilters}>Search</button>
   </div>
 </Modal>
-<div class="flex items-center justify-center p-4 space-x-4">
+
+<div class="max-w-screen-xl">
+  <div class="max-w-screen-sm">
+    <h2 class="mb-4 text-xl lg:text-2xl tracking-tight font-extrabold text-gray-900 dark:text-white">
+      <span class="text-blue-400">{items.total}</span> Properties
+    </h2>
+  </div>
+</div>
+
+<div class="flex items-center space-x-4">
   <button on:click={() => navigate('/catalogue/properties/new')} class="bg-green-500 rounded p-2">Add property</button>
 
   <button on:click={() => (showModal = true)} class="bg-blue-500 rounded p-2">Filters</button>
@@ -163,6 +170,14 @@
                   >Status</SortButton
                 >
               </th>
+              <th
+                scope="col"
+                class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+              >
+                <SortButton name="createdAt" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
+                  >Date</SortButton
+                >
+              </th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
@@ -174,65 +189,70 @@
               </tr>
             {/if}
           </tbody>
-          {#each items.data as item}
-            <tr>
-              <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                <div class="inline-flex items-center gap-x-3">
-                  <input
-                    type="checkbox"
-                    class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
-                  />
-                </div>
-              </td>
+          {#if items.data}
+            {#each items.data as item}
+              <tr>
+                <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
+                  <div class="inline-flex items-center gap-x-3">
+                    <input
+                      type="checkbox"
+                      class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
+                    />
+                  </div>
+                </td>
 
-              <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                <a
-                  href={`/catalogue/properties/${item.uuid}`}
-                  class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer"
-                >
-                  {item.title}
-                </a>
-              </td>
-              <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                {item.description}
-              </td>
+                <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
+                  <a
+                    href={`/catalogue/properties/${item.uuid}`}
+                    class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer"
+                  >
+                    {item.title}
+                  </a>
+                </td>
+                <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
+                  {item.description}
+                </td>
 
-              <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                <button
-                  title="Edit Order"
-                  on:click={toggleStatus.bind(this, item.uuid)}
-                  type="button"
-                  class="text-gray-500 transition-colors duration-200 dark:hover:text-yellow-500 dark:text-gray-300 hover:text-yellow-500 focus:outline-none"
-                >
-                  {#if !item.active}
-                    <svg
-                      class="text-red-500"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="32"
-                      height="32"
-                      viewBox="0 0 24 24"
-                      ><path
-                        fill="currentColor"
-                        d="M17 7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h10c2.76 0 5-2.24 5-5s-2.24-5-5-5zM7 15c-1.66 0-3-1.34-3-3s1.34-3 3-3s3 1.34 3 3s-1.34 3-3 3z"
-                      /></svg
-                    >
-                  {:else}
-                    <svg
-                      class="text-green-500"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="32"
-                      height="32"
-                      viewBox="0 0 24 24"
-                      ><path
-                        fill="currentColor"
-                        d="M17 7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h10c2.76 0 5-2.24 5-5s-2.24-5-5-5zm0 8c-1.66 0-3-1.34-3-3s1.34-3 3-3s3 1.34 3 3s-1.34 3-3 3z"
-                      /></svg
-                    >
-                  {/if}
-                </button>
-              </td>
-            </tr>
-          {/each}
+                <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
+                  <button
+                    title="Edit Order"
+                    on:click={toggleStatus.bind(this, item.uuid)}
+                    type="button"
+                    class="text-gray-500 transition-colors duration-200 dark:hover:text-yellow-500 dark:text-gray-300 hover:text-yellow-500 focus:outline-none"
+                  >
+                    {#if !item.active}
+                      <svg
+                        class="text-red-500"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="32"
+                        height="32"
+                        viewBox="0 0 24 24"
+                        ><path
+                          fill="currentColor"
+                          d="M17 7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h10c2.76 0 5-2.24 5-5s-2.24-5-5-5zM7 15c-1.66 0-3-1.34-3-3s1.34-3 3-3s3 1.34 3 3s-1.34 3-3 3z"
+                        /></svg
+                      >
+                    {:else}
+                      <svg
+                        class="text-green-500"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="32"
+                        height="32"
+                        viewBox="0 0 24 24"
+                        ><path
+                          fill="currentColor"
+                          d="M17 7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h10c2.76 0 5-2.24 5-5s-2.24-5-5-5zm0 8c-1.66 0-3-1.34-3-3s1.34-3 3-3s3 1.34 3 3s-1.34 3-3 3z"
+                        /></svg
+                      >
+                    {/if}
+                  </button>
+                </td>
+                <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
+                  {item.createdAt}
+                </td>
+              </tr>
+            {/each}
+          {/if}
         </table>
       </div>
     </div>
