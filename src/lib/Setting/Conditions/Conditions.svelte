@@ -111,10 +111,10 @@
 
         <div class="mb-4">
           <DropDown
-            placeholder="Type"
-            label="Type"
-            bind:value={filters['type']}
-            values={fields.find((field) => field.varName === 'type').ui.defaultValues}
+            placeholder="Kind"
+            label="Kind"
+            bind:value={filters['kind']}
+            values={fields.find((field) => field.varName === 'kind').ui.defaultValues}
           />
         </div>
 
@@ -181,7 +181,7 @@
               >
                 <div class="flex items-center gap-x-3">
                   <SortButton name="title" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
-                    >Type</SortButton
+                    >Kind</SortButton
                   >
                 </div>
               </th>
@@ -244,7 +244,7 @@
 
               <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                 <div>
-                  {item.type}
+                  {item.kind}
                 </div>
               </td>
 
