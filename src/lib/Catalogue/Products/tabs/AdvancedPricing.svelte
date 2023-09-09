@@ -17,15 +17,13 @@
   let model;
   let loading = false;
 
-  $: skipUuids = model ? [model.uuid, ...model.cartCondition.map((r) => r.uuid)] : [];
+  $: skipUuids = cartConditions.map((r) => r.uuid);
   $: cartConditions = model
     ? model.cartCondition.map((item) => ({
         ...item.model,
         order: item?.relationship?.order,
       }))
     : [];
-
-  $: console.log(model);
 
   onMount(async () => {
     model = await s.findOne($params.id, ['cartCondition']);
