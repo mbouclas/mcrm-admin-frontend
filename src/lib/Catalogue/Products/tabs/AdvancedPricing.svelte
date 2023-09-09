@@ -111,7 +111,7 @@
             {/if}
           </tbody>
           {#if cartConditions?.length}
-            {#each cartConditions as item}
+            {#each cartConditions.sort((a, b) => a.order - b.order) as item}
               <tr>
                 <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                   <a href={`/catalogue/products/${item.uuid}`} class="hover:underline">
