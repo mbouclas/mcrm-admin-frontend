@@ -16,7 +16,6 @@
   const s = new ProductsService();
   let model;
   let loading = false;
-  let selectedUuids = [];
 
   $: skipUuids = model ? [model.uuid, ...model.cartCondition.map((r) => r.uuid)] : [];
 
@@ -24,13 +23,12 @@
     model = await s.findOne($params.id, ['cartCondition']);
   });
 
-  async function relate() {
-    await s.manageCartCondition($params.id, selectedUuids, 'attachCondition');
+  async function attachCondition(uuid) {
+    await s.manageCartCondition($params.id, [uuid], 'attachCondition');
     model = await s.findOne($params.id, ['*']);
-    selectedUuids = [];
   }
 
-  async function unrelate(item) {
+  async function unattachCondition(item) {
     await s.manageCartCondition($params.id, [item.uuid], 'unattachCondition');
     model = await s.findOne($params.id, ['*']);
   }
@@ -39,9 +37,8 @@
 <ItemSelectorModal
   config={conditionItemSelectorConfig}
   {skipUuids}
-  on:confirm={() => relate()}
-  on:select={(e) => (selectedUuids = [...selectedUuids, e.detail.uuid])}
-  closeOnSelect={false}
+  on:select={(e) => attachCondition(e.detail.uuid)}
+  closeOnSelect={true}
   label="Add conditions"
   selectMode="single"
 >
@@ -136,7 +133,8 @@
                   {formatDate(item.createdAt)}
                 </td>
                 <td class="px-4 py-4 text-sm whitespace-nowrap">
-                  <button on:click={() => unrelate(item)} class="text-gray-500"><Trash color="white" /></button>
+                  <button on:click={() => unattachCondition(item)} class="text-gray-500"><Trash color="white" /></button
+                  >
                 </td>
               </tr>
             {/each}
