@@ -146,7 +146,7 @@ export class ProductsService extends BaseHttpService {
     return res;
   }
 
-  async manageCartCondition(sourceUuid: string, destinationUuids: string[], type: string) {
+  async manageCartCondition(sourceUuid: string, destinationUuid: string, type: string) {
     const successMessage =
       type === 'attachCondition' ? 'Cart condition attached successfully' : 'Cart condition unattached successfully';
     const errorMessage =
@@ -156,7 +156,7 @@ export class ProductsService extends BaseHttpService {
       `product/manage-cart-condition`,
       {
         sourceUuid,
-        destinationUuids,
+        destinationUuid,
         type,
       },
       { successMessage, errorMessage },

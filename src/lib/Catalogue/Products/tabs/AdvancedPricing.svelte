@@ -24,12 +24,12 @@
   });
 
   async function attachCondition(uuid) {
-    await s.manageCartCondition($params.id, [uuid], 'attachCondition');
+    await s.manageCartCondition($params.id, uuid, 'attachCondition');
     model = await s.findOne($params.id, ['*']);
   }
 
   async function unattachCondition(item) {
-    await s.manageCartCondition($params.id, [item.uuid], 'unattachCondition');
+    await s.manageCartCondition($params.id, item.uuid, 'unattachCondition');
     model = await s.findOne($params.id, ['*']);
   }
 </script>
