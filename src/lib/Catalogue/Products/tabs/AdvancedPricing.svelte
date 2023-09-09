@@ -21,11 +21,11 @@
   $: cartConditions = model
     ? model.cartCondition.map((item) => ({
         ...item.model,
-        order: item.relationship.order,
+        order: item?.relationship?.order,
       }))
     : [];
 
-  $: console.log(cartConditions);
+  $: console.log(model);
 
   onMount(async () => {
     model = await s.findOne($params.id, ['cartCondition']);

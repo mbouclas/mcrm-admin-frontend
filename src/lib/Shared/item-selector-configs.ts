@@ -171,6 +171,9 @@ export const pageItemSelectorConfig: IItemSelectorConfig = {
 export const conditionItemSelectorConfig: IItemSelectorConfig = {
   apiUrl: 'condition',
   module: 'Condition',
+  filters: {
+    target: 'item',
+  },
   labels: [
     {
       field: 'title',
