@@ -18,6 +18,14 @@
   let loading = false;
 
   $: skipUuids = model ? [model.uuid, ...model.cartCondition.map((r) => r.uuid)] : [];
+  $: cartConditions = model
+    ? model.cartCondition.map((item) => ({
+        ...item.model,
+        order: item.relationship.order,
+      }))
+    : [];
+
+  $: console.log(cartConditions);
 
   onMount(async () => {
     model = await s.findOne($params.id, ['cartCondition']);
@@ -104,8 +112,8 @@
               </tr>
             {/if}
           </tbody>
-          {#if model?.cartCondition?.length}
-            {#each model.cartCondition as item}
+          {#if cartConditions?.length}
+            {#each cartConditions as item}
               <tr>
                 <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                   <a href={`/catalogue/products/${item.uuid}`} class="hover:underline">
