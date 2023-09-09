@@ -9,8 +9,13 @@
   import Modal from '../../Shared/Modal.svelte';
   import CustomFilters from '../../Shared/CustomFilters.svelte';
   import { navigate } from 'svelte-navigator';
+  import DropDown from '../../Shared/DropDown.svelte';
+  import { AppService } from '../../Shared/app.service';
+  import Input from '../../Shared/Input.svelte';
+  import type { IDynamicFieldConfigBlueprint } from '../../DynamicFields/types';
 
   let showModal = false;
+  let fields: IDynamicFieldConfigBlueprint[] = [];
 
   let items = {
     data: [],
@@ -28,6 +33,8 @@
   reset();
 
   onMount(async () => {
+    fields = AppService.getModel('CartConditionModel').fields;
+
     await search();
   });
 
@@ -94,7 +101,33 @@
         filters[e.detail.key] = e.detail.value;
       }}
       filterBySearch={false}
-    />
+      filterByPrice={false}
+      filterByDate={false}
+    >
+      <div class="w-full" slot="fields">
+        <div class="relative z-0 w-full mb-6 group">
+          <Input bind:value={filters['title']} placeholder="Title" label="Title" />
+        </div>
+
+        <div class="mb-4">
+          <DropDown
+            placeholder="Type"
+            label="Type"
+            bind:value={filters['type']}
+            values={fields.find((field) => field.varName === 'type').ui.defaultValues}
+          />
+        </div>
+
+        <div class="mb-4">
+          <DropDown
+            placeholder="Target"
+            label="Target"
+            bind:value={filters['target']}
+            values={fields.find((field) => field.varName === 'target').ui.defaultValues}
+          />
+        </div>
+      </div></CustomFilters
+    >
   </div>
   <div slot="footer">
     <button class="bg-blue-500 px-2 py-1 rounded" autofocus on:click={searchByFilters}>Search</button>

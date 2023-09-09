@@ -54,6 +54,8 @@
     <Search bind:value={search} placeholder="Search..." />
   {/if}
 
+  <slot name="fields" />
+
   {#if filterByPrice}
     <div>
       <Label class="text-2xl mb-4 flowbite-modal-title">Filter by price</Label>
