@@ -89,22 +89,6 @@
     await search();
   }
 
-  async function viewGate(uuid: number) {
-    // await service.edit(id);
-  }
-
-  async function changeStatus(uuid: number) {
-    // await service.edit(id);
-  }
-
-  async function editGate(uuid: number) {
-    // await service.edit(id);
-  }
-
-  async function deleteGate(uuid: number) {
-    // await service.edit(id);
-  }
-
   async function changeGateBy(gate: string, way: string) {
     if (filters.gate === gate) {
       filters.way = filters.way === 'asc' ? 'desc' : 'asc';
@@ -202,6 +186,14 @@
     <Button color="alternative" on:click={cancelAddGateModal}>Cancel</Button>
   </div>
 </Modal>
+
+<div class="max-w-screen-xl">
+  <div class="max-w-screen-sm">
+    <h2 class="mb-4 text-xl lg:text-2xl tracking-tight font-extrabold text-gray-900 dark:text-white">
+      <span class="text-blue-400">{gates.total}</span> Gates
+    </h2>
+  </div>
+</div>
 
 <div
   class="text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 overflow-y-hidden overflow-x-auto"

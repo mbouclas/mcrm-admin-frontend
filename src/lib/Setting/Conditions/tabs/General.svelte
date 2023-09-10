@@ -186,10 +186,10 @@
 
       <div class="w-full mb-6 group">
         <DropDown
-          placeholder="Select type"
-          label="Type"
-          bind:value={model.type}
-          values={fields.find((field) => field.varName === 'type').ui.defaultValues}
+          placeholder="Select kind"
+          label="Kind"
+          bind:value={model.kind}
+          values={fields.find((field) => field.varName === 'kind').ui.defaultValues}
         />
       </div>
 

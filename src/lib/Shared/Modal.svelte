@@ -2,20 +2,16 @@
   import { XMark } from 'svelte-heros-v2';
 
   export let showModal = false;
-
-  let dialog;
-
-  $: if (dialog && showModal) dialog.showModal();
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
 {#if showModal}
-  <dialog bind:this={dialog} on:close={() => (showModal = false)} on:click|self={() => dialog.close()}>
+  <div class="wrapper" on:close={() => (showModal = false)}>
     <div class="bg-[#1b1f2b] text-gray-200" on:click|stopPropagation>
       {#if $$slots.header}
         <div class="flex items-center justify-between pb-6 text-3xl">
           <slot name="header" />
-          <XMark class="cursor-pointer" on:click={() => dialog.close()} />
+          <XMark class="cursor-pointer" on:click={() => (showModal = false)} />
         </div>
         <hr class="mt-2" />
       {/if}
@@ -32,22 +28,23 @@
         {/if}
       </div>
     </div>
-  </dialog>
+  </div>
 {/if}
 
 <style>
-  :global(dialog::-webkit-scrollbar) {
+  :global(.wrapper::-webkit-scrollbar) {
     width: 0.25rem;
   }
 
-  :global(dialog::-webkit-scrollbar-track) {
+  :global(.wrapper::-webkit-scrollbar-track) {
     background: #323232;
   }
 
-  :global(dialog::-webkit-scrollbar-thumb) {
+  :global(.wrapper::-webkit-scrollbar-thumb) {
     background-color: #b3b3b3;
   }
-  dialog {
+  .wrapper {
+    position: fixed;
     z-index: 999;
     min-width: 40em;
     max-height: 900px;
@@ -56,14 +53,17 @@
     border: none;
     padding: 0;
     background: rgba(0, 0, 0, 0.3);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
-  dialog::backdrop {
+  .wrapper::backdrop {
     background: rgba(0, 0, 0, 0.3);
   }
-  dialog > div {
+  .wrapper > div {
     padding: 2em;
   }
-  dialog[open] {
+  .wrapper[open] {
     animation: zoom 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
   @keyframes zoom {
@@ -74,7 +74,7 @@
       transform: scale(1);
     }
   }
-  dialog[open]::backdrop {
+  .wrapper[open]::backdrop {
     animation: fade 0.2s ease-out;
   }
   @keyframes fade {

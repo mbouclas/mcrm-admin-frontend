@@ -167,3 +167,29 @@ export const pageItemSelectorConfig: IItemSelectorConfig = {
     },
   ],
 };
+
+export const conditionItemSelectorConfig: IItemSelectorConfig = {
+  apiUrl: 'condition',
+  module: 'Condition',
+  filters: {
+    target: 'item',
+  },
+  labels: [
+    {
+      field: 'title',
+      label: 'Title',
+    },
+    {
+      field: 'type',
+      label: 'Type',
+    },
+    {
+      field: 'target',
+      label: 'Target',
+    },
+    {
+      field: 'value',
+      label: 'Value',
+    },
+  ],
+};

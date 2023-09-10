@@ -9,8 +9,13 @@
   import Modal from '../../Shared/Modal.svelte';
   import CustomFilters from '../../Shared/CustomFilters.svelte';
   import { navigate } from 'svelte-navigator';
+  import DropDown from '../../Shared/DropDown.svelte';
+  import { AppService } from '../../Shared/app.service';
+  import Input from '../../Shared/Input.svelte';
+  import type { IDynamicFieldConfigBlueprint } from '../../DynamicFields/types';
 
   let showModal = false;
+  let fields: IDynamicFieldConfigBlueprint[] = [];
 
   let items = {
     data: [],
@@ -28,6 +33,8 @@
   reset();
 
   onMount(async () => {
+    fields = AppService.getModel('CartConditionModel').fields;
+
     await search();
   });
 
@@ -94,22 +101,48 @@
         filters[e.detail.key] = e.detail.value;
       }}
       filterBySearch={false}
-    />
+      filterByPrice={false}
+      filterByDate={false}
+    >
+      <div class="w-full" slot="fields">
+        <div class="relative z-0 w-full mb-6 group">
+          <Input bind:value={filters['title']} placeholder="Title" label="Title" />
+        </div>
+
+        <div class="mb-4">
+          <DropDown
+            placeholder="Kind"
+            label="Kind"
+            bind:value={filters['kind']}
+            values={fields.find((field) => field.varName === 'kind').ui.defaultValues}
+          />
+        </div>
+
+        <div class="mb-4">
+          <DropDown
+            placeholder="Target"
+            label="Target"
+            bind:value={filters['target']}
+            values={fields.find((field) => field.varName === 'target').ui.defaultValues}
+          />
+        </div>
+      </div></CustomFilters
+    >
   </div>
   <div slot="footer">
     <button class="bg-blue-500 px-2 py-1 rounded" autofocus on:click={searchByFilters}>Search</button>
   </div>
 </Modal>
 
-<div class="px-4 mx-auto max-w-screen-xl">
-  <div class="mx-auto max-w-screen-sm text-center lg:mb-16">
+<div class="max-w-screen-xl">
+  <div class="max-w-screen-sm">
     <h2 class="mb-4 text-xl lg:text-2xl tracking-tight font-extrabold text-gray-900 dark:text-white">
-      {items.total} Conditions
+      <span class="text-blue-400"> {items.total}</span> Conditions
     </h2>
   </div>
 </div>
 
-<div class="flex items-center justify-center space-x-4">
+<div class="flex items-center space-x-4">
   <button on:click={() => navigate('/settings/conditions/new')} class="bg-green-500 rounded p-2">Add condition</button>
 
   {#each appliedFilters as filter}
@@ -148,7 +181,7 @@
               >
                 <div class="flex items-center gap-x-3">
                   <SortButton name="title" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
-                    >Type</SortButton
+                    >Kind</SortButton
                   >
                 </div>
               </th>
@@ -211,7 +244,7 @@
 
               <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                 <div>
-                  {item.type}
+                  {item.kind}
                 </div>
               </td>
 
