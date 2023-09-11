@@ -2,11 +2,12 @@
   import { XMark } from 'svelte-heros-v2';
 
   export let showModal = false;
+  export let className = '';
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
 {#if showModal}
-  <div class="wrapper" on:close={() => (showModal = false)}>
+  <div class={`wrapper ${className}`} on:close={() => (showModal = false)}>
     <div class="bg-[#1b1f2b] text-gray-200" on:click|stopPropagation>
       {#if $$slots.header}
         <div class="flex items-center justify-between pb-6 text-3xl">

@@ -11,22 +11,24 @@
   import CustomFilters from '../../../Shared/CustomFilters.svelte';
   import { navigate, useLocation } from 'svelte-navigator';
   import Input from '../../../Shared/Input.svelte';
+  import ImportTemplateFieldMaps from './ImportTemplateFieldMaps.svelte';
 
   let showModal = false;
   let searchVal = '';
 
   const defaultTemplateData = {
+    uuid: '',
     type: '',
     name: '',
     default: false,
-    fieldMap: {},
+    fieldMap: [],
     processor: '',
   };
 
   let importTemplateData = defaultTemplateData;
   let isImportTemplateModalOpen = false;
 
-  let isEditImportTemplateModalOpen = true;
+  let isEditImportTemplateModalOpen = false;
   let editImportTemplateIndex = null;
 
   let isDeleteImportTemplateModalOpen = false;
@@ -80,15 +82,6 @@
     await search();
   }
 
-  async function toggleStatus(uuid: string) {
-    const foundIndex = items.data.findIndex((i) => i.uuid === uuid);
-    const newActive = !items.data[foundIndex].active;
-
-    await service.update(uuid, { active: newActive });
-
-    items.data[foundIndex].active = newActive;
-  }
-
   async function handlePageChange(e) {
     filters.page = e.detail;
     await search();
@@ -116,6 +109,17 @@
     isImportTemplateModalOpen = false;
   };
 
+  const confirmImportTemplateEdit = async () => {
+    await service.patch(importTemplateData.uuid, importTemplateData);
+    await search();
+    isEditImportTemplateModalOpen = false;
+    importTemplateData = defaultTemplateData;
+  };
+
+  const cancelImportTemplateEdit = () => {
+    isEditImportTemplateModalOpen = false;
+  };
+
   const handleDeleteModalOpen = (item) => {
     importTemplateData = item;
     isDeleteImportTemplateModalOpen = true;
@@ -128,7 +132,6 @@
 
     await search();
   };
-  $: console.log(importTemplateData);
 
   const cancelDeleteImportTemplate = () => {
     isDeleteImportTemplateModalOpen = false;
@@ -169,7 +172,7 @@
   </div>
 </Modal>
 
-<Modal bind:showModal={isImportTemplateModalOpen}>
+<Modal className="w-3/4" bind:showModal={isImportTemplateModalOpen}>
   <div slot="header">Add import template</div>
 
   <div slot="content">
@@ -184,10 +187,36 @@
     <div class="mb-4">
       <Input label="Processor" placeholder="Processor" bind:value={importTemplateData.processor} required />
     </div>
+
+    <ImportTemplateFieldMaps bind:items={importTemplateData.fieldMap} />
   </div>
   <svelte:fragment slot="footer">
     <Button on:click={confirmImportTemplateAdd}>Add</Button>
     <Button color="alternative" on:click={cancelImportTemplateAdd}>Cancel</Button>
+  </svelte:fragment>
+</Modal>
+
+<Modal className="w-3/4" bind:showModal={isEditImportTemplateModalOpen}>
+  <div slot="header">Edit import template</div>
+
+  <div slot="content">
+    <div class="mb-4">
+      <Input label="Name" placeholder="Enter name" bind:value={importTemplateData.name} required />
+    </div>
+
+    <div class="mb-4">
+      <Input label="Type" placeholder="Type" bind:value={importTemplateData.type} required />
+    </div>
+
+    <div class="mb-4">
+      <Input label="Processor" placeholder="Processor" bind:value={importTemplateData.processor} required />
+    </div>
+
+    <ImportTemplateFieldMaps bind:items={importTemplateData.fieldMap} />
+  </div>
+  <svelte:fragment slot="footer">
+    <Button on:click={confirmImportTemplateEdit}>Add</Button>
+    <Button color="alternative" on:click={cancelImportTemplateEdit}>Cancel</Button>
   </svelte:fragment>
 </Modal>
 
