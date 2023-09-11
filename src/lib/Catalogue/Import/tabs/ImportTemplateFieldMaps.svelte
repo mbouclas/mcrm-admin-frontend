@@ -151,7 +151,7 @@
     </div>
   </div>
   <svelte:fragment slot="footer">
-    <Button on:click={confirmFieldMapEdit}>Add</Button>
+    <Button on:click={confirmFieldMapEdit}>Confirm</Button>
     <Button color="alternative" on:click={cancelFieldMapEdit}>Cancel</Button>
   </svelte:fragment>
 </Modal>
