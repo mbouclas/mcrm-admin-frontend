@@ -3,6 +3,21 @@
   import Modal from '../../../Shared/Modal.svelte';
   import Input from '../../../Shared/Input.svelte';
   import Toggle from '../../../Shared/Toggle.svelte';
+  import DropDown from '../../../Shared/DropDown.svelte';
+
+  let typeValues = [
+    'text',
+    'number',
+    'float',
+    'boolean',
+    'category',
+    'property',
+    'image',
+    'variantId',
+    'productId',
+    'price',
+    'tag',
+  ];
 
   export let items: any[];
 
@@ -80,7 +95,7 @@
     </div>
 
     <div class="mb-4">
-      <Input label="Type" placeholder="Enter  type" bind:value={importTemplateData.type} required />
+      <DropDown placeholder="Type" label="Type" bind:value={importTemplateData['type']} values={typeValues} />
     </div>
 
     <div class="mb-4">
@@ -115,7 +130,7 @@
     </div>
 
     <div class="mb-4">
-      <Input label="Type" placeholder="Type" bind:value={importTemplateData.type} required />
+      <DropDown placeholder="Type" label="Type" bind:value={importTemplateData['type']} values={typeValues} />
     </div>
 
     <div class="mb-4">

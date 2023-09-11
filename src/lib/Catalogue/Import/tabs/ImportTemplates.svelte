@@ -9,7 +9,6 @@
   import { formatDate } from '../../../helpers/dates';
   import Paginator from '../../../Shared/Paginator.svelte';
   import Modal from '../../../Shared/Modal.svelte';
-  import CustomFilters from '../../../Shared/CustomFilters.svelte';
   import { navigate, useLocation } from 'svelte-navigator';
   import Input from '../../../Shared/Input.svelte';
   import ImportTemplateFieldMaps from './ImportTemplateFieldMaps.svelte';
@@ -88,17 +87,6 @@
     await search();
   }
 
-  async function searchByFilters() {
-    if (searchVal.trim().length) {
-      queryParams.set('q', searchVal);
-      const newUrl = currentPath + '?' + queryParams.toString();
-      navigate(newUrl);
-      filters.q = searchVal;
-    }
-    await search();
-    showModal = false;
-  }
-
   const confirmImportTemplateAdd = async () => {
     await service.store(importTemplateData);
     await search();
@@ -158,22 +146,6 @@
   <div slot="footer">
     <Button on:click={() => deleteImportTemplate()}>Confirm</Button>
     <Button color="alternative" on:click={() => cancelDeleteImportTemplate()}>Cancel</Button>
-  </div>
-</Modal>
-
-<Modal bind:showModal>
-  <div slot="header">Filters</div>
-  <div slot="content">
-    <CustomFilters
-      on:change={(e) => {
-        filters[e.detail.key] = e.detail.value;
-      }}
-      filterByPrice={false}
-      bind:search={searchVal}
-    />
-  </div>
-  <div slot="footer">
-    <button class="bg-blue-500 px-2 py-1 rounded" autofocus on:click={searchByFilters}>Search</button>
   </div>
 </Modal>
 
@@ -241,13 +213,6 @@
   <button on:click={() => (isImportTemplateModalOpen = true)} class="bg-green-500 rounded p-2"
     >Add import template</button
   >
-
-  {#each appliedFilters as filter}
-    <button>{filter.name}</button>
-  {/each}
-
-  <button on:click={() => (showModal = true)} class="bg-blue-500 rounded p-2">Filters</button>
-  <button on:click={reset} class="bg-red-500 rounded p-2">Reset Filters</button>
 </div>
 
 <div class="flex flex-col mt-6">
@@ -267,9 +232,7 @@
                     class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
                   />
 
-                  <SortButton name="name" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
-                    >Name</SortButton
-                  >
+                  <span>Name</span>
                 </div>
               </th>
 
@@ -278,9 +241,7 @@
                 class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
               >
                 <div class="flex items-center gap-x-3">
-                  <SortButton name="type" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
-                    >Type</SortButton
-                  >
+                  <span>Type</span>
                 </div>
               </th>
 
