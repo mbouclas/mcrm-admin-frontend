@@ -90,7 +90,7 @@
   <div slot="header">Add Field Map</div>
 
   <div slot="content">
-    <div class="mb-4">
+    <div class="mb-4 mt-4">
       <Input label="Name" placeholder="Enter name" bind:value={importTemplateData.name} required />
     </div>
 
@@ -125,7 +125,7 @@
   <div slot="header">Edit field map</div>
 
   <div slot="content">
-    <div class="mb-4">
+    <div class="mb-4 mt-4">
       <Input label="Name" placeholder="Enter name" bind:value={importTemplateData.name} required />
     </div>
 

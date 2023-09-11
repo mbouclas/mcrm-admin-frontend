@@ -153,7 +153,7 @@
   <div slot="header">Add import template</div>
 
   <div slot="content">
-    <div class="mb-4">
+    <div class="mb-4 mt-4">
       <Input label="Name" placeholder="Enter name" bind:value={importTemplateData.name} required />
     </div>
 
@@ -179,7 +179,7 @@
   <div slot="header">Edit import template</div>
 
   <div slot="content">
-    <div class="mb-4">
+    <div class="mb-4 mt-4">
       <Input label="Name" placeholder="Enter name" bind:value={importTemplateData.name} required />
     </div>
 
