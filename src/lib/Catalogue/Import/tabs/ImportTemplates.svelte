@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { Button } from 'flowbite-svelte';
   import type { IPagination } from '../../../Shared/models/generic';
+  import Toggle from '../../../Shared/Toggle.svelte';
   import { ImportTemplatesService } from '../../services/import/import-templates.service';
   import SortButton from '../../../Shared/SortTableHeadButton.svelte';
   import Loading from '../../../Shared/Loading.svelte';
@@ -137,6 +138,10 @@
     isDeleteImportTemplateModalOpen = false;
     importTemplateData = defaultTemplateData;
   };
+
+  async function toggleStatus(item, value) {
+    await service.update(item.uuid, { default: value });
+  }
 </script>
 
 <Modal bind:showModal={isDeleteImportTemplateModalOpen}>
@@ -188,6 +193,8 @@
       <Input label="Processor" placeholder="Processor" bind:value={importTemplateData.processor} required />
     </div>
 
+    <div class="mb-4"><Toggle label="Default" bind:value={importTemplateData.default} /></div>
+
     <ImportTemplateFieldMaps bind:items={importTemplateData.fieldMap} />
   </div>
   <svelte:fragment slot="footer">
@@ -211,6 +218,8 @@
     <div class="mb-4">
       <Input label="Processor" placeholder="Processor" bind:value={importTemplateData.processor} required />
     </div>
+
+    <div class="mb-4"><Toggle label="Default" bind:value={importTemplateData.default} /></div>
 
     <ImportTemplateFieldMaps bind:items={importTemplateData.fieldMap} />
   </div>
@@ -280,9 +289,16 @@
                 class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
               >
                 <div class="flex items-center gap-x-3">
-                  <SortButton name="processor" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
-                    >Processor</SortButton
-                  >
+                  <span>Processor</span>
+                </div>
+              </th>
+
+              <th
+                scope="col"
+                class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+              >
+                <div class="flex items-center gap-x-3">
+                  <span>Default</span>
                 </div>
               </th>
 
@@ -341,6 +357,12 @@
                     <span>
                       {item.processor}
                     </span>
+                  </div>
+                </td>
+
+                <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
+                  <div class="inline-flex items-center gap-x-3">
+                    <Toggle on:change={(e) => toggleStatus(item, e.detail.value)} bind:value={item.default} />
                   </div>
                 </td>
 

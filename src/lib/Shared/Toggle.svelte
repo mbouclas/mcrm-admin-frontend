@@ -1,5 +1,8 @@
 <script lang="ts">
   import { Label, Toggle } from 'flowbite-svelte';
+  import { createEventDispatcher } from 'svelte';
+
+  let dispatch = createEventDispatcher();
 
   import ErrorMessage from './ErrorMessage.svelte';
 
@@ -14,6 +17,13 @@
   <Label color={errors.length ? 'red' : 'gray'} for={label} class="block mb-2">{label}:</Label>
 {/if}
 
-<Toggle on:click={(e) => (value = !value)} {color} checked={value} />
+<Toggle
+  on:click={(_) => {
+    value = !value;
+    dispatch('change', { value });
+  }}
+  {color}
+  checked={value}
+/>
 
 <ErrorMessage {errors} />
