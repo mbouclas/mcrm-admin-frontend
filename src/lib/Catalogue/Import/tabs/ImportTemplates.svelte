@@ -111,7 +111,7 @@
   };
 
   const confirmImportTemplateEdit = async () => {
-    await service.patch(importTemplateData.uuid, importTemplateData);
+    await service.update(importTemplateData.uuid, importTemplateData);
     await search();
     isEditImportTemplateModalOpen = false;
     importTemplateData = defaultTemplateData;
@@ -224,7 +224,7 @@
     <ImportTemplateFieldMaps bind:items={importTemplateData.fieldMap} />
   </div>
   <svelte:fragment slot="footer">
-    <Button on:click={confirmImportTemplateEdit}>Add</Button>
+    <Button on:click={confirmImportTemplateEdit}>Confirm</Button>
     <Button color="alternative" on:click={cancelImportTemplateEdit}>Cancel</Button>
   </svelte:fragment>
 </Modal>
