@@ -189,7 +189,7 @@
 
 <div class="max-w-screen-xl">
   <div class="max-w-screen-sm">
-    <h2 class="mb-4 text-xl lg:text-2xl tracking-tight font-extrabold text-gray-900 dark:text-white">
+    <h2 class="mb-4 text-xl lg:text-2xl tracking-tight font-extrabold text-gray-900 dark:text-white outline-none">
       <span class="text-blue-400">{gates.total}</span> Gates
     </h2>
   </div>

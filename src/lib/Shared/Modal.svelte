@@ -2,12 +2,12 @@
   import { XMark } from 'svelte-heros-v2';
 
   export let showModal = false;
+  export let className = '';
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
 {#if showModal}
   <div class="wrapper" on:close={() => (showModal = false)}>
-    <div class="bg-[#1b1f2b] text-gray-200" on:click|stopPropagation>
+    <div class={`modal-content bg-[#1b1f2b] text-gray-200 ${className}`} on:click|stopPropagation>
       {#if $$slots.header}
         <div class="flex items-center justify-between pb-6 text-3xl">
           <slot name="header" />
@@ -43,29 +43,28 @@
   :global(.wrapper::-webkit-scrollbar-thumb) {
     background-color: #b3b3b3;
   }
+
   .wrapper {
     position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.3); /* Backdrop style */
     z-index: 999;
-    min-width: 40em;
-    max-height: 900px;
-    overflow-y: auto;
+    animation: fadeIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); /* Animation for the backdrop */
+  }
+
+  .modal-content {
     border-radius: 0.3em;
-    border: none;
-    padding: 0;
-    background: rgba(0, 0, 0, 0.3);
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-  .wrapper::backdrop {
-    background: rgba(0, 0, 0, 0.3);
-  }
-  .wrapper > div {
+    overflow-y: auto;
     padding: 2em;
+    animation: zoom 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); /* Animation for the modal */
   }
-  .wrapper[open] {
-    animation: zoom 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
+
   @keyframes zoom {
     from {
       transform: scale(0.95);
@@ -74,10 +73,8 @@
       transform: scale(1);
     }
   }
-  .wrapper[open]::backdrop {
-    animation: fade 0.2s ease-out;
-  }
-  @keyframes fade {
+
+  @keyframes fadeIn {
     from {
       opacity: 0;
     }

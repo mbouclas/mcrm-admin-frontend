@@ -2,31 +2,33 @@
   import { onMount } from 'svelte';
   import { Button } from 'flowbite-svelte';
   import type { IPagination } from '../../../Shared/models/generic';
+  import Toggle from '../../../Shared/Toggle.svelte';
   import { ImportTemplatesService } from '../../services/import/import-templates.service';
   import SortButton from '../../../Shared/SortTableHeadButton.svelte';
   import Loading from '../../../Shared/Loading.svelte';
   import { formatDate } from '../../../helpers/dates';
   import Paginator from '../../../Shared/Paginator.svelte';
   import Modal from '../../../Shared/Modal.svelte';
-  import CustomFilters from '../../../Shared/CustomFilters.svelte';
   import { navigate, useLocation } from 'svelte-navigator';
   import Input from '../../../Shared/Input.svelte';
+  import ImportTemplateFieldMaps from './ImportTemplateFieldMaps.svelte';
 
   let showModal = false;
   let searchVal = '';
 
   const defaultTemplateData = {
+    uuid: '',
     type: '',
     name: '',
     default: false,
-    fieldMap: {},
+    fieldMap: [],
     processor: '',
   };
 
   let importTemplateData = defaultTemplateData;
   let isImportTemplateModalOpen = false;
 
-  let isEditImportTemplateModalOpen = true;
+  let isEditImportTemplateModalOpen = false;
   let editImportTemplateIndex = null;
 
   let isDeleteImportTemplateModalOpen = false;
@@ -80,29 +82,9 @@
     await search();
   }
 
-  async function toggleStatus(uuid: string) {
-    const foundIndex = items.data.findIndex((i) => i.uuid === uuid);
-    const newActive = !items.data[foundIndex].active;
-
-    await service.update(uuid, { active: newActive });
-
-    items.data[foundIndex].active = newActive;
-  }
-
   async function handlePageChange(e) {
     filters.page = e.detail;
     await search();
-  }
-
-  async function searchByFilters() {
-    if (searchVal.trim().length) {
-      queryParams.set('q', searchVal);
-      const newUrl = currentPath + '?' + queryParams.toString();
-      navigate(newUrl);
-      filters.q = searchVal;
-    }
-    await search();
-    showModal = false;
   }
 
   const confirmImportTemplateAdd = async () => {
@@ -114,6 +96,17 @@
 
   const cancelImportTemplateAdd = () => {
     isImportTemplateModalOpen = false;
+  };
+
+  const confirmImportTemplateEdit = async () => {
+    await service.update(importTemplateData.uuid, importTemplateData);
+    await search();
+    isEditImportTemplateModalOpen = false;
+    importTemplateData = defaultTemplateData;
+  };
+
+  const cancelImportTemplateEdit = () => {
+    isEditImportTemplateModalOpen = false;
   };
 
   const handleDeleteModalOpen = (item) => {
@@ -128,12 +121,15 @@
 
     await search();
   };
-  $: console.log(importTemplateData);
 
   const cancelDeleteImportTemplate = () => {
     isDeleteImportTemplateModalOpen = false;
     importTemplateData = defaultTemplateData;
   };
+
+  async function toggleStatus(item, value) {
+    await service.update(item.uuid, { default: value });
+  }
 </script>
 
 <Modal bind:showModal={isDeleteImportTemplateModalOpen}>
@@ -153,27 +149,11 @@
   </div>
 </Modal>
 
-<Modal bind:showModal>
-  <div slot="header">Filters</div>
-  <div slot="content">
-    <CustomFilters
-      on:change={(e) => {
-        filters[e.detail.key] = e.detail.value;
-      }}
-      filterByPrice={false}
-      bind:search={searchVal}
-    />
-  </div>
-  <div slot="footer">
-    <button class="bg-blue-500 px-2 py-1 rounded" autofocus on:click={searchByFilters}>Search</button>
-  </div>
-</Modal>
-
-<Modal bind:showModal={isImportTemplateModalOpen}>
+<Modal className="w-3/4" bind:showModal={isImportTemplateModalOpen}>
   <div slot="header">Add import template</div>
 
   <div slot="content">
-    <div class="mb-4">
+    <div class="mb-4 mt-4">
       <Input label="Name" placeholder="Enter name" bind:value={importTemplateData.name} required />
     </div>
 
@@ -184,6 +164,10 @@
     <div class="mb-4">
       <Input label="Processor" placeholder="Processor" bind:value={importTemplateData.processor} required />
     </div>
+
+    <div class="mb-4"><Toggle label="Default" bind:value={importTemplateData.default} /></div>
+
+    <ImportTemplateFieldMaps bind:items={importTemplateData.fieldMap} />
   </div>
   <svelte:fragment slot="footer">
     <Button on:click={confirmImportTemplateAdd}>Add</Button>
@@ -191,10 +175,36 @@
   </svelte:fragment>
 </Modal>
 
+<Modal className="w-3/4" bind:showModal={isEditImportTemplateModalOpen}>
+  <div slot="header">Edit import template</div>
+
+  <div slot="content">
+    <div class="mb-4 mt-4">
+      <Input label="Name" placeholder="Enter name" bind:value={importTemplateData.name} required />
+    </div>
+
+    <div class="mb-4">
+      <Input label="Type" placeholder="Type" bind:value={importTemplateData.type} required />
+    </div>
+
+    <div class="mb-4">
+      <Input label="Processor" placeholder="Processor" bind:value={importTemplateData.processor} required />
+    </div>
+
+    <div class="mb-4"><Toggle label="Default" bind:value={importTemplateData.default} /></div>
+
+    <ImportTemplateFieldMaps bind:items={importTemplateData.fieldMap} />
+  </div>
+  <svelte:fragment slot="footer">
+    <Button on:click={confirmImportTemplateEdit}>Confirm</Button>
+    <Button color="alternative" on:click={cancelImportTemplateEdit}>Cancel</Button>
+  </svelte:fragment>
+</Modal>
+
 <div class="max-w-screen-xl">
   <div class="max-w-screen-sm">
-    <h2 class="mb-4 text-xl lg:text-2xl tracking-tight font-extrabold text-gray-900 dark:text-white">
-      <span class="text-blue-400"> {items.total}</span> Import templates
+    <h2 class="mb-4 text-xl lg:text-2xl tracking-tight font-extrabold text-gray-900 dark:text-white outline-none">
+      <span class="text-blue-400">{items.total}</span> Import templates
     </h2>
   </div>
 </div>
@@ -203,13 +213,6 @@
   <button on:click={() => (isImportTemplateModalOpen = true)} class="bg-green-500 rounded p-2"
     >Add import template</button
   >
-
-  {#each appliedFilters as filter}
-    <button>{filter.name}</button>
-  {/each}
-
-  <button on:click={() => (showModal = true)} class="bg-blue-500 rounded p-2">Filters</button>
-  <button on:click={reset} class="bg-red-500 rounded p-2">Reset Filters</button>
 </div>
 
 <div class="flex flex-col mt-6">
@@ -229,9 +232,7 @@
                     class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
                   />
 
-                  <SortButton name="name" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
-                    >Name</SortButton
-                  >
+                  <span>Name</span>
                 </div>
               </th>
 
@@ -240,9 +241,7 @@
                 class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
               >
                 <div class="flex items-center gap-x-3">
-                  <SortButton name="type" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
-                    >Type</SortButton
-                  >
+                  <span>Type</span>
                 </div>
               </th>
 
@@ -251,9 +250,16 @@
                 class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
               >
                 <div class="flex items-center gap-x-3">
-                  <SortButton name="processor" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
-                    >Processor</SortButton
-                  >
+                  <span>Processor</span>
+                </div>
+              </th>
+
+              <th
+                scope="col"
+                class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+              >
+                <div class="flex items-center gap-x-3">
+                  <span>Default</span>
                 </div>
               </th>
 
@@ -312,6 +318,12 @@
                     <span>
                       {item.processor}
                     </span>
+                  </div>
+                </td>
+
+                <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
+                  <div class="inline-flex items-center gap-x-3">
+                    <Toggle on:change={(e) => toggleStatus(item, e.detail.value)} bind:value={item.default} />
                   </div>
                 </td>
 
