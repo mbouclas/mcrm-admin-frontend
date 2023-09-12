@@ -296,12 +296,9 @@
                       class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
                     />
 
-                    <a
-                      href={`/catalogue/import templates/${item.uuid}`}
-                      class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer"
-                    >
+                    <span>
                       {item.name}
-                    </a>
+                    </span>
                   </div>
                 </td>
 
