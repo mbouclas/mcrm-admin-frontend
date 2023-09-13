@@ -221,12 +221,11 @@ export const paymentMethodItemSelectorConfig: IItemSelectorConfig = {
   ],
 };
 
-export const addressItemSelectorConfig = (userId, type: 'SHIPPING' | 'BILLING'): IItemSelectorConfig => {
+export const addressItemSelectorConfig = (userId): IItemSelectorConfig => {
   return {
     apiUrl: 'address',
     filters: {
       userId,
-      type,
     },
     module: 'Address',
     labels: [
