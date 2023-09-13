@@ -6,6 +6,12 @@
   import { onMount } from 'svelte';
   import getModelPrototypeFromFields from '../../helpers/model-prototype';
   import type { IDynamicFieldConfigBlueprint } from '../../DynamicFields/types';
+  import {
+    shippingMethodItemSelectorConfig,
+    paymentMethodItemSelectorConfig,
+  } from '../../Shared/item-selector-configs';
+  import ItemSelectorModal from '../../DynamicFields/fields/item-selector-modal.svelte';
+
   import { formatDate } from '../../helpers/dates.js';
   import { moneyFormat } from '../../helpers/money';
   import { app } from '../../stores';
@@ -129,7 +135,18 @@
         <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
           <div class="flex justify-between items-center mb-2">
             <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Payment Method</h2>
-            <Button size="md" on:click={() => openUserModal()}>Edit</Button>
+
+            <ItemSelectorModal
+              config={paymentMethodItemSelectorConfig}
+              on:select={(e) => {
+                model.paymentMethod = e.detail;
+              }}
+              closeOnSelect={true}
+              label="Select Payment Method"
+              selectMode="single"
+            >
+              <Button>Edit</Button>
+            </ItemSelectorModal>
           </div>
 
           <div class="flex items-center space-x-4">
@@ -144,7 +161,19 @@
         <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
           <div class="flex justify-between items-center mb-2">
             <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Shipping Method</h2>
-            <Button size="md" on:click={() => openUserModal()}>Edit</Button>
+
+            <ItemSelectorModal
+              config={shippingMethodItemSelectorConfig}
+              on:select={(e) => {
+                console.log(e.detail);
+                model.shippingMethod = e.detail;
+              }}
+              closeOnSelect={true}
+              label="Select Shipping Method"
+              selectMode="single"
+            >
+              <Button>Edit</Button>
+            </ItemSelectorModal>
           </div>
 
           <div class="flex items-center space-x-4">

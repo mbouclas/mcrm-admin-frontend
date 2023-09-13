@@ -193,3 +193,30 @@ export const conditionItemSelectorConfig: IItemSelectorConfig = {
     },
   ],
 };
+
+export const shippingMethodItemSelectorConfig: IItemSelectorConfig = {
+  apiUrl: 'shipping-method',
+  module: 'Shipping method',
+  labels: [
+    {
+      field: 'title',
+      label: 'Title',
+    },
+
+    {
+      field: 'shippingTime',
+      label: 'Shipping Time',
+    },
+  ],
+};
+
+export const paymentMethodItemSelectorConfig: IItemSelectorConfig = {
+  apiUrl: 'payment-method',
+  module: 'Payment method',
+  labels: [
+    {
+      field: 'title',
+      label: 'Title',
+    },
+  ],
+};
