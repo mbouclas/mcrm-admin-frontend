@@ -196,7 +196,7 @@ export const conditionItemSelectorConfig: IItemSelectorConfig = {
 
 export const shippingMethodItemSelectorConfig: IItemSelectorConfig = {
   apiUrl: 'shipping-method',
-  module: 'Shipping method',
+  module: 'ShippingMethod',
   labels: [
     {
       field: 'title',
@@ -212,11 +212,38 @@ export const shippingMethodItemSelectorConfig: IItemSelectorConfig = {
 
 export const paymentMethodItemSelectorConfig: IItemSelectorConfig = {
   apiUrl: 'payment-method',
-  module: 'Payment method',
+  module: 'PaymentMethod',
   labels: [
     {
       field: 'title',
       label: 'Title',
     },
   ],
+};
+
+export const addressItemSelectorConfig = (userId, type: 'SHIPPING' | 'BILLING'): IItemSelectorConfig => {
+  return {
+    apiUrl: 'address',
+    filters: {
+      userId,
+      type,
+    },
+    module: 'Address',
+    labels: [
+      {
+        field: 'country',
+        label: 'Country',
+      },
+
+      {
+        field: 'region',
+        label: 'Region',
+      },
+
+      {
+        field: 'street',
+        label: 'Street',
+      },
+    ],
+  };
 };

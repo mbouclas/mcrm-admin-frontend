@@ -9,6 +9,7 @@
   import {
     shippingMethodItemSelectorConfig,
     paymentMethodItemSelectorConfig,
+    addressItemSelectorConfig,
   } from '../../Shared/item-selector-configs';
   import ItemSelectorModal from '../../DynamicFields/fields/item-selector-modal.svelte';
 
@@ -88,7 +89,18 @@
         <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
           <div class="flex justify-between items-center mb-2">
             <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Shipping Address</h2>
-            <Button size="md" on:click={() => openUserModal()}>Edit</Button>
+
+            <ItemSelectorModal
+              config={addressItemSelectorConfig(model.user.uuid, 'SHIPPING')}
+              on:select={(e) => {
+                model.shippingAddress = e.detail;
+              }}
+              closeOnSelect={true}
+              label="Select Shipping address"
+              selectMode="single"
+            >
+              <Button>Edit</Button>
+            </ItemSelectorModal>
           </div>
 
           <div class="flex justify-between items-center">
@@ -112,7 +124,18 @@
         <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
           <div class="flex justify-between items-center mb-2">
             <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Billing Address</h2>
-            <Button size="md" on:click={() => openUserModal()}>Edit</Button>
+
+            <ItemSelectorModal
+              config={addressItemSelectorConfig(model.user.uuid, 'BILLING')}
+              on:select={(e) => {
+                model.billingAddress = e.detail;
+              }}
+              closeOnSelect={true}
+              label="Select Billing address"
+              selectMode="single"
+            >
+              <Button>Edit</Button>
+            </ItemSelectorModal>
           </div>
           <address class="not-italic">
             <span class="block">{billingAddress.lastName} {billingAddress.firstName}</span>
