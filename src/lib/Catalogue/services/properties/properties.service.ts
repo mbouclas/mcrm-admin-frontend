@@ -95,10 +95,14 @@ export class PropertiesService extends BaseHttpService {
   }
 
   async store(data: IGenericObject) {
-    return await super.post('property', data, {
-      successMessage: 'Created successfully',
-      errorMessage: 'Failed to created',
-    });
+    return await super.post(
+      'property',
+      { ...data, active: true },
+      {
+        successMessage: 'Created successfully',
+        errorMessage: 'Failed to created',
+      },
+    );
   }
 
   async storePropertyValue(data: IGenericObject) {
