@@ -1,6 +1,6 @@
 <script lang="ts">
   import { OrderService } from '../services/order/order.service';
-  import { Select, Label } from 'flowbite-svelte';
+  import { Button, Select, Label } from 'flowbite-svelte';
   import Loading from '../../Shared/Loading.svelte';
   import { useParams } from 'svelte-navigator';
   import { onMount } from 'svelte';
@@ -80,7 +80,11 @@
       </div>
       <div class="grid gap-8 md:grid-cols-2">
         <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
-          <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Shipping Address</h2>
+          <div class="flex justify-between items-center mb-2">
+            <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Shipping Address</h2>
+            <Button size="md" on:click={() => openUserModal()}>Edit</Button>
+          </div>
+
           <div class="flex justify-between items-center">
             <div class="flex items-center space-x-4">
               <address class="not-italic">
@@ -100,30 +104,34 @@
         </div>
 
         <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
-          <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Billing Address</h2>
-          <div class="flex justify-between items-center">
-            <div class="flex items-center space-x-4">
-              <address class="not-italic">
-                <span class="block">{billingAddress.lastName} {billingAddress.firstName}</span>
-                <span class="block"
-                  >{billingAddress.street}, {billingAddress.region}, {billingAddress.postCode}, {billingAddress.country}</span
-                >
-                {#if billingAddress.apartment}
-                  <span class="block">Apartment: {billingAddress.apartment}</span>
-                {/if}
-                {#if billingAddress.company}
-                  <span class="block">Company: {billingAddress.company}</span>
-                {/if}
-              </address>
-            </div>
+          <div class="flex justify-between items-center mb-2">
+            <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Billing Address</h2>
+            <Button size="md" on:click={() => openUserModal()}>Edit</Button>
           </div>
+          <address class="not-italic">
+            <span class="block">{billingAddress.lastName} {billingAddress.firstName}</span>
+            <span class="block">
+              {billingAddress.street}, {billingAddress.region}, {billingAddress.postCode}, {billingAddress.country}
+            </span>
+            {#if billingAddress.apartment}
+              <span class="block">Apartment: {billingAddress.apartment}</span>
+            {/if}
+            {#if billingAddress.company}
+              <span class="block">Company: {billingAddress.company}</span>
+            {/if}
+          </address>
         </div>
       </div>
+
       <div class="border-gray-100 border-t my-6" />
 
       <div class="grid gap-8 md:grid-cols-2">
         <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
-          <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Payment Method</h2>
+          <div class="flex justify-between items-center mb-2">
+            <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Payment Method</h2>
+            <Button size="md" on:click={() => openUserModal()}>Edit</Button>
+          </div>
+
           <div class="flex items-center space-x-4">
             <ul>
               <li>
@@ -134,7 +142,11 @@
         </div>
 
         <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
-          <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Shipping Method</h2>
+          <div class="flex justify-between items-center mb-2">
+            <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Shipping Method</h2>
+            <Button size="md" on:click={() => openUserModal()}>Edit</Button>
+          </div>
+
           <div class="flex items-center space-x-4">
             <ul>
               <li>{model.shippingMethod.title}</li>
@@ -166,31 +178,33 @@
             <tbody>
               {#each model.metaData.cart.items as item}
                 {@const variant = getVariantFromItems(item.variantId)}
-                <tr
-                  class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                >
-                  <td class="w-32 p-4">
-                    <img src={variant.thumb} />
-                  </td>
-                  <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                    <a href={`/catalogue/products/${item.productId}`}>{item.title}</a>
-                  </td>
-                  <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                    {variant.variantId}
-                  </td>
-                  <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                    {#if variant.color && item.metaData && item.metaData.color}
-                      Color: {item.metaData.color.name}
-                    {/if}
-                  </td>
-                  <td class="px-6 py-4">
-                    {item.quantity}
-                  </td>
-                  <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                    {moneyFormat(item.price * item.quantity)}
-                  </td>
-                  <td class="px-6 py-4" />
-                </tr>
+                {#if variant}
+                  <tr
+                    class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                  >
+                    <td class="w-32 p-4">
+                      <img src={variant.thumb} />
+                    </td>
+                    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                      <a href={`/catalogue/products/${item.productId}`}>{item.title}</a>
+                    </td>
+                    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                      {variant.variantId}
+                    </td>
+                    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                      {#if variant.color && item.metaData && item.metaData.color}
+                        Color: {item.metaData.color.name}
+                      {/if}
+                    </td>
+                    <td class="px-6 py-4">
+                      {item.quantity}
+                    </td>
+                    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                      {moneyFormat(item.price * item.quantity)}
+                    </td>
+                    <td class="px-6 py-4" />
+                  </tr>
+                {/if}
               {/each}
             </tbody>
           </table>
