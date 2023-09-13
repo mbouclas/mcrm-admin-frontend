@@ -5,6 +5,7 @@
 
   export let values = [];
   export let value = '';
+
   export let label;
   export let errors = [];
   export let placeholder = '';
@@ -12,12 +13,25 @@
   let dropDownOpen = false;
   export let searchText = '';
 
-  const setValue = (selectedValue) => {
-    value = selectedValue;
+  $: key = getKey(values, value);
+
+  const getKey = (values, value) => {
+    if (values.length) {
+      const found = values.find((item) => item.value === value);
+      if (found?.key) {
+        return found.key;
+      }
+      return '';
+    }
+    return '';
+  };
+
+  const setValue = (selected) => {
+    value = selected.value;
     dropDownOpen = false;
   };
 
-  $: filterdValues = searchText ? values.filter((value) => value.includes(searchText)) : values;
+  $: filterdValues = searchText ? values.filter((value) => value.value.includes(searchText)) : values;
 </script>
 
 {#if label}
@@ -28,8 +42,8 @@
   class="flex items-center justify-between mt-2 bg-gray-700 py-1 pl-2 pr-10 rounded-md py-3 cursor-pointer hover:bg-gray-600"
   on:click|preventDefault={() => (dropDownOpen = true)}
 >
-  {#if value}
-    <span class="text-md">{value}</span>
+  {#if value && key}
+    <span class="text-md">{key}</span>
   {:else}
     <span class="text-md text-gray-400">{placeholder}</span>
   {/if}
@@ -41,7 +55,7 @@
   </div>
   {#each filterdValues as value}
     <li on:click={() => setValue(value)} class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer">
-      {value}
+      {value.key}
     </li>
   {/each}
 </Dropdown>

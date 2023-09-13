@@ -1,7 +1,15 @@
 <script lang="ts">
   import DropDown from '../../../Shared/DropDown.svelte';
 
-  const settingValues: any[] = [',', '|', ' ', ';'];
+  const settingValues: any[] = [
+    {
+      key: ',',
+      value: ',',
+    },
+    { key: '|', value: '|' },
+    { key: 'Space', value: ' ' },
+    { key: ';', value: ';' },
+  ];
 
   export let item: any;
 </script>

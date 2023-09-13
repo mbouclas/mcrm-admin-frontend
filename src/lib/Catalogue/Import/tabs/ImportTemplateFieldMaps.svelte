@@ -6,17 +6,17 @@
   import DropDown from '../../../Shared/DropDown.svelte';
 
   let typeValues = [
-    'text',
-    'number',
-    'float',
-    'boolean',
-    'category',
-    'property',
-    'image',
-    'variantId',
-    'productId',
-    'price',
-    'tag',
+    { key: 'text', value: 'text' },
+    { key: 'number', value: 'number' },
+    { key: 'float', value: 'float' },
+    { key: 'boolean', value: 'boolean' },
+    { key: 'category', value: 'category' },
+    { key: 'property', value: 'property' },
+    { key: 'image', value: 'image' },
+    { key: 'variantId', value: 'variantId' },
+    { key: 'productId', value: 'productId' },
+    { key: 'price', value: 'price' },
+    { key: 'tag', value: 'tag' },
   ];
 
   export let items: any[];
