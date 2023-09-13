@@ -1,17 +1,32 @@
 <script>
   import { XMark } from 'svelte-heros-v2';
+  import { createEventDispatcher } from 'svelte';
+
+  let dispatch = createEventDispatcher();
 
   export let showModal = false;
   export let className = '';
 </script>
 
 {#if showModal}
-  <div class="wrapper" on:close={() => (showModal = false)}>
+  <div
+    class="wrapper"
+    on:close={() => {
+      showModal = false;
+      dispatch('close');
+    }}
+  >
     <div class={`modal-content bg-[#1b1f2b] text-gray-200 ${className}`} on:click|stopPropagation>
       {#if $$slots.header}
         <div class="flex items-center justify-between pb-6 text-3xl">
           <slot name="header" />
-          <XMark class="cursor-pointer" on:click={() => (showModal = false)} />
+          <XMark
+            class="cursor-pointer"
+            on:click={() => {
+              showModal = false;
+              dispatch('close');
+            }}
+          />
         </div>
         <hr class="mt-2" />
       {/if}

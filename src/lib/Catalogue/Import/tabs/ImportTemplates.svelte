@@ -12,9 +12,7 @@
   import { navigate, useLocation } from 'svelte-navigator';
   import Input from '../../../Shared/Input.svelte';
   import ImportTemplateFieldMaps from './ImportTemplateFieldMaps.svelte';
-
-  let showModal = false;
-  let searchVal = '';
+  import ImportTemplateSettings from './ImportTemplateSettings.svelte';
 
   const defaultTemplateData = {
     uuid: '',
@@ -23,6 +21,7 @@
     default: false,
     fieldMap: [],
     processor: '',
+    settings: { delimiter: '' },
   };
 
   let importTemplateData = defaultTemplateData;
@@ -61,7 +60,7 @@
     items.data = [];
 
     loading = true;
-    items = await service.find(filters, ['import templateCategory', 'variants']);
+    items = await service.find(filters, []);
 
     loading = false;
   }
@@ -167,6 +166,8 @@
 
     <div class="mb-4"><Toggle label="Default" bind:value={importTemplateData.default} /></div>
 
+    <div class="mb-4"><ImportTemplateSettings bind:item={importTemplateData.settings} /></div>
+
     <ImportTemplateFieldMaps bind:items={importTemplateData.fieldMap} />
   </div>
   <svelte:fragment slot="footer">
@@ -192,6 +193,8 @@
     </div>
 
     <div class="mb-4"><Toggle label="Default" bind:value={importTemplateData.default} /></div>
+
+    <div class="mb-4"><ImportTemplateSettings bind:item={importTemplateData.settings} /></div>
 
     <ImportTemplateFieldMaps bind:items={importTemplateData.fieldMap} />
   </div>
@@ -296,12 +299,9 @@
                       class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
                     />
 
-                    <a
-                      href={`/catalogue/import templates/${item.uuid}`}
-                      class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer"
-                    >
+                    <span>
                       {item.name}
-                    </a>
+                    </span>
                   </div>
                 </td>
 

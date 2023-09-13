@@ -6,17 +6,17 @@
   import DropDown from '../../../Shared/DropDown.svelte';
 
   let typeValues = [
-    'text',
-    'number',
-    'float',
-    'boolean',
-    'category',
-    'property',
-    'image',
-    'variantId',
-    'productId',
-    'price',
-    'tag',
+    { key: 'text', value: 'text' },
+    { key: 'number', value: 'number' },
+    { key: 'float', value: 'float' },
+    { key: 'boolean', value: 'boolean' },
+    { key: 'category', value: 'category' },
+    { key: 'property', value: 'property' },
+    { key: 'image', value: 'image' },
+    { key: 'variantId', value: 'variantId' },
+    { key: 'productId', value: 'productId' },
+    { key: 'price', value: 'price' },
+    { key: 'tag', value: 'tag' },
   ];
 
   export let items: any[];
@@ -29,18 +29,15 @@
     type: 'text',
   };
 
-  let importTemplateData = defaultTemplateData;
+  let importTemplateData = JSON.parse(JSON.stringify(defaultTemplateData));
   let isFieldMapModalOpen = false;
 
   let isEditFieldMapModalOpen = false;
   let editFieldMapIndex = null;
 
-  let isDeleteFieldMapModalOpen = false;
-
   const confirmFieldMapAdd = async () => {
-    items = [...items, importTemplateData];
+    items = [...items, { ...importTemplateData }];
     isFieldMapModalOpen = false;
-    importTemplateData = defaultTemplateData;
   };
 
   const cancelFieldMapAdd = () => {
@@ -48,43 +45,25 @@
   };
 
   const confirmFieldMapEdit = async () => {
-    items[editFieldMapIndex] = importTemplateData;
-
+    items[editFieldMapIndex] = { ...importTemplateData };
     isEditFieldMapModalOpen = false;
-    importTemplateData = defaultTemplateData;
   };
 
   const cancelFieldMapEdit = () => {
     isEditFieldMapModalOpen = false;
   };
 
-  const deleteFieldMap = async () => {
-    isDeleteFieldMapModalOpen = false;
-    importTemplateData = defaultTemplateData;
+  const handleOpenFieldMapAdd = () => {
+    importTemplateData = { ...defaultTemplateData };
+    isFieldMapModalOpen = true;
   };
 
-  const cancelDeleteFieldMap = () => {
-    isDeleteFieldMapModalOpen = false;
-    importTemplateData = defaultTemplateData;
+  const handleOpenFieldMapEdit = (item, index) => {
+    importTemplateData = { ...item };
+    isEditFieldMapModalOpen = true;
+    editFieldMapIndex = index;
   };
 </script>
-
-<Modal bind:showModal={isDeleteFieldMapModalOpen}>
-  <div slot="header">Confirm delete field map</div>
-
-  <div slot="content">
-    <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-      Are you sure you want to <span class="text-lg font-bold">permanently delete</span>
-      field map
-      <span class="text-lg font-bold">{importTemplateData.name}</span>?
-    </p>
-  </div>
-
-  <div slot="footer">
-    <Button on:click={() => deleteFieldMap()}>Confirm</Button>
-    <Button color="alternative" on:click={() => cancelDeleteFieldMap()}>Cancel</Button>
-  </div>
-</Modal>
 
 <Modal className="w-3/4" bind:showModal={isFieldMapModalOpen}>
   <div slot="header">Add Field Map</div>
@@ -165,7 +144,7 @@
 </div>
 
 <div class="flex items-center space-x-4">
-  <button on:click={() => (isFieldMapModalOpen = true)} class="bg-green-500 rounded p-2">Add field map</button>
+  <button on:click={() => handleOpenFieldMapAdd()} class="bg-green-500 rounded p-2">Add field map</button>
 </div>
 
 <div class="flex flex-col mt-6">
@@ -280,9 +259,7 @@
                       <button
                         title="Edit Rule"
                         on:click={() => {
-                          isEditFieldMapModalOpen = true;
-                          importTemplateData = item;
-                          editFieldMapIndex = index;
+                          handleOpenFieldMapEdit(item, index);
                         }}
                         type="button"
                         class="text-gray-500 transition-colors duration-200 dark:hover:text-yellow-500 dark:text-gray-300 hover:text-yellow-500 focus:outline-none"
