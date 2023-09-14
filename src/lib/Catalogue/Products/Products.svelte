@@ -123,7 +123,7 @@
 </div>
 
 <div class="flex items-center space-x-4">
-  <button on:click={() => navigate('/catalogue/products/new')} class="bg-green-500 rounded p-2">Add page</button>
+  <button on:click={() => navigate('/catalogue/products/new')} class="bg-green-500 rounded p-2">Add product</button>
 
   {#each appliedFilters as filter}
     <button>{filter.name}</button>

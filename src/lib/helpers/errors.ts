@@ -62,4 +62,7 @@ export default {
   'PAGE_CATEGORY.003': 'Page category failed to update',
   'PAGE_CATEGORY.004': 'Page category failed to delete',
   'PAGE_CATEGORY.005': 'Page category failed to move',
+
+  'CONDITION.001': 'Title required',
+  'CONDITION.002': 'Value required',
 };

@@ -12,6 +12,8 @@
 
   export let fields: IDynamicFieldConfigBlueprint[] = [];
   export let model;
+  export let status: any = {};
+
   let mainFields = [];
   let secondaryFields = [];
   let deletePageModalOpen = false;
@@ -181,7 +183,7 @@
   <form>
     <div class="grid md:grid-cols-2 md:gap-6">
       <div class="relative z-0 w-full mb-6 group">
-        <Input bind:value={model.title} bind:errors placeholder="Title" label="Title" />
+        <Input bind:value={model.title} bind:errors={status.title.errors} placeholder="Title" label="Title" />
       </div>
 
       <div class="w-full mb-6 group">
@@ -189,12 +191,13 @@
           placeholder="Select kind"
           label="Kind"
           bind:value={model.kind}
+          bind:errors={status.kind.errors}
           values={fields.find((field) => field.varName === 'kind').ui.defaultValues}
         />
       </div>
 
       <div class="relative z-0 w-full mb-6 group">
-        <Input bind:value={model.value} bind:errors placeholder="Value" label="Value" />
+        <Input bind:value={model.value} bind:errors={status.value.errors} placeholder="Value" label="Value" />
       </div>
 
       <div class="relative z-0 w-full mb-6 group">
@@ -202,6 +205,7 @@
           placeholder="Select target"
           label="Target"
           bind:value={model.target}
+          bind:errors={status.target.errors}
           values={fields.find((field) => field.varName === 'target').ui.defaultValues}
         />
       </div>

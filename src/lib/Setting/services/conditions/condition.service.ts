@@ -2,6 +2,40 @@ import { BaseHttpService } from '../../../Shared/base-http.service';
 import type { IGenericObject } from '../../../Shared/models/generic';
 import queryString from 'query-string';
 import { html } from 'gridjs';
+import { z } from 'zod';
+import errors from '../../../helpers/errors';
+
+enum KindOptions {
+  tax = 'tax',
+  shipping = 'shipping',
+  coupon = 'coupon',
+}
+
+enum TargetOptions {
+  subtotal = 'subtotal',
+  price = 'price',
+  total = 'total',
+  quantity = 'quantity',
+  numberOfItems = 'numberOfItems',
+  items = 'items',
+}
+
+const conditionSchema = z.object({
+  title: z
+    .string({
+      required_error: errors['CONDITION.001'],
+      invalid_type_error: errors['CONDITION.001'],
+    })
+    .min(1, errors['CONDITION.001']),
+  value: z
+    .string({
+      required_error: errors['CONDITION.002'],
+      invalid_type_error: errors['CONDITION.002'],
+    })
+    .min(1, errors['CONDITION.002']),
+  kind: z.nativeEnum(KindOptions),
+  target: z.nativeEnum(TargetOptions),
+});
 
 export class ConditionsService extends BaseHttpService {
   async activateRows(selectedIds: string[]) {
@@ -82,6 +116,7 @@ export class ConditionsService extends BaseHttpService {
       'condition',
       { ...data, active: true },
       {
+        schema: conditionSchema,
         successMessage: 'Created successfully',
         errorMessage: 'Failed to create',
       },

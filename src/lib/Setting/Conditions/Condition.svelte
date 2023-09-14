@@ -9,12 +9,30 @@
   import { AppService } from '../../Shared/app.service';
   import type { IDynamicFieldConfigBlueprint } from '../../DynamicFields/types';
   import getModelPrototypeFromFields from '../../helpers/model-prototype';
+  import { RequestErrorException, clearErrors, handleValidationErrors } from '../../helpers/helperErrors';
 
   const s = new ConditionsService();
   const params = useParams();
   let model;
   let fields: IDynamicFieldConfigBlueprint[] = [];
   export let itemId;
+
+  const defaultConditiontatus = {
+    title: {
+      errors: [],
+    },
+    value: {
+      errors: [],
+    },
+    kind: {
+      errors: [],
+    },
+    target: {
+      errors: [],
+    },
+  };
+
+  let conditionStatus = defaultConditiontatus;
 
   onMount(async () => {
     fields = AppService.getModel('CartConditionModel').fields;
@@ -36,11 +54,19 @@
   });
 
   const onSubmit = async (data) => {
-    if ($params.id === 'new') {
-      await s.store(data);
-      return null;
+    conditionStatus = clearErrors(conditionStatus);
+    try {
+      if ($params.id === 'new') {
+        await s.store(data);
+        return null;
+      }
+      await s.update($params.id, data);
+    } catch (e) {
+      if (e instanceof RequestErrorException) {
+        conditionStatus = handleValidationErrors(e.details.validationErrors, conditionStatus);
+        return null;
+      }
     }
-    await s.update($params.id, data);
   };
 
   let customActiveClass =
@@ -54,7 +80,7 @@
 <Form bind:model {hasError}>
   <Tabs tabStyle="underline" class="mb-4">
     <TabItem open title="General" tabStyle="custom" {customActiveClass} {customInActiveClass}>
-      <General {onSubmit} {fields} {model} />
+      <General {onSubmit} {fields} status={conditionStatus} {model} />
     </TabItem>
     {#if $params.id !== 'new'}{/if}
   </Tabs>

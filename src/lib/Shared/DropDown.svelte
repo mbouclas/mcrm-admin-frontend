@@ -2,6 +2,7 @@
   import { Label, Dropdown, Search } from 'flowbite-svelte';
 
   import { ArrowDown } from 'svelte-heros-v2';
+  import ErrorMessage from './ErrorMessage.svelte';
 
   export let values = [];
   export let value = '';
@@ -40,8 +41,15 @@
     <Search size="md" bind:value={searchText} />
   </div>
   {#each filterdValues as value}
-    <li on:click={() => setValue(value)} class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer">
+    <li
+      on:click={() => {
+        setValue(value);
+        errors = [];
+      }}
+      class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
+    >
       {value}
     </li>
   {/each}
 </Dropdown>
+<ErrorMessage {errors} />
