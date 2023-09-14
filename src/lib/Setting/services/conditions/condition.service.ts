@@ -66,7 +66,7 @@ const conditionSchema = z.object({
     .min(1, errors['CONDITION.002']),
   type: z.nativeEnum(KindOptions),
   target: z.nativeEnum(TargetOptions),
-  rules: z.array(ruleSchema).min(1, 'CONDITION.002'),
+  rules: z.array(ruleSchema).min(1, errors['CONDITION.002']),
 });
 
 export class ConditionsService extends BaseHttpService {
