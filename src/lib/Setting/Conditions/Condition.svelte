@@ -24,7 +24,7 @@
     value: {
       errors: [],
     },
-    kind: {
+    type: {
       errors: [],
     },
     target: {

@@ -33,7 +33,7 @@ const conditionSchema = z.object({
       invalid_type_error: errors['CONDITION.002'],
     })
     .min(1, errors['CONDITION.002']),
-  kind: z.nativeEnum(KindOptions),
+  type: z.nativeEnum(KindOptions),
   target: z.nativeEnum(TargetOptions),
 });
 

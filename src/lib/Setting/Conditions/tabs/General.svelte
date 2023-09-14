@@ -188,11 +188,11 @@
 
       <div class="w-full mb-6 group">
         <DropDown
-          placeholder="Select kind"
-          label="Kind"
-          bind:value={model.kind}
-          bind:errors={status.kind.errors}
-          values={fields.find((field) => field.varName === 'kind').ui.defaultValues}
+          placeholder="Select type"
+          label="Type"
+          bind:value={model.type}
+          bind:errors={status.type.errors}
+          values={fields.find((field) => field.varName === 'type').ui.defaultValues}
         />
       </div>
 
