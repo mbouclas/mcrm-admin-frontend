@@ -30,6 +30,10 @@
     target: {
       errors: [],
     },
+
+    rules: {
+      errors: [],
+    },
   };
 
   let conditionStatus = defaultConditiontatus;

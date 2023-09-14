@@ -20,6 +20,37 @@ enum TargetOptions {
   items = 'items',
 }
 
+const ruleSchema = z.object({
+  name: z
+    .string({
+      required_error: errors['CONDITION.001'],
+      invalid_type_error: errors['CONDITION.001'],
+    })
+    .min(1, errors['CONDITION.001']),
+  field: z
+    .string({
+      required_error: errors['CONDITION.002'],
+      invalid_type_error: errors['CONDITION.002'],
+    })
+    .min(1, errors['CONDITION.002']),
+
+  operator: z
+
+    .string({
+      required_error: errors['CONDITION.002'],
+      invalid_type_error: errors['CONDITION.002'],
+    })
+    .min(1, errors['CONDITION.002']),
+
+  value: z
+
+    .string({
+      required_error: errors['CONDITION.002'],
+      invalid_type_error: errors['CONDITION.002'],
+    })
+    .min(1, errors['CONDITION.002']),
+});
+
 const conditionSchema = z.object({
   title: z
     .string({
@@ -35,6 +66,7 @@ const conditionSchema = z.object({
     .min(1, errors['CONDITION.002']),
   type: z.nativeEnum(KindOptions),
   target: z.nativeEnum(TargetOptions),
+  rules: z.array(ruleSchema).min(1, 'KITICA'),
 });
 
 export class ConditionsService extends BaseHttpService {

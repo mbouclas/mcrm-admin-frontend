@@ -5,6 +5,7 @@
   import Loading from '../../../Shared/Loading.svelte';
   import Input from '../../../Shared/Input.svelte';
   import DropDown from '../../../Shared/DropDown.svelte';
+  import ErrorMessage from '../../../Shared/ErrorMessage.svelte';
 
   import { Trash } from 'svelte-heros-v2';
   import { navigate } from 'svelte-navigator';
@@ -21,6 +22,23 @@
   let isRuleModalOpen = false;
   let isEditRuleModalOpen = false;
   let editRuleIndex;
+  let ruleErrors = [];
+
+  $: ruleErrors = getRuleErrors(model?.rules, status);
+
+  const getRuleErrors = (rules = [], status) => {
+    let newRuleErrors = [];
+    for (let i = 0; i < rules.length; i++) {
+      for (const field of ['value', 'name', 'field', 'operator']) {
+        const errors = status[`rules.${i}.${field}`]?.errors;
+        if (errors?.length) {
+          newRuleErrors = [...newRuleErrors, ...errors];
+        }
+      }
+    }
+
+    return newRuleErrors;
+  };
 
   const ruleFieldValues = ['quantity', 'price', 'subTotal', 'total', 'promo', 'items', 'numberOfItems'];
   const ruleOperatorValues = ['==', '!=', '>', '>=', '<', '<=', 'in', 'not in'];
@@ -31,7 +49,6 @@
     operator: '',
     value: '',
   };
-  let errors = [];
   const s = new ConditionsService();
 
   export let onSubmit: (data: any) => void;
@@ -214,6 +231,7 @@
     <div class="flex items-center justify-center space-x-4">
       <button on:click|preventDefault={() => (isRuleModalOpen = true)} class="bg-green-500 rounded p-2">Add rule</button
       >
+      <ErrorMessage errors={ruleErrors} />
     </div>
 
     <div class="flex flex-col mt-6">
