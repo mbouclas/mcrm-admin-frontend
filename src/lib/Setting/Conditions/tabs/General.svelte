@@ -28,6 +28,11 @@
 
   const getRuleErrors = (rules = [], status) => {
     let newRuleErrors = [];
+    const topRuleErrors = status['rules']?.errors;
+    if (topRuleErrors) {
+      newRuleErrors = [...topRuleErrors];
+    }
+
     for (let i = 0; i < rules.length; i++) {
       for (const field of ['value', 'name', 'field', 'operator']) {
         const errors = status[`rules.${i}.${field}`]?.errors;
