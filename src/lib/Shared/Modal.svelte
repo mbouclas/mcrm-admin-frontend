@@ -31,15 +31,13 @@
         <hr class="mt-2" />
       {/if}
       {#if $$slots.content}
-        <div class="pb-6">
+        <div class="pb-6 overflow-y-scroll">
           <slot name="content" />
         </div>
       {/if}
       <div>
         {#if $$slots.footer}
-          <div class="pb-6">
-            <slot name="footer" />
-          </div>
+          <slot name="footer" />
         {/if}
       </div>
     </div>
