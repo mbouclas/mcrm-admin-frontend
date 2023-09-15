@@ -93,6 +93,11 @@
         model.metaData.cart.items = [...model.metaData.cart.items, e.detail];
         showModal = false;
       }}
+      on:selectVariant={(e) => {
+        console.log(e.detail);
+        model.metaData.cart.items = [...model.metaData.cart.items, e.detail];
+        showModal = false;
+      }}
     />
   </div>
   <div slot="footer">
@@ -338,7 +343,7 @@
                       <a href={`/catalogue/products/${item.productId}`}>{item.title}</a>
                     </td>
                     <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                      {item.sku}
+                      {item?.variantId || item?.sku}
                     </td>
                     <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
                       {#if item.color && item.metaData && item.metaData.color}
