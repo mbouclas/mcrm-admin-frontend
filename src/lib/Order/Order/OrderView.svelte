@@ -10,13 +10,16 @@
     shippingMethodItemSelectorConfig,
     paymentMethodItemSelectorConfig,
     addressItemSelectorConfig,
+    productItemSelectorConfig,
   } from '../../Shared/item-selector-configs';
   import ItemSelectorModal from '../../DynamicFields/fields/item-selector-modal.svelte';
+  import Modal from '../../Shared/Modal.svelte';
 
   import { formatDate } from '../../helpers/dates.js';
   import { moneyFormat } from '../../helpers/money';
   import { app } from '../../stores';
 
+  import ProductAndVariantSelector from '../../Catalogue/Products/ProductAndVariantSelector.svelte';
   const s = new OrderService();
   let loading = false;
   const params = useParams();
@@ -27,6 +30,10 @@
   let shippingAddress;
   let billingAddress;
   let statuses = [];
+
+  let skipUuids = [];
+  let selectedUuids = [];
+  let showModal = false;
 
   app.subscribe((state) => {
     statuses = state.configs.store.orderStatuses;
@@ -76,6 +83,22 @@
     await s.update($params.id, data);
   };
 </script>
+
+<Modal bind:showModal className="w-3/4">
+  <div slot="header">Select product</div>
+  <div slot="content" class="h-[600px]">
+    <ProductAndVariantSelector
+      on:selectProduct={(e) => {
+        console.log(e.detail);
+        model.metaData.cart.items = [...model.metaData.cart.items, e.detail];
+        showModal = false;
+      }}
+    />
+  </div>
+  <div slot="footer">
+    <button class="bg-blue-500 px-2 py-1 rounded" autofocus on:click={() => {}}>Select</button>
+  </div>
+</Modal>
 
 {#if !model}
   <div class="w-full text-center items-center h-64">
@@ -254,7 +277,12 @@
       <div class="border-gray-100 border-t my-6" />
 
       <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
-        <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Items</h2>
+        <div class="flex gap-x-2 m-3">
+          <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Items</h2>
+
+          <button on:click={() => (showModal = true)} class="bg-green-500 rounded p-2">Add item</button>
+        </div>
+
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
           <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -278,7 +306,7 @@
                     class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                   >
                     <td class="w-32 p-4">
-                      <img src={variant.thumb} />
+                      <img src={variant?.thumb?.url || variant?.thumb} />
                     </td>
                     <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
                       <a href={`/catalogue/products/${item.productId}`}>{item.title}</a>
@@ -288,6 +316,32 @@
                     </td>
                     <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
                       {#if variant.color && item.metaData && item.metaData.color}
+                        Color: {item.metaData.color.name}
+                      {/if}
+                    </td>
+                    <td class="px-6 py-4">
+                      {item.quantity}
+                    </td>
+                    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                      {moneyFormat(item.price * item.quantity)}
+                    </td>
+                    <td class="px-6 py-4" />
+                  </tr>
+                {:else}
+                  <tr
+                    class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                  >
+                    <td class="w-32 p-4">
+                      <img src={item?.thumb?.url || item?.thumb} />
+                    </td>
+                    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                      <a href={`/catalogue/products/${item.productId}`}>{item.title}</a>
+                    </td>
+                    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                      {item.sku}
+                    </td>
+                    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                      {#if item.color && item.metaData && item.metaData.color}
                         Color: {item.metaData.color.name}
                       {/if}
                     </td>
