@@ -1,16 +1,24 @@
 <script lang="ts">
   import { OrderService } from '../services/order/order.service';
-  import { Select, Label } from 'flowbite-svelte';
+  import { Button, Select, Label } from 'flowbite-svelte';
   import Loading from '../../Shared/Loading.svelte';
   import { useParams } from 'svelte-navigator';
   import { onMount } from 'svelte';
   import getModelPrototypeFromFields from '../../helpers/model-prototype';
   import type { IDynamicFieldConfigBlueprint } from '../../DynamicFields/types';
+  import {
+    shippingMethodItemSelectorConfig,
+    paymentMethodItemSelectorConfig,
+    addressItemSelectorConfig,
+  } from '../../Shared/item-selector-configs';
+  import ItemSelectorModal from '../../DynamicFields/fields/item-selector-modal.svelte';
+
   import { formatDate } from '../../helpers/dates.js';
   import { moneyFormat } from '../../helpers/money';
   import { app } from '../../stores';
 
   const s = new OrderService();
+  let loading = false;
   const params = useParams();
   let model;
   let fields: IDynamicFieldConfigBlueprint[] = [];
@@ -50,6 +58,23 @@
   async function changeOrderStatus(e) {
     await s.updateOrderStatus(model.uuid, model.status);
   }
+
+  const onSubmitWithLoader = async (data) => {
+    try {
+      loading = true;
+      await onSubmit(data);
+    } finally {
+      loading = false;
+    }
+  };
+
+  const onSubmit = async (data) => {
+    if ($params.id === 'new') {
+      await s.store(data);
+      return null;
+    }
+    await s.update($params.id, data);
+  };
 </script>
 
 {#if !model}
@@ -80,50 +105,117 @@
       </div>
       <div class="grid gap-8 md:grid-cols-2">
         <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
-          <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Shipping Address</h2>
+          <div class="flex justify-between items-center mb-2">
+            <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Shipping Address</h2>
+
+            <ItemSelectorModal
+              config={addressItemSelectorConfig(model.user.uuid)}
+              on:select={(e) => {
+                const addressIndex = model.address.findIndex((address) => address.type.includes('shipping'));
+                if (addressIndex !== -1) {
+                  const type = [...new Set([...model.address[addressIndex].type, 'shipping'])];
+
+                  model.address[addressIndex] = {
+                    ...e.detail,
+                    type,
+                  };
+                  return null;
+                }
+                model.address = [...model.address, { ...e.detail, type: ['shipping'] }];
+              }}
+              closeOnSelect={true}
+              label="Select Shipping address"
+              selectMode="single"
+            >
+              <Button>Edit</Button>
+            </ItemSelectorModal>
+          </div>
+
           <div class="flex justify-between items-center">
             <div class="flex items-center space-x-4">
-              <address class="not-italic">
-                <span class="block">{shippingAddress.lastName} {shippingAddress.firstName}</span>
-                <span class="block"
-                  >{shippingAddress.street}, {shippingAddress.region}, {shippingAddress.postCode}, {shippingAddress.country}</span
-                >
-                {#if shippingAddress.apartment}
-                  <span class="block">Apartment: {shippingAddress.apartment}</span>
-                {/if}
-                {#if shippingAddress.company}
-                  <span class="block">Company: {shippingAddress.company}</span>
-                {/if}
-              </address>
+              {#if shippingAddress}
+                <address class="not-italic">
+                  <span class="block">{shippingAddress.lastName} {shippingAddress.firstName}</span>
+                  <span class="block"
+                    >{shippingAddress.street}, {shippingAddress.region}, {shippingAddress.postCode}, {shippingAddress.country}</span
+                  >
+                  {#if shippingAddress.apartment}
+                    <span class="block">Apartment: {shippingAddress.apartment}</span>
+                  {/if}
+                  {#if shippingAddress.company}
+                    <span class="block">Company: {shippingAddress.company}</span>
+                  {/if}
+                </address>
+              {/if}
             </div>
           </div>
         </div>
 
         <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
-          <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Billing Address</h2>
-          <div class="flex justify-between items-center">
-            <div class="flex items-center space-x-4">
-              <address class="not-italic">
-                <span class="block">{billingAddress.lastName} {billingAddress.firstName}</span>
-                <span class="block"
-                  >{billingAddress.street}, {billingAddress.region}, {billingAddress.postCode}, {billingAddress.country}</span
-                >
-                {#if billingAddress.apartment}
-                  <span class="block">Apartment: {billingAddress.apartment}</span>
-                {/if}
-                {#if billingAddress.company}
-                  <span class="block">Company: {billingAddress.company}</span>
-                {/if}
-              </address>
-            </div>
+          <div class="flex justify-between items-center mb-2">
+            <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Billing Address</h2>
+
+            <ItemSelectorModal
+              config={addressItemSelectorConfig(model.user.uuid)}
+              on:select={(e) => {
+                const addressIndex = model.address.findIndex((address) => address.type.includes('billing'));
+
+                if (addressIndex !== -1) {
+                  const type = [...new Set([...model.address[addressIndex].type, 'billing'])];
+
+                  model.address[addressIndex] = {
+                    ...e.detail,
+                    type,
+                  };
+                  return null;
+                }
+
+                model.address = [...model.address, { ...e.detail, type: ['billing'] }];
+              }}
+              closeOnSelect={true}
+              label="Select Billing address"
+              selectMode="single"
+            >
+              <Button>Edit</Button>
+            </ItemSelectorModal>
           </div>
+          {#if billingAddress}
+            <address class="not-italic">
+              <span class="block">{billingAddress.lastName} {billingAddress.firstName}</span>
+              <span class="block">
+                {billingAddress.street}, {billingAddress.region}, {billingAddress.postCode}, {billingAddress.country}
+              </span>
+              {#if billingAddress.apartment}
+                <span class="block">Apartment: {billingAddress.apartment}</span>
+              {/if}
+              {#if billingAddress.company}
+                <span class="block">Company: {billingAddress.company}</span>
+              {/if}
+            </address>
+          {/if}
         </div>
       </div>
+
       <div class="border-gray-100 border-t my-6" />
 
       <div class="grid gap-8 md:grid-cols-2">
         <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
-          <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Payment Method</h2>
+          <div class="flex justify-between items-center mb-2">
+            <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Payment Method</h2>
+
+            <ItemSelectorModal
+              config={paymentMethodItemSelectorConfig}
+              on:select={(e) => {
+                model.paymentMethod = e.detail;
+              }}
+              closeOnSelect={true}
+              label="Select Payment Method"
+              selectMode="single"
+            >
+              <Button>Edit</Button>
+            </ItemSelectorModal>
+          </div>
+
           <div class="flex items-center space-x-4">
             <ul>
               <li>
@@ -134,7 +226,22 @@
         </div>
 
         <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
-          <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Shipping Method</h2>
+          <div class="flex justify-between items-center mb-2">
+            <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Shipping Method</h2>
+
+            <ItemSelectorModal
+              config={shippingMethodItemSelectorConfig}
+              on:select={(e) => {
+                model.shippingMethod = e.detail;
+              }}
+              closeOnSelect={true}
+              label="Select Shipping Method"
+              selectMode="single"
+            >
+              <Button>Edit</Button>
+            </ItemSelectorModal>
+          </div>
+
           <div class="flex items-center space-x-4">
             <ul>
               <li>{model.shippingMethod.title}</li>
@@ -166,31 +273,33 @@
             <tbody>
               {#each model.metaData.cart.items as item}
                 {@const variant = getVariantFromItems(item.variantId)}
-                <tr
-                  class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                >
-                  <td class="w-32 p-4">
-                    <img src={variant.thumb} />
-                  </td>
-                  <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                    <a href={`/catalogue/products/${item.productId}`}>{item.title}</a>
-                  </td>
-                  <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                    {variant.variantId}
-                  </td>
-                  <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                    {#if variant.color && item.metaData && item.metaData.color}
-                      Color: {item.metaData.color.name}
-                    {/if}
-                  </td>
-                  <td class="px-6 py-4">
-                    {item.quantity}
-                  </td>
-                  <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                    {moneyFormat(item.price * item.quantity)}
-                  </td>
-                  <td class="px-6 py-4" />
-                </tr>
+                {#if variant}
+                  <tr
+                    class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                  >
+                    <td class="w-32 p-4">
+                      <img src={variant.thumb} />
+                    </td>
+                    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                      <a href={`/catalogue/products/${item.productId}`}>{item.title}</a>
+                    </td>
+                    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                      {variant.variantId}
+                    </td>
+                    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                      {#if variant.color && item.metaData && item.metaData.color}
+                        Color: {item.metaData.color.name}
+                      {/if}
+                    </td>
+                    <td class="px-6 py-4">
+                      {item.quantity}
+                    </td>
+                    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                      {moneyFormat(item.price * item.quantity)}
+                    </td>
+                    <td class="px-6 py-4" />
+                  </tr>
+                {/if}
               {/each}
             </tbody>
           </table>
@@ -199,3 +308,38 @@
     </div>
   </section>
 {/if}
+
+<div
+  class="fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200 dark:bg-gray-700 dark:border-gray-600"
+>
+  <div class="grid h-full max-w-lg grid-cols-1 mx-auto font-medium">
+    {#if loading}
+      <button
+        class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group"
+      >
+        <Loading />
+      </button>
+    {:else}
+      <button
+        on:click={() => onSubmitWithLoader(model)}
+        type="button"
+        class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group"
+      >
+        <svg
+          class="w-6 h-6 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500"
+          xmlns="http://www.w3.org/2000/svg"
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+          ><path
+            fill="currentColor"
+            d="M21 7v12q0 .825-.588 1.413T19 21H5q-.825 0-1.413-.588T3 19V5q0-.825.588-1.413T5 3h12l4 4Zm-9 11q1.25 0 2.125-.875T15 15q0-1.25-.875-2.125T12 12q-1.25 0-2.125.875T9 15q0 1.25.875 2.125T12 18Zm-6-8h9V6H6v4Z"
+          /></svg
+        >
+        <span class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500"
+          >Save</span
+        >
+      </button>
+    {/if}
+  </div>
+</div>

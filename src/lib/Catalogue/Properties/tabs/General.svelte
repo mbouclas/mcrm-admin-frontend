@@ -1,43 +1,56 @@
 <script lang="ts">
   import type { IDynamicFieldConfigBlueprint } from '../../../DynamicFields/types';
-  import Fields from '../../../DynamicFields/Renderer.svelte';
   import Loading from '../../../Shared/Loading.svelte';
+  import Input from '../../../Shared/Input.svelte';
+  import DropDown from '../../../Shared/DropDown.svelte';
 
   export let fields: IDynamicFieldConfigBlueprint[] = [];
   export let model;
-  export let handlePropertyValue;
-  export let reloadData;
-  let mainFields = [];
-  let secondaryFields = [];
-  let bottomFields = [];
-  // export let onSubmit: (data: any) => void;
 
-  $: {
-    fields.forEach((field) => {
-      if (!field.group || field.group === 'main') {
-        mainFields.push(field);
-      }
-      if (field.group === 'right') {
-        secondaryFields.push(field);
-      }
-
-      if (field.group === 'bottom') {
-        bottomFields.push(field);
-      }
-    });
-  }
+  const defaultStatusData = {
+    title: {
+      errors: [],
+    },
+    description: {
+      errors: [],
+    },
+    type: { erorrs: [] },
+  };
+  let status = defaultStatusData;
 </script>
 
 {#if !model}<Loading /> {/if}
 {#if model}
-  <div class="block lg:flex">
-    <div class="w-full p-2">
-      <Fields fields={mainFields} bind:model module="Property" itemId={model.uuid} />
+  <form>
+    <div class="grid md:grid-cols-2 md:gap-6">
+      <div class="relative z-0 w-full mb-6 group">
+        <div class="mb-4">
+          <Input bind:value={model.title} bind:errors={status.title.errors} placeholder="Title" label="Title" />
+        </div>
+
+        <div class="mb-4">
+          <Input
+            bind:value={model.description}
+            bind:errors={status.description.errors}
+            placeholder="Title"
+            label="Title"
+          />
+        </div>
+
+        <div class="mb-4">
+          <DropDown
+            placeholder="Select type"
+            label="Type"
+            bind:value={model.type}
+            values={fields
+              .find((field) => field.varName === 'type')
+              .ui.defaultValues.map((item) => ({
+                key: item,
+                value: item,
+              }))}
+          />
+        </div>
+      </div>
     </div>
-    <!-- END BLOCK -->
-    <div class="w-full p-2">
-      <Fields fields={secondaryFields} bind:model module="Property" itemId={model.uuid} />
-    </div>
-    <!-- END BLOCK -->
-  </div>
+  </form>
 {/if}

@@ -45,8 +45,32 @@
     return newRuleErrors;
   };
 
-  const ruleFieldValues = ['quantity', 'price', 'subTotal', 'total', 'promo', 'items', 'numberOfItems'];
-  const ruleOperatorValues = ['==', '!=', '>', '>=', '<', '<=', 'in', 'not in'];
+  const ruleFieldValues = [
+    {
+      key: 'quantity',
+      value: 'quantity',
+    },
+    { key: 'price', value: 'price' },
+    { key: 'subTotal', value: 'subTotal' },
+    { key: 'total', value: 'total' },
+    { key: 'promo', value: 'promo' },
+    { key: 'items', value: 'items' },
+    { key: 'numberOfItems', value: 'numberOfItems' },
+  ];
+
+  const ruleOperatorValues = [
+    {
+      key: '==',
+      value: '==',
+    },
+    { key: '!=', value: '!=' },
+    { key: '>', value: '>' },
+    { key: '>=', value: '>=' },
+    { key: '<', value: '<' },
+    { key: '<=', value: '<=' },
+    { key: 'in', value: 'in' },
+    { key: 'not in', value: 'not in' },
+  ];
 
   let ruleData = {
     name: '',
@@ -214,7 +238,12 @@
           label="Type"
           bind:value={model.type}
           bind:errors={status.type.errors}
-          values={fields.find((field) => field.varName === 'type').ui.defaultValues}
+          values={fields
+            .find((field) => field.varName === 'type')
+            .ui.defaultValues.map((item) => ({
+              key: item,
+              value: item,
+            }))}
         />
       </div>
 
@@ -228,7 +257,12 @@
           label="Target"
           bind:value={model.target}
           bind:errors={status.target.errors}
-          values={fields.find((field) => field.varName === 'target').ui.defaultValues}
+          values={fields
+            .find((field) => field.varName === 'target')
+            .ui.defaultValues.map((item) => ({
+              key: item,
+              value: item,
+            }))}
         />
       </div>
     </div>

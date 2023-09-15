@@ -193,3 +193,56 @@ export const conditionItemSelectorConfig: IItemSelectorConfig = {
     },
   ],
 };
+
+export const shippingMethodItemSelectorConfig: IItemSelectorConfig = {
+  apiUrl: 'shipping-method',
+  module: 'ShippingMethod',
+  labels: [
+    {
+      field: 'title',
+      label: 'Title',
+    },
+
+    {
+      field: 'shippingTime',
+      label: 'Shipping Time',
+    },
+  ],
+};
+
+export const paymentMethodItemSelectorConfig: IItemSelectorConfig = {
+  apiUrl: 'payment-method',
+  module: 'PaymentMethod',
+  labels: [
+    {
+      field: 'title',
+      label: 'Title',
+    },
+  ],
+};
+
+export const addressItemSelectorConfig = (userId): IItemSelectorConfig => {
+  return {
+    apiUrl: 'address',
+    filters: {
+      userId,
+    },
+    module: 'Address',
+    labels: [
+      {
+        field: 'country',
+        label: 'Country',
+      },
+
+      {
+        field: 'region',
+        label: 'Region',
+      },
+
+      {
+        field: 'street',
+        label: 'Street',
+      },
+    ],
+  };
+};

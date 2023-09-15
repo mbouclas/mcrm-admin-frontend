@@ -114,7 +114,12 @@
             placeholder="Kind"
             label="Kind"
             bind:value={filters['kind']}
-            values={fields.find((field) => field.varName === 'kind').ui.defaultValues}
+            values={fields
+              .find((field) => field.varName === 'kind')
+              .ui.defaultValues.map((item) => ({
+                key: item,
+                value: item,
+              }))}
           />
         </div>
 
@@ -123,7 +128,12 @@
             placeholder="Target"
             label="Target"
             bind:value={filters['target']}
-            values={fields.find((field) => field.varName === 'target').ui.defaultValues}
+            values={fields
+              .find((field) => field.varName === 'target')
+              .ui.defaultValues.map((item) => ({
+                key: item,
+                value: item,
+              }))}
           />
         </div>
       </div></CustomFilters
@@ -136,7 +146,7 @@
 
 <div class="max-w-screen-xl">
   <div class="max-w-screen-sm">
-    <h2 class="mb-4 text-xl lg:text-2xl tracking-tight font-extrabold text-gray-900 dark:text-white">
+    <h2 class="mb-4 text-xl lg:text-2xl tracking-tight font-extrabold text-gray-900 dark:text-white outline-none">
       <span class="text-blue-400"> {items.total}</span> Conditions
     </h2>
   </div>

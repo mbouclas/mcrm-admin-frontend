@@ -6,7 +6,7 @@
   import ManufacturerList from './Manufacturers/Manufacturers.svelte';
   import ProductCategoriesList from './Products/ProductCategoriesList.svelte';
   import ProductPropertiesList from './Products/PropertiesList.svelte';
-  import Import from './Products/Import.svelte';
+  import Import from './Import/Import.svelte';
   import PropertiesList from './Properties/PropertiesList.svelte';
   import Property from './Properties/Property.svelte';
 </script>
