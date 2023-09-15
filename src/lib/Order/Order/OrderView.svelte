@@ -3,6 +3,7 @@
   import { Button, Select, Label } from 'flowbite-svelte';
   import Loading from '../../Shared/Loading.svelte';
   import { useParams } from 'svelte-navigator';
+  import { Trash } from 'svelte-heros-v2';
   import { onMount } from 'svelte';
   import getModelPrototypeFromFields from '../../helpers/model-prototype';
   import type { IDynamicFieldConfigBlueprint } from '../../DynamicFields/types';
@@ -81,6 +82,10 @@
       return null;
     }
     await s.update($params.id, data);
+  };
+
+  const removeItem = (index) => {
+    model.metaData.cart.items = model.metaData.cart.items.filter((item, itemIndex) => index !== itemIndex);
   };
 </script>
 
@@ -304,7 +309,7 @@
               </tr>
             </thead>
             <tbody>
-              {#each model.metaData.cart.items as item}
+              {#each model.metaData.cart.items as item, index}
                 {@const variant = getVariantFromItems(item.variantId)}
                 {#if variant}
                   <tr
@@ -356,7 +361,9 @@
                     <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
                       {moneyFormat(item.price * item.quantity)}
                     </td>
-                    <td class="px-6 py-4" />
+                    <td class="px-6 py-4">
+                      <button on:click={() => removeItem(index)} class="text-gray-500"><Trash color="white" /></button>
+                    </td>
                   </tr>
                 {/if}
               {/each}
