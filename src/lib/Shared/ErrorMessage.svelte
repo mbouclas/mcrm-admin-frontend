@@ -6,7 +6,7 @@
 
 {#if errors.length}
   <p class="error-message" out:fade={{ delay: 0, duration: 100 }} in:fly={{ y: -50, duration: 100 }}>
-    {errors.join(',')}
+    {@html errors.join('')}
   </p>
 {/if}
 

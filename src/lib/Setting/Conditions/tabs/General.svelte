@@ -34,10 +34,11 @@
     }
 
     for (let i = 0; i < rules.length; i++) {
-      for (const field of ['value', 'name', 'field', 'operator']) {
+      for (const field of ['name', 'value', 'field', 'operator']) {
         const errors = status[`rules.${i}.${field}`]?.errors;
         if (errors?.length) {
-          newRuleErrors = [...newRuleErrors, ...errors];
+          const formattedErrors = errors.map((message) => message + '<br>');
+          newRuleErrors = [...newRuleErrors, ...formattedErrors];
         }
       }
     }
@@ -267,7 +268,7 @@
       </div>
     </div>
 
-    <div class="flex items-center justify-center space-x-4">
+    <div class="flex flex-col items-center justify-center gap-y-4">
       <button on:click|preventDefault={() => (isRuleModalOpen = true)} class="bg-green-500 rounded p-2">Add rule</button
       >
       <ErrorMessage errors={ruleErrors} />

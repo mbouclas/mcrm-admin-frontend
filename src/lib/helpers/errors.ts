@@ -65,4 +65,9 @@ export default {
 
   'CONDITION.001': 'Title required',
   'CONDITION.002': 'Value required',
+  'CONDITION.003': 'Dropdown value required',
+  'CONDITION.004': 'Field value required',
+  'CONDITION.005': 'Operator value required',
+  'CONDITION.006': 'Name value required',
+  'CONDITION.007': 'At least one rule required',
 };

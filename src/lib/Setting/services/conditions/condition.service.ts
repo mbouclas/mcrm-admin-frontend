@@ -23,27 +23,26 @@ enum TargetOptions {
 const ruleSchema = z.object({
   name: z
     .string({
-      required_error: errors['CONDITION.001'],
-      invalid_type_error: errors['CONDITION.001'],
+      required_error: errors['CONDITION.006'],
+      invalid_type_error: errors['CONDITION.006'],
     })
-    .min(1, errors['CONDITION.001']),
+    .min(1, errors['CONDITION.006']),
+
   field: z
     .string({
-      required_error: errors['CONDITION.002'],
-      invalid_type_error: errors['CONDITION.002'],
+      required_error: errors['CONDITION.004'],
+      invalid_type_error: errors['CONDITION.004'],
     })
-    .min(1, errors['CONDITION.002']),
+    .min(1, errors['CONDITION.004']),
 
   operator: z
-
     .string({
-      required_error: errors['CONDITION.002'],
-      invalid_type_error: errors['CONDITION.002'],
+      required_error: errors['CONDITION.005'],
+      invalid_type_error: errors['CONDITION.005'],
     })
-    .min(1, errors['CONDITION.002']),
+    .min(1, errors['CONDITION.005']),
 
   value: z
-
     .string({
       required_error: errors['CONDITION.002'],
       invalid_type_error: errors['CONDITION.002'],
@@ -66,7 +65,7 @@ const conditionSchema = z.object({
     .min(1, errors['CONDITION.002']),
   type: z.nativeEnum(KindOptions),
   target: z.nativeEnum(TargetOptions),
-  rules: z.array(ruleSchema).min(1, errors['CONDITION.002']),
+  rules: z.array(ruleSchema).min(1, errors['CONDITION.007']),
 });
 
 export class ConditionsService extends BaseHttpService {
