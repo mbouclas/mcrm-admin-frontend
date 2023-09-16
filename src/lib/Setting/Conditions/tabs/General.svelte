@@ -73,12 +73,15 @@
     { key: 'not in', value: 'not in' },
   ];
 
-  let ruleData = {
+  const defaultRuleData = {
     name: '',
     field: '',
     operator: '',
     value: '',
   };
+
+  let ruleData = { ...defaultRuleData };
+
   const s = new ConditionsService();
 
   export let onSubmit: (data: any) => void;
@@ -136,6 +139,11 @@
   const cancelRuleEdit = () => {
     editRuleIndex = null;
     isEditRuleModalOpen = false;
+  };
+
+  const handleAddRule = () => {
+    ruleData = { ...defaultRuleData };
+    isRuleModalOpen = true;
   };
 </script>
 
@@ -269,8 +277,7 @@
     </div>
 
     <div class="flex flex-col items-center justify-center gap-y-4">
-      <button on:click|preventDefault={() => (isRuleModalOpen = true)} class="bg-green-500 rounded p-2">Add rule</button
-      >
+      <button on:click|preventDefault={handleAddRule} class="bg-green-500 rounded p-2">Add rule</button>
       <ErrorMessage errors={ruleErrors} />
     </div>
 
