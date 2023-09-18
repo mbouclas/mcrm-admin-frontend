@@ -63,8 +63,16 @@ const conditionSchema = z.object({
       invalid_type_error: errors['CONDITION.002'],
     })
     .min(1, errors['CONDITION.002']),
-  type: z.nativeEnum(KindOptions),
-  target: z.nativeEnum(TargetOptions),
+  type: z.nativeEnum(KindOptions, {
+    errorMap: () => {
+      return { message: errors['CONDITION.003'] };
+    },
+  }),
+  target: z.nativeEnum(TargetOptions, {
+    errorMap: () => {
+      return { message: errors['CONDITION.003'] };
+    },
+  }),
   rules: z.array(ruleSchema).min(1, errors['CONDITION.007']),
 });
 
