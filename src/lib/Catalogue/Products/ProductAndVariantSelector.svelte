@@ -232,7 +232,10 @@
                       class="bg-blue-500 px-2 py-1 rounded text-white"
                       autofocus
                       on:click={() => {
-                        dispatch('selectVariant', item);
+                        dispatch('selectVariant', {
+                          ...item,
+                          quantity: 1,
+                        });
                       }}>Select variant</button
                     >
                   </td>
@@ -414,7 +417,10 @@
                         class="bg-blue-500 px-2 py-1 rounded text-white"
                         autofocus
                         on:click={() => {
-                          dispatch('selectProduct', item);
+                          dispatch('selectProduct', {
+                            ...item,
+                            quantity: 1,
+                          });
                         }}>Select product</button
                       >
                     {/if}

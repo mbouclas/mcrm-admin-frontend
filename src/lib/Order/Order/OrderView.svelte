@@ -11,7 +11,6 @@
     shippingMethodItemSelectorConfig,
     paymentMethodItemSelectorConfig,
     addressItemSelectorConfig,
-    productItemSelectorConfig,
   } from '../../Shared/item-selector-configs';
   import ItemSelectorModal from '../../DynamicFields/fields/item-selector-modal.svelte';
   import Modal from '../../Shared/Modal.svelte';
@@ -26,14 +25,11 @@
   const params = useParams();
   let model;
   let fields: IDynamicFieldConfigBlueprint[] = [];
-  let relationships: any[] = [];
   export let itemId;
   let shippingAddress;
   let billingAddress;
   let statuses = [];
 
-  let skipUuids = [];
-  let selectedUuids = [];
   let showModal = false;
 
   app.subscribe((state) => {
@@ -87,6 +83,16 @@
   const removeItem = (index) => {
     model.metaData.cart.items = model.metaData.cart.items.filter((item, itemIndex) => index !== itemIndex);
   };
+
+  function increaseQuantity(index) {
+    model.metaData.cart.items[index].quantity += 1;
+  }
+
+  function decreaseQuantity(index) {
+    if (model.metaData.cart.items[index].quantity > 1) {
+      model.metaData.cart.items[index].quantity -= 1;
+    }
+  }
 </script>
 
 <Modal bind:showModal className="w-3/4">
@@ -329,9 +335,20 @@
                         Color: {item.metaData.color.name}
                       {/if}
                     </td>
+
                     <td class="px-6 py-4">
-                      {item.quantity}
+                      <div class="flex items-center justify-between">
+                        <button on:click={() => decreaseQuantity(index)} class="bg-red-500 text-white px-2 py-1 rounded"
+                          >-</button
+                        >
+                        {item.quantity}
+                        <button
+                          on:click={() => increaseQuantity(index)}
+                          class="bg-green-500 text-white px-2 py-1 rounded">+</button
+                        >
+                      </div>
                     </td>
+
                     <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
                       {moneyFormat(item.price * item.quantity)}
                     </td>
@@ -347,7 +364,7 @@
                     <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
                       <a href={`/catalogue/products/${item.productId}`}>{item.title}</a>
                     </td>
-                    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                    <td class="px-4 py-2 font-semibold text-gray-900 dark:text-white">
                       {item?.variantId || item?.sku}
                     </td>
                     <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
@@ -355,9 +372,20 @@
                         Color: {item.metaData.color.name}
                       {/if}
                     </td>
+
                     <td class="px-6 py-4">
-                      {item.quantity}
+                      <div class="flex items-center justify-between">
+                        <button on:click={() => decreaseQuantity(index)} class="bg-red-500 text-white px-2 py-1 rounded"
+                          >-</button
+                        >
+                        {item.quantity}
+                        <button
+                          on:click={() => increaseQuantity(index)}
+                          class="bg-green-500 text-white px-2 py-1 rounded">+</button
+                        >
+                      </div>
                     </td>
+
                     <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
                       {moneyFormat(item.price * item.quantity)}
                     </td>
