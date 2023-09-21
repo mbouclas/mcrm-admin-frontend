@@ -419,6 +419,7 @@
                         on:click={() => {
                           dispatch('selectProduct', {
                             ...item,
+                            productId: item.uuid,
                             quantity: 1,
                           });
                         }}>Select product</button
