@@ -74,16 +74,23 @@
   };
 
   let customActiveClass =
-    'inline-block p-4 text-white rounded-t-lg border-b-2 border-white active dark:text-white-500 dark:border-white-500';
+    'inline-block p-4 text-white rounded-t-lg border-b-2 border-white bg-gray-900 active dark:text-white-500 dark:border-white-500';
   let customInActiveClass =
-    'inline-block p-4 rounded-t-lg border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300';
+    'inline-block p-4 rounded-t-lg border-b-2 bg-gray-800 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300';
 
   let hasError = false;
 </script>
 
 <Form bind:model {hasError}>
   <Tabs tabStyle="underline" class="mb-4">
-    <TabItem open title="General" tabStyle="custom" {customActiveClass} {customInActiveClass}>
+    <TabItem
+      open
+      defaultClass="bg-blue-500"
+      title="General"
+      tabStyle="custom"
+      activeClasses={customActiveClass}
+      inactiveClasses={customInActiveClass}
+    >
       <General {onSubmit} {fields} status={conditionStatus} {model} />
     </TabItem>
     {#if $params.id !== 'new'}{/if}
