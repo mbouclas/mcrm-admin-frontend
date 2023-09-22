@@ -111,7 +111,7 @@
           <DropDown
             placeholder="Type"
             label="Type"
-            bind:value={filters['type']}
+            bind:value={filters['Type']}
             values={fields
               .find((field) => field.varName === 'type')
               .ui.defaultValues.map((item) => ({
@@ -189,7 +189,7 @@
               >
                 <div class="flex items-center gap-x-3">
                   <SortButton name="title" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
-                    >Kind</SortButton
+                    >Type</SortButton
                   >
                 </div>
               </th>
@@ -252,7 +252,7 @@
 
               <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                 <div>
-                  {item.kind}
+                  {item.type}
                 </div>
               </td>
 

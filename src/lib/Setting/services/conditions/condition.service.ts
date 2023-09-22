@@ -5,7 +5,7 @@ import { html } from 'gridjs';
 import { z } from 'zod';
 import errors from '../../../helpers/errors';
 
-enum KindOptions {
+enum TypeOptions {
   tax = 'tax',
   shipping = 'shipping',
   coupon = 'coupon',
@@ -63,7 +63,7 @@ const conditionSchema = z.object({
       invalid_type_error: errors['CONDITION.002'],
     })
     .min(1, errors['CONDITION.002']),
-  type: z.nativeEnum(KindOptions, {
+  type: z.nativeEnum(TypeOptions, {
     errorMap: () => {
       return { message: errors['CONDITION.003'] };
     },
