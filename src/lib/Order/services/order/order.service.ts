@@ -79,7 +79,7 @@ export class OrderService extends BaseHttpService {
   }
 
   async store(data: IGenericObject) {
-    return await super.post('order/basic', data, {
+    return await super.post('order', data, {
       successMessage: 'Created successfully',
       errorMessage: 'Failed to create',
     });

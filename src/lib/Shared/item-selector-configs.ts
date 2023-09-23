@@ -21,8 +21,8 @@ export const userItemSelectorConfig: IItemSelectorConfig = {
 };
 
 export const customerItemSelectorConfig: IItemSelectorConfig = {
-  apiUrl: 'user',
-  module: 'User',
+  apiUrl: 'customer',
+  module: 'Customer',
   filters: {
     isCustomer: true,
   },
