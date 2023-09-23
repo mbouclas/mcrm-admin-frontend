@@ -12,6 +12,7 @@
   import { customerItemSelectorConfig, userItemSelectorConfig } from '../../Shared/item-selector-configs';
   import Modal from '../../Shared/Modal.svelte';
   import CustomFilters from '../../Shared/CustomFilters.svelte';
+  import { navigate } from 'svelte-navigator';
 
   let dropdownOpen = false;
 
@@ -168,6 +169,10 @@
     </li>
     <li>
       <button on:click={reset} class="bg-red-500 rounded p-2">Reset Filters</button>
+    </li>
+
+    <li>
+      <button on:click={() => navigate('/order/new')} class="bg-green-500 rounded p-2">Add order</button>
     </li>
   </ul>
 </div>
