@@ -38,6 +38,7 @@
     loading = false;
   reset();
 
+  let selectedProduct = null;
   onMount(async () => {
     await search();
   });
@@ -234,6 +235,9 @@
                       on:click={() => {
                         dispatch('selectVariant', {
                           ...item,
+                          sku: item.variantId,
+                          variantId: item.uuid,
+                          productId: selectedProduct.uuid,
                           quantity: 1,
                         });
                       }}>Select variant</button
@@ -410,6 +414,7 @@
                         autofocus
                         on:click={() => {
                           variants = [...item.variants];
+                          selectedProduct = item;
                         }}>Select variants</button
                       >
                     {:else}

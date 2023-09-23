@@ -55,10 +55,6 @@
     }
   }
 
-  function getVariantFromItems(variantId) {
-    return model.variant.find((i) => i.uuid === variantId);
-  }
-
   async function changeOrderStatus(e) {
     await s.updateOrderStatus(model.uuid, model.status);
   }
@@ -316,84 +312,44 @@
             </thead>
             <tbody>
               {#each model.metaData.cart.items as item, index}
-                {@const variant = getVariantFromItems(item.variantId)}
-                {#if variant}
-                  <tr
-                    class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                  >
-                    <td class="w-32 p-4">
-                      <img src={variant?.thumb?.url || variant?.thumb} />
-                    </td>
-                    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                      <a href={`/catalogue/products/${item.productId}`}>{item.title}</a>
-                    </td>
-                    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                      {variant.variantId}
-                    </td>
-                    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                      {#if variant.color && item.metaData && item.metaData.color}
-                        Color: {item.metaData.color.name}
-                      {/if}
-                    </td>
+                <tr
+                  class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                >
+                  <td class="w-32 p-4">
+                    <img src={item?.thumb?.url || item?.thumb} />
+                  </td>
+                  <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                    <a href={`/catalogue/products/${item.productId}`}>{item.title}</a>
+                  </td>
+                  <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                    {item?.sku}
+                  </td>
+                  <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                    {#if item.color && item.metaData && item.metaData.color}
+                      Color: {item.metaData.color.name}
+                    {/if}
+                  </td>
 
-                    <td class="px-6 py-4">
-                      <div class="flex items-center justify-between">
-                        <button on:click={() => decreaseQuantity(index)} class="bg-red-500 text-white px-2 py-1 rounded"
-                          >-</button
-                        >
-                        {item.quantity}
-                        <button
-                          on:click={() => increaseQuantity(index)}
-                          class="bg-green-500 text-white px-2 py-1 rounded">+</button
-                        >
-                      </div>
-                    </td>
+                  <td class="px-6 py-4">
+                    <div class="flex items-center justify-between">
+                      <button on:click={() => decreaseQuantity(index)} class="bg-red-500 text-white px-2 py-1 rounded"
+                        >-</button
+                      >
+                      {item.quantity}
+                      <button on:click={() => increaseQuantity(index)} class="bg-green-500 text-white px-2 py-1 rounded"
+                        >+</button
+                      >
+                    </div>
+                  </td>
 
-                    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                      {moneyFormat(item.price * item.quantity)}
-                    </td>
-                    <td class="px-6 py-4" />
-                  </tr>
-                {:else}
-                  <tr
-                    class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                  >
-                    <td class="w-32 p-4">
-                      <img src={item?.thumb?.url || item?.thumb} />
-                    </td>
-                    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                      <a href={`/catalogue/products/${item.productId}`}>{item.title}</a>
-                    </td>
-                    <td class="px-4 py-2 font-semibold text-gray-900 dark:text-white">
-                      {item?.variantId || item?.sku}
-                    </td>
-                    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                      {#if item.color && item.metaData && item.metaData.color}
-                        Color: {item.metaData.color.name}
-                      {/if}
-                    </td>
+                  <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                    {moneyFormat(item.price * item.quantity)}
+                  </td>
 
-                    <td class="px-6 py-4">
-                      <div class="flex items-center justify-between">
-                        <button on:click={() => decreaseQuantity(index)} class="bg-red-500 text-white px-2 py-1 rounded"
-                          >-</button
-                        >
-                        {item.quantity}
-                        <button
-                          on:click={() => increaseQuantity(index)}
-                          class="bg-green-500 text-white px-2 py-1 rounded">+</button
-                        >
-                      </div>
-                    </td>
-
-                    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                      {moneyFormat(item.price * item.quantity)}
-                    </td>
-                    <td class="px-6 py-4">
-                      <button on:click={() => removeItem(index)} class="text-gray-500"><Trash color="white" /></button>
-                    </td>
-                  </tr>
-                {/if}
+                  <td class="px-6 py-4">
+                    <button on:click={() => removeItem(index)} class="text-gray-500"><Trash color="white" /></button>
+                  </td>
+                </tr>
               {/each}
             </tbody>
           </table>
