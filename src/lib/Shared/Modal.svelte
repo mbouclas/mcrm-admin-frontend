@@ -16,6 +16,7 @@
       dispatch('close');
     }}
   >
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div class={`modal-content bg-[#1b1f2b] text-gray-200 ${className}`} on:click|stopPropagation>
       {#if $$slots.header}
         <div class="flex items-center justify-between pb-6 text-3xl">
@@ -31,15 +32,13 @@
         <hr class="mt-2" />
       {/if}
       {#if $$slots.content}
-        <div class="pb-6">
+        <div class="pb-6 overflow-y-auto">
           <slot name="content" />
         </div>
       {/if}
       <div>
         {#if $$slots.footer}
-          <div class="pb-6">
-            <slot name="footer" />
-          </div>
+          <slot name="footer" />
         {/if}
       </div>
     </div>
@@ -47,15 +46,15 @@
 {/if}
 
 <style>
-  :global(.wrapper::-webkit-scrollbar) {
+  ::-webkit-scrollbar {
     width: 0.25rem;
   }
 
-  :global(.wrapper::-webkit-scrollbar-track) {
+  ::-webkit-scrollbar-track {
     background: #323232;
   }
 
-  :global(.wrapper::-webkit-scrollbar-thumb) {
+  :-webkit-scrollbar-thumb {
     background-color: #b3b3b3;
   }
 

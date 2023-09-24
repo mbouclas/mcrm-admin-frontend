@@ -34,7 +34,6 @@
 
   onMount(async () => {
     fields = AppService.getModel('CartConditionModel').fields;
-
     await search();
   });
 
@@ -46,7 +45,6 @@
 
     loading = false;
   }
-
   async function reset() {
     filters = Object.assign({}, defaultFilters);
     await search();
@@ -111,11 +109,11 @@
 
         <div class="mb-4">
           <DropDown
-            placeholder="Kind"
-            label="Kind"
-            bind:value={filters['kind']}
+            placeholder="Type"
+            label="Type"
+            bind:value={filters['Type']}
             values={fields
-              .find((field) => field.varName === 'kind')
+              .find((field) => field.varName === 'type')
               .ui.defaultValues.map((item) => ({
                 key: item,
                 value: item,
@@ -191,7 +189,7 @@
               >
                 <div class="flex items-center gap-x-3">
                   <SortButton name="title" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
-                    >Kind</SortButton
+                    >Type</SortButton
                   >
                 </div>
               </th>
@@ -254,7 +252,7 @@
 
               <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                 <div>
-                  {item.kind}
+                  {item.type}
                 </div>
               </td>
 
@@ -310,7 +308,7 @@
 
   <Paginator
     totalConditions={parseInt(items.pages)}
-    baseURL={`/orders`}
+    baseURL={`/settings/conditions`}
     total={parseInt(items.total)}
     currentCondition={parseInt(items.page)}
     on:pageChange={handleConditionChange}

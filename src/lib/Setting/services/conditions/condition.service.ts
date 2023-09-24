@@ -2,6 +2,79 @@ import { BaseHttpService } from '../../../Shared/base-http.service';
 import type { IGenericObject } from '../../../Shared/models/generic';
 import queryString from 'query-string';
 import { html } from 'gridjs';
+import { z } from 'zod';
+import errors from '../../../helpers/errors';
+
+enum TypeOptions {
+  tax = 'tax',
+  shipping = 'shipping',
+  coupon = 'coupon',
+}
+
+enum TargetOptions {
+  subtotal = 'subtotal',
+  price = 'price',
+  total = 'total',
+  quantity = 'quantity',
+  numberOfItems = 'numberOfItems',
+  items = 'items',
+}
+
+const ruleSchema = z.object({
+  name: z
+    .string({
+      required_error: errors['CONDITION.006'],
+      invalid_type_error: errors['CONDITION.006'],
+    })
+    .min(1, errors['CONDITION.006']),
+
+  field: z
+    .string({
+      required_error: errors['CONDITION.004'],
+      invalid_type_error: errors['CONDITION.004'],
+    })
+    .min(1, errors['CONDITION.004']),
+
+  operator: z
+    .string({
+      required_error: errors['CONDITION.005'],
+      invalid_type_error: errors['CONDITION.005'],
+    })
+    .min(1, errors['CONDITION.005']),
+
+  value: z
+    .string({
+      required_error: errors['CONDITION.002'],
+      invalid_type_error: errors['CONDITION.002'],
+    })
+    .min(1, errors['CONDITION.002']),
+});
+
+const conditionSchema = z.object({
+  title: z
+    .string({
+      required_error: errors['CONDITION.001'],
+      invalid_type_error: errors['CONDITION.001'],
+    })
+    .min(1, errors['CONDITION.001']),
+  value: z
+    .string({
+      required_error: errors['CONDITION.002'],
+      invalid_type_error: errors['CONDITION.002'],
+    })
+    .min(1, errors['CONDITION.002']),
+  type: z.nativeEnum(TypeOptions, {
+    errorMap: () => {
+      return { message: errors['CONDITION.003'] };
+    },
+  }),
+  target: z.nativeEnum(TargetOptions, {
+    errorMap: () => {
+      return { message: errors['CONDITION.003'] };
+    },
+  }),
+  rules: z.array(ruleSchema).min(1, errors['CONDITION.007']),
+});
 
 export class ConditionsService extends BaseHttpService {
   async activateRows(selectedIds: string[]) {
@@ -82,6 +155,7 @@ export class ConditionsService extends BaseHttpService {
       'condition',
       { ...data, active: true },
       {
+        schema: conditionSchema,
         successMessage: 'Created successfully',
         errorMessage: 'Failed to create',
       },
