@@ -235,7 +235,6 @@
                       on:click={() => {
                         dispatch('selectVariant', {
                           ...item,
-                          sku: item.variantId,
                           variantId: item.uuid,
                           productId: selectedProduct.uuid,
                           quantity: 1,
@@ -410,7 +409,7 @@
                   <td class="px-4 py-4 text-sm whitespace-nowrap text-center">
                     {#if item.variants.length}
                       <button
-                        class="bg-blue-500 px-2 py-1 rounded text-white"
+                        class="bg-blue-700 px-2 py-1 rounded text-white"
                         autofocus
                         on:click={() => {
                           variants = [...item.variants];
