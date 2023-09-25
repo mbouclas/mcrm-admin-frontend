@@ -172,7 +172,7 @@
     </li>
 
     <li>
-      <button on:click={() => navigate('/order/new')} class="bg-green-500 rounded p-2">Add order</button>
+      <button on:click={() => navigate('/orders/new')} class="bg-green-500 rounded p-2">Add order</button>
     </li>
   </ul>
 </div>

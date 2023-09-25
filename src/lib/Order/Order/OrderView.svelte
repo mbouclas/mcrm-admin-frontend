@@ -63,7 +63,9 @@
   }
 
   async function changeOrderStatus(e) {
-    await s.updateOrderStatus(model.uuid, model.status);
+    if ($params.id !== 'new') {
+      await s.updateOrderStatus(model.uuid, model.status);
+    }
   }
 
   const onSubmitWithLoader = async (data) => {
