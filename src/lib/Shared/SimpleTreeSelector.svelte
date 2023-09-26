@@ -5,6 +5,7 @@
   import ProductCategoryEdit from '../Catalogue/Products/ProductCategoryEdit.svelte';
   import PageCategoryEdit from '../Cms/Pages/PageCategoryEdit.svelte';
 
+
   enum DeleteType {
     DELETE_CHILDREN = 'DELETE_CHILDREN',
     MOVE_CHILDREN_TO_PARENT = 'MOVE_CHILDREN_TO_PARENT',

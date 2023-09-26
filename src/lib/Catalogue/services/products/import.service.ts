@@ -6,16 +6,35 @@ export interface IImportStartResult {
     success: boolean;
 }
 
+export interface IBaseProcessResult {
+    success: boolean;
+    rowsProcessed: number;
+}
+
 
 export class ImportService extends BaseHttpService {
     uploadUpdates$ = writable(null);
 
-    async start(file: IFileUploadResult): Promise<IImportStartResult> {
-        return await super.post('import/start', file);
+    async validate(file: IFileUploadResult, template: string): Promise<IImportStartResult> {
+        return await super.post('import/validate', {file, template});
+    }
+
+    async start(file: IFileUploadResult, template: string, immediate = false): Promise<IImportStartResult|IBaseProcessResult> {
+        return await super.post(`import/start?template=${template}&immediate=${immediate}`, file);
     }
 
     async getProgress(jobId: number) {
         return await super.get(`import/progress/${jobId}`);
+    }
+
+    async backup(isDev = false) {
+
+        if (isDev) {
+            return  {
+                success: true
+            };
+        }
+        return await super.post(`import/backup`);
     }
 
     startUploadUpdatesQuery(jobId: number) {

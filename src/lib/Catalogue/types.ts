@@ -24,9 +24,30 @@ export interface IFileUploadResult {
     mimetype: string;
 }
 
+export interface IFileImportUploadResult {
+    response: IImportAnalyzerResult;
+}
+
+export interface IImportProcessorFieldMap {
+    name: string;
+    importFieldName: string;
+    rename?: boolean;
+    required?: boolean;
+    type?: 'text'|'number'|'float'|'boolean'|'category'|'property'|'image'|'variantId'|'productId'|'price'|'tag';
+    relationships?: string[];//graph rels. If present they must be the ones present on the model
+    validations?: Function[],// list of validations to run, each entry is a function
+    isSlugFor?: string;
+    matchSourceValue?: string;
+    matchTargetValue?: string;
+    slugifyValue?: boolean;
+    priceOnRequestFlag?: string;
+}
+
 export interface IImportAnalyzerResult {
     data: IImportAnalyzerData[];
     invalidRows: IImportAnalyzerInvalidRow[];
     isInvalid: boolean;
     file: IFileUploadResult
+    fieldMap: IImportProcessorFieldMap[];
+    validRows: number;
 }

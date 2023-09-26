@@ -9,77 +9,73 @@
     TableHeadCell,
     Button,
     Heading,
+    Select, Alert, Modal
   } from 'flowbite-svelte';
   import type { IDynamicFieldConfigFileUploadSettingsBluePrint } from '../../../DynamicFields/types';
-  import type { IImportAnalyzerResult } from '../../types';
+  import type {
+    IFileImportUploadResult,
+    IImportAnalyzerInvalidRow,
+    IImportAnalyzerResult,
+    IImportProcessorFieldMap
+  } from '../../types';
   import Loading from '../../../Shared/Loading.svelte';
   import Toast from '../../../Shared/Toast.svelte';
-  import { ImportService } from '../../services/products/import.service';
+  import { ImportService} from '../../services/products/import.service';
+  import type {IBaseProcessResult, IImportStartResult} from '../../services/products/import.service';
+  import {onMount} from "svelte";
+  import {ImportTemplatesService} from "../../services/import/import-templates.service";
+  import type {IEvent} from "../../../Shared/models/generic";
 
   let model;
   const options: IDynamicFieldConfigFileUploadSettingsBluePrint = {
     accept: '.csv',
-    baseUrl: 'import/analyze',
+    baseUrl: 'import/validate',
     fileLimit: 1,
     multiple: false,
   };
-  const pageTitle = `Import Products`;
+  const pageTitle = `Import`;
   let validRows = 0,
-    invalidRows = 0,
-    isInvalid = false,
-    processing = false,
-    analysisDone = false,
-    importInProgress = false,
-    rows = [],
-    propertyCols = [],
-    file,
-    errors;
+          invalidRows: IImportAnalyzerInvalidRow[] = [],
+          isInvalid = false,
+          processing = false,
+          analysisDone = false,
+          immediateImportThreshold = 500,
+          importInProgress = false,
+          rows = [],
+          propertyCols = [],
+          fieldMap = [],
+          rowsProcessed: number = null,
+          file,
+          backupInProgress = false,
+          errors;
 
-  const templates = [
-    {
-      name: 'Template 1',
-      id: 1,
-      default: true,
-    },
-    {
-      name: 'Template 2',
-      id: 2,
-      default: false,
-    },
-  ];
+  let templates = [];
   let selectedTemplate;
 
-  function handleUploadDone(e) {
-    const res: IImportAnalyzerResult = e.detail.response;
-    if (res.isInvalid) {
-      handleInvalidUpload();
-      return;
-    }
+  onMount(async () => {
+    const service = new ImportTemplatesService();
+    const res = await service.find({
+      limit: 12,
+      page: 1,
+      orderBy: 'createdAt',
+      way: 'desc',
+      q: '',
+    }, ['import templateCategory', 'variants'], true);
+    templates = res;
 
-    validRows = res.data.length;
-    invalidRows = res.invalidRows.length;
+  });
 
-    file = res.file;
-    rows = res.data;
-    rows.forEach((row) => {
-      // console.log(row.properties)
-      if (!Array.isArray(row.properties)) {
-        return;
-      }
-
-      row.properties.forEach((prop) => {
-        const key = prop.key.replace('property.', '');
-        if (propertyCols.indexOf(key) !== -1) {
-          return;
-        }
-
-        propertyCols.push(key);
-      });
-    });
-
+  function handleValidationUploadDone(e: IEvent<IFileImportUploadResult>) {
+    fieldMap = e.detail.response.fieldMap;
+    rows = e.detail.response.data;
+    validRows = e.detail.response.validRows;
+    invalidRows = e.detail.response.invalidRows;
     processing = false;
     analysisDone = true;
+    file = e.detail.response.file;
   }
+
+
 
   function handleInvalidUpload() {
     isInvalid = true;
@@ -90,25 +86,56 @@
     processing = true;
   }
 
-  function renderProperty(idx: number, properties) {
-    const found = properties.find((p) => p.key === propertyCols[idx]);
-    if (!found) {
-      return '';
-    }
-    return found.value;
+
+
+  function handleImportDone(res: IBaseProcessResult) {
+    importInProgress = false;
+    rowsProcessed = res.rowsProcessed;
+    reset();
+
+    setTimeout(() => {
+      rowsProcessed = null;
+    }, 3000);
   }
 
-  function handleImportDone(res) {
-    importInProgress = false;
-    console.log('Import done', res);
+  async function validate() {
+    const service = new ImportService();
+    importInProgress = true;
+
+    const res = await service.validate(file, selectedTemplate.uuid);
   }
 
   async function handleStartImport() {
     const service = new ImportService();
+
+    // run a backup first
+    try {
+      backupInProgress = true;
+      await service.backup(import.meta.env.DEV);
+      backupInProgress = false;
+    } catch (e) {
+      console.log(e);
+      errors = e;
+      return;
+    }
+
+
     importInProgress = true;
 
+    if (validRows <= immediateImportThreshold) {
+      try {
+        const res = await service.start(file, selectedTemplate.id, false) as IBaseProcessResult;
+        handleImportDone(res);
+      }
+      catch (e) {
+        errors = e;
+        console.log(e)
+      }
+      return;
+    }
+
     try {
-      const res = await service.start(file);
+      const res = await service.start(file, selectedTemplate.id, false) as IImportStartResult;
       // we now have a jobId which we need to query for
       service.startUploadUpdatesQuery(res.jobId); //Initialize the query
       // Receive updates until we have something valid
@@ -123,62 +150,158 @@
     }
   }
 
-  function handleTemplateChange() {
+  function handleTemplateChange(template) {
+    selectedTemplate = template || selectedTemplate;
     const parts = options.baseUrl.split('?');
     options.baseUrl = `${parts[0]}?template=${selectedTemplate.id}`;
+  }
 
-    console.log(options.baseUrl, selectedTemplate);
+  function renderProperty(row: any, key: IImportProcessorFieldMap) {
+    // transform data
+    return row[key.name];
+
+  }
+
+  function renderInvalidRowProperty(invalidRow: IImportAnalyzerInvalidRow, key: IImportProcessorFieldMap) {
+    const field = invalidRow.fields.find((f) => f.key === key.name);
+    if (!field) {
+      return invalidRow.row[key.importFieldName];
+    }
+
+    return '<span class="text-red-500">INVALID VALUE</span>';
+  }
+
+  function reset() {
+    validRows = 0;
+    invalidRows = [];
+    isInvalid = false;
+    processing = false;
+    analysisDone = false;
+    importInProgress = false;
+    selectedTemplate = null;
+    rows = [];
+    propertyCols = [];
+    fieldMap = [];
+    file = null;
+    errors = null;
   }
 </script>
 
 <svelte:head>
   <title>{pageTitle}</title>
 </svelte:head>
+<Modal title="Backup in progress" autoclose={false} size="xl" bind:open={backupInProgress}>
+  <div>
+    <Heading tag="h2">Backup in progress</Heading>
+    <p>Do not close or refresh this window</p>
+  </div>
+  <div class="flex items-center justify-center">
+    <Loading color="green" />
+  </div>
+
+</Modal>
 
 {#if processing}<Loading /> {/if}
-<p>Valid Rows: {validRows}</p>
-<p>Invalid Rows: {invalidRows}</p>
-{#if !importInProgress}
-  {selectedTemplate?.name}
-  <select bind:value={selectedTemplate} on:change={handleTemplateChange}>
-    {#each templates as template}
-      <option value={template}>{template.name}</option>
-    {/each}
-  </select>
-  <FileUpload {options} {model} on:done={handleUploadDone} on:started={handleUploadStart} />
+<div class="my-6">
+
+
+</div>
+{#if !importInProgress && rowsProcessed}
+  <Alert color="green" rounded={false} class="border-t-4">
+    <p class="font-medium">Import Complete</p>
+    {rowsProcessed} rows processed successfully
+  </Alert>
 {/if}
 
-{#if analysisDone}
+{#if !importInProgress && !analysisDone}
+  <Table>
+    <TableHead>
+      <TableHeadCell>Template</TableHeadCell>
+      <TableHeadCell>Description</TableHeadCell>
+      <TableHeadCell></TableHeadCell>
+
+    </TableHead>
+    <TableBody class="divide-y">
+      {#each templates as template}
+        <TableBodyRow>
+          <TableBodyCell>{template.name}</TableBodyCell>
+          <TableBodyCell>{template.description}</TableBodyCell>
+          <TableBodyCell>
+            {#if selectedTemplate === template}
+              Selected
+              {:else}
+            <Button on:click={handleTemplateChange.bind(this, template)}>Select</Button>
+              {/if}
+          </TableBodyCell>
+
+        </TableBodyRow>
+      {/each}
+    </TableBody>
+  </Table>
+  {#if selectedTemplate}
+    <div class="my-6">
+    <Heading tag="h4">Using {selectedTemplate.name}</Heading>
+    </div>
+  <FileUpload {options} {model} on:done={handleValidationUploadDone} on:started={handleUploadStart} />
+    {/if}
+{/if}
+
+
+
+{#if analysisDone && invalidRows.length === 0}
   <Heading tag="h2">Upload Results Sample</Heading>
   <Table>
     <TableHead>
-      <TableHeadCell>Product name</TableHeadCell>
-      <TableHeadCell>Categories</TableHeadCell>
-      <TableHeadCell>Price</TableHeadCell>
-      {#each propertyCols as col}
-        <TableHeadCell>{col}</TableHeadCell>
+      {#each fieldMap as col}
+        <TableHeadCell>{col.name}</TableHeadCell>
       {/each}
     </TableHead>
     <TableBody class="divide-y">
       {#each rows.slice(0, 10) as row}
         <TableBodyRow>
-          <TableBodyCell>{row.title}</TableBodyCell>
-          <TableBodyCell
-            >{#each row.categories as category}{category}{/each}</TableBodyCell
-          >
-          <TableBodyCell>{row.price}</TableBodyCell>
-          {#each propertyCols as col, idx}
-            <TableBodyCell>{renderProperty(idx, row.properties)}</TableBodyCell>
+          {#each fieldMap as c}
+            <TableBodyCell>{renderProperty(row, c)}</TableBodyCell>
           {/each}
         </TableBodyRow>
       {/each}
     </TableBody>
   </Table>
-  <Button gradient color="red" class="w-full" on:click={handleStartImport} disabled={importInProgress}
-    >Start Import</Button
+<div class="my-6">
+  <Button gradient color="green" class="w-full" on:click={handleStartImport} disabled={importInProgress}
+  >Start Import</Button
   >
+</div>
 {/if}
-
+{#if analysisDone}
+  <div class="my-6">
+  <p>Valid Rows: {validRows}</p>
+  <p>Invalid Rows: {invalidRows.length}</p>
+  </div>
+  <div class="my-6">
+    <Button color="red" on:click={reset}>Reset</Button>
+  </div>
+{/if}
+{#if invalidRows.length > 0}
+  <Heading tag="h2" class="my-6">List of invalid rows</Heading>
+  <Table>
+    <TableHead>
+      <TableHeadCell>#Row</TableHeadCell>
+      {#each fieldMap as col}
+        <TableHeadCell>{col.name}</TableHeadCell>
+      {/each}
+    </TableHead>
+    <TableBody class="divide-y">
+      {#each invalidRows as row}
+        <TableBodyRow>
+          <TableBodyCell>{row.id}</TableBodyCell>
+          {#each fieldMap as c}
+            <TableBodyCell>{@html renderInvalidRowProperty(row, c)}</TableBodyCell>
+          {/each}
+        </TableBodyRow>
+      {/each}
+    </TableBody>
+  </Table>
+{/if}
 <div class="w-full">
   <div class="relative h-56">
     <Toast simple position="bottom-right" show={importInProgress} message="Import started" type="success" />
