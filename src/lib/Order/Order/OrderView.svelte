@@ -170,7 +170,7 @@
           <Label for="status">Order Status</Label>
           <Select id="status" size="sm" class="mt-2" bind:value={model.status} on:change={changeOrderStatus}>
             {#each statuses as status}
-              <option value={status.id} disabled={status.id < model.status}>{status.label}</option>
+              <option value={status.id} disabled={false}>{status.label}</option>
             {/each}
           </Select>
         </div>
