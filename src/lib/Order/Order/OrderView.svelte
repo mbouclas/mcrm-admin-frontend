@@ -2,7 +2,7 @@
   import { OrderService } from '../services/order/order.service';
   import { Button, Select, Label } from 'flowbite-svelte';
   import Loading from '../../Shared/Loading.svelte';
-  import { useParams } from 'svelte-navigator';
+  import { navigate, useParams } from 'svelte-navigator';
   import { Trash } from 'svelte-heros-v2';
   import { onMount } from 'svelte';
   import getModelPrototypeFromFields from '../../helpers/model-prototype';
@@ -143,7 +143,7 @@
 
             {#if $params.id !== 'new'}
               <p class="font-light text-gray-500 dark:text-gray-400">{formatDate(model.createdAt)}</p>
-              <p class="font-semibold text-gray-500 dark:text-gray-400">{moneyFormat(model.total)}</p>
+              <p class="font-semibold text-gray-500 dark:text-gray-400">{moneyFormat(model.metaData.cart.total)}</p>
             {/if}
           </div>
         {/if}
