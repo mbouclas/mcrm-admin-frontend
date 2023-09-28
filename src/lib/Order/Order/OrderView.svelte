@@ -146,7 +146,8 @@
               <p class="font-semibold text-gray-500 dark:text-gray-400">{moneyFormat(model.total)}</p>
             {/if}
           </div>
-        {:else}
+        {/if}
+        {#if $params.id === 'new'}
           <ItemSelectorModal
             config={customerItemSelectorConfig}
             on:select={(e) => selectUser(e.detail)}
@@ -155,7 +156,7 @@
             selectMode="single"
           >
             <Button>
-              Add user <svg
+              Select user <svg
                 class="w-5 h-5"
                 xmlns="http://www.w3.org/2000/svg"
                 width="32"
