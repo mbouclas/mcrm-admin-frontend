@@ -79,7 +79,10 @@
 
   const onSubmit = async (data) => {
     if ($params.id === 'new') {
-      await s.store(data);
+      const order = await s.store(data);
+      model = null;
+      navigate(`/orders/${order.uuid}`);
+      location.reload();
       return null;
     }
     await s.update($params.id, data);
