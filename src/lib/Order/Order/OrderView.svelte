@@ -143,7 +143,7 @@
 
             {#if $params.id !== 'new'}
               <p class="font-light text-gray-500 dark:text-gray-400">{formatDate(model.createdAt)}</p>
-              <p class="font-semibold text-gray-500 dark:text-gray-400">{moneyFormat(model.metaData.cart.total)}</p>
+              <p class="font-semibold text-gray-500 dark:text-gray-400">{moneyFormat(model.total)}</p>
             {/if}
           </div>
         {/if}
