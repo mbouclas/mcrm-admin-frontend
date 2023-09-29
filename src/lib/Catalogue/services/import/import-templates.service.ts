@@ -55,7 +55,7 @@ export class ImportTemplatesService extends BaseHttpService {
     return await this.get(`import-template/${uuid}`, filters);
   }
 
-  async find(filters: IGenericObject = {}, relationships: string[] = []) {
+  async find(filters: IGenericObject = {}, relationships: string[] = [], mixed = false) {
     let qs;
     if (Object.keys(filters).length > 0) {
       qs = queryString.stringify(filters);
@@ -65,6 +65,10 @@ export class ImportTemplatesService extends BaseHttpService {
       qs = qs
         ? `${qs}&${relationships.map((r) => `with[]=${r}`).join('&')}`
         : relationships.map((r) => `with[]=${r}`).join('&');
+    }
+
+    if (mixed) {
+        qs = qs ? `${qs}&mixed=${mixed}` : `mixed=${mixed}`;
     }
 
     return await this.get(`import-template${qs ? `?${qs}` : ''}`);

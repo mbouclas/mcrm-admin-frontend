@@ -95,4 +95,11 @@ export class OrderService extends BaseHttpService {
       },
     );
   }
+
+  async generatePdf(uuid: string) {
+    return await super.post(`order/${uuid}/pdf`, {}, {
+      successMessage: 'Created successfully',
+      errorMessage: 'Failed to create',
+    });
+  }
 }

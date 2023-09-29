@@ -7,7 +7,7 @@
     import { XhrFileUploads} from "../../helpers/xhr-file-uploads";
     import type { IUploadResponse } from "../../helpers/xhr-file-uploads";
     import {createEventDispatcher} from "svelte";
-
+    let showFileProgress = false;
     const dispatch = createEventDispatcher();
     export let model;
     export let module;
@@ -19,6 +19,7 @@
     } as IDynamicFieldConfigFileUploadSettingsBluePrint;
 
     async function onFilesDropped(e) {
+        showFileProgress = true;
         dispatch('dropped', e);
         files = e.detail.files;
         for (let idx = 0; files.accepted.length > idx; idx++) {
@@ -71,6 +72,9 @@
     function handleUploadDone(response: IUploadResponse) {
         model = response;
         dispatch('done', model);
+        setTimeout(() => {
+            showFileProgress = false;
+        }, 1000);
     }
 
     function handleUploadError(error) {
@@ -94,19 +98,20 @@
     >
     <!-- <p>Drag &amp; drop files</p> -->
 </div>
-{#if files}
-    <h2>Accepted files</h2>
+{#if files && showFileProgress}
     <ul>
         {#each files.accepted as file}
             <li>{file.name} - {fileSize(file.size)} <Progressbar progress={file.progress} /></li>
         {/each}
     </ul>
+    {#if files.rejected.length > 0}
     <h2>Rejected files</h2>
     <ul>
         {#each files.rejected as rejected}
             <li>{rejected.file.name} - {rejected.error.message}</li>
         {/each}
     </ul>
+        {/if}
 {/if}
 
 

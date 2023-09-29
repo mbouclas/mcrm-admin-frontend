@@ -391,6 +391,16 @@
               navigate('/settings/conditions/list');
             }}
           />
+          <SidebarItem
+                  {aClass}
+                  label="Shipping"
+                  icon={{ name: Cog }}
+                  href="/settings/shipping"
+                  on:click={(e) => {
+              e.preventDefault();
+              navigate('/settings/shipping');
+            }}
+          />
         </SidebarDropdownWrapper>
       {/if}
     </SidebarGroup>

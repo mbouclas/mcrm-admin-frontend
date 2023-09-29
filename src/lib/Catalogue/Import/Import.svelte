@@ -14,7 +14,7 @@
     <General />
   </TabItem>
 
-  <TabItem open title="Import templates" tabStyle="custom" {customActiveClass} {customInActiveClass}>
+  <TabItem title="Import templates" tabStyle="custom" {customActiveClass} {customInActiveClass}>
     <ImportTemplates />
   </TabItem>
 </Tabs>

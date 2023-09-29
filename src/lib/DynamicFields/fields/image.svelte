@@ -2,6 +2,10 @@
   import FileUploader from '../../Shared/file-uploader.svelte';
   import type { IEvent, IGenericObject } from '../../Shared/models/generic';
   import type { SuccessResponse, UploadResult, UppyFile } from '@uppy/core';
+  import { createEventDispatcher } from 'svelte';
+  import Popup from '../../Catalogue/Products/tabs/Popup.svelte';
+  import { ImageService } from '../../Shared/services/image.service';
+  import { setNotificationAction } from '../../stores';
   const uploadIdPrefix = 'upload-';
   export let model;
   export let itemId;
@@ -12,10 +16,7 @@
   export let type: 'main' | 'image' = 'main';
   export let maxNumberOfFiles = 1;
   let show_modal = false;
-  import { createEventDispatcher } from 'svelte';
-  import Popup from '../../Catalogue/Products/tabs/Popup.svelte';
-  import { ImageService } from '../../Shared/services/image.service';
-  import { setNotificationAction } from '../../stores';
+
   const dispatch = createEventDispatcher();
 
   let uploader = {};
