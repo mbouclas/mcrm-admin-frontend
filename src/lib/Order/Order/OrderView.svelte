@@ -196,7 +196,7 @@
           </Select>
         </div>
       </div>
-      <div class={lockEdit && 'opacity-20'}>
+      <div class={lockEdit && 'opacity-20 pointer-events-none'}>
         <div class="grid gap-8 md:grid-cols-2">
           {#if model.user}
             <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
