@@ -107,9 +107,11 @@
   };
 
   async function generatePdf() {
-    const pdf = await s.generatePdf(model.uuid)
-    window.open(pdf.filename, '_blank')
+    const pdf = await s.generatePdf(model.uuid);
+    window.open(pdf.filename, '_blank');
   }
+
+  $: lockEdit = $params.id !== 'new' && model?.status !== 1;
 </script>
 
 <Modal bind:showModal className="w-3/4">
@@ -136,7 +138,6 @@
     <Loading />
   </div>
 {:else}
-
   <section class="bg-white dark:bg-gray-900">
     <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
       <div class="mx-auto max-w-screen-sm text-center lg:mb-16 mb-8">
@@ -144,12 +145,14 @@
           {#if $params.id === 'new'}New Order{:else}
             <span>Order {model.orderId}</span>
 
-              <button on:click={generatePdf} title="Generate PDF" class="ml-4 ">
-                              <svg class="w-5 h-5" width="512" height="512" viewBox="0 0 15 15" xmlns="http://www.w3.org/2000/svg">
-    <path fill="currentColor" d="M2.5 6.5V6H2v.5h.5Zm4 0V6H6v.5h.5Zm0 4H6v.5h.5v-.5Zm7-7h.5v-.207l-.146-.147l-.354.354Zm-3-3l.354-.354L10.707 0H10.5v.5ZM2.5 7h1V6h-1v1Zm.5 4V8.5H2V11h1Zm0-2.5v-2H2v2h1Zm.5-.5h-1v1h1V8Zm.5-.5a.5.5 0 0 1-.5.5v1A1.5 1.5 0 0 0 5 7.5H4ZM3.5 7a.5.5 0 0 1 .5.5h1A1.5 1.5 0 0 0 3.5 6v1ZM6 6.5v4h1v-4H6Zm.5 4.5h1v-1h-1v1ZM9 9.5v-2H8v2h1ZM7.5 6h-1v1h1V6ZM9 7.5A1.5 1.5 0 0 0 7.5 6v1a.5.5 0 0 1 .5.5h1ZM7.5 11A1.5 1.5 0 0 0 9 9.5H8a.5.5 0 0 1-.5.5v1ZM10 6v5h1V6h-1Zm.5 1H13V6h-2.5v1Zm0 2H12V8h-1.5v1ZM2 5V1.5H1V5h1Zm11-1.5V5h1V3.5h-1ZM2.5 1h8V0h-8v1Zm7.646-.146l3 3l.708-.708l-3-3l-.708.708ZM2 1.5a.5.5 0 0 1 .5-.5V0A1.5 1.5 0 0 0 1 1.5h1ZM1 12v1.5h1V12H1Zm1.5 3h10v-1h-10v1ZM14 13.5V12h-1v1.5h1ZM12.5 15a1.5 1.5 0 0 0 1.5-1.5h-1a.5.5 0 0 1-.5.5v1ZM1 13.5A1.5 1.5 0 0 0 2.5 15v-1a.5.5 0 0 1-.5-.5H1Z"/>
-</svg>
-              </button>
-
+            <button on:click={generatePdf} title="Generate PDF" class="ml-4">
+              <svg class="w-5 h-5" width="512" height="512" viewBox="0 0 15 15" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  fill="currentColor"
+                  d="M2.5 6.5V6H2v.5h.5Zm4 0V6H6v.5h.5Zm0 4H6v.5h.5v-.5Zm7-7h.5v-.207l-.146-.147l-.354.354Zm-3-3l.354-.354L10.707 0H10.5v.5ZM2.5 7h1V6h-1v1Zm.5 4V8.5H2V11h1Zm0-2.5v-2H2v2h1Zm.5-.5h-1v1h1V8Zm.5-.5a.5.5 0 0 1-.5.5v1A1.5 1.5 0 0 0 5 7.5H4ZM3.5 7a.5.5 0 0 1 .5.5h1A1.5 1.5 0 0 0 3.5 6v1ZM6 6.5v4h1v-4H6Zm.5 4.5h1v-1h-1v1ZM9 9.5v-2H8v2h1ZM7.5 6h-1v1h1V6ZM9 7.5A1.5 1.5 0 0 0 7.5 6v1a.5.5 0 0 1 .5.5h1ZM7.5 11A1.5 1.5 0 0 0 9 9.5H8a.5.5 0 0 1-.5.5v1ZM10 6v5h1V6h-1Zm.5 1H13V6h-2.5v1Zm0 2H12V8h-1.5v1ZM2 5V1.5H1V5h1Zm11-1.5V5h1V3.5h-1ZM2.5 1h8V0h-8v1Zm7.646-.146l3 3l.708-.708l-3-3l-.708.708ZM2 1.5a.5.5 0 0 1 .5-.5V0A1.5 1.5 0 0 0 1 1.5h1ZM1 12v1.5h1V12H1Zm1.5 3h10v-1h-10v1ZM14 13.5V12h-1v1.5h1ZM12.5 15a1.5 1.5 0 0 0 1.5-1.5h-1a.5.5 0 0 1-.5.5v1ZM1 13.5A1.5 1.5 0 0 0 2.5 15v-1a.5.5 0 0 1-.5-.5H1Z"
+                />
+              </svg>
+            </button>
           {/if}
         </h2>
         {#if model.user}
@@ -164,23 +167,25 @@
           </div>
         {/if}
         {#if $params.id === 'new'}
-          <ItemSelectorModal
-            config={customerItemSelectorConfig}
-            on:select={(e) => selectUser(e.detail)}
-            closeOnSelect={true}
-            label="Select User"
-            selectMode="single"
-          >
-            <Button>
-              Select user <svg
-                class="w-5 h-5"
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"><path fill="currentColor" d="M10 20v-7L2.95 4h18.1L14 13v7h-4Z" /></svg
-              >
-            </Button>
-          </ItemSelectorModal>
+          <div>
+            <ItemSelectorModal
+              config={customerItemSelectorConfig}
+              on:select={(e) => selectUser(e.detail)}
+              closeOnSelect={true}
+              label="Select User"
+              selectMode="single"
+            >
+              <Button>
+                Select user <svg
+                  class="w-5 h-5 text-xl"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="32"
+                  height="32"
+                  viewBox="0 0 24 24"><path fill="currentColor" d="M10 20v-7L2.95 4h18.1L14 13v7h-4Z" /></svg
+                >
+              </Button>
+            </ItemSelectorModal>
+          </div>
         {/if}
         <div class="my-4">
           <Label for="status">Order Status</Label>
@@ -191,232 +196,236 @@
           </Select>
         </div>
       </div>
-      <div class="grid gap-8 md:grid-cols-2">
-        {#if model.user}
-          <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
-            <div class="flex justify-between items-center mb-2">
-              <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Shipping Address</h2>
+      <div class={lockEdit && 'opacity-20'}>
+        <div class="grid gap-8 md:grid-cols-2">
+          {#if model.user}
+            <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
+              <div class="flex justify-between items-center mb-2">
+                <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Shipping Address</h2>
 
-              <ItemSelectorModal
-                config={addressItemSelectorConfig(model.user.uuid)}
-                on:select={(e) => {
-                  const addressIndex = model.address.findIndex((address) => address.type.includes('shipping'));
-                  if (addressIndex !== -1) {
-                    const type = [...new Set([...model.address[addressIndex].type, 'shipping'])];
+                <ItemSelectorModal
+                  config={addressItemSelectorConfig(model.user.uuid)}
+                  on:select={(e) => {
+                    const addressIndex = model.address.findIndex((address) => address.type.includes('shipping'));
+                    if (addressIndex !== -1) {
+                      const type = [...new Set([...model.address[addressIndex].type, 'shipping'])];
 
-                    model.address[addressIndex] = {
-                      ...e.detail,
-                      type,
-                    };
-                    return null;
-                  }
-                  model.address = [...model.address, { ...e.detail, type: ['shipping'] }];
-                }}
-                closeOnSelect={true}
-                label="Select Shipping address"
-                selectMode="single"
-              >
-                <Button>Edit</Button>
-              </ItemSelectorModal>
-            </div>
+                      model.address[addressIndex] = {
+                        ...e.detail,
+                        type,
+                      };
+                      return null;
+                    }
+                    model.address = [...model.address, { ...e.detail, type: ['shipping'] }];
+                  }}
+                  closeOnSelect={true}
+                  label="Select Shipping address"
+                  selectMode="single"
+                >
+                  <Button>Edit</Button>
+                </ItemSelectorModal>
+              </div>
 
-            <div class="flex justify-between items-center">
-              <div class="flex items-center space-x-4">
-                {#if shippingAddress}
-                  <address class="not-italic">
-                    <span class="block">{shippingAddress.lastName} {shippingAddress.firstName}</span>
-                    <span class="block"
-                      >{shippingAddress.street}, {shippingAddress.region}, {shippingAddress.postCode}, {shippingAddress.country}</span
-                    >
-                    {#if shippingAddress.apartment}
-                      <span class="block">Apartment: {shippingAddress.apartment}</span>
-                    {/if}
-                    {#if shippingAddress.company}
-                      <span class="block">Company: {shippingAddress.company}</span>
-                    {/if}
-                  </address>
-                {/if}
+              <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                  {#if shippingAddress}
+                    <address class="not-italic">
+                      <span class="block">{shippingAddress.lastName} {shippingAddress.firstName}</span>
+                      <span class="block"
+                        >{shippingAddress.street}, {shippingAddress.region}, {shippingAddress.postCode}, {shippingAddress.country}</span
+                      >
+                      {#if shippingAddress.apartment}
+                        <span class="block">Apartment: {shippingAddress.apartment}</span>
+                      {/if}
+                      {#if shippingAddress.company}
+                        <span class="block">Company: {shippingAddress.company}</span>
+                      {/if}
+                    </address>
+                  {/if}
+                </div>
               </div>
             </div>
-          </div>
-        {/if}
+          {/if}
 
-        {#if model.user}
+          {#if model.user}
+            <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
+              <div class="flex justify-between items-center mb-2">
+                <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Billing Address</h2>
+
+                <ItemSelectorModal
+                  config={addressItemSelectorConfig(model.user.uuid)}
+                  on:select={(e) => {
+                    const addressIndex = model.address.findIndex((address) => address.type.includes('billing'));
+
+                    if (addressIndex !== -1) {
+                      const type = [...new Set([...model.address[addressIndex].type, 'billing'])];
+
+                      model.address[addressIndex] = {
+                        ...e.detail,
+                        type,
+                      };
+                      return null;
+                    }
+
+                    model.address = [...model.address, { ...e.detail, type: ['billing'] }];
+                  }}
+                  closeOnSelect={true}
+                  label="Select Billing address"
+                  selectMode="single"
+                >
+                  <Button>Edit</Button>
+                </ItemSelectorModal>
+              </div>
+              {#if billingAddress}
+                <address class="not-italic">
+                  <span class="block">{billingAddress.lastName} {billingAddress.firstName}</span>
+                  <span class="block">
+                    {billingAddress.street}, {billingAddress.region}, {billingAddress.postCode}, {billingAddress.country}
+                  </span>
+                  {#if billingAddress.apartment}
+                    <span class="block">Apartment: {billingAddress.apartment}</span>
+                  {/if}
+                  {#if billingAddress.company}
+                    <span class="block">Company: {billingAddress.company}</span>
+                  {/if}
+                </address>
+              {/if}
+            </div>
+          {/if}
+        </div>
+
+        <div class="border-gray-100 border-t my-6" />
+
+        <div class="grid gap-8 md:grid-cols-2">
           <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
             <div class="flex justify-between items-center mb-2">
-              <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Billing Address</h2>
+              <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Payment Method</h2>
 
               <ItemSelectorModal
-                config={addressItemSelectorConfig(model.user.uuid)}
+                config={paymentMethodItemSelectorConfig}
                 on:select={(e) => {
-                  const addressIndex = model.address.findIndex((address) => address.type.includes('billing'));
-
-                  if (addressIndex !== -1) {
-                    const type = [...new Set([...model.address[addressIndex].type, 'billing'])];
-
-                    model.address[addressIndex] = {
-                      ...e.detail,
-                      type,
-                    };
-                    return null;
-                  }
-
-                  model.address = [...model.address, { ...e.detail, type: ['billing'] }];
+                  model.paymentMethod = e.detail;
                 }}
                 closeOnSelect={true}
-                label="Select Billing address"
+                label="Select Payment Method"
                 selectMode="single"
               >
                 <Button>Edit</Button>
               </ItemSelectorModal>
             </div>
-            {#if billingAddress}
-              <address class="not-italic">
-                <span class="block">{billingAddress.lastName} {billingAddress.firstName}</span>
-                <span class="block">
-                  {billingAddress.street}, {billingAddress.region}, {billingAddress.postCode}, {billingAddress.country}
-                </span>
-                {#if billingAddress.apartment}
-                  <span class="block">Apartment: {billingAddress.apartment}</span>
-                {/if}
-                {#if billingAddress.company}
-                  <span class="block">Company: {billingAddress.company}</span>
-                {/if}
-              </address>
+
+            {#if model.paymentMethod}
+              <div class="flex items-center space-x-4">
+                <ul>
+                  <li>
+                    {model.paymentMethod.description}
+                  </li>
+                </ul>
+              </div>
             {/if}
           </div>
-        {/if}
-      </div>
 
-      <div class="border-gray-100 border-t my-6" />
+          <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
+            <div class="flex justify-between items-center mb-2">
+              <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Shipping Method</h2>
 
-      <div class="grid gap-8 md:grid-cols-2">
-        <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
-          <div class="flex justify-between items-center mb-2">
-            <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Payment Method</h2>
-
-            <ItemSelectorModal
-              config={paymentMethodItemSelectorConfig}
-              on:select={(e) => {
-                model.paymentMethod = e.detail;
-              }}
-              closeOnSelect={true}
-              label="Select Payment Method"
-              selectMode="single"
-            >
-              <Button>Edit</Button>
-            </ItemSelectorModal>
-          </div>
-
-          {#if model.paymentMethod}
-            <div class="flex items-center space-x-4">
-              <ul>
-                <li>
-                  {model.paymentMethod.description}
-                </li>
-              </ul>
+              <ItemSelectorModal
+                config={shippingMethodItemSelectorConfig}
+                on:select={(e) => {
+                  model.shippingMethod = e.detail;
+                }}
+                closeOnSelect={true}
+                label="Select Shipping Method"
+                selectMode="single"
+              >
+                <Button>Edit</Button>
+              </ItemSelectorModal>
             </div>
-          {/if}
+
+            {#if model.shippingMethod}
+              <div class="flex items-center space-x-4">
+                <ul>
+                  <li>{model.shippingMethod.title}</li>
+                  <li>{model.shippingMethod.shippingTime}</li>
+                </ul>
+              </div>
+            {/if}
+          </div>
         </div>
+
+        <div class="border-gray-100 border-t my-6" />
 
         <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
-          <div class="flex justify-between items-center mb-2">
-            <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Shipping Method</h2>
+          <div class="flex gap-x-2 m-3">
+            <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Items</h2>
 
-            <ItemSelectorModal
-              config={shippingMethodItemSelectorConfig}
-              on:select={(e) => {
-                model.shippingMethod = e.detail;
-              }}
-              closeOnSelect={true}
-              label="Select Shipping Method"
-              selectMode="single"
-            >
-              <Button>Edit</Button>
-            </ItemSelectorModal>
+            <button on:click={() => (showModal = true)} class="bg-green-500 rounded p-2">Add item</button>
           </div>
 
-          {#if model.shippingMethod}
-            <div class="flex items-center space-x-4">
-              <ul>
-                <li>{model.shippingMethod.title}</li>
-                <li>{model.shippingMethod.shippingTime}</li>
-              </ul>
-            </div>
-          {/if}
-        </div>
-      </div>
+          <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+              <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                  <th scope="col" class="px-6 py-3">
+                    <span class="sr-only">Image</span>
+                  </th>
+                  <th scope="col" class="px-6 py-3"> Product </th>
+                  <th scope="col" class="px-6 py-3"> SKU </th>
+                  <th scope="col" class="px-6 py-3"> Properties </th>
+                  <th scope="col" class="px-6 py-3"> Qty </th>
+                  <th scope="col" class="px-6 py-3"> Price </th>
+                  <th scope="col" class="px-6 py-3"> Action </th>
+                </tr>
+              </thead>
+              <tbody>
+                {#if model?.metaData?.cart?.items}
+                  {#each model.metaData.cart.items as item, index}
+                    <tr
+                      class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                    >
+                      <td class="w-32 p-4">
+                        <img src={item?.thumb?.url || item?.thumb} />
+                      </td>
+                      <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                        <a href={`/catalogue/products/${item.productId}`}>{item.title}</a>
+                      </td>
+                      <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                        {item?.sku}
+                      </td>
+                      <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                        {#if item.color && item.metaData && item.metaData.color}
+                          Color: {item.metaData.color.name}
+                        {/if}
+                      </td>
 
-      <div class="border-gray-100 border-t my-6" />
+                      <td class="px-6 py-4">
+                        <div class="flex items-center justify-between">
+                          <button
+                            on:click={() => decreaseQuantity(index)}
+                            class="bg-red-500 text-white px-2 py-1 rounded">-</button
+                          >
+                          {item.quantity}
+                          <button
+                            on:click={() => increaseQuantity(index)}
+                            class="bg-green-500 text-white px-2 py-1 rounded">+</button
+                          >
+                        </div>
+                      </td>
 
-      <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
-        <div class="flex gap-x-2 m-3">
-          <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Items</h2>
+                      <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                        {moneyFormat(item.price * item.quantity)}
+                      </td>
 
-          <button on:click={() => (showModal = true)} class="bg-green-500 rounded p-2">Add item</button>
-        </div>
-
-        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-          <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-              <tr>
-                <th scope="col" class="px-6 py-3">
-                  <span class="sr-only">Image</span>
-                </th>
-                <th scope="col" class="px-6 py-3"> Product </th>
-                <th scope="col" class="px-6 py-3"> SKU </th>
-                <th scope="col" class="px-6 py-3"> Properties </th>
-                <th scope="col" class="px-6 py-3"> Qty </th>
-                <th scope="col" class="px-6 py-3"> Price </th>
-                <th scope="col" class="px-6 py-3"> Action </th>
-              </tr>
-            </thead>
-            <tbody>
-              {#if model?.metaData?.cart?.items}
-                {#each model.metaData.cart.items as item, index}
-                  <tr
-                    class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                  >
-                    <td class="w-32 p-4">
-                      <img src={item?.thumb?.url || item?.thumb} />
-                    </td>
-                    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                      <a href={`/catalogue/products/${item.productId}`}>{item.title}</a>
-                    </td>
-                    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                      {item?.sku}
-                    </td>
-                    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                      {#if item.color && item.metaData && item.metaData.color}
-                        Color: {item.metaData.color.name}
-                      {/if}
-                    </td>
-
-                    <td class="px-6 py-4">
-                      <div class="flex items-center justify-between">
-                        <button on:click={() => decreaseQuantity(index)} class="bg-red-500 text-white px-2 py-1 rounded"
-                          >-</button
+                      <td class="px-6 py-4">
+                        <button on:click={() => removeItem(index)} class="text-gray-500"><Trash color="white" /></button
                         >
-                        {item.quantity}
-                        <button
-                          on:click={() => increaseQuantity(index)}
-                          class="bg-green-500 text-white px-2 py-1 rounded">+</button
-                        >
-                      </div>
-                    </td>
-
-                    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                      {moneyFormat(item.price * item.quantity)}
-                    </td>
-
-                    <td class="px-6 py-4">
-                      <button on:click={() => removeItem(index)} class="text-gray-500"><Trash color="white" /></button>
-                    </td>
-                  </tr>
-                {/each}
-              {/if}
-            </tbody>
-          </table>
+                      </td>
+                    </tr>
+                  {/each}
+                {/if}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -424,7 +433,9 @@
 {/if}
 
 <div
-  class="fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200 dark:bg-gray-700 dark:border-gray-600"
+  class={`fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200 dark:bg-gray-700 dark:border-gray-600 ${
+    lockEdit && 'opacity-60'
+  }`}
 >
   <div class="grid h-full max-w-lg grid-cols-1 mx-auto font-medium">
     {#if loading}
@@ -435,6 +446,7 @@
       </button>
     {:else}
       <button
+        disabled={lockEdit}
         on:click={() => onSubmitWithLoader(model)}
         type="button"
         class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group"
