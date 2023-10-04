@@ -57,8 +57,8 @@
 
   $: {
     if (model && Array.isArray(model.address)) {
-      shippingAddress = model.address.find((a) => a.type.map((i) => i.toLowerCase()).includes('shipping'));
-      billingAddress = model.address.find((a) => a.type.map((i) => i.toLowerCase()).includes('billing'));
+      shippingAddress = model.address.find((a) => a.type.includes('SHIPPING'));
+      billingAddress = model.address.find((a) => a.type.includes('BILLING'));
     }
   }
 
@@ -206,9 +206,9 @@
                 <ItemSelectorModal
                   config={addressItemSelectorConfig(model.user.uuid)}
                   on:select={(e) => {
-                    const addressIndex = model.address.findIndex((address) => address.type.includes('shipping'));
+                    const addressIndex = model.address.findIndex((address) => address.type.includes('SHIPPING'));
                     if (addressIndex !== -1) {
-                      const type = [...new Set([...model.address[addressIndex].type, 'shipping'])];
+                      const type = [...new Set([...model.address[addressIndex].type, 'SHIPPING'])];
 
                       model.address[addressIndex] = {
                         ...e.detail,
@@ -216,7 +216,7 @@
                       };
                       return null;
                     }
-                    model.address = [...model.address, { ...e.detail, type: ['shipping'] }];
+                    model.address = [...model.address, { ...e.detail, type: ['SHIPPING'] }];
                   }}
                   closeOnSelect={true}
                   label="Select Shipping address"
@@ -255,10 +255,10 @@
                 <ItemSelectorModal
                   config={addressItemSelectorConfig(model.user.uuid)}
                   on:select={(e) => {
-                    const addressIndex = model.address.findIndex((address) => address.type.includes('billing'));
+                    const addressIndex = model.address.findIndex((address) => address.type.includes('BILLING'));
 
                     if (addressIndex !== -1) {
-                      const type = [...new Set([...model.address[addressIndex].type, 'billing'])];
+                      const type = [...new Set([...model.address[addressIndex].type, 'BILLING'])];
 
                       model.address[addressIndex] = {
                         ...e.detail,
@@ -267,7 +267,7 @@
                       return null;
                     }
 
-                    model.address = [...model.address, { ...e.detail, type: ['billing'] }];
+                    model.address = [...model.address, { ...e.detail, type: ['BILLING'] }];
                   }}
                   closeOnSelect={true}
                   label="Select Billing address"
