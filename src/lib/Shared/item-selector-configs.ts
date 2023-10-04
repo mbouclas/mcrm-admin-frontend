@@ -23,7 +23,9 @@ export const userItemSelectorConfig: IItemSelectorConfig = {
 export const customerItemSelectorConfig: IItemSelectorConfig = {
   apiUrl: 'customer',
   module: 'Customer',
-  filters: {},
+  filters: {
+    isCustomer: true,
+  },
   labels: [
     {
       field: 'lastName.firstName',
