@@ -1,6 +1,15 @@
 <script lang="ts">
   import { OrderService } from '../services/order/order.service';
-  import { Button, Select, Label } from 'flowbite-svelte';
+  import {
+    Button,
+    Select,
+    Label,
+    Indicator,
+    Modal as NativeModal,
+    Table,
+    TableHead,
+    TableHeadCell, TableBody, TableBodyRow, TableBodyCell
+  } from 'flowbite-svelte';
   import Loading from '../../Shared/Loading.svelte';
   import { navigate, useParams } from 'svelte-navigator';
   import { Trash } from 'svelte-heros-v2';
@@ -13,6 +22,7 @@
     addressItemSelectorConfig,
     customerItemSelectorConfig,
   } from '../../Shared/item-selector-configs';
+  import { saveAs } from 'file-saver';
   import ItemSelectorModal from '../../DynamicFields/fields/item-selector-modal.svelte';
   import Modal from '../../Shared/Modal.svelte';
 
@@ -21,6 +31,8 @@
   import { app } from '../../stores';
 
   import ProductAndVariantSelector from '../../Catalogue/Products/ProductAndVariantSelector.svelte';
+  import {FileService} from "../../Shared/services/file.service";
+  import type {IEvent} from "../../Shared/models/generic";
   const s = new OrderService();
   let loading = false;
   const params = useParams();
@@ -30,8 +42,9 @@
   let shippingAddress;
   let billingAddress;
   let statuses = [];
-
-  let showModal = false;
+  let showModal = false,
+          showUploadedFilesModal = false,
+  selectedItem = null;
 
   app.subscribe((state) => {
     statuses = state.configs.store.orderStatuses;
@@ -112,8 +125,49 @@
   }
 
   $: lockEdit = $params.id !== 'new' && model?.status !== 1;
-</script>
 
+  function showAttachmentsModal(item) {
+    showUploadedFilesModal = true;
+    selectedItem = item;
+  }
+
+  async function downloadAttachment(file) {
+
+    try {
+      // const res = await new FileService().getFile(file.filename);
+      const res = await new FileService().stream(file.filename);
+      saveAs(res, file.originalName);
+    }
+    catch (e) {
+      console.log(e)
+    }
+
+  }
+</script>
+<NativeModal bind:open={showUploadedFilesModal} size="xl" autoclose={false} title="Attached Files">
+  <Table>
+    <TableHead>
+      <TableHeadCell>Filename</TableHeadCell>
+      <TableHeadCell>Description</TableHeadCell>
+      <TableHeadCell></TableHeadCell>
+    </TableHead>
+    <TableBody class="divide-y">
+      {#each selectedItem.metaData.uploadedFiles as file}
+      <TableBodyRow>
+        <TableBodyCell>{file.originalName}</TableBodyCell>
+        <TableBodyCell>{file.description}</TableBodyCell>
+        <TableBodyCell>
+          <Button on:click={downloadAttachment.bind(this, file)}>
+          <svg class="w-6 h-6"
+                  xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M6.5 20q-2.275 0-3.888-1.575T1 14.575q0-1.95 1.175-3.475T5.25 9.15q.575-2.025 2.138-3.4T11 4.075v8.075L9.4 10.6L8 12l4 4l4-4l-1.4-1.4l-1.6 1.55V4.075q2.575.35 4.288 2.313T19 11q1.725.2 2.863 1.488T23 15.5q0 1.875-1.313 3.188T18.5 20h-12Z"/></svg>
+          </Button>
+        </TableBodyCell>
+      </TableBodyRow>
+      {/each}
+    </TableBody>
+  </Table>
+
+</NativeModal>
 <Modal bind:showModal className="w-3/4">
   <div slot="header">Select product</div>
   <div slot="content" class="h-[600px]">
@@ -419,6 +473,13 @@
                       <td class="px-6 py-4">
                         <button on:click={() => removeItem(index)} class="text-gray-500"><Trash color="white" /></button
                         >
+                        {#if item.metaData && Array.isArray(item.metaData.uploadedFiles)}
+                          <Button class="relative" size="sm" on:click={showAttachmentsModal.bind(this, item)}>
+                            <svg  class="w-6 h-6"
+                                    xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 256 256"><path fill="currentColor" d="m213.66 66.34l-40-40A8 8 0 0 0 168 24H88a16 16 0 0 0-16 16v16H56a16 16 0 0 0-16 16v144a16 16 0 0 0 16 16h112a16 16 0 0 0 16-16v-16h16a16 16 0 0 0 16-16V72a8 8 0 0 0-2.34-5.66ZM168 216H56V72h76.69L168 107.31V216Zm32-32h-16v-80a8 8 0 0 0-2.34-5.66l-40-40A8 8 0 0 0 136 56H88V40h76.69L200 75.31Zm-56-32a8 8 0 0 1-8 8H88a8 8 0 0 1 0-16h48a8 8 0 0 1 8 8Zm0 32a8 8 0 0 1-8 8H88a8 8 0 0 1 0-16h48a8 8 0 0 1 8 8Z"/></svg>
+                            <Indicator color="blue" border size="xl" placement="top-right" class="text-xs font-bold">{item.metaData.uploadedFiles.length}</Indicator>
+                          </Button>
+                          {/if}
                       </td>
                     </tr>
                   {/each}
