@@ -3,7 +3,7 @@
     import {createEventDispatcher, onMount} from "svelte";
     import Input from "../Shared/Input.svelte";
     import {CustomFieldsService} from "./services/custom-fields.service";
-    import {Button, Label, Select} from "flowbite-svelte";
+    import {Button, Helper, Label, Select} from "flowbite-svelte";
     import type {IEvent} from "../Shared/models/generic";
     import { z} from 'zod';
     import CustomFields from './group-field-renderer.svelte';
@@ -72,6 +72,20 @@
     {/each}
 </Select>
 </div>
+
+    <div class="mb-4 mt-4">
+        <Input label="Group" placeholder="Group" bind:value={model.group} required={false} />
+        <Helper class="mt-2 text-sm">
+            Arbitrary group name
+        </Helper>
+    </div>
+
+    <div class="mb-4 mt-4">
+        <Input label="Hint" placeholder="Hint" bind:value={model.hint} required={false} />
+        <Helper class="mt-2 text-sm">
+            Hint is displayed below the field to provide additional usage information
+        </Helper>
+    </div>
 
 <div class="grid grid-cols-3 gap-4">
     <CustomFields fields={fieldSettings} let:field={field} fieldPrimaryKey="varName" bind:model={model}>
