@@ -401,6 +401,16 @@
               navigate('/settings/shipping');
             }}
           />
+          <SidebarItem
+                  {aClass}
+                  label="Custom Fields"
+                  icon={{ name: Cog }}
+                  href="/settings/cf"
+                  on:click={(e) => {
+              e.preventDefault();
+              navigate('/settings/cf');
+            }}
+          />
         </SidebarDropdownWrapper>
       {/if}
     </SidebarGroup>
