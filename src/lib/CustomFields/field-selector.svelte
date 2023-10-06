@@ -53,7 +53,6 @@
     $: filteredItems = fields.filter((item) => item.label.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1);
     $: {
         if (refresh) {
-            console.log('reloading...')
             fields = fieldsService.modelFields(modelName);
             refresh = false;
         }
@@ -65,6 +64,7 @@
     <slot name="heading">
         <Heading tag="h4" class="mb-4">{filteredItems.length} Fields</Heading>
     </slot>
+    <slot name="top-actions"></slot>
 <TableSearch placeholder="Search by field name" hoverable={true} bind:inputValue={searchTerm} >
     <TableHead>
         {#if mode !== 'list'}

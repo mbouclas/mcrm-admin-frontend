@@ -3,13 +3,15 @@
     import {onMount} from "svelte";
     import FieldSelector from './field-selector.svelte';
     import {Button, Modal} from "flowbite-svelte";
-    import {ArrowTopRightOnSquare, Trash} from "svelte-heros-v2";
+    import {ArrowTopRightOnSquare, Plus, Trash} from "svelte-heros-v2";
     import type {IDynamicFieldConfigBlueprint} from "../DynamicFields/types";
     import EditField from "./edit-field.svelte";
+    import AddField from './add-field.svelte'
 
     const params = useParams();
     let selectedField: Partial<IDynamicFieldConfigBlueprint> = null,
         showEditFieldModal = false,
+        showAddFieldModal = false,
         refresh = false,
     filters = {};
 
@@ -32,7 +34,20 @@
         refresh = true;
     }
 
+    function addField() {
+        showAddFieldModal = true;
+    }
+
+    async function onAddNewField(newField: Partial<IDynamicFieldConfigBlueprint>) {
+        showAddFieldModal = false;
+        selectedField = newField;
+        showEditFieldModal = true;
+    }
+
 </script>
+<Modal size="xl" bind:open={showAddFieldModal} title={`Add new field on ${$params.id}`}>
+    <AddField onSave={onAddNewField} modelName={$params.id} />
+</Modal>
 
 {#if $params.id}
     <Modal size="xl" bind:open={showEditFieldModal} title={`Editing ${selectedField?.varName} on ${$params.id}`}>
@@ -40,6 +55,11 @@
     </Modal>
 
     <FieldSelector let:field={field} mode="list" modelName={$params.id} bind:refresh={refresh}>
+        <div slot="top-actions" class="flex justify-end">
+            <div>
+                <Button color="green" title="Add new field" on:click={addField}><Plus /></Button>
+            </div>
+        </div>
     <div slot="actions">
         <Button on:click={editField.bind(this, field)} title="Edit">
             <ArrowTopRightOnSquare/>

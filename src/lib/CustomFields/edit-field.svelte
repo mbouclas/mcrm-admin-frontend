@@ -3,7 +3,7 @@
     import {createEventDispatcher, onMount} from "svelte";
     import Input from "../Shared/Input.svelte";
     import {CustomFieldsService} from "./services/custom-fields.service";
-    import {Badge, Button, Heading, Label, Select} from "flowbite-svelte";
+    import {Button, Label, Select} from "flowbite-svelte";
     import type {IEvent} from "../Shared/models/generic";
     import { z} from 'zod';
     import CustomFields from './group-field-renderer.svelte';
