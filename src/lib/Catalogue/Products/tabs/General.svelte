@@ -1,20 +1,20 @@
 <script lang="ts">
   import type { IDynamicFieldConfigBlueprint } from '../../../DynamicFields/types';
-  import { Button, Toggle, Modal, Dropdown, Search, Checkbox, DropdownItem } from 'flowbite-svelte';
+  import { Button, Toggle, Modal, Dropdown, Search} from 'flowbite-svelte';
   import Fields from '../../../DynamicFields/Renderer.svelte';
   import Loading from '../../../Shared/Loading.svelte';
   import Input from '../../../Shared/Input.svelte';
   import ErrorMessage from '../../../Shared/ErrorMessage.svelte';
-
+  import SalesChannelsSelector from '../../../SalesChannels/sales-channels-selector.svelte';
   import { Trash, ArrowDown } from 'svelte-heros-v2';
-  import Number from '../../../DynamicFields/fields/number-input.svelte';
   import RichText from '../../../DynamicFields/fields/richtext.svelte';
   import Image from '../../../DynamicFields/fields/image.svelte';
   import ProductCategorySelector from '../ProductCategorySelector.svelte';
   import Tags from '../ProductCategoriesTags.svelte';
   import { ProductsService } from '../../services/products/products.service';
   import { ManufacturersService } from '../../services/manufacturers/manufacturers.service';
-  import { navigate } from 'svelte-navigator';
+  import { navigate } from 'mcrm-svelte-navigator';
+  import {type ISalesChannel, SalesChannelsService} from "../../../SalesChannels/services/sales-channels.service";
 
   const s = new ProductsService();
   const m = new ManufacturersService();
@@ -96,6 +96,10 @@
     await s.deleteRow(model.uuid);
     navigate('/catalogue/products/list');
   };
+
+  async function saveSalesChannel(channels: ISalesChannel[], itemId: string) {
+    await (new SalesChannelsService()).save(channels, itemId, 'Product');
+  }
 </script>
 
 <Modal title="Confirm delete product" bind:open={deleteProductModalOpen} autoclose outsideclose>
@@ -112,11 +116,12 @@
 
 {#if !model}<Loading /> {/if}
 {#if model}
+
   {#if model.uuid}
     <div class="flex w-full pb-5 pr-3 justify-end">
       <div class="flex items-center w-20">
         <span
-          >{model.active ? 'Active' : 'Inactive'}<span>
+          >Status<span>
             <Toggle on:click={(e) => toggleStatus()} color="green" checked={model.active} />
           </span></span
         >
@@ -198,6 +203,9 @@
               </li>
             {/each}
           </Dropdown>
+        </div>
+        <div class="my-6">
+        <SalesChannelsSelector model={model.salesChannel} itemId={model.uuid} saveOnSelect={true} onSave={saveSalesChannel} />
         </div>
       </div>
     </div>

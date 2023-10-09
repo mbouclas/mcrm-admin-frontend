@@ -3,7 +3,7 @@
   import General from './tabs/General.svelte';
   import SEO from './tabs/SEO.svelte';
 
-  import { useParams } from 'svelte-navigator';
+  import { useParams } from 'mcrm-svelte-navigator';
   import Form from '../../DynamicFields/Form.svelte';
   import { ManufacturersService } from '../services/manufacturers/manufacturers.service';
   import { onMount } from 'svelte';

@@ -11,7 +11,7 @@
     TableHeadCell, TableBody, TableBodyRow, TableBodyCell
   } from 'flowbite-svelte';
   import Loading from '../../Shared/Loading.svelte';
-  import { navigate, useParams } from 'svelte-navigator';
+  import { navigate, useParams } from 'mcrm-svelte-navigator';
   import { Trash } from 'svelte-heros-v2';
   import { onMount } from 'svelte';
   import getModelPrototypeFromFields from '../../helpers/model-prototype';

@@ -8,7 +8,7 @@
   } from "flowbite-svelte";
   import { Eye, EyeSlash, Pencil, PencilSquare, Trash } from "svelte-heros-v2";
   import { ChevronDown } from "svelte-heros-v2";
-  import { navigate } from "svelte-navigator";
+  import { navigate } from "mcrm-svelte-navigator";
   import { createEventDispatcher } from "svelte";
   import { Confirm } from "svelte-confirm";
 

@@ -4,7 +4,7 @@
     import {ArrowTopRightOnSquare} from 'svelte-heros-v2';
     import EditField from './edit-field.svelte';
     import type {IDynamicFieldConfigBlueprint} from "../DynamicFields/types";
-    import {useNavigate} from "svelte-navigator";
+    import {useNavigate} from "mcrm-svelte-navigator";
     import type {IBaseModel} from "../DynamicFields/base-model";
     const navigate = useNavigate();
 

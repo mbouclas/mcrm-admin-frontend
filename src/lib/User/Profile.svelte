@@ -1,5 +1,5 @@
 <script>
-  import { Router, Route, Link } from "svelte-navigator";
+  import { Router, Route, Link } from "mcrm-svelte-navigator";
   import Settings from './settings/Settings.svelte';
 </script>
 <Router>

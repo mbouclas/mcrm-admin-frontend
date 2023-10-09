@@ -1,5 +1,5 @@
 <script>
-  import { Router, Route } from 'svelte-navigator';
+  import { Router, Route } from 'mcrm-svelte-navigator';
   import Gates from './Gate/Gates.svelte';
   import GateView from './Gate/GateView.svelte';
 </script>

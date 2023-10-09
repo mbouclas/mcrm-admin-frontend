@@ -1,5 +1,5 @@
 <script>
-  import { Router, Route, Link } from 'svelte-navigator';
+  import { Router, Route, Link } from 'mcrm-svelte-navigator';
   import Page from './Pages/Page.svelte';
   import PageList from './Pages/Pages.svelte';
   import PageCategoriesList from './Pages/PageCategoriesList.svelte';

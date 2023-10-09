@@ -1,7 +1,7 @@
 <script lang="ts">
 import { Heading, Input, Label, AccordionItem } from 'flowbite-svelte';
 import { onMount } from 'svelte';
-import { useParams } from "svelte-navigator";
+import { useParams } from "mcrm-svelte-navigator";
 import Fields from "../../DynamicFields/Renderer.svelte";
 
     import type { IEditableRegion } from '../models';
@@ -643,7 +643,7 @@ onMount(async () => {
         if (m.region === 'hero') {
             model = m.items[0].item;
         }
-        
+
     })
 });
 
@@ -669,8 +669,8 @@ let test = {};
 <AccordionItem isOpen={idx === 0}>
     <span slot="header">{item.label}</span>
     <div slot="body">
-        
-        
+
+
         {JSON.stringify(item.fields)}
         <br>-------<br>
 {#if item.fields && item.name === 'hero' && Object.keys(model).length > 0}

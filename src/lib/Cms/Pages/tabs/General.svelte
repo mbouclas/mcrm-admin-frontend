@@ -9,7 +9,7 @@
   import PageCategorySelector from '../PageCategorySelector.svelte';
   import Tags from '../PageCategoriesTags.svelte';
   import { Trash } from 'svelte-heros-v2';
-  import { navigate } from 'svelte-navigator';
+  import { navigate } from 'mcrm-svelte-navigator';
   import { PagesService } from '../../services/pages/page.service';
 
   export let fields: IDynamicFieldConfigBlueprint[] = [];

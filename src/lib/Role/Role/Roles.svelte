@@ -9,7 +9,7 @@
   import ItemSelectorModal from '../../DynamicFields/fields/item-selector-modal.svelte';
   import { Button } from 'flowbite-svelte';
   import { userItemSelectorConfig } from '../../Shared/item-selector-configs';
-  import { navigate, useLocation } from 'svelte-navigator';
+  import { navigate, useLocation } from 'mcrm-svelte-navigator';
   import { RequestErrorException, handleValidationErrors, clearErrors } from '../../helpers/helperErrors';
   import CustomFilters from '../../Shared/CustomFilters.svelte';
   import Modal from '../../Shared/Modal.svelte';

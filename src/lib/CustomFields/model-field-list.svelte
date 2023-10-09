@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {useParams} from "svelte-navigator";
+    import {useParams} from "mcrm-svelte-navigator";
     import {onMount} from "svelte";
     import FieldSelector from './field-selector.svelte';
     import {Button, Modal} from "flowbite-svelte";

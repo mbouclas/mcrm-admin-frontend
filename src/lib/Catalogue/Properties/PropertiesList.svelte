@@ -1,6 +1,6 @@
 <script lang="ts">
   import queryString from 'query-string';
-  import { useParams, useLocation, navigate } from 'svelte-navigator';
+  import { useParams, useLocation, navigate } from 'mcrm-svelte-navigator';
   import { PropertiesService } from '../services/properties/properties.service';
   import { onMount } from 'svelte';
 

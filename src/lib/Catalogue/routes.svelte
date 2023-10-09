@@ -1,5 +1,5 @@
 <script>
-  import { Router, Route, Link } from 'svelte-navigator';
+  import { Router, Route, Link } from 'mcrm-svelte-navigator';
   import Product from './Products/Product.svelte';
   import ProductList from './Products/Products.svelte';
   import Manufacturer from './Manufacturers/Manufacturer.svelte';

@@ -9,7 +9,7 @@
   import RichText from '../../../DynamicFields/fields/richtext.svelte';
   import Image from '../../../DynamicFields/fields/image.svelte';
   import { ManufacturersService } from '../../services/manufacturers/manufacturers.service';
-  import { navigate } from 'svelte-navigator';
+  import { navigate } from 'mcrm-svelte-navigator';
 
   const s = new ManufacturersService();
 

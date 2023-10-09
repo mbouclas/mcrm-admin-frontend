@@ -8,11 +8,11 @@
   import SortButton from '../../Shared/SortTableHeadButton.svelte';
   import Loading from '../../Shared/Loading.svelte';
   import ItemSelectorModal from '../../DynamicFields/fields/item-selector-modal.svelte';
-  import { MenuButton, Button, Dropdown, DropdownItem, Li } from 'flowbite-svelte';
+  import {  Button, Dropdown, DropdownItem, Li } from 'flowbite-svelte';
   import { customerItemSelectorConfig, userItemSelectorConfig } from '../../Shared/item-selector-configs';
   import Modal from '../../Shared/Modal.svelte';
   import CustomFilters from '../../Shared/CustomFilters.svelte';
-  import { navigate } from 'svelte-navigator';
+  import { navigate } from 'mcrm-svelte-navigator';
 
   let dropdownOpen = false;
 
@@ -156,7 +156,7 @@
     {/each}
 
     <li>
-      <MenuButton size="lg" class="dots-menu dark:text-white" vertical />
+<!--      <MenuButton size="lg" class="dots-menu dark:text-white" vertical />-->
 
       <Dropdown bind:open={dropdownOpen}>
         {#each statuses.filter((s) => !statusFiltersShown.includes(s.id)) as status}

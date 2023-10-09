@@ -8,7 +8,7 @@
   import { moneyFormat } from '../../helpers/money';
   import Modal from '../../Shared/Modal.svelte';
   import CustomFilters from '../../Shared/CustomFilters.svelte';
-  import { navigate, useLocation } from 'svelte-navigator';
+  import { navigate, useLocation } from 'mcrm-svelte-navigator';
 
   import { createEventDispatcher } from 'svelte';
 

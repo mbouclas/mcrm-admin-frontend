@@ -4,9 +4,9 @@
   import { Search, Input, Modal, Button } from 'flowbite-svelte';
   import { Trash } from 'svelte-heros-v2';
   import Paginator from '../../Shared/Paginator.svelte';
-  import { navigate } from 'svelte-navigator';
+  import { navigate } from 'mcrm-svelte-navigator';
 
-  import { useParams } from 'svelte-navigator';
+  import { useParams } from 'mcrm-svelte-navigator';
   import { onMount } from 'svelte';
   import getModelPrototypeFromFields from '../../helpers/model-prototype';
   import type { IDynamicFieldConfigBlueprint } from '../../DynamicFields/types';

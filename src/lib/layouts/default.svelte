@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Router, Route, Link, useLocation } from 'svelte-navigator';
+  import { Router, Route, Link, useLocation } from 'mcrm-svelte-navigator';
   import PrivateRoute from '../Auth/PrivateRoute.svelte';
   import Header from '../Shared/Header.svelte';
   import Topbar from '../Shared/Topbar.svelte';

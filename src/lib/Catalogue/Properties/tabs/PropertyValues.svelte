@@ -7,7 +7,7 @@
   import Input from '../../../Shared/Input.svelte';
   import Loading from '../../../Shared/Loading.svelte';
   import { Button } from 'flowbite-svelte';
-  import { navigate, useLocation } from 'svelte-navigator';
+  import { navigate, useLocation } from 'mcrm-svelte-navigator';
   import Image from '../../../DynamicFields/fields/image.svelte';
   import { RequestErrorException, handleValidationErrors, clearErrors } from '../../../helpers/helperErrors';
   import Modal from '../../../Shared/Modal.svelte';

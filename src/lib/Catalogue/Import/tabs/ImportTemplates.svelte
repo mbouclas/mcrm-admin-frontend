@@ -9,7 +9,7 @@
   import { formatDate } from '../../../helpers/dates';
   import Paginator from '../../../Shared/Paginator.svelte';
   import Modal from '../../../Shared/Modal.svelte';
-  import { navigate, useLocation } from 'svelte-navigator';
+  import { navigate, useLocation } from 'mcrm-svelte-navigator';
   import Input from '../../../Shared/Input.svelte';
   import ImportTemplateFieldMaps from './ImportTemplateFieldMaps.svelte';
   import ImportTemplateSettings from './ImportTemplateSettings.svelte';

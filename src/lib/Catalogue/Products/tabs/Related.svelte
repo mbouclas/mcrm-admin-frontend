@@ -8,7 +8,7 @@
 
   import Loading from '../../../Shared/Loading.svelte';
 
-  import { useParams } from 'svelte-navigator';
+  import { useParams } from 'mcrm-svelte-navigator';
   import { ProductsService } from '../../services/products/products.service';
 
   import { productItemSelectorConfig } from '../../../Shared/item-selector-configs';

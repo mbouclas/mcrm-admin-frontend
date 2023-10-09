@@ -4,7 +4,7 @@
   import { Input, Modal, Button, Toggle, Select, Label } from 'flowbite-svelte';
   import { Trash, PencilSquare } from 'svelte-heros-v2';
 
-  import { useParams } from 'svelte-navigator';
+  import { useParams } from 'mcrm-svelte-navigator';
   import { onMount } from 'svelte';
   import getModelPrototypeFromFields from '../../helpers/model-prototype';
   import type { IDynamicFieldConfigBlueprint } from '../../DynamicFields/types';

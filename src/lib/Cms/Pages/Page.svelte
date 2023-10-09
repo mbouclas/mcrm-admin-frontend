@@ -5,7 +5,7 @@
   import Gallery from './tabs/Gallery.svelte';
   import SEO from './tabs/SEO.svelte';
 
-  import { useParams } from 'svelte-navigator';
+  import { useParams } from 'mcrm-svelte-navigator';
   import Form from '../../DynamicFields/Form.svelte';
   import { PagesService } from '../services/pages/page.service';
   import { onMount } from 'svelte';

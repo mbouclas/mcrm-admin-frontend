@@ -1,5 +1,5 @@
 <script>
-  import { Link, useNavigate } from 'svelte-navigator';
+  import { Link, useNavigate } from 'mcrm-svelte-navigator';
   import {
     SidebarGroup,
     Sidebar,

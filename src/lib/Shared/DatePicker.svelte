@@ -1,7 +1,7 @@
 <script>
   import { DateTime, Info } from 'luxon';
   import DayItem from './DayItem.svelte';
-  import { Chevron, ChevronLeft, ChevronRight } from 'flowbite-svelte';
+  import { ChevronLeft, ChevronRight } from 'svelte-heros-v2';
 
   export let onSelect;
   export let selectedValues = [];

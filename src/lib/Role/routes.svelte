@@ -1,5 +1,5 @@
 <script>
-  import { Router, Route } from 'svelte-navigator';
+  import { Router, Route } from 'mcrm-svelte-navigator';
   import Roles from './Role/Roles.svelte';
   import RoleView from './Role/RoleView.svelte';
 </script>

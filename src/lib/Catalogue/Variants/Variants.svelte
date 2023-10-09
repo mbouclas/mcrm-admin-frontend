@@ -7,7 +7,7 @@
   import getModelPrototypeFromFields from '../../helpers/model-prototype';
 
   import { onMount } from 'svelte';
-  import { useParams } from 'svelte-navigator';
+  import { useParams } from 'mcrm-svelte-navigator';
 
   export let productId;
   import { VariantsService } from '../services/variants/variants.service';

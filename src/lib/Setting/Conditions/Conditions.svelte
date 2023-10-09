@@ -8,7 +8,7 @@
   import Paginator from '../../Shared/Paginator.svelte';
   import Modal from '../../Shared/Modal.svelte';
   import CustomFilters from '../../Shared/CustomFilters.svelte';
-  import { navigate } from 'svelte-navigator';
+  import { navigate } from 'mcrm-svelte-navigator';
   import DropDown from '../../Shared/DropDown.svelte';
   import { AppService } from '../../Shared/app.service';
   import Input from '../../Shared/Input.svelte';

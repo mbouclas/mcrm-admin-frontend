@@ -6,7 +6,7 @@
   import Input from '../../../Shared/Input.svelte';
   import DropDown from '../../../Shared/DropDown.svelte';
   import { Trash } from 'svelte-heros-v2';
-  import { navigate } from 'svelte-navigator';
+  import { navigate } from 'mcrm-svelte-navigator';
   import { ConditionsService } from '../../services/conditions/condition.service';
   import Rules from '../../../Shared/Rules.svelte';
 

@@ -2,9 +2,9 @@
   import { RoleService } from '../services/role/role.service';
   import { Modal, Button } from 'flowbite-svelte';
   import { Trash } from 'svelte-heros-v2';
-  import { navigate } from 'svelte-navigator';
+  import { navigate } from 'mcrm-svelte-navigator';
 
-  import { useParams } from 'svelte-navigator';
+  import { useParams } from 'mcrm-svelte-navigator';
   import { onMount } from 'svelte';
   import { AuthService } from '../../Auth/auth.service';
   import { RequestErrorException, handleValidationErrors, clearErrors } from '../../helpers/helperErrors';

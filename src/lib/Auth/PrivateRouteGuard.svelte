@@ -1,5 +1,5 @@
 <script>
-  import { useNavigate, useLocation } from "svelte-navigator";
+  import { useNavigate, useLocation } from "mcrm-svelte-navigator";
   import { user } from "../stores.ts";
   import {AuthService} from "./auth.service.ts";
 

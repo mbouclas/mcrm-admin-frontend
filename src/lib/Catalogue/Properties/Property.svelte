@@ -3,7 +3,7 @@
   import General from './tabs/General.svelte';
   import PropertyValues from './tabs/PropertyValues.svelte';
 
-  import { useParams } from 'svelte-navigator';
+  import { useParams } from 'mcrm-svelte-navigator';
   import Form from '../../DynamicFields/Form.svelte';
   import { PropertiesService } from '../services/properties/properties.service';
   import { onMount } from 'svelte';

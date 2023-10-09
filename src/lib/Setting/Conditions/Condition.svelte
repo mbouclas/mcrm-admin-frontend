@@ -2,7 +2,7 @@
   import { Tabs, TabItem } from 'flowbite-svelte';
   import General from './tabs/General.svelte';
 
-  import { useParams } from 'svelte-navigator';
+  import { useParams } from 'mcrm-svelte-navigator';
   import Form from '../../DynamicFields/Form.svelte';
   import { ConditionsService } from '../services/conditions/condition.service';
   import { onMount } from 'svelte';

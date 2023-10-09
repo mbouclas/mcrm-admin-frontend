@@ -6,7 +6,7 @@
   import SEO from './tabs/SEO.svelte';
   import Files from './tabs/Files.svelte';
 
-  import { useParams } from 'svelte-navigator';
+  import { useParams } from 'mcrm-svelte-navigator';
   import Form from '../../DynamicFields/Form.svelte';
   import { ProductsService } from '../services/products/products.service';
   import { onMount } from 'svelte';
