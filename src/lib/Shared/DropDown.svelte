@@ -1,8 +1,12 @@
 <script lang="ts">
   import { Label, Dropdown, Search } from 'flowbite-svelte';
 
+  import { createEventDispatcher } from 'svelte';
   import { ArrowDown } from 'svelte-heros-v2';
   import ErrorMessage from './ErrorMessage.svelte';
+  import { isBoolean } from 'lodash';
+
+  const dispatch = createEventDispatcher();
 
   export let values = [];
   export let value = '';
@@ -15,6 +19,10 @@
   export let searchText = '';
 
   $: key = getKey(values, value);
+
+  $: if (isBoolean(dropDownOpen)) {
+    dispatch('opened', dropDownOpen);
+  }
 
   const getKey = (values, value) => {
     if (values.length) {
