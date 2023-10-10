@@ -13,8 +13,8 @@ const productSchema = z.object({
     .string({ required_error: errors['PRODUCT.011'], invalid_type_error: errors['PRODUCT.011'] })
     .min(1, errors['PRODUCT.011']),
   price: z
-    .string({ required_error: errors['PRODUCT.012'], invalid_type_error: errors['PRODUCT.012'] })
-    .min(1, errors['PRODUCT.012']),
+    .number({ required_error: errors['PRODUCT.012'], invalid_type_error: errors['PRODUCT.012'] })
+    .min(0.01, errors['PRODUCT.012']),
   description: z
     .string({ required_error: errors['PRODUCT.013'], invalid_type_error: errors['PRODUCT.013'] })
     .min(1, errors['PRODUCT.013']),
@@ -91,6 +91,7 @@ export class ProductsService extends BaseHttpService {
     return await this.patch(`product/${id}`, data, {
       successMessage: 'Updated successfully',
       errorMessage: 'Failed to update',
+      schema: productSchema,
     });
   }
 

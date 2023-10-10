@@ -6,7 +6,7 @@
   import Input from '../../../Shared/Input.svelte';
   import ErrorMessage from '../../../Shared/ErrorMessage.svelte';
   import SalesChannelsSelector from '../../../SalesChannels/sales-channels-selector.svelte';
-  import { Trash, ArrowDown } from 'svelte-heros-v2';
+  import { Trash } from 'svelte-heros-v2';
   import RichText from '../../../DynamicFields/fields/richtext.svelte';
   import Image from '../../../DynamicFields/fields/image.svelte';
   import ProductCategorySelector from '../ProductCategorySelector.svelte';
@@ -14,7 +14,7 @@
   import { ProductsService } from '../../services/products/products.service';
   import { ManufacturersService } from '../../services/manufacturers/manufacturers.service';
   import { navigate } from 'mcrm-svelte-navigator';
-  import {type ISalesChannel, SalesChannelsService} from "../../../SalesChannels/services/sales-channels.service";
+  import { type ISalesChannel, SalesChannelsService } from '../../../SalesChannels/services/sales-channels.service';
 
   const s = new ProductsService();
   const m = new ManufacturersService();
@@ -42,6 +42,7 @@
   };
 
   const onSubmitWithLoader = async (data) => {
+    console.log('submit ', data);
     try {
       loading = true;
       await onSubmit(data);
@@ -62,9 +63,6 @@
   let secondaryFields = [];
   let deleteProductModalOpen = false;
   let loading = false;
-  // export let onSubmit: (data: any) => void;
-
-  // console.log(fields);
 
   $: {
     fields.forEach((field) => {
@@ -116,7 +114,6 @@
 
 {#if !model}<Loading /> {/if}
 {#if model}
-
   {#if model.uuid}
     <div class="flex w-full pb-5 pr-3 justify-end">
       <div class="flex items-center w-20">
@@ -181,31 +178,29 @@
         </div>
 
         <div class="pt-6">
-          <h3>Manufacturer</h3>
-
-          <div
-            class="flex items-center justify-between mt-2 bg-gray-700 py-1 pl-2 pr-10 rounded-md py-3 cursor-pointer hover:bg-gray-600"
-            on:click|preventDefault={getManufacturers}
-          >
-            <span class="text-md">{model?.manufacturer?.title || ''}</span>
-            <ArrowDown size="35px" />
-          </div>
-          <Dropdown bind:open={manufacturerDropDownOpen} class="overflow-y-auto px-3 pb-3 text-sm h-64 z-20">
-            <div slot="header" class="p-3">
-              <Search size="md" bind:value={searchManufacturerText} />
-            </div>
-            {#each manufacturers as manufacturer}
-              <li
-                on:click={() => setManufacturer(manufacturer)}
-                class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
-              >
-                {manufacturer.title}
-              </li>
-            {/each}
-          </Dropdown>
+          <DropDown
+            on:opened={(e) => {
+              const opened = e.detail;
+              if (opened) {
+                getManufacturers();
+              }
+            }}
+            placeholder="Select manufacturer"
+            label="Manufacturers"
+            bind:value={searchManufacturerText}
+            values={manufacturers.map((item) => ({
+              key: item.title,
+              value: item.title,
+            }))}
+          />
         </div>
         <div class="my-6">
-        <SalesChannelsSelector model={model.salesChannel} itemId={model.uuid} saveOnSelect={true} onSave={saveSalesChannel} />
+          <SalesChannelsSelector
+            model={model.salesChannel}
+            itemId={model.uuid}
+            saveOnSelect={true}
+            onSave={saveSalesChannel}
+          />
         </div>
       </div>
     </div>
@@ -232,7 +227,11 @@
         </button>
       {:else}
         <button
-          on:click={() => onSubmitWithLoader(model)}
+          on:click={() =>
+            onSubmitWithLoader({
+              ...model,
+              price: parseFloat(model.price),
+            })}
           type="button"
           class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group"
         >
