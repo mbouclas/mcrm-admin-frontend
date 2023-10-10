@@ -18,6 +18,11 @@ interface IRequestOptions {
   renameServerValidationErrors?: { [key: string]: string };
 }
 
+const hasOnlyActiveProperty = (obj) => {
+  const keys = Object.keys(obj);
+  return keys.length === 1 && keys[0] === 'active';
+};
+
 export class BaseHttpService {
   protected apiUrl = import.meta.env.VITE_API_URL;
 
@@ -119,7 +124,9 @@ export class BaseHttpService {
 
   async patch(url: string, body: IGenericObject = {}, options: IRequestOptions = {}) {
     if (options?.schema) {
-      validateClientData(options.schema, body);
+      if (!hasOnlyActiveProperty(body)) {
+        validateClientData(options.schema, body);
+      }
     }
 
     try {
