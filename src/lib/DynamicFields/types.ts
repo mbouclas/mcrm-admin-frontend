@@ -1,5 +1,6 @@
 import type {IGenericObject} from "../Shared/models/generic";
 import {BaseModel} from "./base-model";
+import type {IZodSchema} from "../helpers/data";
 
 export interface IBaseUploaderSettings {
     usePreviews?: boolean;
@@ -81,6 +82,7 @@ export interface IDynamicFieldConfigBlueprint<ISettingsType = any> {
     translatable?: boolean;
     required?: boolean;
     disabled?: boolean;
+    schema?: IZodSchema;
     min?: number;
     max?: number;
     step?: number;

@@ -98,7 +98,7 @@
   };
 
   async function saveSalesChannel(channels: ISalesChannel[], itemId: string) {
-    await (new SalesChannelsService()).save(channels, itemId, 'Product');
+    await (new SalesChannelsService()).sync(channels, itemId, 'Product');
   }
 </script>
 

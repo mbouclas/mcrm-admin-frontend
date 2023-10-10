@@ -6,16 +6,21 @@
     export let model: any = {};
     export let fieldPrimaryKey = 'varName';
     export let wrapperClass = 'mb-4 mt-4';
+
+
+
+
 </script>
+{#if typeof model !== 'undefined'}
+
 {#each fields as field}
     <div class={wrapperClass}>
         <slot {field}>
-            <FieldRenderer {field} bind:model={model[field[fieldPrimaryKey]]} />
+            <FieldRenderer {field} bind:model={model[field[fieldPrimaryKey]]} indentNested={true} />
         </slot>
     </div>
 {/each}
-
-
+    {/if}
 <!--
 @component
 @slot field

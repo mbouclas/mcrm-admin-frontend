@@ -79,7 +79,7 @@
                     <Plus />
                 </Button>
                     {:else}
-                    <slot name="selector" model={model} />
+                    <slot name="selector" {model} />
                 {/if}
             </TableBodyCell>
                 {/if}
@@ -87,7 +87,7 @@
             <TableBodyCell>{model.fields.length}</TableBodyCell>
             {#if $$slots.actions}
                 <TableBodyCell>
-                    <slot name="actions" model={model}></slot>
+                    <slot name="actions" {model}></slot>
                 </TableBodyCell>
             {/if}
         </TableBodyRow>

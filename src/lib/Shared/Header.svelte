@@ -411,6 +411,17 @@
               navigate('/settings/cf');
             }}
           />
+
+          <SidebarItem
+                  {aClass}
+                  label="Sales Channels"
+                  icon={{ name: Cog }}
+                  href="/settings/sales-channels"
+                  on:click={(e) => {
+              e.preventDefault();
+              navigate('/settings/sales-channels');
+            }}
+          />
         </SidebarDropdownWrapper>
       {/if}
     </SidebarGroup>

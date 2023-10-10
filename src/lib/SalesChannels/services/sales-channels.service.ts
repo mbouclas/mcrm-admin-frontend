@@ -8,6 +8,7 @@ export interface ISalesChannel {
     description: string;
     slug: string;
     active: string;
+    default: string;
 }
 
 export class SalesChannelsService extends BaseHttpService {
@@ -26,9 +27,26 @@ export class SalesChannelsService extends BaseHttpService {
         return await this.get(`sales-channels${qs ? `?${qs}` : ''}`);
     }
 
-    async save(channels: ISalesChannel[], itemId: string, model: string) {
+    async findOne(uuid: string, relationships: string[] = []) {
+        const filters = relationships.length > 0 ? { with: relationships } : {};
+        return await this.get(`sales-channels/${uuid}`, filters);
+    }
+
+    async sync(channels: ISalesChannel[], itemId: string, model: string) {
         return await super.post(`sales-channels/${itemId}/save`, {channels, model}, {
             successMessage: 'Sales Channels Saved',
+        });
+    }
+
+    async update(uuid: string, channel: Partial<ISalesChannel>) {
+        return await super.patch(`sales-channels/${uuid}`, channel, {
+            successMessage: 'Sales Channel Updated',
+        });
+    }
+
+    async store(channel: Partial<ISalesChannel>) {
+        return await super.post(`sales-channels`, channel, {
+            successMessage: 'Sales Channel Created',
         });
     }
 }

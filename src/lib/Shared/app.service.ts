@@ -12,6 +12,10 @@ export class AppService {
     }
 
     public static getModel(name: string) {
+        if (name.indexOf('Model') === -1) {
+            name = `${name}Model`;
+        }
+
         return this.models.find(model => model.name === name);
     }
 }

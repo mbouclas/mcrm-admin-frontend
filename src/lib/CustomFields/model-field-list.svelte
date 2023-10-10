@@ -1,9 +1,9 @@
 <script lang="ts">
-    import {useParams} from "mcrm-svelte-navigator";
+    import {navigate, useParams} from "mcrm-svelte-navigator";
     import {onMount} from "svelte";
     import FieldSelector from './field-selector.svelte';
     import {Button, Modal} from "flowbite-svelte";
-    import {ArrowTopRightOnSquare, Plus, Trash} from "svelte-heros-v2";
+    import {ArrowTopRightOnSquare, Plus, Trash, ArrowLeft} from "svelte-heros-v2";
     import type {IDynamicFieldConfigBlueprint} from "../DynamicFields/types";
     import EditField from "./edit-field.svelte";
     import AddField from './add-field.svelte'
@@ -54,13 +54,18 @@
         <EditField model={selectedField} onSave={onSaveField} modelName={$params.id} />
     </Modal>
 
-    <FieldSelector let:field={field} mode="list" modelName={$params.id} bind:refresh={refresh}>
-        <div slot="top-actions" class="flex justify-end">
-            <div>
+    <FieldSelector  mode="list" modelName={$params.id} bind:refresh={refresh}>
+        <div slot="top-actions">
+            <div class="flex justify-between">
+                <div class="justify-start">
+                    <Button color="blue" title="Back to list" on:click={() => navigate('/settings/cf')}><ArrowLeft /></Button>
+                </div>
+            <div class="justify-end">
                 <Button color="green" title="Add new field" on:click={addField}><Plus /></Button>
             </div>
+            </div>
         </div>
-    <div slot="actions">
+    <div slot="actions" let:field>
         <Button on:click={editField.bind(this, field)} title="Edit">
             <ArrowTopRightOnSquare/>
         </Button>

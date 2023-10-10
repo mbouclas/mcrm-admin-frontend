@@ -14,7 +14,6 @@
 
 
     function onSelection(model: Partial<IBaseModel>|Partial<IBaseModel>[]) {
-        console.log(model);
         navigate(`/settings/cf/${model.name}`);
         // showModelSelectorModal = false
     }
@@ -25,8 +24,8 @@
 </script>
 
 
-<ModelSelector mode="custom" onSelection={onSelection} let:model={model}>
-    <div slot="selector">
+<ModelSelector mode="custom" onSelection={onSelection} >
+    <div slot="selector" let:model>
         <button on:click={onSelection.bind(this, model)}><ArrowTopRightOnSquare /></button>
     </div>
 </ModelSelector>
