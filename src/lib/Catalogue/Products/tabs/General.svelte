@@ -178,23 +178,25 @@
         </div>
 
         <div class="pt-6">
-          <DropDown
-            on:opened={(e) => {
-              const opened = e.detail;
-              if (opened) {
-                getManufacturers();
-              }
-            }}
-            placeholder="Select manufacturer"
-            label="Manufacturers"
-            bind:searchText={searchManufacturerText}
-            bind:value={model.manufacturer}
-            bind:key={model.manufacturer.title}
-            values={manufacturers.map((item) => ({
-              key: item.title,
-              value: item,
-            }))}
-          />
+          {#if model}
+            <DropDown
+              on:opened={(e) => {
+                const opened = e.detail;
+                if (opened) {
+                  getManufacturers();
+                }
+              }}
+              placeholder="Select manufacturer"
+              label="Manufacturers"
+              bind:searchText={searchManufacturerText}
+              bind:value={model.manufacturer}
+              bind:key={model.manufacturer.title}
+              values={manufacturers.map((item) => ({
+                key: item.title,
+                value: item,
+              }))}
+            />
+          {/if}
         </div>
         <div class="my-6">
           <SalesChannelsSelector

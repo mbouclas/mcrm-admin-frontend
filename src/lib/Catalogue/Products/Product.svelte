@@ -67,6 +67,12 @@
       model.images = [];
     }
 
+    if (!model.manufacturer) {
+      model.manufacturer = {
+        key: '',
+      };
+    }
+
     if (!model.seo) {
       model.seo = {
         title: model.title,
