@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { IDynamicFieldConfigBlueprint } from '../../../DynamicFields/types';
-  import { Button, Toggle, Modal, Dropdown, Search} from 'flowbite-svelte';
+  import { Button, Toggle, Modal, Dropdown, Search } from 'flowbite-svelte';
   import Fields from '../../../DynamicFields/Renderer.svelte';
   import Loading from '../../../Shared/Loading.svelte';
   import Input from '../../../Shared/Input.svelte';
@@ -15,7 +15,7 @@
   import { ManufacturersService } from '../../services/manufacturers/manufacturers.service';
   import { navigate } from 'mcrm-svelte-navigator';
   import { type ISalesChannel, SalesChannelsService } from '../../../SalesChannels/services/sales-channels.service';
-  import DropDown from "../../../Shared/DropDown.svelte";
+  import DropDown from '../../../Shared/DropDown.svelte';
 
   const s = new ProductsService();
   const m = new ManufacturersService();
@@ -43,7 +43,6 @@
   };
 
   const onSubmitWithLoader = async (data) => {
-    console.log('submit ', data);
     try {
       loading = true;
       await onSubmit(data);
@@ -97,7 +96,7 @@
   };
 
   async function saveSalesChannel(channels: ISalesChannel[], itemId: string) {
-    await (new SalesChannelsService()).sync(channels, itemId, 'Product');
+    await new SalesChannelsService().sync(channels, itemId, 'Product');
   }
 </script>
 
@@ -188,10 +187,12 @@
             }}
             placeholder="Select manufacturer"
             label="Manufacturers"
-            bind:value={searchManufacturerText}
+            bind:searchText={searchManufacturerText}
+            bind:value={model.manufacturer}
+            bind:key={model.manufacturer.title}
             values={manufacturers.map((item) => ({
               key: item.title,
-              value: item.title,
+              value: item,
             }))}
           />
         </div>

@@ -10,6 +10,7 @@
 
   export let values = [];
   export let value = '';
+  export let key = null;
 
   export let label;
   export let labelClass = '';
@@ -19,7 +20,7 @@
   let dropDownOpen = false;
   export let searchText = '';
 
-  $: key = getKey(values, value);
+  $: key = key || getKey(values, value);
 
   $: if (isBoolean(dropDownOpen)) {
     dispatch('opened', dropDownOpen);
@@ -41,7 +42,7 @@
     dropDownOpen = false;
   };
 
-  $: filterdValues = searchText ? values.filter((value) => value.value.includes(searchText)) : values;
+  $: filterdValues = searchText ? values.filter((value) => value.key.includes(searchText)) : values;
 </script>
 
 {#if label}
