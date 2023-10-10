@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Tabs, TabItem, Button } from 'flowbite-svelte';
+  import { Tabs, TabItem } from 'flowbite-svelte';
   import General from './tabs/General.svelte';
   import Related from './tabs/Related.svelte';
   import Variants from '../Variants/Variants.svelte';

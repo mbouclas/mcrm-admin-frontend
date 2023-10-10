@@ -15,6 +15,7 @@
   import { ManufacturersService } from '../../services/manufacturers/manufacturers.service';
   import { navigate } from 'mcrm-svelte-navigator';
   import { type ISalesChannel, SalesChannelsService } from '../../../SalesChannels/services/sales-channels.service';
+  import DropDown from "../../../Shared/DropDown.svelte";
 
   const s = new ProductsService();
   const m = new ManufacturersService();
