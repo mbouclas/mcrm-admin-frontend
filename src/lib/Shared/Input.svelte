@@ -1,13 +1,13 @@
 <script lang="ts">
   import ErrorMessage from './ErrorMessage.svelte';
-  import { Input, Label } from 'flowbite-svelte';
+  import { Input, Label, type InputType } from 'flowbite-svelte';
 
   export let label;
   export let value;
   export let errors = [];
   export let required = false;
   export let placeholder = `Enter ${label}`;
-  export let type = 'text';
+  export let type: InputType = 'text';
 </script>
 
 {#if label}

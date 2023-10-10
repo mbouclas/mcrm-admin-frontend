@@ -7,7 +7,7 @@
   import Input from '../../../Shared/Input.svelte';
   import ErrorMessage from '../../../Shared/ErrorMessage.svelte';
   import SalesChannelsSelector from '../../../SalesChannels/sales-channels-selector.svelte';
-  import { Trash, ArrowDown } from 'svelte-heros-v2';
+  import { Trash } from 'svelte-heros-v2';
   import RichText from '../../../DynamicFields/fields/richtext.svelte';
   import Image from '../../../DynamicFields/fields/image.svelte';
   import ProductCategorySelector from '../ProductCategorySelector.svelte';
@@ -43,6 +43,7 @@
   };
 
   const onSubmitWithLoader = async (data) => {
+    console.log('submit ', data);
     try {
       loading = true;
       await onSubmit(data);
@@ -63,9 +64,6 @@
   let secondaryFields = [];
   let deleteProductModalOpen = false;
   let loading = false;
-  // export let onSubmit: (data: any) => void;
-
-  // console.log(fields);
 
   $: {
     fields.forEach((field) => {
@@ -230,7 +228,11 @@
         </button>
       {:else}
         <button
-          on:click={() => onSubmitWithLoader(model)}
+          on:click={() =>
+            onSubmitWithLoader({
+              ...model,
+              price: parseFloat(model.price),
+            })}
           type="button"
           class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group"
         >
