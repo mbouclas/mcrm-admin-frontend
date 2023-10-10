@@ -12,6 +12,7 @@
   export let value = '';
 
   export let label;
+  export let labelClass = '';
   export let errors = [];
   export let placeholder = '';
 
@@ -44,7 +45,7 @@
 </script>
 
 {#if label}
-  <Label color={errors.length ? 'red' : 'gray'} for={label} class="block mb-2">{label}:</Label>
+  <Label color={errors.length ? 'red' : 'gray'} for={label} class={`block mb-2 text-md ${labelClass}`}>{label}:</Label>
 {/if}
 
 <div
