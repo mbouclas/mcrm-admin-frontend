@@ -50,7 +50,6 @@
     async function onSaved(e: IEvent<ISalesChannel>) {
         await search();
     }
-
 </script>
 <div class="flex">
     <Heading tag="h3">Payment Methods</Heading>
