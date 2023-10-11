@@ -14,3 +14,13 @@ export interface IPagination<T> {
   pages?: number;
   data:T[];
 }
+
+export interface IMcrmDi {
+  id: string;
+  title?: string;
+  description?: string;
+  reference?: any;
+  usedFor?: string;
+  model?: string;
+  category?: string;
+}

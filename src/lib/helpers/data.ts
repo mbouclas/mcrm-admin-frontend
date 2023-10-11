@@ -51,9 +51,18 @@ export function schemaToFields(schema: IZodSchema) {
 
     for (let key in schema.properties) {
         const property = schema.properties[key];
+        if (property.description && property.description.indexOf('json:') !== -1) {
+            const json = JSON.parse(property.description.replace('json:', ''));
+            for (let k in json) {
+                property[k] = json[k];
+            }
+        }
+
         const field = {
             varName: key,
-            label: key,
+            label: property['label'] || key,
+            hint: property['hint'] || property.description || '',
+            placeholder: property['placeholder'] || '',
             type: property.type,
             required: schema.required && schema.required.indexOf(key) > -1,
         };

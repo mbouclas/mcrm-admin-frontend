@@ -393,12 +393,22 @@
           />
           <SidebarItem
                   {aClass}
-                  label="Shipping"
+                  label="Shipping Methods"
                   icon={{ name: Cog }}
                   href="/settings/shipping"
                   on:click={(e) => {
               e.preventDefault();
               navigate('/settings/shipping');
+            }}
+          />
+          <SidebarItem
+                  {aClass}
+                  label="Payment Methods"
+                  icon={{ name: Cog }}
+                  href="/settings/payment-methods"
+                  on:click={(e) => {
+              e.preventDefault();
+              navigate('/settings/payment-methods');
             }}
           />
           <SidebarItem

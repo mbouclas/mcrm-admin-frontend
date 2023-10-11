@@ -41,7 +41,7 @@
 
     $: filteredItems = salesChannels.data.filter((item) => item.title.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1);
 
-    async function onAddNewField(item: Partial<ISalesChannel>) {
+    async function onAddNew(item: Partial<ISalesChannel>) {
         showAddModal = false;
         selectedItem = item;
         showEditModal = true;
@@ -63,7 +63,7 @@
 </Modal>
 
 <Modal size="xl" bind:open={showAddModal} title={`Add Channel`}>
-    <AddChannel onSave={onAddNewField} />
+    <AddChannel onSave={onAddNew} />
 </Modal>
 <TableSearch placeholder="Search by field name" hoverable={true} bind:inputValue={searchTerm} >
     <TableHead>
