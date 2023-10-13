@@ -6,16 +6,32 @@
   import Loading from '../../Shared/Loading.svelte';
   import { formatDate } from '../../helpers/dates';
   import ItemSelectorModal from '../../DynamicFields/fields/item-selector-modal.svelte';
-  import { Button } from 'flowbite-svelte';
-  import { productCategoryItemSelectorConfig } from '../../Shared/item-selector-configs';
+  import {
+    Banner,
+    Button,
+    Checkbox,
+    Dropdown,
+    DropdownItem,
+    Modal as NativeModal, TableBody, TableBodyCell, TableBodyRow,
+    TableHead,
+    TableHeadCell, TableSearch
+  } from 'flowbite-svelte';
+
   import Paginator from '../../Shared/Paginator.svelte';
   import { moneyFormat } from '../../helpers/money';
   import Modal from '../../Shared/Modal.svelte';
   import CustomFilters from '../../Shared/CustomFilters.svelte';
   import { navigate, useLocation } from 'mcrm-svelte-navigator';
+  import {ChevronDown, Plus, Trash} from "svelte-heros-v2";
+  import BulkAssignSalesChannel from './bulk-actions/assign-sales-channel.svelte';
+  import BulkEditCategories from './bulk-actions/edit-categories.svelte';
+  import FiltersBar from './filters.svelte';
+  import {DotsVertical} from "radix-icons-svelte";
+  import QuickEdit from './Product.svelte';
 
   let showModal = false;
-  let searchVal = '';
+  let searchVal = '',
+          searchTerm = '';
 
   const location = useLocation();
   const currentPath = $location.pathname;
@@ -34,12 +50,21 @@
   };
   let filters: typeof defaultFilters,
     appliedFilters = [],
-    loading = false;
-  reset();
+    loading = false,
+          filteredItems = [];
 
-  onMount(async () => {
-    await search();
-  });
+  let selected: string[] = [],// the uuids of the selected items
+          originalSelection: string[] = []// A copy of the selection to revert to if the user hits the clear all
+  ;
+  let allSelected = false,
+  hiddenItemsSelected = false,
+          showBulkAssignSalesChannelModal = false,
+          showQuickEdit = false,
+          showBulkEditCategoriesModal = false
+    ;
+  let timeout: any;
+  let selectedItemId = null;
+  reset();
 
   async function search() {
     items.data = [];
@@ -97,7 +122,90 @@
     await search();
     showModal = false;
   }
+
+  function singleItemSelected() {
+    allSelected = selected.length === items.data.length;
+  }
+
+  async function toggleSelectAll() {
+    allSelected = !allSelected;
+    if (allSelected) {
+      selected = items.data.map((item) => item.uuid);
+    } else {
+      selected = [];
+    }
+
+    originalSelection = selected;
+  }
+
+  async function selectAll() {
+    hiddenItemsSelected = !hiddenItemsSelected;
+    if (hiddenItemsSelected) {
+      const r = await service.getProductIdsFromFilters(filters, items.total);
+      selected = r;
+      return;
+    }
+
+    selected = originalSelection;
+  }
+
+  async function bulkToggleStatus(activate: boolean) {
+    const data = selected.map((uuid) => ({ uuid, active: activate }));
+    await service.bulkUpdate(data);
+    await search();
+    selected = [];
+  }
+
+    async function applyFilters() {
+        await search();
+    }
+
+    async function clearFilters() {
+        await reset();
+    }
+
+  async function bulkAssignToSalesChannel() {
+    // assign here
+    showBulkAssignSalesChannelModal = true;
+  }
+
+    async function bulkEditCategories() {
+        // edit here
+      showBulkEditCategoriesModal = true;
+    }
+
+  function quickEdit(item) {
+    selectedItemId = item.uuid;
+    showQuickEdit = true;
+  }
+
+  async function handleSearch() {
+    if (loading) {return}
+    //debounce search
+    clearTimeout(timeout);
+    timeout = setTimeout(async () => {
+      filters.q = searchTerm;
+      await search();
+    }, 500);
+  }
+
+  $: {
+    handleSearch();
+  }
+
 </script>
+
+<NativeModal size="xl" bind:open={showBulkEditCategoriesModal} title={`Bulk Edit Categories`}>
+<BulkEditCategories />
+</NativeModal>
+
+<NativeModal size="xl" bind:open={showBulkAssignSalesChannelModal} title={`Assign Sales Channels`}>
+  <BulkAssignSalesChannel />
+</NativeModal>
+
+<NativeModal size="xl" bind:open={showQuickEdit} title={`Edit`}>
+  <QuickEdit itemId={selectedItemId} />
+</NativeModal>
 
 <Modal bind:showModal>
   <div slot="header">Filters</div>
@@ -123,205 +231,195 @@
 </div>
 
 <div class="flex items-center space-x-4">
-  <button on:click={() => navigate('/catalogue/products/new')} class="bg-green-500 rounded p-2">Add product</button>
+  <Button on:click={() => navigate('/catalogue/products/new')} class="bg-green-500 rounded p-2">
+    <Plus /></Button>
 
   {#each appliedFilters as filter}
     <button>{filter.name}</button>
   {/each}
 
-  <button on:click={() => (showModal = true)} class="bg-blue-500 rounded p-2">Filters</button>
-  <button on:click={reset} class="bg-red-500 rounded p-2">Reset Filters</button>
+<!--  <button on:click={() => (showModal = true)} class="bg-blue-500 rounded p-2">Filters</button>-->
+  <FiltersBar bind:filters={filters} on:filter={applyFilters} on:clear={clearFilters} />
+
+  {#if selected.length >0}
+  <Button color="purple">With {selected.length} Items
+    <ChevronDown class="w-3 h-3 ml-2 text-white dark:text-white" />
+  </Button>
+    <Dropdown>
+      <DropdownItem on:click={bulkToggleStatus.bind(this, true)}>Activate</DropdownItem>
+      <DropdownItem  on:click={bulkToggleStatus.bind(this, false)}>Deactivate</DropdownItem>
+      <DropdownItem on:click={bulkAssignToSalesChannel}>Assign to sales channel</DropdownItem>
+      <DropdownItem on:click={bulkEditCategories}>Edit Categories</DropdownItem>
+    </Dropdown>
+    {/if}
 </div>
+{#if selected.length >0}
+  <div class="my-4 p-4">
+    <Banner id="info-banner" position="relative" bannerType="info">
+      <div slot="header" class="mb-4 md:mb-0 md:mr-4">
+        <h2 class="mb-1 text-base font-semibold text-gray-900 dark:text-white">
+          {#if !hiddenItemsSelected && allSelected}
+          All {selected.length} items on this page are selected
+            {:else if !hiddenItemsSelected && !allSelected}
+            {selected.length} items are selected
 
-<div class="flex flex-col mt-6">
-  <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-    <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-      <div class="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead class="bg-gray-50 dark:bg-gray-800">
-            <tr>
-              <th
-                scope="col"
-                class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-              >
-                <div class="flex items-center gap-x-3">
-                  <input
-                    type="checkbox"
-                    class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
-                  />
-                </div>
-              </th>
-              <th
-                scope="col"
-                class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-              >
-                <SortButton name="sku" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
-                  >SKU</SortButton
-                >
-              </th>
-              <th
-                scope="col"
-                class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-              >
-                <SortButton name="title" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
-                  >Title</SortButton
-                >
-              </th>
-              <th
-                scope="col"
-                class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-              >
-                <SortButton name="status" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
-                  >Status</SortButton
-                >
-              </th>
-              <th
-                scope="col"
-                class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-              >
-                <ItemSelectorModal
-                  config={productCategoryItemSelectorConfig}
-                  on:select={(e) => setFilter('category', e.detail.uuid)}
-                  closeOnSelect={true}
-                  label="Select Customer"
-                  selectMode="single"
-                >
-                  <Button
-                    >Categories
-                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
-                      ><path fill="currentColor" d="M10 20v-7L2.95 4h18.1L14 13v7h-4Z" /></svg
-                    >
-                  </Button>
-                </ItemSelectorModal>
-              </th>
-              <th
-                scope="col"
-                class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-              >
-                #Variants
-              </th>
-              <th
-                scope="col"
-                class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-              >
-                <SortButton name="price" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
-                  >Price</SortButton
-                >
-              </th>
-
-              <th
-                scope="col"
-                class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-              >
-                <SortButton name="createdAt" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
-                  >Date</SortButton
-                >
-              </th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
-            {#if loading}
-              <tr>
-                <td colspan="10" class="text-center py-10">
-                  <Loading />
-                </td>
-              </tr>
+            {:else}
+            All {selected.length} items are selected
             {/if}
-          </tbody>
-          {#if items.data}
-            {#each items.data as item}
-              <tr>
-                <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                  <div class="inline-flex items-center gap-x-3">
-                    <input
-                      type="checkbox"
-                      class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
-                    />
-                    <a href={`/catalogue/products/${item.uuid}`} class="h-12 w-12">
-                      <img src={item?.thumb?.url || item?.thumb} />
-                    </a>
-                  </div>
-                </td>
-                <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                  <a
-                    href={`/catalogue/products/${item.uuid}`}
-                    class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer"
-                  >
-                    {item.sku}
-                  </a>
-                </td>
-                <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                  <a href={`/catalogue/products/${item.uuid}`} class="hover:underline">
-                    {item.title}
-                  </a>
-                </td>
+        </h2>
+        <p class="flex items-center text-sm font-normal text-gray-500 dark:text-gray-400">
+          {#if !hiddenItemsSelected && allSelected}
+          <a href="#" on:click|preventDefault={selectAll} class="underline font-bold">
+            Select all {items.total} items
+          </a>
+            {:else if hiddenItemsSelected}
+            <a href="#" on:click|preventDefault={selectAll} class="underline font-bold">
+              Clear Selection
+            </a>
+              {/if}
+        </p>
+      </div>
 
-                <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                  <button
-                    title="Edit Order"
+    </Banner>
+  </div>
+{/if}
+
+<TableSearch placeholder="Search in Titles, sku, descriptions..." hoverable={true} bind:inputValue={searchTerm} >
+  <TableHead>
+      <TableHeadCell>
+        <Checkbox checked={allSelected}
+                  on:change={toggleSelectAll}
+        />
+      </TableHeadCell>
+    <TableHeadCell>
+      <SortButton name="sku" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
+      >SKU</SortButton
+      >
+    </TableHeadCell>
+    <TableHeadCell>
+      <SortButton name="title" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
+      >Title</SortButton>
+    </TableHeadCell>
+    <TableHeadCell>
+      <SortButton name="status" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}>Status</SortButton>
+    </TableHeadCell>
+    <TableHeadCell>Categories</TableHeadCell>
+    <TableHeadCell>#Variants</TableHeadCell>
+    <TableHeadCell>
+      <SortButton name="price" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
+      >Price</SortButton>
+    </TableHeadCell>
+    <TableHeadCell>
+      <SortButton name="createdAt" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
+      >Date</SortButton>
+    </TableHeadCell>
+    <TableHeadCell></TableHeadCell>
+  </TableHead>
+  <TableBody class="divide-y">
+    {#if Array.isArray(items.data) && !loading}
+      {#each items.data as item}
+        <TableBodyRow>
+          <TableBodyCell>
+            <Checkbox bind:group={selected}
+                      on:change={singleItemSelected}
+                      value={item.uuid}
+            />
+          </TableBodyCell>
+          <TableBodyCell>
+            <a href={`/catalogue/products/${item.uuid}`}
+                    class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer">
+              {item.sku}
+            </a>
+          </TableBodyCell>
+          <TableBodyCell>{item.title}</TableBodyCell>
+          <TableBodyCell>
+            <Button
+                    title="Status"
                     on:click={toggleStatus.bind(this, item.uuid)}
                     type="button"
                     class="text-gray-500 transition-colors duration-200 dark:hover:text-yellow-500 dark:text-gray-300 hover:text-yellow-500 focus:outline-none"
-                  >
-                    {#if !item.active}
-                      <svg
+            >
+              {#if !item.active}
+                <svg
                         class="text-red-500"
                         xmlns="http://www.w3.org/2000/svg"
                         width="32"
                         height="32"
                         viewBox="0 0 24 24"
-                        ><path
-                          fill="currentColor"
-                          d="M17 7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h10c2.76 0 5-2.24 5-5s-2.24-5-5-5zM7 15c-1.66 0-3-1.34-3-3s1.34-3 3-3s3 1.34 3 3s-1.34 3-3 3z"
-                        /></svg
-                      >
-                    {:else}
-                      <svg
+                ><path
+                        fill="currentColor"
+                        d="M17 7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h10c2.76 0 5-2.24 5-5s-2.24-5-5-5zM7 15c-1.66 0-3-1.34-3-3s1.34-3 3-3s3 1.34 3 3s-1.34 3-3 3z"
+                /></svg
+                >
+              {:else}
+                <svg
                         class="text-green-500"
                         xmlns="http://www.w3.org/2000/svg"
                         width="32"
                         height="32"
                         viewBox="0 0 24 24"
-                        ><path
-                          fill="currentColor"
-                          d="M17 7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h10c2.76 0 5-2.24 5-5s-2.24-5-5-5zm0 8c-1.66 0-3-1.34-3-3s1.34-3 3-3s3 1.34 3 3s-1.34 3-3 3z"
-                        /></svg
-                      >
-                    {/if}
-                  </button>
-                </td>
-                <td class="px-4 py-4 text-sm whitespace-nowrap text-center">
-                  <div class="flex items-center gap-x-6">
-                    {#each item.productCategory as category, idx}
-                      <button on:click={setFilter.bind(this, 'category', category.uuid)}>{category.title}</button>
-                      {#if idx < item.productCategory.length - 1}
-                        ,
-                      {/if}
-                    {/each}
-                  </div>
-                </td>
-                <td class="px-4 py-4 text-sm whitespace-nowrap text-center">
-                  {item.variants.length}
-                </td>
-                <td class="px-4 py-4 text-sm whitespace-nowrap text-center">
-                  {moneyFormat(item.price)}
-                </td>
-                <td class="px-4 py-4 text-sm whitespace-nowrap">
-                  {formatDate(item.createdAt)}
-                </td>
-              </tr>
-            {/each}
-          {/if}
-        </table>
-      </div>
-    </div>
-  </div>
+                ><path
+                        fill="currentColor"
+                        d="M17 7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h10c2.76 0 5-2.24 5-5s-2.24-5-5-5zm0 8c-1.66 0-3-1.34-3-3s1.34-3 3-3s3 1.34 3 3s-1.34 3-3 3z"
+                /></svg
+                >
+              {/if}
+            </Button>
+          </TableBodyCell>
+          <TableBodyCell>
+            <div class="flex items-center gap-x-6">
+              {#if Array.isArray(item.productCategory)}
+                {#each item.productCategory as category, idx}
+                  {category.title}
+                  {#if idx < item.productCategory.length - 1}
+                    ,
+                  {/if}
+                {/each}
+              {/if}
+            </div>
+          </TableBodyCell>
+          <TableBodyCell>{Array.isArray(item.variants) ? item.variants.length : '-'}</TableBodyCell>
+          <TableBodyCell>
+            {moneyFormat(item.price)}
+          </TableBodyCell>
+          <TableBodyCell>
+            {formatDate(item.createdAt)}
+          </TableBodyCell>
+          <TableBodyCell>
+            <Button>
+              <DotsVertical/>
+            </Button>
+            <Dropdown>
+              <DropdownItem>
+                <Button on:click={quickEdit.bind(this, item)}>Quick Edit</Button>
+              </DropdownItem>
+              <DropdownItem class="bg-red-600">
+                <Button><Trash /> Delete</Button>
+              </DropdownItem>
+            </Dropdown>
+          </TableBodyCell>
+        </TableBodyRow>
+    {/each}
+      {:else}
+      <TableBodyRow>
+        <TableBodyCell colspan="9">
+          <div class="flex justify-center">
+            <Loading>
+              Loading...
+            </Loading>
+          </div>
 
+        </TableBodyCell>
+      </TableBodyRow>
+      {/if}
+  </TableBody>
+</TableSearch>
+{#if !loading}
   <Paginator
-    totalPages={parseInt(items.pages)}
-    baseURL={`/orders`}
-    total={parseInt(items.total)}
-    currentPage={parseInt(items.page)}
-    on:pageChange={handlePageChange}
+          totalPages={parseInt(items.pages)}
+          baseURL={`/orders`}
+          total={parseInt(items.total)}
+          currentPage={parseInt(items.page)}
+          on:pageChange={handlePageChange}
   />
-</div>
+  {/if}

@@ -165,4 +165,22 @@ export class ProductsService extends BaseHttpService {
 
     return res;
   }
+
+  async getProductIdsFromFilters(filters: IGenericObject = {}, limit = 12) {
+    let qs;
+
+    const temp = Object.assign({}, filters);
+    temp['limit'] = limit;
+    if (Object.keys(temp).length > 0) {
+      qs = queryString.stringify(temp);
+    }
+
+    return await this.get(`product/ids${qs ? `?${qs}` : ''}`);
+  }
+
+  async bulkUpdate(records: IGenericObject) {
+    return await super.patch(`product/bulk/update`, {records}, {
+        successMessage: 'Updated successfully',
+    });
+  }
 }

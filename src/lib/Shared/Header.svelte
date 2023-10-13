@@ -14,7 +14,7 @@
 
   import { user } from '../stores';
   import { AuthService } from '../Auth/auth.service';
-
+  import logo from '../../assets/logo-2.svg';
   let hasRoleGate = AuthService.hasGate('menu.roles.show');
   let hasUsersGate = AuthService.hasGate('menu.users.show');
   let hasGatesGate = AuthService.hasGate('menu.gates.show');
@@ -53,7 +53,7 @@
       <Link to="/" class="nav-brand  py-5 px-10">
         <img
           class="w-24 object-fit"
-          src="http://skote-v-dark.svelte.themesbrand.com/assets/images/logo-light.png"
+          src={logo}
           alt=""
           srcset=""
         />
@@ -211,8 +211,8 @@
   <div class="flex justify-center">
     <Link to="/" class="nav-brand  py-5 px-10">
       <img
-        class="w-24 object-fit"
-        src="http://skote-v-dark.svelte.themesbrand.com/assets/images/logo-light.png"
+        class="w-36 object-fit"
+        src={logo}
         alt=""
         srcset=""
       />

@@ -15,19 +15,23 @@
 
     fillArrayOfPages(totalPages);
 
-    let pages = pageNumbers(totalPages, currentPage);
-    let next = (currentPage === totalPages) ? null : currentPage + 1;
-    let previous = (currentPage === 1) ? null : currentPage - 1;
+    let pages = [];
+    let next;
+    let previous;
 
     $: {
+        calculate();
+    }
+
+    function calculate() {
         next = (currentPage === totalPages) ? null : currentPage + 1;
         previous = (currentPage === 1) ? null : currentPage - 1;
         pages = pageNumbers(totalPages, currentPage);
+
     }
 
-
     onMount(() => {
-
+        calculate();
     })
 
     function fillArrayOfPages(pages) {

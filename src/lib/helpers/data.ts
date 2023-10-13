@@ -16,15 +16,16 @@ export interface Properties {
     [key: string]: IZodProperty;
 }
 
-export function flattenTree(tree, key = 'children', collection = []) {
+export function flattenTree(tree, key = 'children', collection = [], level = 0) {
     if (!Array.isArray(tree)) return;
 
     for (var i=0; i < tree.length; i++) {
         const child = tree[i];
+        child['level'] = level;
 
         collection.push(child);
         if (Array.isArray(child[key])) {
-            collection = [...flattenTree(child[key], key, collection)];
+            collection = [...flattenTree(child[key], key, collection, level + 1)];
         }
     }
 

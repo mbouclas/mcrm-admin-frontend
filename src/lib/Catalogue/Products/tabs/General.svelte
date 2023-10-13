@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { IDynamicFieldConfigBlueprint } from '../../../DynamicFields/types';
-  import { Button, Toggle, Modal, Dropdown, Search } from 'flowbite-svelte';
+  import {Button, Toggle, Modal, Dropdown, Search, NumberInput, Label} from 'flowbite-svelte';
   import Fields from '../../../DynamicFields/Renderer.svelte';
   import Loading from '../../../Shared/Loading.svelte';
   import Input from '../../../Shared/Input.svelte';
@@ -133,18 +133,26 @@
   <form>
     <div class="grid md:grid-cols-2 md:gap-6">
       <div class="relative z-0 w-full mb-6 group">
-        <Input bind:value={model.title} bind:errors={status.title.errors} placeholder="Title" label="Title" />
-        <div class="grid md:grid-cols-2 md:gap-6">
+        <div class="grid md:grid-cols-2 md:gap-6 my-4">
+          <div class="relative z-0 w-full mb-6 group">
+            <Input bind:value={model.title} bind:errors={status.title.errors} placeholder="Title" label="Title" />
+          </div>
+
           <div class="relative z-0 w-full mb-6 group">
             <Input bind:value={model.sku} bind:errors={status.sku.errors} placeholder="SKU" label="SKU" />
           </div>
+          </div>
+        <div class="grid md:grid-cols-2 md:gap-6 my-4">
           <div class="relative z-0 w-full mb-6 group">
-            <Input
-              type="number"
-              bind:value={model.price}
+            <Label>Price</Label>
+            <NumberInput bind:value={model.price} min="0"  placeholder="Price" label="Price" />
+          </div>
+          <div class="relative z-0 w-full mb-6 group">
+            <Label>Sale Price</Label>
+            <NumberInput
+              bind:value={model.salePrice}
               bind:errors={status.price.errors}
-              placeholder="Price"
-              label="Price"
+              min="0"
             />
           </div>
         </div>

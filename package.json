@@ -70,6 +70,7 @@
     "body-scroll-lock": "^4.0.0-beta.0",
     "classnames": "^2.3.2",
     "file-saver": "^2.0.5",
+    "flowbite-svelte-icons": "^0.4.4",
     "gridjs-svelte": "^2.1.1",
     "json-schema-to-zod": "^1.1.1",
     "lodash": "^4.17.21",

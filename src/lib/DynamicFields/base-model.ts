@@ -29,3 +29,7 @@ export class BaseModel {
     return this;
   }
 }
+
+export interface IBaseTree extends IBaseModel {
+  children?: IBaseTree[];
+}

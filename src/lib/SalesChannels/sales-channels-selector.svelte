@@ -1,17 +1,21 @@
 <script lang="ts">
     import {createEventDispatcher, onMount} from "svelte";
-    import {MultiSelect, Badge, Heading} from 'flowbite-svelte';
-    import {SalesChannelsService} from "./services/sales-channels.service";
+    import {MultiSelect, Badge, Heading, Select} from 'flowbite-svelte';
+    import {type ISalesChannel, SalesChannelsService} from "./services/sales-channels.service";
     import Loading from "../Shared/Loading.svelte";
+    import type {IEvent} from "../Shared/models/generic";
     let items = [],
         loading = false,
         selected = [];
     export let model = [];
+
     export let label = 'Sales Channels';
     export let saveOnSelect = false;
-    export let onSave: (value: any, itemId) => void;
-    export let itemId;
+    export let mode: 'multi'|'single' = 'multi';
+    export let onSave: (value: any, itemId) => void = undefined;
+    export let itemId = undefined;
     const dispatch = createEventDispatcher();
+    export let singleSelection = null;
 
     onMount(async () => {
         if (!Array.isArray(model)) {
@@ -50,6 +54,16 @@
         }
     }
 
+    async function onSingleSelection(e: Event) {
+        // get the value from the option
+        const found = items.find(i => i.uuid === e.target.value);
+        dispatch('selection', found);
+
+        if (saveOnSelect && typeof onSave === 'function') {
+            await onSave(found, itemId);
+            return;
+        }
+    }
 
 </script>
 
@@ -57,6 +71,7 @@
     {#if loading}
         <Loading />
     {:else}
+        {#if mode === 'multi'}
     <Heading tag="h6" class="font-normal">{label} ( {selected.length} selected )</Heading>
         <MultiSelect items={items} bind:value={selected} size='lg' let:clear let:item
                      on:selected={onSelection}>
@@ -64,5 +79,13 @@
                 {item.name}
             </Badge>
         </MultiSelect>
+        {:else}
+            <Select bind:value={singleSelection} on:change={onSingleSelection}>
+                <option value={null}>All</option>
+                {#each items as item}
+                    <option value={item.uuid}>{item.name}</option>
+                {/each}
+            </Select>
+        {/if}
     {/if}
 
