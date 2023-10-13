@@ -193,14 +193,21 @@
     handleSearch();
   }
 
+  function onBulkUpdateDone() {
+    showBulkEditCategoriesModal = false;
+    showBulkAssignSalesChannelModal = false;
+    selected = [];
+    search();
+  }
+
 </script>
 
 <NativeModal size="xl" bind:open={showBulkEditCategoriesModal} title={`Bulk Edit Categories`}>
-<BulkEditCategories />
+<BulkEditCategories uuids={selected} on:done={onBulkUpdateDone}/>
 </NativeModal>
 
 <NativeModal size="xl" bind:open={showBulkAssignSalesChannelModal} title={`Assign Sales Channels`}>
-  <BulkAssignSalesChannel />
+  <BulkAssignSalesChannel uuids={selected} on:done={onBulkUpdateDone} />
 </NativeModal>
 
 <NativeModal size="xl" bind:open={showQuickEdit} title={`Edit`}>

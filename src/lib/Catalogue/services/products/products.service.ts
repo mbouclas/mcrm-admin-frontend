@@ -183,4 +183,10 @@ export class ProductsService extends BaseHttpService {
         successMessage: 'Updated successfully',
     });
   }
+
+  async bulkUpdateRelationships(records: IGenericObject, type: 'category'| 'sales-channel') {
+    return await super.patch(`product/bulk/${type}`, records, {
+        successMessage: 'Updated successfully',
+    });
+  }
 }

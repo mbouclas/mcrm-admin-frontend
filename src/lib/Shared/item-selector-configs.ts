@@ -246,3 +246,22 @@ export const addressItemSelectorConfig = (userId): IItemSelectorConfig => {
     ],
   };
 };
+
+export const salesChannelItemSelectorConfig: IItemSelectorConfig = {
+  apiUrl: 'sales-channels',
+  module: 'SalesChannel',
+  labelField: 'title',
+  filter: 'local',
+  isTree: true,
+  labels: [
+    {
+      field: 'title',
+      label: 'Title',
+    },
+    {
+      field: 'active',
+      label: 'Active',
+      type: 'boolean',
+    },
+  ],
+};
