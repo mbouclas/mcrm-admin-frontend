@@ -1,3 +1,5 @@
+import type {IGenericObject} from "../../Shared/models/generic";
+
 export enum CustomFieldType {
     text = 'text',
     number = 'number',
@@ -44,4 +46,15 @@ export class CustomFieldModel  {
     filterField?: string;
     isSortable = false;
     exported = false;
+    fieldSettings?: IGenericObject = {};
+
+    constructor(config?: CustomFieldModel) {
+        if (config) {
+            for (const key in config) {
+                if (config.hasOwnProperty(key)) {
+                    this[key] = config[key];
+                }
+            }
+        }
+    }
 }

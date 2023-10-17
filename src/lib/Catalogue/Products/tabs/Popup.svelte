@@ -1,8 +1,9 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
   import type {IDynamicFieldConfigBlueprint} from "../../../DynamicFields/types.js";
-  import Input from "../../../DynamicFields/fields/input.svelte";
-  import TextArea from "../../../DynamicFields/fields/textarea.svelte";
+  import {Input, Modal, Textarea} from "flowbite-svelte";
+  import CustomFields from "../../../CustomFields/group-field-renderer.svelte";
+
   const dispatch = createEventDispatcher();
   export let hideModal;
   export let showModal;
@@ -35,6 +36,13 @@
       placeholder: "Caption",
       required: false,
     },
+    {
+      type: "textarea",
+      varName: "description",
+      label: "Description",
+      placeholder: "Description",
+      required: false,
+    },
   ];
   export let model;
 
@@ -59,22 +67,19 @@
     return fields.find((field) => field.varName === name);
   }
 </script>
-{#if showModal}
-<div class="modal z-[999]">
-  <div class="backdrop" on:click={toggle} />
-  <div class="content">
-    <h1 class="title">Image Details</h1>
-    <form action="" on:submit|preventDefault={onSave.bind(this, model)}>
-    <Input  bind:model={model.title} placeholder="Title" label="Title"  field={getField('title')} />
-    <Input  bind:model={model.alt} placeholder="Alt" label="Alt"  field={getField('alt')} />
-    <TextArea  bind:model={model.description} placeholder="Description" label="Description"  field={getField('description')} />
-    <TextArea  bind:model={model.caption} placeholder="Caption" label="Caption"  field={getField('caption')} />
+<Modal title="Image Details" autoclose={false} size="md" bind:open={showModal}>
+  <form action="" on:submit|preventDefault={onSave.bind(this, model)}>
+    <div class="my-4 border border-1 border-gray-500 rounded-xl p-4">
+      <CustomFields fields={fields} let:field={field} fieldPrimaryKey="varName" bind:model={model}>
+
+      </CustomFields>
+    </div>
+
 
     <button class="save-btn" type="submit">Save</button>
-    </form>
-  </div>
-</div>
-  {/if}
+  </form>
+</Modal>
+
 <style scoped>
   .modal {
     position: fixed;

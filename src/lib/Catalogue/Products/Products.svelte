@@ -298,6 +298,7 @@
                   on:change={toggleSelectAll}
         />
       </TableHeadCell>
+    <TableHeadCell></TableHeadCell>
     <TableHeadCell>
       <SortButton name="sku" way={filters.way} activeFilter={filters.orderBy} onChange={changeOrderBy}
       >SKU</SortButton
@@ -332,6 +333,7 @@
                       value={item.uuid}
             />
           </TableBodyCell>
+          <TableHeadCell><img src={item.thumb}  class="w-16 object-cover" /></TableHeadCell>
           <TableBodyCell>
             <a href={`/catalogue/products/${item.uuid}`}
                     class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer">

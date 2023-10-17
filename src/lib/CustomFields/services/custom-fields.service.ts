@@ -5,8 +5,23 @@ import type {IGenericObject} from "../../Shared/models/generic";
 import {sortBy, filter, find} from "lodash";
 import type {IDynamicFieldConfigBlueprint} from "../../DynamicFields/types";
 import {BootService} from "../../Shared/boot.service";
+import {AppService} from "../../Shared/app.service";
+export interface ICustomFieldType {
+    name: string;
+    label: string;
+    icon: string;
+    description: string;
+    fieldSettings?: IDynamicFieldConfigBlueprint[];
+}
+const allModels = sortBy(AppService.getAvailableModels().map(model => {
+    return {
+        label: model.name.replace('Model', ''),
+        value: model.name,
+    }
+}), 'label');
 
-export const CustomFieldTypes = [
+
+export const CustomFieldTypes: ICustomFieldType[] = [
     {
         name: 'text',
         label: 'Text',
@@ -24,6 +39,59 @@ export const CustomFieldTypes = [
         label: 'Boolean',
         icon: 'boolean',
         description: 'A simple boolean field',
+    },
+    {
+        name: 'item-selector',
+        label: 'Item Object',
+        icon: 'boolean',
+        description: 'An item selector field',
+        fieldSettings: [
+            {
+                varName: 'module',
+                label: 'Module',
+                placeholder: 'Module',
+                type: 'select',
+                options: (() => allModels)(),
+            },
+            {
+                varName: 'selectMode',
+                label: 'Selection Mode',
+                placeholder: 'Selection Mode',
+                type: 'select',
+                options: [
+                    {
+                        label: 'Single',
+                        value: 'single',
+                        default: true,
+                    },
+                    {
+                        label: 'Multiple',
+                        value: 'multiple',
+                    }
+                ],
+            },
+            {
+                varName: 'selectionProperty',
+                label: 'Selection Property',
+                placeholder: 'Selection Property',
+                type: 'select',
+                options: [
+                    {
+                        label: 'ID',
+                        value: 'uuid',
+                        default: true,
+                    },
+                    {
+                        label: 'Title',
+                        value: 'title',
+                    },
+                    {
+                        label: 'Everything',
+                        value: '*',
+                    }
+                ],
+            },
+        ]
     },
     {
         name: 'date',
@@ -184,7 +252,7 @@ export class CustomFieldsService extends BaseHttpService {
             return CustomFieldTypes;
         }
 
-        return filter(CustomFieldTypes, filters);
+        return filter(CustomFieldTypes, filters) as ICustomFieldType[];
     }
 
     static getFieldSettings(filters?: IGenericObject) {
@@ -192,7 +260,7 @@ export class CustomFieldsService extends BaseHttpService {
             return CustomFieldModelSettings;
         }
 
-        return filter(CustomFieldModelSettings, filters);
+        return filter(CustomFieldModelSettings, filters) as Partial<IDynamicFieldConfigBlueprint>[];
     }
 
     static getFieldSetting(filters: IGenericObject) {

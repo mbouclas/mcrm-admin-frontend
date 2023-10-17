@@ -1,5 +1,6 @@
 import type { IItemSelectorConfig } from '../DynamicFields/types';
 
+
 export const userItemSelectorConfig: IItemSelectorConfig = {
   apiUrl: 'user',
   module: 'User',
@@ -46,6 +47,7 @@ export const customerItemSelectorConfig: IItemSelectorConfig = {
 export const productItemSelectorConfig: IItemSelectorConfig = {
   apiUrl: 'product',
   module: 'Product',
+  labelField: 'sku:::title',
   labels: [
     {
       field: 'title',
@@ -264,4 +266,24 @@ export const salesChannelItemSelectorConfig: IItemSelectorConfig = {
       type: 'boolean',
     },
   ],
+};
+
+
+export const itemSelectorConfigs = [
+  userItemSelectorConfig,
+  customerItemSelectorConfig,
+  productItemSelectorConfig,
+  propertyItemSelectorConfig,
+  productCategoryItemSelectorConfig,
+  pageCategoryItemSelectorConfig,
+  manufacturerItemSelectorConfig,
+  pageItemSelectorConfig,
+  conditionItemSelectorConfig,
+  shippingMethodItemSelectorConfig,
+  paymentMethodItemSelectorConfig,
+  salesChannelItemSelectorConfig,
+];
+
+export const getItemSelectorConfig = (module: string): IItemSelectorConfig => {
+    return itemSelectorConfigs.find(c => c.module === module.replace('Model', '')) || null;
 };

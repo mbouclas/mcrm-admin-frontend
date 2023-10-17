@@ -48,12 +48,14 @@ export function filterInFields(input: string, arr: object[], searchFields: strin
 }
 
 export function schemaToFields(schema: IZodSchema) {
+    if (!schema) {return  [];}
     const fields = [];
 
     for (let key in schema.properties) {
         const property = schema.properties[key];
         if (property.description && property.description.indexOf('json:') !== -1) {
             const json = JSON.parse(property.description.replace('json:', ''));
+
             for (let k in json) {
                 property[k] = json[k];
             }
@@ -66,6 +68,8 @@ export function schemaToFields(schema: IZodSchema) {
             placeholder: property['placeholder'] || '',
             type: property.type,
             required: schema.required && schema.required.indexOf(key) > -1,
+            default: property['default'] || undefined,
+            options: property['options'] || [],
         };
 
         fields.push(field);
@@ -80,28 +84,32 @@ export function setupModelFromFields<T>(model: T, fields: IDynamicFieldConfigBlu
             model[field.varName] = {};
         }
 
+        model[field.varName] = getModelValueFromFieldSchema(field);
+
         if (field.schema) {
             schemaToFields(field.schema).forEach(f => {
                 if (model[field.varName][f.varName]) {return;}
-
-                switch (f.type) {
-                    case 'boolean':
-                    case 'switch':
-                    case 'toggle':
-                        model[field.varName][f.varName] = false;
-                        break;
-                    case 'array':
-                        model[field.varName][f.varName] = [];
-                        break;
-                    case 'json':
-                        model[field.varName][f.varName] = {};
-                        break;
-                    default:
-                        model[field.varName][f.varName] = '';
-                }
-            })
+                model[field.varName][f.varName] = getModelValueFromFieldSchema(f);
+            });
         }
     });
 
     return model;
+}
+
+export function getModelValueFromFieldSchema<T>(field: IDynamicFieldConfigBlueprint) {
+    switch (field.type) {
+        case 'boolean':
+        case 'switch':
+        case 'toggle':
+            return false;
+        case 'array':
+            return [];
+        case 'json':
+        case 'image':
+        case 'file':
+            return {};
+        default:
+            return '';
+    }
 }

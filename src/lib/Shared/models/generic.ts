@@ -23,4 +23,5 @@ export interface IMcrmDi {
   usedFor?: string;
   model?: string;
   category?: string;
+  metaData?: IGenericObject;
 }

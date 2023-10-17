@@ -1,3 +1,5 @@
+import type {ZodError} from "zod";
+
 export default {
   '400.20': 'User exists',
   '400.21': 'Invalid email format',
@@ -71,3 +73,13 @@ export default {
   'CONDITION.006': 'Name value required',
   'CONDITION.007': 'At least one rule required',
 };
+
+
+export function formatZodErrors(e: ZodError) {
+  const errors = {};
+  e.errors.forEach((error) => {
+    errors[error.path[0]] = error;
+  });
+
+  return errors;
+}

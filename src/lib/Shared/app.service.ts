@@ -18,4 +18,8 @@ export class AppService {
 
         return this.models.find(model => model.name === name);
     }
+
+    public static getAvailableModels() {
+        return this.models;
+    }
 }

@@ -106,6 +106,7 @@ export interface IDynamicFieldConfigBlueprint<ISettingsType = any> {
     itemSelectorConfig?: IDynamicFieldItemSelectorConfig;
     imageSettings?: IDynamicFieldConfigImageSettingsBluePrint;
     filterField?: string;
+    fieldSettings?: IGenericObject;
     onValueChange?: (DynamicFieldOnValueChange) => void;
     [key: string]: any;
 }

@@ -124,10 +124,11 @@
         selection.push(item);
       }
       selectedItems = selection;
-    } else if (selectMode === 'single') {
-      selectedItem = item;
-    }
+      dispatch('selection', selectedItems);
 
+      return;
+    }
+    selectedItem = item;
     dispatch('select', item);
   }
 

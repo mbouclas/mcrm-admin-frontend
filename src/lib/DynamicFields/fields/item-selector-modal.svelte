@@ -20,6 +20,10 @@
     dispatch('select', event.detail);
   }
 
+  function onSelectMultiple(event) {
+    dispatch('select', event.detail);
+  }
+
   function onConfirm() {
     defaultModal = false;
     dispatch('confirm');
@@ -33,9 +37,10 @@
 {/if}
 
 <Modal title={label} bind:open={defaultModal}>
-  <ItemSelector {selectMode} bind:skipUuids bind:selectedItem bind:selectedItems on:select={onSelect} {config} />
+  <ItemSelector {selectMode} bind:skipUuids bind:selectedItem bind:selectedItems
+                on:select={onSelect} on:selection={onSelectMultiple}
+                {config} />
   <svelte:fragment slot="footer">
-    <Button on:click={() => onConfirm()}>I accept</Button>
-    <Button color="alternative">Decline</Button>
+    <Button on:click={() => onConfirm()}>Close</Button>
   </svelte:fragment>
 </Modal>
