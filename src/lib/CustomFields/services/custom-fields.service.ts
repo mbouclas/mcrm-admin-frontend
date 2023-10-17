@@ -13,6 +13,13 @@ export interface ICustomFieldType {
     description: string;
     fieldSettings?: IDynamicFieldConfigBlueprint[];
 }
+
+export interface ICustomFieldSelectOption {
+    label: string;
+    value: string;
+    default?: boolean;
+}
+
 const allModels = sortBy(AppService.getAvailableModels().map(model => {
     return {
         label: model.name.replace('Model', ''),

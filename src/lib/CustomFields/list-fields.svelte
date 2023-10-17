@@ -19,6 +19,8 @@
         showEditFieldModal = false,
         selectedField = null;
     export let model: IEditableRegionField[] = [];
+    export let onSave: (model: IEditableRegionField[], field: CustomFieldModel) => void;
+
     function onAddField(field: CustomFieldModel) {
         const temp = Object.assign([], model); //svelte not updating the view cause we're updating an object property
         const foundIndex = temp.findIndex(f => f.varName === field.varName);
@@ -31,6 +33,10 @@
 
         model = temp;
         showAddFieldModal = false;
+
+        if (onSave) {
+            onSave(model, field);
+        }
     }
 
     function editField(field: IEditableRegionField) {
@@ -45,8 +51,13 @@
         }
 
         const temp = Object.assign([], model);
+        const fieldToDelete = temp[idx];
         temp.splice(idx, 1);
         model = temp;
+
+        if (onSave) {
+            onSave(model, fieldToDelete);
+        }
     }
 
 </script>
@@ -60,7 +71,9 @@
 </Modal>
 
 <div class="flex justify-between my-4">
-    <Heading tag="h5" class="mb-4">Fields</Heading>
+    <Heading tag="h5" class="mb-4">
+        <slot name="heading">Fields</slot>
+    </Heading>
     <Button type="button" size="sm" color="green" on:click={() => showAddFieldModal = true}>
         <Plus />
     </Button>

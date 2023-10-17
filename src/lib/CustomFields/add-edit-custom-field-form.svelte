@@ -1,7 +1,7 @@
 <script lang="ts">
     import type {IDynamicFieldConfigBlueprint} from "../DynamicFields/types";
     import {createEventDispatcher, onMount} from "svelte";
-    import {Button, Helper, Label, Select, Input} from "flowbite-svelte";
+    import {Button, Helper, Label, Select, Input, Heading} from "flowbite-svelte";
     import type {IEvent} from "../Shared/models/generic";
     import {z, ZodError} from 'zod';
     import CustomFields from './group-field-renderer.svelte';
@@ -9,6 +9,7 @@
     import {CustomFieldsService} from "./services/custom-fields.service";
     import {formatZodErrors} from "../helpers/errors";
     import {setNotificationAction} from "../stores";
+    import OptionBuilder from './select-option-builder.svelte';
 
     const dispatch = createEventDispatcher();
 
@@ -50,6 +51,8 @@
 
         if (onSave) {
             onSave(model);
+            dispatch('save', model);
+            return;
         }
 
         dispatch('save', model);
@@ -120,6 +123,11 @@
 
             </CustomFields>
         </div>
+        {/if}
+
+    {#if ['select', 'multiselect'].indexOf(model.type) !== -1}
+        <Heading tag="h5" class="text-base">Select Options</Heading>
+        <OptionBuilder bind:model={model.options} />
         {/if}
 
     <div class="mb-4 mt-4">

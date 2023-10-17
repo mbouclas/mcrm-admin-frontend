@@ -15,6 +15,7 @@
     import type {IDynamicFieldConfigBlueprint} from "../DynamicFields/types";
     import {Plus} from "svelte-heros-v2";
     import type {IGenericObject} from "../Shared/models/generic";
+    import ListFields from "./list-fields.svelte";
 
     const dispatch = createEventDispatcher();
     export let mode: 'single'|'multiple'|'custom'|'list' = 'single';
@@ -22,6 +23,8 @@
     export let selection: Partial<IDynamicFieldConfigBlueprint>|Partial<IDynamicFieldConfigBlueprint>[] = [];
     export let modelName: string = '';
     export let refresh = false;
+
+    export let onSave: (model: Partial<IDynamicFieldConfigBlueprint>|Partial<IDynamicFieldConfigBlueprint>[], selected?: Partial<IDynamicFieldConfigBlueprint>) => void = undefined;
 
     const fieldsService = new CustomFieldsService();
     let fields = [],
@@ -65,6 +68,7 @@
         <Heading tag="h4" class="mb-4">{filteredItems.length} Fields</Heading>
     </slot>
     <slot name="top-actions"></slot>
+
 <TableSearch placeholder="Search by field name" hoverable={true} bind:inputValue={searchTerm} >
     <TableHead>
         {#if mode !== 'list'}
