@@ -44,9 +44,11 @@ export class CustomFieldModel  {
     group?: string;
     order = 0;
     filterField?: string;
+    isReadonly = false;
     isSortable = false;
     exported = false;
     fieldSettings?: IGenericObject = {};
+    fields?: CustomFieldModel[] = [];
 
     constructor(config?: CustomFieldModel) {
         if (config) {

@@ -3,7 +3,7 @@
     import {
         Badge,
         Button,
-        Checkbox,
+        Checkbox, Heading,
         Helper,
         Input,
         Label,
@@ -19,6 +19,8 @@
     import ItemSelectorModal from "../DynamicFields/fields/item-selector-modal.svelte";
     import {ArrowTopRightOnSquare, Trash} from "svelte-heros-v2";
     import type {IEvent} from "../Shared/models/generic";
+    import CustomFields from "./group-field-renderer.svelte";
+    import Repeater from "./repeater-field-renderer.svelte";
 
     export let field: Partial<IDynamicFieldConfigBlueprint>;
     export let indentNested = false;
@@ -85,6 +87,19 @@
         itemSelectorSelection = (field.fieldSettings.selectMode === 'single') ? {} : [];
     }
 
+    if (['group', 'nested'].indexOf(field.type) !== -1) {
+        if (typeof model !== 'object') {
+            model = {};
+        }
+    }
+
+    if (field.type === 'repeater') {
+       if (!Array.isArray(model)) {
+           model = [];
+       }
+    }
+
+
 
     function fieldsFromSchema() {
         fields = schemaToFields(field.schema);
@@ -102,7 +117,7 @@
         if (!Array.isArray(model)) {
             model = [];
         }
-console.log(e.detail)
+
         e.detail.forEach((item) => {
             if (field.fieldSettings && field.fieldSettings.selectionProperty && field.fieldSettings.selectionProperty !== '*') {
                 model.push(item[field.fieldSettings.selectionProperty]);
@@ -239,6 +254,16 @@ console.log(e.detail)
 
         {/if}
     </div>
+{:else if ['group', 'nested'].indexOf(field.type) !== -1}
+    <CustomFields fields={field.fields} let:field={child} fieldPrimaryKey="varName"
+                  bind:model={model}
+                  outerClass={`my-4 border border-solid border-gray-500 px-4 ${field.fieldSettings && field.fieldSettings['perRow'] ? `grid gap-2 grid-cols-${field.fieldSettings['perRow']}` : ''}`}>
+        <svelte:fragment slot="heading">
+            <Heading tag="h5">{field.label}</Heading>
+        </svelte:fragment>
+    </CustomFields>
+{:else if field.type === 'repeater'}
+<Repeater bind:model={model} fields={field.fields} {field} />
 {:else if field.schema && Array.isArray(fields)}
     <div class={`${indentNested ? indentNestedClass : ''}`}>
     <Renderer fields={fields} bind:model={model}  />

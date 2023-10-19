@@ -14,6 +14,7 @@
   import GateRoutes from '../Gate/routes.svelte';
   import SettingRoutes from '../Setting/routes.svelte';
   import EditableRegions from '../EditableRegions/routes.svelte';
+  import Area51 from '../area51/routes.svelte';
   import { BootService } from '../Shared/boot.service';
   import { onMount } from 'svelte';
   import { notificationsStore } from '../stores';
@@ -129,6 +130,10 @@
 
           <PrivateRoute path="editable-regions/*" let:location>
             <EditableRegions />
+          </PrivateRoute>
+
+          <PrivateRoute path="area51/*" let:location>
+            <Area51 />
           </PrivateRoute>
         </div>
       </div>

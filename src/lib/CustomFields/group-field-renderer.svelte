@@ -6,13 +6,15 @@
     export let model: any = {};
     export let fieldPrimaryKey = 'varName';
     export let wrapperClass = 'mb-4 mt-4';
-
+    export let outerClass = '';
 
 
 
 </script>
 {#if typeof model !== 'undefined'}
-
+<slot name="heading"></slot>
+    <div class={outerClass}>
+        <slot name="before-fields"></slot>
 {#each fields as field}
     <div class={wrapperClass}>
         <slot {field}>
@@ -20,6 +22,7 @@
         </slot>
     </div>
 {/each}
+    </div>
     {/if}
 <!--
 @component

@@ -1,5 +1,7 @@
 import type { IGenericObject } from "../Shared/models/generic";
 import type { IDynamicFieldConfigBlueprint } from "./types";
+import type {IBaseModelFieldGroup} from "../CustomFields/models/groups.model";
+
 
 export interface IBaseModel {
   uuid?: string;
@@ -9,6 +11,7 @@ export interface IBaseModel {
   updatedAt: Date;
   fields: IDynamicFieldConfigBlueprint[];
   relationships: any[];
+  fieldGroups: IBaseModelFieldGroup[];
 }
 
 export class BaseModel {
@@ -19,7 +22,7 @@ export class BaseModel {
   public verifiedAt?: Date;
   public fields: IDynamicFieldConfigBlueprint[] = [];
   public relationships: any[] = [];
-
+  public fieldGroups: IBaseModelFieldGroup[] = [];
 
   public set(obj: IGenericObject) {
     for (let key in obj) {

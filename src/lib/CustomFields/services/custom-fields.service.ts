@@ -6,6 +6,8 @@ import {sortBy, filter, find} from "lodash";
 import type {IDynamicFieldConfigBlueprint} from "../../DynamicFields/types";
 import {BootService} from "../../Shared/boot.service";
 import {AppService} from "../../Shared/app.service";
+import type {IBaseModel} from "../../DynamicFields/base-model";
+import type {IBaseModelFieldGroup} from "../models/groups.model";
 export interface ICustomFieldType {
     name: string;
     label: string;
@@ -153,6 +155,47 @@ export const CustomFieldTypes: ICustomFieldType[] = [
         label: 'Rich Text',
         icon: 'rich-text',
         description: 'A simple rich text field',
+    },
+
+    {
+        name: 'nested',
+        label: 'Group',
+        icon: 'rich-text',
+        description: 'A group of fields',
+        fieldSettings: [
+            {
+                varName: 'perRow',
+                label: 'Fields per row',
+                placeholder: 'Fields per row',
+                type: 'number',
+                default: 1,
+                hint: 'How many fields per row?',
+            }
+        ],
+    },
+    {
+        name: 'repeater',
+        label: 'Repeater',
+        icon: 'rich-text',
+        description: 'Repeatable group of fields',
+        fieldSettings: [
+            {
+                varName: 'limit',
+                label: 'Maximum number of items',
+                placeholder: 'Maximum number of items',
+                type: 'number',
+                default: 1,
+                hint: 'How many items can be added?',
+            },
+            {
+                varName: 'perRow',
+                label: 'Fields per row',
+                placeholder: 'Fields per row',
+                type: 'number',
+                default: 1,
+                hint: 'How many fields per row?',
+            }
+        ],
     }
 ];
 
@@ -216,6 +259,14 @@ export class CustomFieldsService extends BaseHttpService {
         // reload the models into the store and localstorage
         await new BootService().boot();
 
+    }
+
+    async syncFieldGroups(modelName: string, fieldGroups: Partial<IBaseModelFieldGroup>[]) {
+        await super.post(`model-manager/sync/model`, {modelName, fieldGroups}, {
+            successMessage: 'Model synced successfully',
+        });
+        // reload the models into the store and localstorage
+        await new BootService().boot();
     }
 
     allFields(filters?: IGenericObject) {

@@ -9,7 +9,7 @@
         TableHead,
         TableHeadCell
     } from "flowbite-svelte";
-    import {ArrowTopRightOnSquare, Plus, Trash} from "svelte-heros-v2";
+    import {ArrowTopRightOnSquare, LockClosed, Plus, Trash} from "svelte-heros-v2";
     import EditField from "./add-edit-custom-field-form.svelte";
     import type {CustomFieldModel} from "./models/custom-field.model";
     import type {IEditableRegionField} from "../EditableRegions/models";
@@ -96,12 +96,21 @@
                 <TableBodyCell>{field.type}</TableBodyCell>
                 <TableBodyCell>{field.hint || ''}</TableBodyCell>
                 <TableBodyCell>
+                    <div class="flex">
                     <Button title="Edit Field" on:click={editField.bind(this, field)}>
                         <ArrowTopRightOnSquare />
                     </Button>
-                    <Button titl="Delete Field" on:click={remove.bind(this, idx)}>
+                    {#if !field.isReadOnly}
+                    <Button title="Delete Field" on:click={remove.bind(this, idx)}>
                         <Trash color="red" />
                     </Button>
+                        {:else}
+                        <div class="py-2.5 px-5" title="Locked">
+                            <LockClosed />
+                        </div>
+
+                        {/if}
+                    </div>
                 </TableBodyCell>
             </TableBodyRow>
 

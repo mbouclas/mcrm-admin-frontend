@@ -1,7 +1,7 @@
 <script lang="ts">
     import {navigate, useParams} from "mcrm-svelte-navigator";
     import {onMount} from "svelte";
-    import {Breadcrumb, BreadcrumbItem, Button, Modal} from "flowbite-svelte";
+    import {Breadcrumb, BreadcrumbItem, Button, Modal, TabItem, Tabs} from "flowbite-svelte";
     import type {IDynamicFieldConfigBlueprint} from "../DynamicFields/types";
     import EditField from "./edit-field.svelte";
     import AddField from './add-field.svelte'
@@ -9,19 +9,27 @@
     import {CustomFieldsService} from "./services/custom-fields.service";
     import type {CustomFieldModel} from "./models/custom-field.model";
     import {setNotificationAction} from "../stores";
+    import Groups from './field-groups.svelte';
+    import {AppService} from "../Shared/app.service";
+    import type {IBaseModel} from "../DynamicFields/base-model";
 
     const params = useParams();
     let selectedField: Partial<IDynamicFieldConfigBlueprint> = null,
         showEditFieldModal = false,
         showAddFieldModal = false,
         refresh = false,
+        currentModel: IBaseModel = null,
     filters = {};
     const fieldsService = new CustomFieldsService();
-    let fields = [];
+    let fields = [],
+    ready = false;
 
     onMount(async () => {
         filters['name'] = $params.id;
         fields = fieldsService.modelFields($params.id);
+        currentModel = AppService.getModel($params.id);
+
+        ready = true;
     });
 
     function editField(field: Partial<IDynamicFieldConfigBlueprint>) {
@@ -34,7 +42,6 @@
     }
 
     function onSaveField(field: Partial<IDynamicFieldConfigBlueprint>) {
-        console.log(field);
         showEditFieldModal = false;
         refresh = true;
     }
@@ -62,7 +69,8 @@
     <AddField onSave={onAddNewField} modelName={$params.id} />
 </Modal>
 
-{#if $params.id}
+{#if ready}
+
     <Breadcrumb aria-label="Default breadcrumb example" class="mb-4">
         <BreadcrumbItem home>
             <Button on:click={() => navigate(`/settings/cf`)}>
@@ -74,9 +82,18 @@
     <Modal size="xl" bind:open={showEditFieldModal} title={`Editing ${selectedField?.varName} on ${$params.id}`}>
         <EditField model={selectedField} onSave={onSaveField} modelName={$params.id} />
     </Modal>
-    <ListFields bind:model={fields} {onSave}>
-        <svelte:fragment slot="heading">Fields for {$params.id}</svelte:fragment>
-    </ListFields>
+
+    <Tabs style="underline">
+        <TabItem open title="Fields">
+            <ListFields bind:model={fields} {onSave}>
+                <svelte:fragment slot="heading">Fields for {$params.id}</svelte:fragment>
+            </ListFields>
+        </TabItem>
+        <TabItem  title="Field Groups">
+            <Groups bind:groups={currentModel.fieldGroups} model={currentModel} />
+        </TabItem>
+    </Tabs>
+
 <!--    <FieldSelector  mode="list" modelName={$params.id} bind:refresh={refresh} onSave={onSaveField}>
         <div slot="top-actions">
             <div class="flex justify-between">
