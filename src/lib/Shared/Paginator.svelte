@@ -25,6 +25,7 @@
 
     function calculate() {
         next = (currentPage === totalPages) ? null : currentPage + 1;
+
         previous = (currentPage === 1) ? null : currentPage - 1;
         pages = pageNumbers(totalPages, currentPage);
 

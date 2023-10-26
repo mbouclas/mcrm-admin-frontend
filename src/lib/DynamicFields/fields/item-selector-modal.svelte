@@ -39,7 +39,9 @@
 <Modal title={label} bind:open={defaultModal}>
   <ItemSelector {selectMode} bind:skipUuids bind:selectedItem bind:selectedItems
                 on:select={onSelect} on:selection={onSelectMultiple}
-                {config} />
+                {config}>
+
+  </ItemSelector>
   <svelte:fragment slot="footer">
     <Button on:click={() => onConfirm()}>Close</Button>
   </svelte:fragment>

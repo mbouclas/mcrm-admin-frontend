@@ -104,7 +104,7 @@ export interface IDynamicFieldConfigBlueprint<ISettingsType = any> {
         nativeControl?: boolean;
     }
     config?: IImageUploaderSettings| IGenericObject
-    options?: IDynamicFieldSelectOption[];
+    options?: IDynamicFieldSelectOption[]|Function;
     itemSelectorConfig?: IDynamicFieldItemSelectorConfig;
     imageSettings?: IDynamicFieldConfigImageSettingsBluePrint;
     filterField?: string;
@@ -175,4 +175,6 @@ export interface IItemSelectorConfig {
     isTree?: boolean;
     filter?: 'local'|'remote';
     labels?: IItemSelectorDisplayLabel[];
+    with?: string[];
+    postProcessing?: (data: any) => any;
 }

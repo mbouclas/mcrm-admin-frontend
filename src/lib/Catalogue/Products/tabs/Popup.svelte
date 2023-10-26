@@ -23,13 +23,6 @@
       placeholder: "ALT",
     },
     {
-      type: "richText",
-      varName: "description",
-      label: "Description",
-      placeholder: "Description",
-      required: false,
-    },
-    {
       type: "text",
       varName: "caption",
       label: "Caption",
@@ -37,7 +30,7 @@
       required: false,
     },
     {
-      type: "textarea",
+      type: "markDown",
       varName: "description",
       label: "Description",
       placeholder: "Description",

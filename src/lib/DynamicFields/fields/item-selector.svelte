@@ -3,8 +3,8 @@
   import type { IGenericObject, IPagination } from '../../Shared/models/generic';
   import { createEventDispatcher, onMount } from 'svelte';
   import { ItemSelectorService } from '../../Shared/item-selector.service';
-  import Input from './input.svelte';
   import { moneyFormat } from '../../helpers/money';
+  import {Search} from "flowbite-svelte";
 
   const dispatch = createEventDispatcher();
   export let label = '';
@@ -16,6 +16,9 @@
   export let skipUuids = [];
   let selection = [];
   export let idField = config.idField || 'uuid';
+  export let useQueryFilter = true;
+  export let refresh = false;
+
   export let labels = config.labels || [
     {
       label: 'Title',
@@ -44,8 +47,9 @@
 
   async function search() {
     const service = new ItemSelectorService(config.apiUrl);
+
     loading = true;
-    items = await service.find(filters);
+    items = await service.find(filters, config.with || []);
     temp = items;
     loading = false;
 
@@ -54,6 +58,10 @@
       items = {
         data: res,
       } as IPagination<any>;
+    }
+
+    if (config.postProcessing) {
+        items.data = config.postProcessing(items.data);
     }
   }
 
@@ -98,14 +106,15 @@
     return value;
   }
 
-  async function onQueryChange(key, value) {
+  async function onQueryChange(e) {
+
     clearTimeout(timer);
     timer = setTimeout(async () => {
       await search();
     }, 300);
   }
 
-  async function onInput(field, value, e) {
+  async function onInput(e) {
     if (e.target.value.length === 0) {
       reset();
       await search();
@@ -159,12 +168,20 @@
     };
     breadcrumbs = breadcrumbs.slice(0, level);
   }
+
+  $: {
+    if (refresh) {
+      onQueryChange('q', filters.q);
+
+      refresh = false;
+    }
+  }
 </script>
 
 <h2>{label}</h2>
 
 {#if config.isTree}
-  <div class="flex space-x-2 py-4 z-50">
+  <div class="flex space-x-2 py-4 z-50 my-4">
     <button on:click={goBackToParent.bind(this, 0)}>
       <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
         ><path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3L2 12h3v8z" /></svg
@@ -185,14 +202,19 @@
     {/each}
   </div>
 {/if}
-<Input type="search" bind:model={filters.q} {onInput} onChange={onQueryChange} placeholder="Filter" />
+{#if useQueryFilter}
+  <div class="my-4">
+<Search type="search" bind:value={filters.q} on:input={onInput} on:keyup={onQueryChange} placeholder="Filter" />
+  </div>
+  {/if}
 {#if items}
-  <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 table-auto">
-    <thead class="bg-gray-50 dark:bg-gray-800">
+  <slot name="items" items={items}>
+    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 table-auto">
+      <thead class="bg-gray-50 dark:bg-gray-800">
       <tr>
         <th
-          scope="col"
-          class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+                scope="col"
+                class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
         >
           {#if selectMode === 'multiple'}
             <input type="checkbox" on:change={selectAll} />
@@ -200,44 +222,44 @@
         </th>
         {#each labels as label}
           <th
-            scope="col"
-            class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-            >{label.label}
+                  scope="col"
+                  class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+          >{label.label}
           </th>
         {/each}
         {#if config.isTree}
           <th
-            scope="col"
-            class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+                  scope="col"
+                  class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
           />
         {/if}
       </tr>
-    </thead>
-    <tbody>
+      </thead>
+      <tbody>
       {#each items.data.filter((item) => !skipUuids.includes(item.uuid)) as item}
         <tr>
           <td class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400 w-12">
             {#if selectMode === 'multiple'}
               <input
-                type="checkbox"
-                on:change={selectItem.bind(this, item)}
-                value={item}
-                checked={selectedItems.includes(item)}
+                      type="checkbox"
+                      on:change={selectItem.bind(this, item)}
+                      value={item}
+                      checked={selectedItems.includes(item)}
               />
             {:else if selectMode === 'single'}
               <button
-                on:click={selectItem.bind(this, item)}
-                class="text-gray-500 dark:text-gray-400 hover:!text-blue-700 hover:bg-gray-500 hover:rounded p-2"
+                      on:click={selectItem.bind(this, item)}
+                      class="text-gray-500 dark:text-gray-400 hover:!text-blue-700 hover:bg-gray-500 hover:rounded p-2"
               >
                 <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
-                  ><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></svg
+                ><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></svg
                 >
               </button>
             {/if}
           </td>
           {#each labels as label}
             <td class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-              >{composeLabelField(label.field, item)}
+            >{composeLabelField(label.field, item)}
             </td>
           {/each}
 
@@ -246,10 +268,10 @@
               {#if item.children && item.children.length > 0}
                 <button on:click={showChildren.bind(this, item)}>
                   <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
-                    ><path
-                      fill="currentColor"
-                      d="m19 15l-6 6l-1.42-1.42L15.17 16H4V4h2v10h9.17l-3.59-3.58L13 9l6 6z"
-                    /></svg
+                  ><path
+                          fill="currentColor"
+                          d="m19 15l-6 6l-1.42-1.42L15.17 16H4V4h2v10h9.17l-3.59-3.58L13 9l6 6z"
+                  /></svg
                   >
                 </button>
               {/if}
@@ -257,6 +279,8 @@
           {/if}
         </tr>
       {/each}
-    </tbody>
-  </table>
+      </tbody>
+    </table>
+  </slot>
+
 {/if}

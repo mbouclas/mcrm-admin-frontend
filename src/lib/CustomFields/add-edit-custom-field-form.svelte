@@ -30,6 +30,7 @@
         fieldTypeHasSettings = null;
 
     onMount((async () => {
+
         model = new CustomFieldModel(model);
         if (model.name) {
             locked = true;

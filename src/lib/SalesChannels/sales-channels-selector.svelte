@@ -18,7 +18,7 @@
     export let singleSelection = null;
 
     onMount(async () => {
-        if (!Array.isArray(model)) {
+        if (!Array.isArray(model) && mode === 'multi') {
             model = [];
         }
         loading = true;

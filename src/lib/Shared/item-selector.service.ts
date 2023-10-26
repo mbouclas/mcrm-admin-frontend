@@ -15,7 +15,8 @@ export class ItemSelectorService extends BaseHttpService {
       }
 
       if (relationships.length > 0) {
-          qs = qs ? `${qs}&with[]=${relationships.join(",")}` : `with[]=${relationships.join(",")}`;
+          const relsQuery = relationships.map((rel) => `with[]=${rel}`);
+          qs = qs ? `${qs}&${relsQuery.join("&")}` : `${relsQuery.join("&")}`;
       }
 
       const res = await this.get(`${this.baseUrl}${qs ? `?${qs}` : ""}`);

@@ -36,9 +36,6 @@
         dispatch('clear', filters);
     }
 
-    function handleDateSelect(date: Date) {
-        console.log(date)
-    }
 
     function formatToDate() {
         if (filters.createdAtFrom) {

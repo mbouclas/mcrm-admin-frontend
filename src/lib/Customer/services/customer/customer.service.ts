@@ -1,6 +1,8 @@
 import { BaseHttpService } from '../../../Shared/base-http.service';
 import type { IGenericObject } from '../../../Shared/models/generic';
 import queryString from 'query-string';
+import type {AddressModel} from "../../../Order/Order/models/address.model";
+import type {UserModel} from "../../../User/User/models/user.model";
 
 export class CustomerService extends BaseHttpService {
   async deleteRow(itemId: string) {
@@ -46,6 +48,20 @@ export class CustomerService extends BaseHttpService {
   async store(data: IGenericObject) {
     return await super.post('customer/basic', data, {
       successMessage: 'Created successfully',
+      errorMessage: 'Failed to create',
+    });
+  }
+
+  async syncAddress(data: {type: 'BILLING'|'SHIPPING', userId: string, address: AddressModel}) {
+    return await super.post('customer/address/sync', data, {
+      successMessage: 'Address created successfully',
+      errorMessage: 'Failed to create',
+    });
+  }
+
+  async createCustomer(user: Partial<UserModel>) {
+    return await super.post('customer/create', {user}, {
+      successMessage: 'Customer created successfully',
       errorMessage: 'Failed to create',
     });
   }

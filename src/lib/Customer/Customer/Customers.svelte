@@ -6,11 +6,17 @@
   import SortButton from '../../Shared/SortTableHeadButton.svelte';
   import Loading from '../../Shared/Loading.svelte';
   import ItemSelectorModal from '../../DynamicFields/fields/item-selector-modal.svelte';
-  import { Button } from 'flowbite-svelte';
-  import { userItemSelectorConfig } from '../../Shared/item-selector-configs';
+  import { Button, Modal as NativeModal } from 'flowbite-svelte';
+  import {
+    customerItemSelectorConfig,
+
+  } from '../../Shared/item-selector-configs';
   import Modal from '../../Shared/Modal.svelte';
   import CustomFilters from '../../Shared/CustomFilters.svelte';
   import { navigate, useLocation } from 'mcrm-svelte-navigator';
+  import {Plus} from "svelte-heros-v2";
+  import AddUser from "../../User/User/add-edit-user.svelte";
+  import {UserModel} from "../../User/User/models/user.model";
 
   let showModal = false;
   let searchVal = '';
@@ -19,6 +25,7 @@
   const queryParams = new URLSearchParams($location.search);
 
   const service = new CustomerService();
+  let customer = new UserModel();
   let customers = {
       page: 1,
       data: [],
@@ -29,16 +36,19 @@
     limit: 12,
     page: 1,
     way: 'desc',
-    isCustomer: true,
+    role: 'customer',
     q: '',
   };
-  let filters: typeof defaultFilters;
-  reset();
+  let filters: typeof defaultFilters,
+          showCreateCustomerModal = false;
+  let ready = false;
 
-  const customerSelectorConfig = userItemSelectorConfig;
+
+  const customerSelectorConfig = customerItemSelectorConfig;
 
   onMount(async () => {
-    await search();
+    await reset();
+    ready = true;
   });
 
   async function search() {
@@ -103,8 +113,18 @@
     await search();
     showModal = false;
   }
+
+  async function onCustomerSaved(customer: UserModel) {
+    await reset();
+    showCreateCustomerModal = false;
+  }
 </script>
 
+<NativeModal title="Create a new customer" autoclose={false} size="xl" bind:open={showCreateCustomerModal}>
+  <AddUser model={customer} mode="customer" onSave={onCustomerSaved}>
+
+  </AddUser>
+</NativeModal>
 <Modal bind:showModal>
   <div slot="header">Filters</div>
   <div slot="content">
@@ -120,7 +140,7 @@
     <button class="bg-blue-500 px-2 py-1 rounded" autofocus on:click={searchByFilters}>Search</button>
   </div>
 </Modal>
-
+{#if ready}
 <div class="max-w-screen-xl">
   <div class="max-w-screen-sm">
     <h2 class="mb-4 text-xl lg:text-2xl tracking-tight font-extrabold text-gray-900 dark:text-white outline-none">
@@ -133,6 +153,9 @@
   class="text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 overflow-y-hidden overflow-x-auto"
 >
   <ul class="flex space-x-4 items-center -mb-px w-full py-2">
+    <li>
+      <Button color="green" on:click={() => showCreateCustomerModal = true} ><Plus /></Button>
+    </li>
     <li>
       <button on:click={() => (showModal = true)} class="bg-blue-500 rounded p-2">Filters</button>
     </li>
@@ -242,7 +265,7 @@
                 <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{customer.email}</td>
 
                 <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap"
-                  >{customer.orderCount}</td
+                  >{customer.orderCount || 0}</td
                 >
 
                 <td class="px-4 py-4 text-sm whitespace-nowrap">
@@ -264,3 +287,4 @@
     </div>
   </div>
 </div>
+  {/if}

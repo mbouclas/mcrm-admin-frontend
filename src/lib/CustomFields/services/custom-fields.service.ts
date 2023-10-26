@@ -6,7 +6,6 @@ import {sortBy, filter, find} from "lodash";
 import type {IDynamicFieldConfigBlueprint} from "../../DynamicFields/types";
 import {BootService} from "../../Shared/boot.service";
 import {AppService} from "../../Shared/app.service";
-import type {IBaseModel} from "../../DynamicFields/base-model";
 import type {IBaseModelFieldGroup} from "../models/groups.model";
 export interface ICustomFieldType {
     name: string;
@@ -22,13 +21,93 @@ export interface ICustomFieldSelectOption {
     default?: boolean;
 }
 
-const allModels = sortBy(AppService.getAvailableModels().map(model => {
-    return {
-        label: model.name.replace('Model', ''),
-        value: model.name,
-    }
-}), 'label');
 
+
+
+
+export class CustomFieldsService extends BaseHttpService {
+
+    static allModels() {
+        return sortBy(AppService.getAvailableModels().map(model => {
+            return {
+                label: model.name.replace('Model', ''),
+                value: model.name,
+            }
+        }), 'label');
+    }
+
+    async sync(modelName: string, field: Partial<IDynamicFieldConfigBlueprint>) {
+        await super.post(`model-manager/sync`, {modelName, field});
+        // reload the models into the store and localstorage
+        await new BootService().boot();
+
+    }
+
+    async syncFieldGroups(modelName: string, fieldGroups: Partial<IBaseModelFieldGroup>[]) {
+        await super.post(`model-manager/sync/model`, {modelName, fieldGroups}, {
+            successMessage: 'Model synced successfully',
+        });
+        // reload the models into the store and localstorage
+        await new BootService().boot();
+    }
+
+    allFields(filters?: IGenericObject) {
+        const models = get(app).models;
+        const fields = [];
+        models.forEach(model => {
+            model.fields.forEach(field => {
+                const found = fields.findIndex(f => f.varName === field.varName);
+
+                if (found !== -1) {
+                    fields[found].model.push(model.name);
+                    return;
+                }
+
+                field.model = [model.name];
+
+                fields.push(field);
+            });
+        });
+
+        if (!filters) {
+            return sortBy(fields, 'label');
+        }
+
+        return sortBy(filter(fields, filters), 'label');
+    }
+
+    modelFields(modelName: string, filters?: IGenericObject) {
+        const models = get(app).models;
+        const model = models.find(m => m.name === modelName);
+
+        if (!filters) {
+            return sortBy(model.fields, 'varName');
+        }
+
+        return sortBy(filter(model.fields, filters), 'varName');
+    }
+
+    static getFieldTypes(filters?: IGenericObject) {
+        if (!filters) {
+            return CustomFieldTypes;
+        }
+
+        return filter(CustomFieldTypes, filters) as ICustomFieldType[];
+
+    }
+
+    static getFieldSettings(filters?: IGenericObject) {
+        if (!filters) {
+            return CustomFieldModelSettings;
+        }
+
+        return filter(CustomFieldModelSettings, filters) as Partial<IDynamicFieldConfigBlueprint>[];
+    }
+
+    static getFieldSetting(filters: IGenericObject) {
+        return find(CustomFieldModelSettings, filters);
+    }
+}
 
 export const CustomFieldTypes: ICustomFieldType[] = [
     {
@@ -60,7 +139,7 @@ export const CustomFieldTypes: ICustomFieldType[] = [
                 label: 'Module',
                 placeholder: 'Module',
                 type: 'select',
-                options: (() => allModels)(),
+                options: CustomFieldsService.allModels,
             },
             {
                 varName: 'selectMode',
@@ -156,7 +235,12 @@ export const CustomFieldTypes: ICustomFieldType[] = [
         icon: 'rich-text',
         description: 'A simple rich text field',
     },
-
+    {
+        name: 'markDown',
+        label: 'Markdown',
+        icon: 'rich-text',
+        description: 'A simple markdown field',
+    },
     {
         name: 'nested',
         label: 'Group',
@@ -200,13 +284,13 @@ export const CustomFieldTypes: ICustomFieldType[] = [
 ];
 
 export const CustomFieldModelSettings: Partial<IDynamicFieldConfigBlueprint>[] = [
-/*    {
-        varName: 'test',
-        label: 'Test',
-        type: 'text',
-        icon: 'sortable',
-        hint: 'Is this field sortable?',
-    },*/
+    /*    {
+            varName: 'test',
+            label: 'Test',
+            type: 'text',
+            icon: 'sortable',
+            hint: 'Is this field sortable?',
+        },*/
     {
         varName: 'required',
         label: 'Required',
@@ -251,77 +335,3 @@ export const CustomFieldModelSettings: Partial<IDynamicFieldConfigBlueprint>[] =
     },
 
 ];
-
-export class CustomFieldsService extends BaseHttpService {
-
-    async sync(modelName: string, field: Partial<IDynamicFieldConfigBlueprint>) {
-        await super.post(`model-manager/sync`, {modelName, field});
-        // reload the models into the store and localstorage
-        await new BootService().boot();
-
-    }
-
-    async syncFieldGroups(modelName: string, fieldGroups: Partial<IBaseModelFieldGroup>[]) {
-        await super.post(`model-manager/sync/model`, {modelName, fieldGroups}, {
-            successMessage: 'Model synced successfully',
-        });
-        // reload the models into the store and localstorage
-        await new BootService().boot();
-    }
-
-    allFields(filters?: IGenericObject) {
-        const models = get(app).models;
-        const fields = [];
-        models.forEach(model => {
-            model.fields.forEach(field => {
-                const found = fields.findIndex(f => f.varName === field.varName);
-
-                if (found !== -1) {
-                    fields[found].model.push(model.name);
-                    return;
-                }
-
-                field.model = [model.name];
-
-                fields.push(field);
-            });
-        });
-
-        if (!filters) {
-            return sortBy(fields, 'label');
-        }
-
-        return sortBy(filter(fields, filters), 'label');
-    }
-
-    modelFields(modelName: string, filters?: IGenericObject) {
-        const models = get(app).models;
-        const model = models.find(m => m.name === modelName);
-
-        if (!filters) {
-            return sortBy(model.fields, 'varName');
-        }
-
-        return sortBy(filter(model.fields, filters), 'varName');
-    }
-
-    static getFieldTypes(filters?: IGenericObject) {
-        if (!filters) {
-            return CustomFieldTypes;
-        }
-
-        return filter(CustomFieldTypes, filters) as ICustomFieldType[];
-    }
-
-    static getFieldSettings(filters?: IGenericObject) {
-        if (!filters) {
-            return CustomFieldModelSettings;
-        }
-
-        return filter(CustomFieldModelSettings, filters) as Partial<IDynamicFieldConfigBlueprint>[];
-    }
-
-    static getFieldSetting(filters: IGenericObject) {
-        return find(CustomFieldModelSettings, filters);
-    }
-}

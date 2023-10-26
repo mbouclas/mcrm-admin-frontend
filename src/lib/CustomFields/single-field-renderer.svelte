@@ -21,6 +21,8 @@
     import type {IEvent} from "../Shared/models/generic";
     import CustomFields from "./group-field-renderer.svelte";
     import Repeater from "./repeater-field-renderer.svelte";
+    import RichText from "../DynamicFields/fields/richtext.svelte";
+    import MarkDown from './field-types/markdown.svelte';
 
     export let field: Partial<IDynamicFieldConfigBlueprint>;
     export let indentNested = false;
@@ -56,8 +58,12 @@
     }
 
     if (field.type === 'select') {
-        if (!Array.isArray(field.options)) {
+        if (!Array.isArray(field.options) && typeof field.options !== 'function') {
             field.options = [];
+        }
+
+        if (typeof field.options === 'function') {
+            field.options = field.options();
         }
 
         if (typeof model === 'string' && model.length === 0) {
@@ -154,6 +160,10 @@
 
         itemSelectorSelection = temp;
         model = temp2;
+    }
+
+    if (['richText', 'rich', 'richtext'].indexOf(field.type) !== -1) {
+
     }
 
 </script>
@@ -264,6 +274,10 @@
     </CustomFields>
 {:else if field.type === 'repeater'}
 <Repeater bind:model={model} fields={field.fields} {field} />
+    {:else if ['richText', 'rich', 'richtext'].indexOf(field.type) !== -1}
+    <RichText id={field.varName} bind:model={model} {field} />
+{:else if ['markDown', 'md', 'markdown'].indexOf(field.type) !== -1}
+    <MarkDown bind:model={model} id={field.varName} />
 {:else if field.schema && Array.isArray(fields)}
     <div class={`${indentNested ? indentNestedClass : ''}`}>
     <Renderer fields={fields} bind:model={model}  />

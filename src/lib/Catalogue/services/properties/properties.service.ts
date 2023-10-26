@@ -68,7 +68,7 @@ export class PropertiesService extends BaseHttpService {
     return await this.get(`property/variant/${id}`);
   }
 
-  async searchValues(q: string, relationships?: string[] = []) {
+  async searchValues(q: string, relationships: string[] = []) {
     const filters = relationships?.length > 0 ? { with: relationships } : {};
 
     return await this.get(`property/value/search?q=${q}`, filters);

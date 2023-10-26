@@ -25,7 +25,7 @@ export const customerItemSelectorConfig: IItemSelectorConfig = {
   apiUrl: 'customer',
   module: 'Customer',
   filters: {
-    isCustomer: true,
+    role: 'customer',
   },
   labels: [
     {
@@ -48,6 +48,7 @@ export const productItemSelectorConfig: IItemSelectorConfig = {
   apiUrl: 'product',
   module: 'Product',
   labelField: 'sku:::title',
+  with: ['productCategory'],
   labels: [
     {
       field: 'title',

@@ -6,6 +6,9 @@
   import Popup from '../../Catalogue/Products/tabs/Popup.svelte';
   import { ImageService } from '../../Shared/services/image.service';
   import { setNotificationAction } from '../../stores';
+  import {Link} from "svelte-heros-v2";
+  import {Modal} from "flowbite-svelte";
+  import UploadImageFromUrl from './upload-image-from-url.svelte';
   const uploadIdPrefix = 'upload-';
   export let model;
   export let itemId;
@@ -15,7 +18,8 @@
   export let id = 'image';
   export let type: 'main' | 'image' = 'main';
   export let maxNumberOfFiles = 1;
-  let show_modal = false;
+  let show_modal = false,
+          showUploadFromUrlModal = false;
 
   const dispatch = createEventDispatcher();
 
@@ -77,8 +81,15 @@
   function edit() {
     show_modal = !show_modal;
   }
-</script>
 
+  function onRemoteImageSaved(url: string) {
+    model.url = url;
+    showUploadFromUrlModal = false;
+  }
+</script>
+<Modal title="Upload from url" autoclose={false} size="lg" bind:open={showUploadFromUrlModal}>
+  <UploadImageFromUrl onSave={onRemoteImageSaved} />
+</Modal>
 <Popup bind:showModal={show_modal} {onSave} {model} on:change={handleModalModelChange} />
 <div class="w-full bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
   <div class="pt-4 items-center text-center">
@@ -102,7 +113,7 @@
         buttonTitle="Upload photo"
       >
         <div class="w-full h-16 bg-white border-t border-gray-200 dark:bg-gray-700 dark:border-gray-600">
-          <div class="grid h-full max-w-lg grid-cols-3 mx-auto font-medium">
+          <div class="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
             <button
               {id}
               type="button"
@@ -163,6 +174,17 @@
               <span
                 class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500"
                 >Edit</span
+              >
+            </button>
+            <button
+                    on:click={() => showUploadFromUrlModal = true}
+                    type="button"
+                    class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group"
+            >
+             <Link />
+              <span
+                      class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500"
+              >URL</span
               >
             </button>
           </div>

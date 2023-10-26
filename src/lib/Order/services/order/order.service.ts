@@ -1,6 +1,9 @@
 import { BaseHttpService } from '../../../Shared/base-http.service';
 import type { IGenericObject } from '../../../Shared/models/generic';
 import queryString from 'query-string';
+import type {OrderModel} from "../../Order/models/order.model";
+import type {Cart} from "../../Order/models/cart";
+import type {IShippingMethod} from "../../../Setting/services/shipping.service";
 
 export class OrderService extends BaseHttpService {
   async activateRows(selectedIds: string[]) {
@@ -100,6 +103,20 @@ export class OrderService extends BaseHttpService {
     return await super.post(`order/${uuid}/pdf`, {}, {
       successMessage: 'Created successfully',
       errorMessage: 'Failed to create',
+    });
+  }
+
+  async virtualCart(cart: Cart, userId: string, shippingMethod?: IShippingMethod) {
+    return await super.post(`order/virtual-cart`, {cart, userId, shippingMethod }, {
+        successMessage: 'Item added successfully',
+        errorMessage: 'Failed to create',
+    });
+  }
+
+  async saveCustomOrder(model: OrderModel) {
+    return await super.post(`order/custom-order`, model, {
+        successMessage: 'Order added successfully',
+        errorMessage: 'Failed to create',
     });
   }
 }

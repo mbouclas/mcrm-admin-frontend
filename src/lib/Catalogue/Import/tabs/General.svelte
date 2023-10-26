@@ -9,13 +9,13 @@
     TableHeadCell,
     Button,
     Heading,
-    Select, Alert, Modal
+     Alert, Modal
   } from 'flowbite-svelte';
   import type { IDynamicFieldConfigFileUploadSettingsBluePrint } from '../../../DynamicFields/types';
   import type {
     IFileImportUploadResult,
     IImportAnalyzerInvalidRow,
-    IImportAnalyzerResult,
+
     IImportProcessorFieldMap
   } from '../../types';
   import Loading from '../../../Shared/Loading.svelte';
@@ -25,6 +25,8 @@
   import {onMount} from "svelte";
   import {ImportTemplatesService} from "../../services/import/import-templates.service";
   import type {IEvent} from "../../../Shared/models/generic";
+  import {QuestionMark} from "radix-icons-svelte";
+  import {ArrowRightToBracketOutline, EditOutline} from "flowbite-svelte-icons";
 
   let model;
   const options: IDynamicFieldConfigFileUploadSettingsBluePrint = {
@@ -47,6 +49,8 @@
           rowsProcessed: number = null,
           file,
           backupInProgress = false,
+          showSelectedTemplateHelpModal = false,
+          selectedTemplateForHelp = null,
           errors;
 
   let templates = [];
@@ -124,7 +128,7 @@
 
     if (validRows <= immediateImportThreshold) {
       try {
-        const res = await service.start(file, selectedTemplate.id, false) as IBaseProcessResult;
+        const res = await service.start(file, selectedTemplate.id, true) as IBaseProcessResult;
         handleImportDone(res);
       }
       catch (e) {
@@ -185,6 +189,11 @@
     file = null;
     errors = null;
   }
+
+  function templateHelp(template) {
+    selectedTemplateForHelp = template;
+    showSelectedTemplateHelpModal = true;
+  }
 </script>
 
 <svelte:head>
@@ -200,6 +209,33 @@
   </div>
 
 </Modal>
+
+{#if selectedTemplateForHelp}
+<Modal title={`Help for ${selectedTemplateForHelp.title}`} autoclose={false} size="xl" bind:open={showSelectedTemplateHelpModal}>
+  <Table>
+    <TableHead>
+      <TableHeadCell>Field Name</TableHeadCell>
+      <TableHeadCell>CSV Field Name</TableHeadCell>
+      <TableHeadCell>Type</TableHeadCell>
+      <TableHeadCell>Required</TableHeadCell>
+      <TableHeadCell>Instructions</TableHeadCell>
+
+    </TableHead>
+    <TableBody class="divide-y">
+      {#each selectedTemplateForHelp.fieldMap as field}
+        <TableBodyRow>
+          <TableBodyCell>{field.name}</TableBodyCell>
+          <TableBodyCell>{field.importFieldName}</TableBodyCell>
+          <TableBodyCell>{field.type}</TableBodyCell>
+          <TableBodyCell>{field.required ? 'Yes' : 'No'}</TableBodyCell>
+          <TableBodyCell>{@html field.description || ''}</TableBodyCell>
+        </TableBodyRow>
+      {/each}
+    </TableBody>
+  </Table>
+
+</Modal>
+  {/if}
 
 {#if processing}<Loading /> {/if}
 <div class="my-6">
@@ -218,19 +254,24 @@
     <TableHead>
       <TableHeadCell>Template</TableHeadCell>
       <TableHeadCell>Description</TableHeadCell>
+      <TableHeadCell>#Fields</TableHeadCell>
       <TableHeadCell></TableHeadCell>
 
     </TableHead>
     <TableBody class="divide-y">
       {#each templates as template}
         <TableBodyRow>
-          <TableBodyCell>{template.name}</TableBodyCell>
+          <TableBodyCell>{template.title}</TableBodyCell>
           <TableBodyCell>{template.description}</TableBodyCell>
+          <TableBodyCell>
+            <Button on:click={templateHelp.bind(this, template)} color="purple">{template.fieldMap.length}</Button>
+          </TableBodyCell>
           <TableBodyCell>
             {#if selectedTemplate === template}
               Selected
               {:else}
-            <Button on:click={handleTemplateChange.bind(this, template)}>Select</Button>
+            <Button on:click={handleTemplateChange.bind(this, template)}><ArrowRightToBracketOutline /></Button>
+            <Button on:click={handleTemplateChange.bind(this, template)}><EditOutline /></Button>
               {/if}
           </TableBodyCell>
 
@@ -239,8 +280,12 @@
     </TableBody>
   </Table>
   {#if selectedTemplate}
-    <div class="my-6">
-    <Heading tag="h4">Using {selectedTemplate.name}</Heading>
+    <div class="my-6 flex justify-between">
+    <Heading tag="h4">Using {selectedTemplate.title}</Heading>
+      <span></span>
+      <Button on:click={templateHelp.bind(this, selectedTemplate)} color="purple" title="Help">
+        <QuestionMark />
+      </Button>
     </div>
   <FileUpload {options} {model} on:done={handleValidationUploadDone} on:started={handleUploadStart} />
     {/if}
