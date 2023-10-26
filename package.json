@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "build:prod": "cross-env NODE_ENV=production vite build --emptyOutDir",
     "check": "svelte-check --tsconfig ./tsconfig.json"
   },
   "devDependencies": {
@@ -20,7 +21,9 @@
     "@types/sortablejs": "^1.15.1",
     "autoprefixer": "^10.4.8",
     "ckeditor5-svelte": "^0.0.10",
+    "cross-env": "^7.0.3",
     "date-picker-svelte": "^2.8.0",
+    "dotenv": "^16.3.1",
     "filedrop-svelte": "^0.1.2",
     "filesize": "^9.0.11",
     "flowbite": "^1.6.6",

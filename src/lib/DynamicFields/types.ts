@@ -90,6 +90,7 @@ export interface IDynamicFieldConfigBlueprint<ISettingsType = any> {
     order?: number;
     isReadonly?: boolean;
     fields?: IDynamicFieldConfigBlueprint[];
+    settingsSchema?: IZodSchema;
     settings?: { //Specific settings
         allowDeSelect?: boolean; //Allow radio button to be de selected Checkbox default to true, radio button default to false
         useValue?: boolean, //If true, object selector will return value property not the whole object (false default)

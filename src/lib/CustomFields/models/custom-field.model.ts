@@ -1,4 +1,5 @@
 import type {IGenericObject} from "../../Shared/models/generic";
+import {type IZodSchema, schemaToFields} from "../../helpers/data";
 
 export enum CustomFieldType {
     text = 'text',
@@ -49,6 +50,7 @@ export class CustomFieldModel  {
     exported = false;
     fieldSettings?: IGenericObject = {};
     fields?: CustomFieldModel[] = [];
+    schema?: IZodSchema;
 
     constructor(config?: CustomFieldModel) {
         if (config) {
@@ -58,5 +60,11 @@ export class CustomFieldModel  {
                 }
             }
         }
+
+        if (config.schema) {
+            this.fields = schemaToFields(config.schema);
+        }
+
+
     }
 }

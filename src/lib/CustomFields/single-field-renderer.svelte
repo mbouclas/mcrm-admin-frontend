@@ -93,10 +93,17 @@
         itemSelectorSelection = (field.fieldSettings.selectMode === 'single') ? {} : [];
     }
 
+
+
     if (['group', 'nested'].indexOf(field.type) !== -1) {
         if (typeof model !== 'object') {
             model = {};
         }
+
+        if (field.schema) {
+            field.fields = schemaToFields(field.schema);
+        }
+
     }
 
     if (field.type === 'repeater') {

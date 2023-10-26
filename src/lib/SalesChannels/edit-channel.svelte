@@ -13,9 +13,12 @@
     const fields = SalesChannelModel.fields.filter(field => {
         return !field.isSlug;
     });
+    let ready = false;
 
     onMount(async () => {
-        model = setupModelFromFields<ISalesChannel>(await s.findOne(model.uuid, ['*']), fields);
+        const channel = await s.findOne(model.uuid, ['*']);
+        model = setupModelFromFields<ISalesChannel>(channel, fields);
+        ready = true;
     });
 
     async function save() {
@@ -23,7 +26,7 @@
         dispatch('save', model);
     }
 </script>
-
+{#if ready}
 
     <form on:submit|preventDefault={save}>
 <CustomFields fields={fields} let:field={field} fieldPrimaryKey="varName" bind:model={model}>
@@ -38,3 +41,4 @@
     </div>
     </form>
 
+    {/if}

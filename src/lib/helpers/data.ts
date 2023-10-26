@@ -72,6 +72,10 @@ export function schemaToFields(schema: IZodSchema) {
             options: property['options'] || [],
         };
 
+        if (['nested', 'json'].indexOf(field.type) !== -1 && property['properties']) {
+            field['fields'] = schemaToFields(property as unknown as IZodSchema);
+        }
+
         fields.push(field);
     }
 
@@ -80,16 +84,17 @@ export function schemaToFields(schema: IZodSchema) {
 
 export function setupModelFromFields<T>(model: T, fields: IDynamicFieldConfigBlueprint[]): T {
     fields.forEach(field => {
-        if (field.type === 'json' && typeof model[field.varName] === 'undefined') {
+
+        if (['json', 'nested'].indexOf(field.type) !== -1  && typeof model[field.varName] === 'undefined') {
             model[field.varName] = {};
         }
 
-        model[field.varName] = getModelValueFromFieldSchema(field);
+        model[field.varName] = getModelValueFromFieldSchema(field, model[field.varName]);
 
         if (field.schema) {
             schemaToFields(field.schema).forEach(f => {
                 if (model[field.varName][f.varName]) {return;}
-                model[field.varName][f.varName] = getModelValueFromFieldSchema(f);
+                model[field.varName][f.varName] = getModelValueFromFieldSchema(f, model[field.varName][f.varName]);
             });
         }
     });
@@ -97,20 +102,21 @@ export function setupModelFromFields<T>(model: T, fields: IDynamicFieldConfigBlu
     return model;
 }
 
-export function getModelValueFromFieldSchema<T>(field: IDynamicFieldConfigBlueprint) {
+export function getModelValueFromFieldSchema<T>(field: IDynamicFieldConfigBlueprint, value: any) {
     switch (field.type) {
         case 'boolean':
         case 'switch':
         case 'toggle':
-            return false;
+            return typeof value === 'boolean' ? value : false;
         case 'array':
-            return [];
+            return Array.isArray(value) ? value : [];
         case 'json':
+        case 'nested':
         case 'image':
         case 'file':
-            return {};
+            return typeof value === 'object' ? value : {};
         default:
-            return '';
+            return value || '';
     }
 }
 
