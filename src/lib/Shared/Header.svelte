@@ -1,20 +1,28 @@
-<script>
-  import { Link, useNavigate } from 'mcrm-svelte-navigator';
+<script lang="ts">
   import {
     SidebarGroup,
     Sidebar,
     SidebarWrapper,
-    SidebarDropdownItem,
-    SidebarDropdownWrapper,
-    SidebarItem,
+    SidebarItem, SidebarBrand, Button,
   } from 'flowbite-svelte';
-
-  import { ChartPie, ShoppingCart, Squares2x2, InboxArrowDown, Cog, ArrowRightOnRectangle } from 'svelte-heros-v2';
-  import Drawer from 'svelte-drawer-component';
 
   import { user } from '../stores';
   import { AuthService } from '../Auth/auth.service';
   import logo from '../../assets/logo-2.svg';
+  import {
+    ArrowRightToBracketSolid,
+    ChartPieSolid,
+    FileEditSolid,
+    GridSolid,
+    MailBoxSolid,
+    UserSolid
+  } from "flowbite-svelte-icons";
+  import { sideBarMenuItems} from "../../data/menu";
+  import type { SideBarMenuItem} from "../../data/menu";
+  import {ArrowRight, ChevronLeft, ChevronRight} from "svelte-heros-v2";
+  import {navigate, useLocation} from "mcrm-svelte-navigator";
+
+
   let hasRoleGate = AuthService.hasGate('menu.roles.show');
   let hasUsersGate = AuthService.hasGate('menu.users.show');
   let hasGatesGate = AuthService.hasGate('menu.gates.show');
@@ -25,7 +33,7 @@
   let hasEditableRegionsGate = AuthService.hasGate('menu.editableRegions.show');
   let hasSettingsGate = AuthService.hasGate('menu.settings.show');
 
-  const navigate = useNavigate();
+
   function handleLogout(e) {
     e.preventDefault();
     $user = null;
@@ -33,20 +41,138 @@
   }
 
   let site = {
-    name: 'Flowbite-Svelte',
+    name: '',
     href: '/',
-    img: '/images/flowbite-svelte-icon-logo.svg',
+    img: logo,
   };
 
-  let spanClass = 'flex-1 ml-3 whitespace-nowrap';
-  const aClass =
-    'flex items-center p-2 text-base font-normal text-[#a6b0cf] hover:text-white rounded-lg dark:text-white bg-[#2a3042] dark:hover:bg-gray-700';
-  const btnClass =
-    'flex items-center p-2 w-full text-base font-normal hover:text-white text-[#a6b0cf] rounded-lg transition duration-75 group dark:text-white dark:hover:bg-gray-700';
-
   export let open = false;
-</script>
+  let activeLevel = 0;
+  let breadcrumbs = [],
+          currentLevelSideBarMenuItems = sideBarMenuItems,
+          currentItem: SideBarMenuItem = sideBarMenuItems[0],
+  activeUrl = '/',
+  isActive = '';
 
+  useLocation().subscribe(data => {
+    activeUrl = data.pathname;
+    currentItem = findWhereTheHeckAmI(sideBarMenuItems, activeUrl);
+    if (!currentItem) {return}
+    if (currentItem.parent) {
+        currentLevelSideBarMenuItems = currentItem.parent.children;
+    }
+    breadcrumbs = getBreadcrumbs(currentItem);
+  });
+
+  function findWhereTheHeckAmI(items: SideBarMenuItem[] = sideBarMenuItems, activeUrl = '/'): SideBarMenuItem {
+    for (let item of items) {
+      if (item.route === activeUrl) {
+        return item;
+      }
+      const foundChild = findWhereTheHeckAmI(item.children, activeUrl);
+      if (foundChild) {
+        return foundChild;
+      }
+    }
+    return null;
+  }
+
+  function getBreadcrumbs(item: SideBarMenuItem) {
+    const breadcrumbs = [];
+    let currentItem = item.parent; // Start from the parent of the current item
+
+    while (currentItem) {
+      breadcrumbs.unshift(currentItem);  // Add to the start of the array
+      currentItem = currentItem.parent;
+    }
+
+    return breadcrumbs;
+  }
+
+  function changeLevel(item: SideBarMenuItem) {
+    currentItem = item;
+    if (!Array.isArray(item.children) || item.children.length === 0) {
+      if (item.route) {
+        navigate(item.route);
+      }
+      return;
+    }
+
+
+    currentLevelSideBarMenuItems = item.children;
+    breadcrumbs = [...breadcrumbs, item];
+  }
+
+  function goBackALevel() {
+    if (breadcrumbs.length === 1) {
+        currentLevelSideBarMenuItems = sideBarMenuItems;
+        breadcrumbs = [];
+        currentItem = sideBarMenuItems[0];
+        return;
+    }
+
+    breadcrumbs = breadcrumbs.slice(0, breadcrumbs.length - 1);
+    currentLevelSideBarMenuItems = breadcrumbs[breadcrumbs.length - 1].children;
+    currentItem = breadcrumbs[breadcrumbs.length - 1];
+  }
+
+  function amIActive(item: SideBarMenuItem) {
+    if (item.route === activeUrl) {
+      return 'bg-[#2a3042] text-white';
+    }
+    return '';
+  }
+
+  $: {
+    if (currentItem) {
+      currentLevelSideBarMenuItems = currentLevelSideBarMenuItems.map(item => {
+        item.isActive = currentItem.route === item.route;
+        return item;
+      });
+    }
+  }
+
+</script>
+<Sidebar {activeUrl} class="bg-gray-800 h-screen">
+  <SidebarWrapper>
+
+    <SidebarGroup>
+      <SidebarBrand {site} />
+      {#if breadcrumbs.length > 0}
+      <div class="h-12 flex space-x-1.5">
+        <Button on:click={goBackALevel}>
+          <ChevronLeft /> <span class="text-white">{breadcrumbs[breadcrumbs.length - 1].label}</span>
+        </Button>
+
+      </div>
+        {/if}
+      {#each currentLevelSideBarMenuItems as item}
+      <SidebarItem class={`${amIActive(item)}`} label={item.label} href={item.href || 'javascript:void(0)'} on:click={changeLevel.bind(this, item)}>
+
+        <svelte:fragment slot="icon">
+          {#if item.icon}
+            <svelte:component this={item.icon} />
+
+          {/if}
+        </svelte:fragment>
+        <svelte:fragment slot="subtext">
+          {#if Array.isArray(item.children) && item.children.length > 0}
+            <span class="inline-flex justify-end w-full">
+              <ChevronRight  />
+            </span>
+
+            {/if}
+        </svelte:fragment>
+      </SidebarItem>
+        {/each}
+    </SidebarGroup>
+
+
+
+  </SidebarWrapper>
+</Sidebar>
+
+<!--
 <Drawer {open} size="256px" on:clickAway={() => (open = false)}>
   <Sidebar class="h-screen sidebar !bg-[#2a3042]">
     <div class="flex justify-center">
@@ -61,6 +187,7 @@
     </div>
     <SidebarWrapper class="rounded-none !bg-[#2a3042]">
       <SidebarGroup>
+
         {#if hasCatalogueGate}
           <SidebarDropdownWrapper {btnClass} label="Catalogue" icon={{ name: Squares2x2 }}>
             <SidebarDropdownItem
@@ -446,3 +573,4 @@
     </SidebarGroup>
   </SidebarWrapper>
 </Sidebar>
+-->

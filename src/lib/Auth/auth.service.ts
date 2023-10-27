@@ -78,6 +78,10 @@ export class AuthService extends BaseHttpService {
     return localStorage.getItem('sessId');
   }
 
+  static clearSessionId() {
+    localStorage.removeItem('sessId');
+  }
+
   async login(username: string, password: string) {
     const headers = new Headers();
     headers.append('Content-Type', 'application/x-www-form-urlencoded');
@@ -96,11 +100,26 @@ export class AuthService extends BaseHttpService {
     };
 
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}oauth/token`, requestOptions);
-    console.log(`${import.meta.env.VITE_BASE_URL}oauth/token`);
+
     // const text = await res.text();
     // console.log(await res.json())
     AuthService.storeSessionId(res.headers.get('x-sess-id'));
 
     return await res.json();
+  }
+
+  async logout() {
+    const headers = this.getAuthHeaders();
+
+    const requestOptions = {
+      method: 'DELETE',
+      headers: headers,
+    };
+
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}oauth/logout`, requestOptions);
+    AuthService.clearSessionId();
+    localStorage.setItem("user", '');
+    localStorage.setItem("bootData", '');
+
   }
 }

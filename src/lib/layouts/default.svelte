@@ -24,6 +24,7 @@
 
   import { v4 } from 'uuid';
   import Toast from '../Shared/Toast.svelte';
+  import Dashboard from "../Dashboard/index.svelte";
 
   interface ExtendedINotification extends INotification {
     id: string;
@@ -78,14 +79,14 @@
 
 {#await promise then res}
   <Router>
-    <div class="flex">
+    <div class="flex h-full min-h-full">
       <Header bind:open />
       <div class="bg-[#222736] w-full">
         <Topbar bind:open />
         <!-- {url} -->
         <div class="p-4 body">
           <Route path="/">
-            <h1>Home</h1>
+            <Dashboard />
           </Route>
 
           <PrivateRoute path="about/*" let:location>
