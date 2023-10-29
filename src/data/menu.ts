@@ -28,7 +28,7 @@ export class SideBarMenuItem {
 
 export const sideBarMenuItems: SideBarMenuItem[] = [
     new SideBarMenuItem({
-        label: 'Dashboard',
+        label: 'Home',
         icon: Home,
         route: '/',
     }),
@@ -112,6 +112,27 @@ export const sideBarMenuItems: SideBarMenuItem[] = [
         ]
     }),
     new SideBarMenuItem({
+        label: 'Analytics',
+        icon: null,
+        children: [
+            new SideBarMenuItem({
+                label: 'Orders',
+                icon: null,
+                route: '/analytics/orders',
+            }),
+            new SideBarMenuItem({
+                label: 'Merchandising',
+                icon: null,
+                route: '/analytics/merchandising',
+            }),
+            new SideBarMenuItem({
+                label: 'Predictive Analytics',
+                icon: null,
+                route: '/analytics/predictive',
+            }),
+        ]
+    }),
+    new SideBarMenuItem({
         label: 'Store Settings',
         icon: null,
         children: [
@@ -134,6 +155,16 @@ export const sideBarMenuItems: SideBarMenuItem[] = [
                 label: 'Conditions',
                 icon: null,
                 route: '/settings/conditions/list',
+            }),
+            new SideBarMenuItem({
+                label: 'Payment Methods',
+                icon: null,
+                route: '/settings/payment-methods',
+            }),
+            new SideBarMenuItem({
+                label: 'Customer Groups',
+                icon: null,
+                route: '/settings/customer-groups',
             }),
             new SideBarMenuItem({
                 label: 'Sales Channels',

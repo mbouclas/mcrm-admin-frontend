@@ -65,4 +65,12 @@ export class CustomerService extends BaseHttpService {
       errorMessage: 'Failed to create',
     });
   }
+
+  async assignUserToGroups(userId: string, groups: string[]) {
+    return await super.post(`customer/${userId}/user-group`, groups, {
+      successMessage: 'Groups assigned successfully',
+      errorMessage: 'Failed to assign',
+    });
+
+  }
 }

@@ -1,13 +1,17 @@
 <script lang="ts">
   import { CustomerService } from '../services/customer/customer.service';
   import { AddressService } from '../services/address/address.service';
-  import { Input, Modal, Button, Toggle, Select, Label } from 'flowbite-svelte';
-  import { Trash, PencilSquare } from 'svelte-heros-v2';
+  import {Input, Modal, Button, Toggle, Select, Label, Badge, Heading, Hr} from 'flowbite-svelte';
+  import {Trash, PencilSquare, Plus} from 'svelte-heros-v2';
 
   import { useParams } from 'mcrm-svelte-navigator';
   import { onMount } from 'svelte';
   import getModelPrototypeFromFields from '../../helpers/model-prototype';
   import type { IDynamicFieldConfigBlueprint } from '../../DynamicFields/types';
+  import { userGroupItemSelectorConfig} from "../../Shared/item-selector-configs";
+  import ItemSelectorModal from '../../DynamicFields/fields/item-selector-modal.svelte';
+  import Card from '../../Shared/card.svelte';
+  import {user} from "../../stores";
 
   const s = new CustomerService();
   const a = new AddressService();
@@ -79,7 +83,7 @@
       if ($params.id === 'new') {
         customer = getModelPrototypeFromFields(fields);
       } else {
-        customer = await s.findOne($params.id, ['address', 'orders']);
+        customer = await s.findOne($params.id, ['address', 'orders', 'userGroup']);
       }
     }
   };
@@ -153,6 +157,20 @@
     await s.update(customer.uuid, customer);
     await getCustomer();
   };
+
+  async function attachToGroups(groups) {
+    await s.assignUserToGroups(customer.uuid, groups.map(g => g.uuid));
+    customer.userGroup = groups;
+  }
+
+  async function removeFromGroup(group) {
+    const idx = customer.userGroup.findIndex((g) => g.uuid === group.uuid);
+    if (idx > -1) {
+      customer.userGroup.splice(idx, 1);
+    }
+
+    await s.assignUserToGroups(customer.uuid, customer.userGroup.map(g => g.uuid));
+  }
 </script>
 
 <Modal bind:open={isAddressModalOpen}>
@@ -287,6 +305,7 @@
             </span></span
           >
         </div>
+
       </div>
       <div class="flex my-10">
         <div
@@ -299,10 +318,43 @@
               <p class="font-light text-gray-500 dark:text-gray-400">{customer.firstName}</p>
               <p class="font-light text-gray-500 dark:text-gray-400">{customer.lastName}</p>
               <p class="font-semibold text-gray-500 dark:text-gray-400">Active: {customer.active ? 'Yes' : 'No'}</p>
+
             </div>
             <Button size="md" on:click={() => openCustomerModal()}>Edit</Button>
           </div>
         </div>
+      </div>
+
+      <div class="my-4">
+        <Card>
+          <svelte:fragment slot="header">
+            User Groups
+          </svelte:fragment>
+          <div slot="headerActions">
+            <ItemSelectorModal
+                    config={userGroupItemSelectorConfig}
+                    on:select={(e) => attachToGroups(e.detail)}
+                    closeOnSelect={true}
+                    label="Add User to Groups"
+                    selectMode="multiple"
+            >
+              <Button class="gap-2.5" color="purple"
+              ><Plus /> Add User to Groups
+
+              </Button>
+            </ItemSelectorModal>
+          </div>
+
+            <p>
+              {#each customer.userGroup as group}
+
+                <Badge color="pink" dismissable on:close={removeFromGroup.bind(this, group)}>
+                  {group.title}
+                </Badge>
+              {/each}
+            </p>
+
+        </Card>
       </div>
 
       <!-- Addresses Table -->

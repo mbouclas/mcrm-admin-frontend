@@ -7,13 +7,16 @@
     import {createEventDispatcher, onMount} from "svelte";
     import {UserService} from "../services/user/user.service";
     import Loading from "../../Shared/Loading.svelte";
-    import {Button, Checkbox, Heading, Input, Label} from "flowbite-svelte";
+    import {Badge, Button, Checkbox, Heading, Input, Label} from "flowbite-svelte";
     import FormError from "../../Shared/form-error.svelte";
     import {ZodError} from "zod";
     import {formatZodErrors} from "../../helpers/errors";
     import {RoleService} from "../services/role/role.service";
     import type {IRole} from "../../Auth/auth.service";
     import {CustomerService} from "../../Customer/services/customer/customer.service";
+    import {userGroupItemSelectorConfig} from "../../Shared/item-selector-configs";
+    import ItemSelectorModal from "../../DynamicFields/fields/item-selector-modal.svelte";
+    import {Plus} from "svelte-heros-v2";
 
     const dispatch = createEventDispatcher();
     export let mode: 'user'|'customer'|'admin'|'guest' = 'user';
@@ -96,6 +99,18 @@
         }
     }
 
+    function attachToGroups(groups) {
+        if (!Array.isArray(model.userGroup)) {
+            model.userGroup = [];
+        }
+
+        model.userGroup = groups;
+    }
+
+    function removeFromGroup(group) {
+        model.userGroup = model.userGroup.filter(g => g.uuid !== group.uuid);
+    }
+
 </script>
 {#if !ready}
     <div class="flex justify-center">
@@ -168,6 +183,31 @@
 
         <div class="my-4">
             <Checkbox value={model.active} checked={model.active} on:change={() => model.active = !model.active}>Active</Checkbox>
+        </div>
+        <div class="my-4">
+            <ItemSelectorModal
+                    config={userGroupItemSelectorConfig}
+                    on:select={(e) => attachToGroups(e.detail)}
+                    closeOnSelect={true}
+                    label="Add User to Groups"
+                    selectMode="multiple"
+            >
+                <Button class="gap-2.5" color="purple"
+                ><Plus /> Add User to Groups
+
+                </Button>
+            </ItemSelectorModal>
+
+            {#if Array.isArray(model.userGroup)}
+            <p>
+                {#each model.userGroup as group}
+
+                    <Badge color="pink" dismissable on:close={removeFromGroup.bind(this, group)}>
+                        {group.title}
+                    </Badge>
+                {/each}
+            </p>
+                {/if}
         </div>
         <slot name="actions">
             <div class="my-4">

@@ -254,6 +254,28 @@ export const salesChannelItemSelectorConfig: IItemSelectorConfig = {
   apiUrl: 'sales-channels',
   module: 'SalesChannel',
   labelField: 'title',
+  labels: [
+    {
+      field: 'title',
+      label: 'Title',
+    },
+    {
+      field: 'active',
+      label: 'Active',
+      type: 'boolean',
+    },
+    {
+      field: 'default',
+      label: 'Default',
+      type: 'boolean',
+    },
+  ],
+};
+
+export const userGroupItemSelectorConfig: IItemSelectorConfig = {
+  apiUrl: 'user-group',
+  module: 'UserGroup',
+  labelField: 'title',
   filter: 'local',
   isTree: true,
   labels: [
@@ -266,9 +288,13 @@ export const salesChannelItemSelectorConfig: IItemSelectorConfig = {
       label: 'Active',
       type: 'boolean',
     },
+    {
+      field: 'default',
+      label: 'Default',
+      type: 'boolean',
+    },
   ],
 };
-
 
 export const itemSelectorConfigs = [
   userItemSelectorConfig,

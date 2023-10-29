@@ -12,16 +12,13 @@
 
   import {
     Button,
-    Dropdown,
-    DropdownItem,
-    Li,
     Table,
     TableBody, TableBodyCell,
     TableBodyRow,
     TableHead,
     TableHeadCell
   } from 'flowbite-svelte';
-  import { customerItemSelectorConfig, userItemSelectorConfig } from '../../Shared/item-selector-configs';
+  import { customerItemSelectorConfig } from '../../Shared/item-selector-configs';
   import Modal from '../../Shared/Modal.svelte';
   import CustomFilters from '../../Shared/CustomFilters.svelte';
   import { navigate } from 'mcrm-svelte-navigator';
