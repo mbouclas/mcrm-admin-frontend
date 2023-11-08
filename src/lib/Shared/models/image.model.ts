@@ -6,4 +6,11 @@ export class ImageModel {
     title: string;
     description: string;
 
+    constructor(config?: Partial<ImageModel>) {
+        for (const key in config) {
+            if (config.hasOwnProperty(key)) {
+                this[key] = config[key];
+            }
+        }
+    }
 }

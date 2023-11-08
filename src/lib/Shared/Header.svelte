@@ -64,14 +64,30 @@
     breadcrumbs = getBreadcrumbs(currentItem);
   });
 
-  function findWhereTheHeckAmI(items: SideBarMenuItem[] = sideBarMenuItems, activeUrl = '/'): SideBarMenuItem {
+  function findWhereTheHeckAmI(items: SideBarMenuItem[], activeUrl = '/'): SideBarMenuItem | null {
     for (let item of items) {
-      if (item.route === activeUrl) {
+      let isMatch: boolean;
+
+      // If regexMatch string is provided, use it for matching
+      if (item.regexMatch) {
+        const routeRegex = new RegExp(item.regexMatch);
+        isMatch = routeRegex.test(activeUrl);
+
+      } else {
+        // Otherwise, do a direct route comparison
+        isMatch = item.route === activeUrl;
+      }
+
+      if (isMatch) {
         return item;
       }
-      const foundChild = findWhereTheHeckAmI(item.children, activeUrl);
-      if (foundChild) {
-        return foundChild;
+
+      // Recursively check children
+      if (item.children && item.children.length > 0) {
+        const foundChild = findWhereTheHeckAmI(item.children, activeUrl);
+        if (foundChild) {
+          return foundChild;
+        }
       }
     }
     return null;
@@ -117,9 +133,17 @@
   }
 
   function amIActive(item: SideBarMenuItem) {
-    if (item.route === activeUrl) {
+    if (!item.regexMatch && item.route === activeUrl) {
       return 'bg-[#2a3042] text-white';
     }
+
+    if (item.regexMatch) {
+      const routeRegex = new RegExp(item.regexMatch);
+      if (routeRegex.test(activeUrl)) {
+        return 'bg-[#2a3042] text-white';
+      }
+    }
+
     return '';
   }
 

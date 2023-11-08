@@ -14,7 +14,7 @@
 <Router>
   <Route path="products/list" component={ProductList} />
 
-  <Route path="products/categories" component={ProductCategoriesList} />
+  <Route path="categories" component={ProductCategoriesList} />
 
   <Route path="products/properties" component={ProductPropertiesList} />
 

@@ -1,6 +1,7 @@
 import {AuthService} from "../Auth/auth.service";
 import { writable, readable } from 'svelte/store';
 import {BaseHttpService} from "../Shared/base-http.service";
+import type {IGenericObject} from "../Shared/models/generic";
 
 export interface IUploadResponse {
     jobId: string;
@@ -12,6 +13,7 @@ export interface IFileUploadMetaData {
     module: string;
     type: 'file'|'image';
     id?: string;
+    data?: IGenericObject;
 }
 
 export interface IFile extends File {

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
   import type {IDynamicFieldConfigBlueprint} from "../../../DynamicFields/types.js";
-  import {Input, Modal, Textarea} from "flowbite-svelte";
+  import {Button, Input, Modal, Textarea} from "flowbite-svelte";
   import CustomFields from "../../../CustomFields/group-field-renderer.svelte";
 
   const dispatch = createEventDispatcher();
@@ -60,7 +60,7 @@
     return fields.find((field) => field.varName === name);
   }
 </script>
-<Modal title="Image Details" autoclose={false} size="md" bind:open={showModal}>
+<Modal title="Image Details" autoclose={false} size="md" bind:open={showModal} dialogClass="fixed top-0 left-0 right-0 h-modal md:inset-0 md:h-full  w-full p-4 flex z-[99999]">
   <form action="" on:submit|preventDefault={onSave.bind(this, model)}>
     <div class="my-4 border border-1 border-gray-500 rounded-xl p-4">
       <CustomFields fields={fields} let:field={field} fieldPrimaryKey="varName" bind:model={model}>
@@ -69,8 +69,9 @@
     </div>
 
 
-    <button class="save-btn" type="submit">Save</button>
+    <Button color="green" class="w-full" type="submit">Save</Button>
   </form>
+  <div class="my-12"></div>
 </Modal>
 
 <style scoped>

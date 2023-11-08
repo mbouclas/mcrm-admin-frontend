@@ -7,6 +7,7 @@
     import { XhrFileUploads} from "../../helpers/xhr-file-uploads";
     import type { IUploadResponse } from "../../helpers/xhr-file-uploads";
     import {createEventDispatcher} from "svelte";
+    import type {IGenericObject} from "../../Shared/models/generic";
     let showFileProgress = false;
     const dispatch = createEventDispatcher();
     export let model;
@@ -14,9 +15,8 @@
     export let itemId;
 
     export let files: Files;
-    export let options: IDynamicFieldConfigFileUploadSettingsBluePrint = {
-
-    } as IDynamicFieldConfigFileUploadSettingsBluePrint;
+    export let options: IDynamicFieldConfigFileUploadSettingsBluePrint = {} as IDynamicFieldConfigFileUploadSettingsBluePrint;
+    export let data: IGenericObject = {};
 
     async function onFilesDropped(e) {
         showFileProgress = true;
@@ -26,7 +26,7 @@
             files.accepted[idx]['progress'] = 0;
             files.accepted[idx]['index'] = idx;
 
-            const uploader = new XhrFileUploads(files.accepted[idx], {module, type: 'file', id: itemId}, options.baseUrl);
+            const uploader = new XhrFileUploads(files.accepted[idx], {module, type: 'file', id: itemId, data}, options.baseUrl);
 
 
             // Handle progress updates

@@ -9,7 +9,7 @@
     TableHeadCell,
     Button,
     Heading,
-     Alert, Modal
+    Alert, Modal, Hr
   } from 'flowbite-svelte';
   import type { IDynamicFieldConfigFileUploadSettingsBluePrint } from '../../../DynamicFields/types';
   import type {
@@ -27,6 +27,11 @@
   import type {IEvent} from "../../../Shared/models/generic";
   import {QuestionMark} from "radix-icons-svelte";
   import {ArrowRightToBracketOutline, EditOutline} from "flowbite-svelte-icons";
+  import {getPropertyFromObject, schemaToFields} from "../../../helpers/data";
+  import CustomFields from "../../../CustomFields/group-field-renderer.svelte";
+  import {truncate} from "lodash";
+  import {moneyFormat} from "../../../helpers/money";
+  import {setNotificationAction} from "../../../stores";
 
   let model;
   const options: IDynamicFieldConfigFileUploadSettingsBluePrint = {
@@ -37,11 +42,12 @@
   };
   const pageTitle = `Import`;
   let validRows = 0,
+          skippedRows = undefined,
           invalidRows: IImportAnalyzerInvalidRow[] = [],
           isInvalid = false,
           processing = false,
           analysisDone = false,
-          immediateImportThreshold = 500,
+          immediateImportThreshold = 300,
           importInProgress = false,
           rows = [],
           propertyCols = [],
@@ -51,10 +57,12 @@
           backupInProgress = false,
           showSelectedTemplateHelpModal = false,
           selectedTemplateForHelp = null,
+          invalidRowsCount = undefined,
           errors;
 
   let templates = [];
   let selectedTemplate;
+  let loading = false;
 
   onMount(async () => {
     const service = new ImportTemplatesService();
@@ -66,20 +74,30 @@
       q: '',
     }, ['import templateCategory', 'variants'], true);
     templates = res;
-
+    templates.forEach(template => {
+      if (template.settingsSchema) {
+        template.settingsSchema = schemaToFields(template.settingsSchema);
+        template.settings = (typeof template.settings !== 'object') ? {} : template.settings;
+      }
+    });
   });
 
   function handleValidationUploadDone(e: IEvent<IFileImportUploadResult>) {
+    invalidRowsCount = e.detail.response.invalidRowsCount || undefined;
     fieldMap = e.detail.response.fieldMap;
     rows = e.detail.response.data;
     validRows = e.detail.response.validRows;
     invalidRows = e.detail.response.invalidRows;
+    skippedRows = e.detail.response.skippedRows;
     processing = false;
     analysisDone = true;
     file = e.detail.response.file;
+    loading = false;
+    if (e.detail.response.isInvalid && typeof e.detail.response.metaData === 'object') {
+      isInvalid = true;
+      errors = e.detail.response.metaData;
+    }
   }
-
-
 
   function handleInvalidUpload() {
     isInvalid = true;
@@ -87,6 +105,7 @@
 
   function handleUploadStart(e) {
     console.log('Started', e.detail);
+    loading = true;
     processing = true;
   }
 
@@ -95,6 +114,10 @@
   function handleImportDone(res: IBaseProcessResult) {
     importInProgress = false;
     rowsProcessed = res.rowsProcessed;
+    setNotificationAction({
+      message: 'Import Complete',
+      type: 'success',
+    });
     reset();
 
     setTimeout(() => {
@@ -102,12 +125,6 @@
     }, 3000);
   }
 
-  async function validate() {
-    const service = new ImportService();
-    importInProgress = true;
-
-    const res = await service.validate(file, selectedTemplate.uuid);
-  }
 
   async function handleStartImport() {
     const service = new ImportService();
@@ -127,19 +144,27 @@
     importInProgress = true;
 
     if (validRows <= immediateImportThreshold) {
+      loading = true;
       try {
-        const res = await service.start(file, selectedTemplate.id, true) as IBaseProcessResult;
+        const res = await service.start(file, selectedTemplate.id, true, selectedTemplate.settings) as IBaseProcessResult;
         handleImportDone(res);
       }
       catch (e) {
         errors = e;
         console.log(e)
       }
+
+      loading = false;
       return;
     }
 
+    setNotificationAction({
+      message: 'Import Started in the background',
+      type: 'info',
+    });
+
     try {
-      const res = await service.start(file, selectedTemplate.id, false) as IImportStartResult;
+      const res = await service.start(file, selectedTemplate.id, false, selectedTemplate.settings) as IImportStartResult;
       // we now have a jobId which we need to query for
       service.startUploadUpdatesQuery(res.jobId); //Initialize the query
       // Receive updates until we have something valid
@@ -158,11 +183,47 @@
     selectedTemplate = template || selectedTemplate;
     const parts = options.baseUrl.split('?');
     options.baseUrl = `${parts[0]}?template=${selectedTemplate.id}`;
+    selectedTemplate.data = {};
+    if (selectedTemplate.settings && typeof selectedTemplate.settings === 'object') {
+        selectedTemplate.data = {...{settings: selectedTemplate.settings}};
+    }
   }
 
   function renderProperty(row: any, key: IImportProcessorFieldMap) {
     // transform data
-    return row[key.name];
+    switch (key.type) {
+      case "image":
+        try {
+          const json = JSON.parse(row[key.name]);
+          return `<img src="${json.url}"  class="w-20 h-20 object-cover" />`;
+        }
+        catch (e) {
+          return `<img src="${row[key.name]}" alt="${row[key.name]}" class="w-20 h-20 object-cover" />`;
+
+        }
+      case "boolean":
+        return row[key.name] ? 'Yes' : 'No';
+      case "price":
+        return moneyFormat(row[key.name]);
+      case 'category' : {
+        if (row['productCategory']) {
+
+            if (!key.displayUsing) {
+              return row[key.name].join(', ');
+            }
+
+            if (key.displayUsing.indexOf('.') !== -1) {
+              const parts = key.displayUsing.split('.');
+              return row[parts[0]].map(c => c[parts[1]]).join(', ');
+            }
+
+            return row[key.displayUsing].join(', ');
+        }
+
+      }
+
+      default: return truncate(row[key.name]);
+    }
 
   }
 
@@ -199,6 +260,12 @@
 <svelte:head>
   <title>{pageTitle}</title>
 </svelte:head>
+<Modal size="sm" bind:open={loading} title="Please wait..."
+       dialogClass="fixed top-0 left-0 right-0 h-modal md:inset-0 md:h-full  w-full p-4 flex z-[99999]">
+  <div class="flex items-center justify-center">
+    <Loading>Please wait...</Loading>
+  </div>
+</Modal>
 <Modal title="Backup in progress" autoclose={false} size="xl" bind:open={backupInProgress}>
   <div>
     <Heading tag="h2">Backup in progress</Heading>
@@ -209,10 +276,10 @@
   </div>
 
 </Modal>
-
+<div class="w-full  overflow-x-auto">
 {#if selectedTemplateForHelp}
 <Modal title={`Help for ${selectedTemplateForHelp.title}`} autoclose={false} size="xl" bind:open={showSelectedTemplateHelpModal}>
-  <Table>
+  <Table shadow striped>
     <TableHead>
       <TableHeadCell>Field Name</TableHeadCell>
       <TableHeadCell>CSV Field Name</TableHeadCell>
@@ -250,7 +317,7 @@
 {/if}
 
 {#if !importInProgress && !analysisDone}
-  <Table>
+  <Table shadow striped hoverable={true}>
     <TableHead>
       <TableHeadCell>Template</TableHeadCell>
       <TableHeadCell>Description</TableHeadCell>
@@ -287,48 +354,72 @@
         <QuestionMark />
       </Button>
     </div>
-  <FileUpload {options} {model} on:done={handleValidationUploadDone} on:started={handleUploadStart} />
+
+    {#if selectedTemplate.settingsSchema}
+      <CustomFields fields={selectedTemplate.settingsSchema} let:field={field} fieldPrimaryKey="varName" bind:model={selectedTemplate.settings}>
+
+      </CustomFields>
+      {/if}
+
+  <FileUpload {options} {model} bind:data={selectedTemplate.data}
+              on:done={handleValidationUploadDone} on:started={handleUploadStart} />
     {/if}
 {/if}
 
-
-
-{#if analysisDone && invalidRows.length === 0}
-  <Heading tag="h2">Upload Results Sample</Heading>
-  <Table>
-    <TableHead>
-      {#each fieldMap as col}
-        <TableHeadCell>{col.name}</TableHeadCell>
-      {/each}
-    </TableHead>
-    <TableBody class="divide-y">
-      {#each rows.slice(0, 10) as row}
-        <TableBodyRow>
-          {#each fieldMap as c}
-            <TableBodyCell>{renderProperty(row, c)}</TableBodyCell>
-          {/each}
-        </TableBodyRow>
-      {/each}
-    </TableBody>
-  </Table>
-<div class="my-6">
-  <Button gradient color="green" class="w-full" on:click={handleStartImport} disabled={importInProgress}
-  >Start Import</Button
-  >
-</div>
-{/if}
 {#if analysisDone}
   <div class="my-6">
-  <p>Valid Rows: {validRows}</p>
-  <p>Invalid Rows: {invalidRows.length}</p>
+    <p>Valid Rows: {validRows}</p>
+    <p>Invalid Rows: {invalidRows.length}</p>
+    {#if errors && errors.skippedProducts}
+      <Alert color="red" rounded={false} class="border-t-4">
+        <p class="font-medium">{errors.skippedProducts.count} Products already exist</p>
+      </Alert>
+      {/if}
+    {#if skippedRows}
+      <p>Skipped Rows: {skippedRows}</p>
+      {/if}
   </div>
   <div class="my-6">
     <Button color="red" on:click={reset}>Reset</Button>
   </div>
 {/if}
+
+{#if analysisDone && invalidRows.length === 0}
+  <Heading tag="h2">Upload Results Sample</Heading>
+  <Hr />
+<div class="w-[98%] max-w-[90%] overflow-x-auto">
+    <Table shadow striped>
+      <TableHead>
+        {#each fieldMap as col}
+          <TableHeadCell>{col.name}</TableHeadCell>
+        {/each}
+      </TableHead>
+      <TableBody class="divide-y">
+        {#each rows.slice(0, 10) as row}
+          <TableBodyRow>
+            {#each fieldMap as c}
+              <TableBodyCell>{@html renderProperty(row, c)}</TableBodyCell>
+            {/each}
+          </TableBodyRow>
+        {/each}
+      </TableBody>
+    </Table>
+
+  <div class="my-6">
+    <Button gradient color="green" class="w-full" on:click={handleStartImport} disabled={importInProgress || isInvalid}
+    >Start Import</Button>
+  </div>
+</div>
+
+
+{/if}
+
 {#if invalidRows.length > 0}
   <Heading tag="h2" class="my-6">List of invalid rows</Heading>
-  <Table>
+  {#if invalidRowsCount}
+    <p class="my-6 text-red-800">Only showing first 50 invalid rows. Found <strong>{invalidRowsCount}</strong> more</p>
+    {/if}
+  <Table shadow striped>
     <TableHead>
       <TableHeadCell>#Row</TableHeadCell>
       {#each fieldMap as col}
@@ -347,8 +438,4 @@
     </TableBody>
   </Table>
 {/if}
-<div class="w-full">
-  <div class="relative h-56">
-    <Toast simple position="bottom-right" show={importInProgress} message="Import started" type="success" />
-  </div>
 </div>

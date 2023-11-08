@@ -3,7 +3,8 @@
   import type { IDynamicFieldConfigBlueprint } from "../types";
   import { Label, Textarea, Helper } from "flowbite-svelte";
   import { onMount } from "svelte";
-  export let id = 'mytextarea';
+  import {v4} from "uuid";
+  export let id = v4();
   export let useDarkMode = true;
   export let field: IDynamicFieldConfigBlueprint;
   export let onChange;
@@ -20,8 +21,10 @@
   let hasError = false;
 
   function init() {
+
     tinymce.init({
       selector: `#${id}`,
+      inline: false,
       setup: (editor) => {
         editor.on('init', (e) => {
           console.log('The Editor has initialized.', `#${id}`);
@@ -34,7 +37,7 @@
           model = editor.getContent();
         });
       },
-      toolbar_sticky: true,
+      toolbar_sticky: false,
       image_advtab: true,
       image_caption: true,
       plugins,
@@ -74,7 +77,7 @@
 
 </script>
 
-<div class="mb-6">
+<div class="my-4">
   {#if field.label}
     <Label class={`block mb-2 !text-gray-400 ${hasError ? "has-error" : ""}`}>
       {field.label}
@@ -82,7 +85,7 @@
   {/if}
 
   <div class={`${hasError ? "has-error" : ""}`}>
-    <textarea id={id}>{model}</textarea>
+    <textarea {id}>{model}</textarea>
   </div>
   {#if helperText}
     <Helper class={hasError ? "helper-text has-error" : "helper-text"}>

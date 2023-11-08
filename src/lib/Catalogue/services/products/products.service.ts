@@ -4,8 +4,9 @@ import queryString from 'query-string';
 import { html } from 'gridjs';
 import { z } from 'zod';
 import errors from '../../../helpers/errors';
+import type {ProductModel} from "../../models/product.model";
 
-const productSchema = z.object({
+export const productSchema = z.object({
   title: z
     .string({ required_error: errors['PRODUCT.010'], invalid_type_error: errors['PRODUCT.010'] })
     .min(1, errors['PRODUCT.010']),
@@ -95,12 +96,11 @@ export class ProductsService extends BaseHttpService {
     });
   }
 
-  async store(data: IGenericObject) {
+  async store(data: ProductModel) {
     return await super.post(
       'product',
-      { ...data, active: true },
+      data,
       {
-        schema: productSchema,
         successMessage: 'Created successfully',
         errorMessage: 'Failed to create',
       },
@@ -127,7 +127,9 @@ export class ProductsService extends BaseHttpService {
   }
 
   async saveProductCategories(productId: string, categories: IGenericObject[]) {
-    const res = await super.patch(`product/${productId}/productCategories`, categories);
+    return await super.patch(`product/${productId}/productCategories`, categories, {
+      successMessage: 'Updated successfully',
+    });
   }
 
   async relate(sourceUuid: string, destinationUuids: string[], type: string) {

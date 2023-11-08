@@ -12,4 +12,12 @@ export class ProductVariantModel {
     productId: string;
     createdAt: Date = new Date();
     updatedAt: Date = new Date();
+
+    constructor(config?: Partial<ProductVariantModel>) {
+        for (const key in config) {
+            if (config.hasOwnProperty(key)) {
+                this[key] = config[key];
+            }
+        }
+    }
 }

@@ -348,7 +348,7 @@
             <p>
               {#each customer.userGroup as group}
 
-                <Badge color="pink" dismissable on:close={removeFromGroup.bind(this, group)}>
+                <Badge color="pink" dismissable on:close={removeFromGroup.bind(this, group)} class="ml-4">
                   {group.title}
                 </Badge>
               {/each}

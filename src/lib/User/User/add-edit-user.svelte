@@ -63,7 +63,7 @@
             if (e instanceof ZodError) {
                 errors = formatZodErrors(e);
             }
-            console.log(errors)
+
             return;
         }
 

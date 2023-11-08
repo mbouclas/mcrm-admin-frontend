@@ -1,3 +1,4 @@
+import type {IGenericObject} from "../Shared/models/generic";
 
 export interface IImportAnalyzerData {
     title: string;
@@ -41,6 +42,7 @@ export interface IImportProcessorFieldMap {
     matchTargetValue?: string;
     slugifyValue?: boolean;
     priceOnRequestFlag?: string;
+    displayUsing?: string;
 }
 
 export interface IImportAnalyzerResult {
@@ -50,4 +52,7 @@ export interface IImportAnalyzerResult {
     file: IFileUploadResult
     fieldMap: IImportProcessorFieldMap[];
     validRows: number;
+    invalidRowsCount: number;
+    skippedRows: number;
+    metaData: IGenericObject;
 }

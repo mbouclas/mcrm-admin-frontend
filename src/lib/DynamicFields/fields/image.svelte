@@ -2,28 +2,36 @@
   import FileUploader from '../../Shared/file-uploader.svelte';
   import type { IEvent, IGenericObject } from '../../Shared/models/generic';
   import type { SuccessResponse, UploadResult, UppyFile } from '@uppy/core';
-  import { createEventDispatcher } from 'svelte';
+  import {createEventDispatcher, onMount} from 'svelte';
   import Popup from '../../Catalogue/Products/tabs/Popup.svelte';
   import { ImageService } from '../../Shared/services/image.service';
   import { setNotificationAction } from '../../stores';
   import {Link} from "svelte-heros-v2";
   import {Modal} from "flowbite-svelte";
   import UploadImageFromUrl from './upload-image-from-url.svelte';
+  import {v4} from "uuid";
   const uploadIdPrefix = 'upload-';
   export let model;
   export let itemId;
   export let module = 'Product';
   export let title = 'Image';
   export let metaData: IGenericObject = {};
-  export let id = 'image';
+  export let id = v4();
   export let type: 'main' | 'image' = 'main';
+  export let classes = 'p-8 rounded-t-lg';
   export let maxNumberOfFiles = 1;
   let show_modal = false,
           showUploadFromUrlModal = false;
 
   const dispatch = createEventDispatcher();
+  let ready = false;
 
   let uploader = {};
+
+  onMount(() => {
+    id = 'uploader' + Math.random().toString(36).substring(2, 10).toLowerCase();
+    ready = true;
+  });
 
   if (Object.keys(metaData).length === 0) {
     metaData = {
@@ -87,20 +95,22 @@
     showUploadFromUrlModal = false;
   }
 </script>
+{#if ready}
 <Modal title="Upload from url" autoclose={false} size="lg" bind:open={showUploadFromUrlModal}>
   <UploadImageFromUrl onSave={onRemoteImageSaved} />
 </Modal>
 <Popup bind:showModal={show_modal} {onSave} {model} on:change={handleModalModelChange} />
+
 <div class="w-full bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
   <div class="pt-4 items-center text-center">
     <h5 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">{title}</h5>
   </div>
-  <img class="p-8 rounded-t-lg" src={model.url} />
+  <img class={classes} src={model.url} />
 
   <div class=" items-center text-center">
     <div class="flex items-center justify-center">
       <FileUploader
-        {id}
+              {id}
         on:uploadComplete={uploadComplete}
         on:allUploadsComplete={onAllUploadsComplete}
         on:uploadFailed={onUploadFailed}
@@ -193,3 +203,4 @@
     </div>
   </div>
 </div>
+  {/if}

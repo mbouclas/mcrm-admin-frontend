@@ -2,8 +2,9 @@
   import { onMount } from 'svelte';
 
   import { PropertiesService } from '../services/properties/properties.service';
-  import { Checkbox, Search, Button } from 'flowbite-svelte';
+  import {Checkbox, Search, Button, Modal} from 'flowbite-svelte';
   import { ArrowRight } from 'svelte-heros-v2';
+  import Loading from "../../Shared/Loading.svelte";
 
   const p = new PropertiesService();
 
@@ -14,6 +15,7 @@
   let selectedProperty = null;
   let searchValue = '';
   let showSelectedValues = false;
+  let loading = false;
 
   $: selectedProperty?.uuid && findValuesByPropertyId();
 
@@ -36,6 +38,7 @@
 
   const reloadData = async (searchValue) => {
     showSelectedValues = false;
+    loading = true;
 
     if (searchValue) {
       propertyValues = [];
@@ -52,6 +55,8 @@
         selectedProperty = selectedProperty;
       }
     }
+
+    loading = false;
   };
 
   const findValuesByPropertyId = async () => {
@@ -94,6 +99,7 @@
   });
 </script>
 
+
 {#if duplicateVariants.length}
   <div class="text-lg font-bold text-center mb-4">Duplicated variants. Choose which to delete</div>
 
@@ -116,12 +122,11 @@
       <Search bind:value={searchValue} placeholder="Search property values" />
     </div>
     <div class="px-2 relative">
-      <button
-        class="bg-blue-700 hover:bg-blue-900 text-white font-bold rounded-full transition duration-200 ease-in-out text-sm"
-        on:click|stopPropagation={toggleSelectedValues}
+      <Button color="purple" size="sm"
+        on:click={toggleSelectedValues}
       >
         View selected
-      </button>
+      </Button>
       {#if selectedValues.length}
         <span class="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2 text-sm">
           {selectedValues.length}

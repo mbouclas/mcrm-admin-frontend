@@ -19,6 +19,8 @@
   export let useQueryFilter = true;
   export let refresh = false;
 
+  export let onSelect: (item: any) => void;
+
   export let labels = config.labels || [
     {
       label: 'Title',
@@ -135,10 +137,17 @@
       selectedItems = selection;
       dispatch('selection', selectedItems);
 
+      if (onSelect) {
+        onSelect(selectedItems);
+      }
+
       return;
     }
     selectedItem = item;
     dispatch('select', item);
+    if (onSelect) {
+      onSelect(item);
+    }
   }
 
   function selectAll(e) {

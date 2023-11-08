@@ -1,11 +1,9 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
   import type { IPagination } from '../../Shared/models/generic';
   import { ProductsService } from '../services/products/products.service';
   import SortButton from '../../Shared/SortTableHeadButton.svelte';
   import Loading from '../../Shared/Loading.svelte';
   import { formatDate } from '../../helpers/dates';
-  import ItemSelectorModal from '../../DynamicFields/fields/item-selector-modal.svelte';
   import {
     Banner,
     Button,
@@ -28,10 +26,13 @@
   import FiltersBar from './filters.svelte';
   import {DotsVertical} from "radix-icons-svelte";
   import QuickEdit from './Product.svelte';
+  import AddNew from './ProductAdd.svelte';
+  import type {ProductModel} from "../models/product.model";
 
   let showModal = false;
   let searchVal = '',
-          searchTerm = '';
+          searchTerm = '',
+          showAddNewModal = false;
 
   const location = useLocation();
   const currentPath = $location.pathname;
@@ -70,7 +71,7 @@
     items.data = [];
 
     loading = true;
-    items = await service.find(filters, ['productCategory', 'variants']);
+    items = await service.find(filters, ['productCategory', 'variants', 'thumb']);
 
     loading = false;
   }
@@ -200,7 +201,14 @@
     search();
   }
 
+  function onNewProductAdded(newProduct: ProductModel) {
+    navigate(`/catalogue/products/${newProduct.uuid}`);
+  }
+
 </script>
+<NativeModal size="xl" bind:open={showAddNewModal} title={`Add new product`}>
+  <AddNew onSave={onNewProductAdded} />
+</NativeModal>
 
 <NativeModal size="xl" bind:open={showBulkEditCategoriesModal} title={`Bulk Edit Categories`}>
 <BulkEditCategories uuids={selected} on:done={onBulkUpdateDone}/>
@@ -238,7 +246,7 @@
 </div>
 
 <div class="flex items-center space-x-4">
-  <Button on:click={() => navigate('/catalogue/products/new')} class="bg-green-500 rounded p-2">
+  <Button on:click={() => showAddNewModal = true} class="bg-green-500 rounded p-2">
     <Plus /></Button>
 
   {#each appliedFilters as filter}
@@ -333,9 +341,9 @@
                       value={item.uuid}
             />
           </TableBodyCell>
-          <TableHeadCell><img src={item.thumb}  class="w-16 object-cover" /></TableHeadCell>
+          <TableHeadCell><img src={typeof item.thumb === 'object' ? item.thumb.url : item.thumb}  class="w-16 object-cover" /></TableHeadCell>
           <TableBodyCell>
-            <a href={`/catalogue/products/${item.uuid}`}
+            <a href="#" on:click|preventDefault={() => navigate(`/catalogue/products/${item.uuid}`)}
                     class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer">
               {item.sku}
             </a>

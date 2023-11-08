@@ -4,6 +4,8 @@ import type {ITagModel} from "../../Shared/models/tag.model";
 import type {ISalesChannel} from "../../SalesChannels/services/sales-channels.service";
 import type {ImageModel} from "../../Shared/models/image.model";
 import type {IColor} from "../../Order/Order/models/order.model";
+import type {ManufacturerModel} from "./manufacturer.model";
+import type {IGenericObject} from "../../Shared/models/generic";
 
 export interface IPropertyValue {
     name: string;
@@ -26,18 +28,36 @@ export class ProductModel {
     uuid: string;
     title: string;
     description: string;
+    description_long: string;
     price: number;
+    salePrice: number;
+    cost: number;
     active = false;
     slug: string;
-    productCategory: ProductCategoryModel;
+    productCategory: ProductCategoryModel[] = [];
     variants: ProductVariantModel[] = [];
-    thumb: ImageModel|string;
+    thumb: Partial<ImageModel>|string;
+    images: Partial<ImageModel>[] = [];
     tags: ITagModel[] = [];
+    tag: ITagModel[] = [];
     salesChannels: ISalesChannel[] = [];
+    salesChannel: ISalesChannel[] = [];
     createdAt: Date = new Date();
     updatedAt: Date = new Date();
     propertyValue: any[] = [];
     property: IProperty[] = [];
+    stock: number = 0;
+    lowStock: number;
+    manufacturer: ManufacturerModel;
+    seo: IGenericObject = {};
+
+    constructor(config?: Partial<ProductModel>) {
+        for (const key in config) {
+            if (config.hasOwnProperty(key)) {
+                this[key] = config[key];
+            }
+        }
+    }
 
     static getProductColors(product: ProductModel) {
         const colors: Partial<IColor>[] = [];

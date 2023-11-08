@@ -31,7 +31,7 @@ export default {
   'PRODUCT.007': 'Failed to check duplicate variants',
   'PRODUCT.008': 'Failed to update product categories',
   'PRODUCT.009': 'Failed to attach',
-  'PRODUCT.010': 'Name required',
+  'PRODUCT.010': 'Title required',
   'PRODUCT.011': 'Sku required',
   'PRODUCT.012': 'Price required',
   'PRODUCT.013': 'Description required',

@@ -12,16 +12,23 @@
   export let selectedItems = [];
   export let selectMode: 'single' | 'multiple' = 'single';
   export let closeOnSelect = false;
+  export let onSelection: (selection: any) => void;
 
   function onSelect(event) {
     if (closeOnSelect) {
       defaultModal = false;
     }
     dispatch('select', event.detail);
+    if (onSelection) {
+      onSelection(event.detail);
+    }
   }
 
   function onSelectMultiple(event) {
     dispatch('select', event.detail);
+    if (onSelection) {
+      onSelection(event.detail);
+    }
   }
 
   function onConfirm() {

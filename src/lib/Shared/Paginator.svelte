@@ -18,8 +18,10 @@
     let pages = [];
     let next;
     let previous;
+    let ready = false;
 
-    $: {
+    $: if (totalPages > 0) {
+        fillArrayOfPages(totalPages);
         calculate();
     }
 
@@ -33,6 +35,7 @@
 
     onMount(() => {
         calculate();
+        ready = true
     })
 
     function fillArrayOfPages(pages) {
@@ -78,10 +81,12 @@
     async function goToPage(pageNumber: number, $e) {
         currentPage = pageNumber;
         dispatch('pageChange', pageNumber);
+        calculate();
     }
 
 </script>
 
+{#if ready && totalPages > 1}
 <nav class="flex items-center justify-between border-t border-gray-200 px-4 mx-4 my-4 sm:px-0">
     <div class="-mt-px flex w-0 flex-1">
         {#if previous}
@@ -137,3 +142,4 @@
     </div>
 
 </nav>
+    {/if}

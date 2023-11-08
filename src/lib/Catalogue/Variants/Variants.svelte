@@ -16,46 +16,47 @@
   import {
     Modal,
     Button,
-    Table as TableFlowBite,
-    TableBody,
-    TableBodyCell,
-    TableBodyRow,
-    TableHead,
-    TableHeadCell,
   } from 'flowbite-svelte';
   import Table from './VariantsTable.svelte';
   import GenerateVariants from './GenerateVariants.svelte';
+  import {Plus} from "svelte-heros-v2";
+  import type {IEvent, IPagination} from "../../Shared/models/generic";
+  import Loading from "../../Shared/Loading.svelte";
 
   const s = new VariantsService();
   const productService = new ProductsService();
   const p = new PropertiesService();
   const params = useParams();
 
-  $: console.log('params ', $params);
+
+  let generatingInProgress = false;
   let selectedValues = [];
   let duplicateVariants;
   let model;
   let selectedItem;
   let propertyValues = [];
   let fields: IDynamicFieldConfigBlueprint[] = [];
-
+  let loading = false;
   let items = [];
-
+  let ready = false;
   let createModalOpen = false;
   let deleteModalOpen = false;
   let editModalOpen = false;
   let generateVariantsModelOpen = false;
+  let limit = 30;
 
   let pagination = {};
 
-  const reloadData = async (currentPagination) => {
+  const reloadData = async (currentPagination, filters = {}) => {
+    loading = true;
     selectedItem = {};
     if (productId) {
       model = await s.find({
         page: currentPagination.page,
         limit: currentPagination.limit,
         product: [$params.id],
-      });
+        ...filters
+      }, ['*']);
       items = model?.data;
       pagination = {
         total: parseInt(model.total),
@@ -67,9 +68,18 @@
     } else {
       model = getModelPrototypeFromFields(fields);
     }
+    setTimeout(() => {
+      loading = false;
+    }, 1000);
+
   };
 
+  async function search(data: { pagination: any, searchTerm: string }) {
+    await reloadData(data.pagination, { q: data.searchTerm });
+  }
+
   const handleGenerateVariants = async () => {
+
     const propertyValues = selectedValues.map((value) => value.uuid);
 
     if (duplicateVariants && duplicateVariants.length) {
@@ -78,7 +88,7 @@
         return acc;
       }, {});
       await productService.generateVariants($params.id, { propertyValues, duplicateVariants: duplicateVariantsParsed });
-      reloadData({ page: 1, limit: 10 });
+      reloadData({ page: 1, limit });
       generateVariantsModelOpen = false;
       duplicateVariants = [];
       selectedValues = [];
@@ -97,33 +107,25 @@
       return null;
     }
 
+    generatingInProgress = true;
     await productService.generateVariants($params.id, { propertyValues, duplicateVariants: {} });
-    reloadData({ page: 1, limit: 10 });
+    reloadData({ page: 1, limit });
     generateVariantsModelOpen = false;
     duplicateVariants = [];
     selectedValues = [];
-  };
-
-  const handleConfirm = async ({ value, action }) => {
-    if (action === 'delete') {
-      await s.deleteRow(value.uuid);
-    }
-
-    if (action === 'edit') {
-      await s.update(value.uuid, value);
-    }
-
-    reloadData({ page: 1, limit: 10 });
+    generatingInProgress = false;
   };
 
   onMount(async () => {
     fields = AppService.getModel('ProductVariantModel').fields.filter((f) => f.varName !== 'thumb' && !f.hidden);
 
     if (productId) {
-      await reloadData({ page: 1, limit: 10 });
+      await reloadData({ page: 1, limit });
     } else {
       model = getModelPrototypeFromFields(fields);
     }
+
+    ready = true;
   });
 
   const handleAction = async (actionType, item = null) => {
@@ -164,56 +166,36 @@
     propertyValues = [];
   };
 
-  $: console.log(propertyValues);
+
 </script>
-
-<Modal title="Confirm delete" bind:open={deleteModalOpen} autoclose outsideclose>
-  <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">Are you sure you want to delete this item?</p>
-  <svelte:fragment slot="footer">
-    <Button on:click={() => handleConfirm({ value: selectedItem, action: 'delete' })}>Confirm</Button>
-    <Button on:click={() => handleModalCancel()} color="alternative">Cancel</Button>
-  </svelte:fragment>
+<Modal size="sm" bind:open={generatingInProgress} title="Generating Variants"
+       dialogClass="fixed top-0 left-0 right-0 h-modal md:inset-0 md:h-full  w-full p-4 flex z-[99999]">
+  <div class="flex items-center justify-center">
+    <Loading>Please wait...</Loading>
+  </div>
 </Modal>
 
-<Modal size="xl" title="Update item" bind:open={editModalOpen} autoclose outsideclose>
-  <Fields {reloadData} {fields} bind:model={selectedItem} module="Product" itemId={selectedItem?.uuid || ''} />
 
-  {#if propertyValues && propertyValues.length}
-    <TableFlowBite>
-      <TableHead>
-        <TableHeadCell>Property</TableHeadCell>
-        <TableHeadCell>Value</TableHeadCell>
-      </TableHead>
-      <TableBody>
-        {#each propertyValues as propertyValue}
-          <TableBodyRow>
-            <TableBodyCell>{propertyValue.property.title}</TableBodyCell>
-            <TableBodyCell>{propertyValue.name}</TableBodyCell>
-          </TableBodyRow>
-        {/each}
-      </TableBody>
-    </TableFlowBite>
-  {/if}
-
-  <svelte:fragment slot="footer">
-    <Button on:click={() => handleConfirm({ value: selectedItem, action: 'edit' })}>Confirm</Button>
-    <Button on:click={() => handleModalCancel()} color="alternative">Cancel</Button>
-  </svelte:fragment>
-</Modal>
 
 <Modal size="xl" title="Generate variants" bind:open={generateVariantsModelOpen} outsideclose>
   <GenerateVariants bind:duplicateVariants bind:selectedValues />
 
-  <Button on:click={() => handleGenerateVariants()}>Confirm</Button>
-  <Button on:click={() => handleModalCancel()} color="alternative">Cancel</Button>
+  <Button on:click={() => handleGenerateVariants()} color="green">Add Selected</Button>
+  <Button on:click={() => handleModalCancel()} color="red">Cancel</Button>
 </Modal>
 
-<Button on:click={() => handleAction('generateVariants')}>Generate variants</Button>
 
+{#if ready}
 <Table
   bind:fields
   bind:items
   bind:pagination
-  on:reload={(e) => reloadData(e.detail.pagination)}
-  on:action={(e) => handleAction(e.detail.actionType, e.detail.item)}
-/>
+  bind:loading={loading}
+  on:reload={(e) => reloadData(e.detail)}
+  onSearch={search}
+  on:action={(e) => handleAction(e.detail.actionType, e.detail.item)}>
+  <svelte:fragment slot="actions">
+      <Button on:click={() => handleAction('generateVariants')} color="green" class="gap-2.5"><Plus /> Generate variants</Button>
+  </svelte:fragment>
+</Table>
+  {/if}

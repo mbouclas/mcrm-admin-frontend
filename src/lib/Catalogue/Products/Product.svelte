@@ -5,19 +5,19 @@
   import Variants from '../Variants/Variants.svelte';
   import SEO from './tabs/SEO.svelte';
   import Files from './tabs/Files.svelte';
-
   import { useParams } from 'mcrm-svelte-navigator';
-  import Form from '../../DynamicFields/Form.svelte';
   import { ProductsService } from '../services/products/products.service';
   import { onMount } from 'svelte';
-  import { AppService } from '../../Shared/app.service';
-  import type { IDynamicFieldConfigBlueprint } from '../../DynamicFields/types';
-  import getModelPrototypeFromFields from '../../helpers/model-prototype';
+  import {ProductModel} from "../models/product.model";
+  import Gallery from './tabs/Gallery.svelte';
+  import AdvancedPricing from './tabs/AdvancedPricing.svelte';
+
+
 
   const s = new ProductsService();
   const params = useParams();
-  let model;
-  let fields: IDynamicFieldConfigBlueprint[] = [];
+  let model = new ProductModel();
+  let ready = false;
   export let itemId;
 
   const defaultProductStatus = {
@@ -39,14 +39,10 @@
   let productStatus = defaultProductStatus;
 
   onMount(async () => {
-    fields = AppService.getModel('ProductModel').fields.filter((f) => f.varName !== 'thumb');
-
     if (itemId) {
       model = await s.findOne(itemId, ['*']);
     } else {
-      if ($params.id === 'new') {
-        model = getModelPrototypeFromFields(fields);
-      } else {
+      if ($params.id !== 'new') {
         model = await s.findOne($params.id, ['*']);
       }
     }
@@ -82,9 +78,11 @@
         og_description: '',
       };
     }
+
+    ready = true;
   });
 
-  const onSubmit = async (data) => {
+/*  const onSubmit = async (data) => {
     productStatus = clearErrors(productStatus);
 
     try {
@@ -99,7 +97,11 @@
         return null;
       }
     }
-  };
+  };*/
+
+  async function onSubmit(product: ProductModel) {
+
+  }
 
   const onSeoSubmit = async () => {
     await s.update($params.id, model);
@@ -114,15 +116,12 @@
     model[key] = e.detail;
   }
 
-  import Gallery from './tabs/Gallery.svelte';
-  import { RequestErrorException, handleValidationErrors, clearErrors } from '../../helpers/helperErrors';
-  import AdvancedPricing from './tabs/AdvancedPricing.svelte';
 
   let hasError = false;
 
   // User selected a new thumbnail, update the model
   function onThumbnailSet(e) {
-    model.images.push(model.thumb);
+    model.images.push(typeof model.thumb === 'string' ? {url: model.thumb} : model.thumb);
     model.thumb = e.detail;
   }
 </script>
@@ -130,42 +129,43 @@
 <!-- {JSON.stringify(model)} -->
 
 <!-- <Modals /> -->
-
-<Form bind:model {hasError}>
+{#if ready}
+<div>
   <Tabs tabStyle="underline" class="mb-4">
     <TabItem open title="General" tabStyle="custom" {customActiveClass} {customInActiveClass}>
-      <General {onSubmit} status={productStatus} {fields} {model} />
+      <General {onSubmit} status={productStatus} {model} />
     </TabItem>
     {#if $params.id !== 'new'}
       <TabItem title="Gallery" tabStyle="custom" {customActiveClass} {customInActiveClass}>
         <Gallery model={model.images} itemId={model.uuid} module="Product" on:thumbnailSet={onThumbnailSet} />
       </TabItem>
+      <TabItem title="Variants" tabStyle="custom" {customActiveClass} {customInActiveClass}>
+        <Variants productId={$params.id} />
+      </TabItem>
       <TabItem title="SEO" tabStyle="custom" {customActiveClass} {customInActiveClass}>
-        <SEO onSubmit={onSeoSubmit} model={model.seo} on:change={handleModelChange.bind(this, 'seo')} />
+        <SEO onSubmit={onSeoSubmit} bind:model={model}  />
       </TabItem>
       <TabItem title="Files" tabStyle="custom" {customActiveClass} {customInActiveClass}>
         <Files {model} />
       </TabItem>
-      <TabItem title="Items" tabStyle="custom" {customActiveClass} {customInActiveClass}>
+  <!--    <TabItem title="Items" tabStyle="custom" {customActiveClass} {customInActiveClass}>
         <p class="text-sm text-gray-500 dark:text-gray-400">Tab Content 4</p>
-      </TabItem>
-      <TabItem title="Variants" tabStyle="custom" {customActiveClass} {customInActiveClass}>
-        <Variants productId={$params.id} />
-      </TabItem>
-      <TabItem title="Properties" tabStyle="custom" {customActiveClass} {customInActiveClass}>
+      </TabItem>-->
+
+<!--      <TabItem title="Properties" tabStyle="custom" {customActiveClass} {customInActiveClass}>
         <p class="text-sm text-gray-500 dark:text-gray-400">Tab Content 6</p>
-      </TabItem>
+      </TabItem>-->
       <TabItem title="Related products" tabStyle="custom" {customActiveClass} {customInActiveClass}>
         <Related />
       </TabItem>
-      <TabItem title="Advanced pricing" tabStyle="custom" {customActiveClass} {customInActiveClass}>
+<!--      <TabItem title="Advanced pricing" tabStyle="custom" {customActiveClass} {customInActiveClass}>
         <AdvancedPricing />
-      </TabItem>
+      </TabItem>-->
     {/if}
   </Tabs>
-</Form>
+</div>
 <div class="mb-12 pb-6" />
-
+  {/if}
 <style>
   .submit-button-wrapper {
     line-height: 54px;

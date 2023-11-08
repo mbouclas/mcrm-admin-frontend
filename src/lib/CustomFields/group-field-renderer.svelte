@@ -1,14 +1,14 @@
 <script lang="ts">
     import type {IDynamicFieldConfigBlueprint} from "../DynamicFields/types";
     import FieldRenderer from './single-field-renderer.svelte';
+    import type {ZodError} from "zod";
 
     export let fields: Partial<IDynamicFieldConfigBlueprint>[] = [];
     export let model: any = {};
     export let fieldPrimaryKey = 'varName';
     export let wrapperClass = 'mb-4 mt-4';
-    export let outerClass = '';
-
-
+    export let outerClass = undefined;
+    export let errors: Partial<ZodError> = {};
 
 </script>
 {#if typeof model !== 'undefined'}
@@ -18,7 +18,7 @@
 {#each fields as field}
     <div class={wrapperClass}>
         <slot {field}>
-            <FieldRenderer {field} bind:model={model[field[fieldPrimaryKey]]} indentNested={true} />
+            <FieldRenderer {field} bind:model={model[field[fieldPrimaryKey]]} bind:outerClass={outerClass} indentNested={true} bind:errors={errors} />
         </slot>
     </div>
 {/each}

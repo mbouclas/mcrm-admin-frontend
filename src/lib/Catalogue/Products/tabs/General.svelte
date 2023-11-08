@@ -1,90 +1,83 @@
 <script lang="ts">
   import type { IDynamicFieldConfigBlueprint } from '../../../DynamicFields/types';
-  import {Button, Toggle, Modal, Dropdown, Search, NumberInput, Label} from 'flowbite-svelte';
-  import Fields from '../../../DynamicFields/Renderer.svelte';
+  import {
+    Button,
+    Toggle,
+    Modal,
+    NumberInput,
+    Label,
+    Sidebar,
+    SidebarWrapper,
+    SidebarGroup,
+    SidebarItem, BottomNav, BottomNavItem
+  } from 'flowbite-svelte';
   import Loading from '../../../Shared/Loading.svelte';
-  import Input from '../../../Shared/Input.svelte';
-  import ErrorMessage from '../../../Shared/ErrorMessage.svelte';
-  import SalesChannelsSelector from '../../../SalesChannels/sales-channels-selector.svelte';
   import { Trash } from 'svelte-heros-v2';
-  import RichText from '../../../DynamicFields/fields/richtext.svelte';
-  import Image from '../../../DynamicFields/fields/image.svelte';
-  import ProductCategorySelector from '../ProductCategorySelector.svelte';
-  import Tags from '../ProductCategoriesTags.svelte';
-  import { ProductsService } from '../../services/products/products.service';
+  import {productSchema, ProductsService} from '../../services/products/products.service';
   import { ManufacturersService } from '../../services/manufacturers/manufacturers.service';
   import { navigate } from 'mcrm-svelte-navigator';
   import { type ISalesChannel, SalesChannelsService } from '../../../SalesChannels/services/sales-channels.service';
-  import DropDown from '../../../Shared/DropDown.svelte';
+  import Card from "../../../Shared/card.svelte";
+  import {ProductModel} from "../../models/product.model";
+  import {ArrowUpRightFromSquareOutline, FileCheckOutline} from "flowbite-svelte-icons";
+  import {onMount} from "svelte";
+  import {AppService} from "../../../Shared/app.service";
+  import Basic from './components/basic.svelte';
+  import Pricing from './components/pricing.svelte';
+  import Description from './components/description.svelte';
+  import Taxonomy from './components/taxonomy.svelte';
+  import Image from './components/image.svelte';
+  import Inventory from './components/inventory.svelte';
+  import Storefront from './components/storefront.svelte';
+  import Purchasability from './components/purchasability.svelte';
+  import Extra from './components/extras.svelte';
+  import {ZodError} from "zod";
+  import {formatZodErrors} from "../../../helpers/errors";
 
   const s = new ProductsService();
-  const m = new ManufacturersService();
 
-  export let onSubmit: (data: any) => void;
+  let errors = {},
+  ready = false;
+  export let onSubmit: (model: ProductModel) => void;
   export let status: any = {};
+  export let model = new ProductModel();
 
-  let manufacturerDropDownOpen = false;
-  let allManufacturers = [];
 
-  let searchManufacturerText = '';
+  const groupFields = AppService.getModel('ProductModel').fieldGroups;
+  const allFields = AppService.getModel('ProductModel').fields;
+  onMount(async () => {
 
-  $: manufacturers = searchManufacturerText
-    ? allManufacturers.filter((item) => item?.title?.includes(searchManufacturerText))
-    : allManufacturers;
+    ready = true;
+  });
 
-  const getManufacturers = async () => {
-    let data = await m.find();
-    allManufacturers = data.data;
-  };
+  function getGroupFields(group: string) {
+    const fs = groupFields.find((field) => field.name === group);
+    if (!fs) {return  []}
 
-  const setManufacturer = (manufacturer) => {
-    model.manufacturer = manufacturer;
-    manufacturerDropDownOpen = false;
-  };
 
-  const onSubmitWithLoader = async (data) => {
-    try {
-      loading = true;
-      await onSubmit(data);
-    } finally {
-      loading = false;
+    if (!Array.isArray(fs.fields)) {
+      return [];
     }
-  };
+
+    return fs.fields.map(f => {
+      return allFields.find((field) => field.varName === f);
+    });
+  }
 
   async function toggleStatus() {
-    const newActive = !model.active;
-    await s.update(model.uuid, { active: newActive });
-    model.active = newActive;
+    model.active = !model.active;
   }
 
   export let fields: IDynamicFieldConfigBlueprint[] = [];
-  export let model;
-  let mainFields = [];
-  let secondaryFields = [];
-  let deleteProductModalOpen = false;
-  let loading = false;
 
-  $: {
-    fields.forEach((field) => {
-      if (!field.group || field.group === 'main') {
-        mainFields.push(field);
-      }
-      if (field.group === 'extra') {
-        secondaryFields.push(field);
-      }
-    });
-  }
+  let deleteProductModalOpen = false;
+
+
 
   function getField(name: string) {
     return fields.find((field) => field.varName === name);
   }
 
-  function getSlug(e, value) {
-    model.slug = value
-      .toLowerCase()
-      .replace(/ /g, '-')
-      .replace(/[^\w-]+/g, '');
-  }
 
   const handleDeleteModalOpen = () => {
     deleteProductModalOpen = true;
@@ -95,11 +88,49 @@
     navigate('/catalogue/products/list');
   };
 
-  async function saveSalesChannel(channels: ISalesChannel[], itemId: string) {
-    await new SalesChannelsService().sync(channels, itemId, 'Product');
+
+  function goToSection(event: Event) {
+    event.preventDefault()
+    const link = event.currentTarget
+    const anchorId = new URL(link['href']).hash.replace('#', '')
+    const anchor = document.getElementById(anchorId)
+    window.scrollTo({
+      top: anchor.offsetTop,
+      behavior: 'smooth'
+    })
+  }
+
+  async function save() {
+    try {
+      productSchema.parse(model)
+    }
+    catch (e) {
+      if (e instanceof ZodError) {
+        errors = formatZodErrors(e);
+      }
+      console.log(errors)
+      return;
+    }
+
+    try {
+      await new ProductsService().update(model.uuid, model);
+    }
+    catch (e) {
+      console.log(e)
+    }
+
+  }
+
+  async function onKeyPressed(e) {
+    if (e.ctrlKey && e.key === 's') {
+      e.preventDefault();
+
+      await save();
+      return
+    }
   }
 </script>
-
+<svelte:window on:keydown={onKeyPressed}/>
 <Modal title="Confirm delete product" bind:open={deleteProductModalOpen} autoclose outsideclose>
   <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
     Are you sure you want to <span class="text-lg font-bold">permanently delete</span>
@@ -112,9 +143,14 @@
   </svelte:fragment>
 </Modal>
 
-{#if !model}<Loading /> {/if}
-{#if model}
-  {#if model.uuid}
+{#if !ready}
+  <div class="flex justify-center">
+    <Loading />
+  </div>
+{/if}
+
+{#if ready}
+
     <div class="flex w-full pb-5 pr-3 justify-end">
       <div class="flex items-center w-20">
         <span
@@ -128,146 +164,115 @@
         <button on:click={() => handleDeleteModalOpen()} class="text-gray-500"><Trash color="white" /></button>
       {/if}
     </div>
-  {/if}
 
-  <form>
-    <div class="grid md:grid-cols-2 md:gap-6">
-      <div class="relative z-0 w-full mb-6 group">
-        <div class="grid md:grid-cols-2 md:gap-6 my-4">
-          <div class="relative z-0 w-full mb-6 group">
-            <Input bind:value={model.title} bind:errors={status.title.errors} placeholder="Title" label="Title" />
-          </div>
 
-          <div class="relative z-0 w-full mb-6 group">
-            <Input bind:value={model.sku} bind:errors={status.sku.errors} placeholder="SKU" label="SKU" />
-          </div>
-          </div>
-        <div class="grid md:grid-cols-2 md:gap-6 my-4">
-          <div class="relative z-0 w-full mb-6 group">
-            <Label>Price</Label>
-            <NumberInput bind:value={model.price} min="0"  placeholder="Price" label="Price" />
-          </div>
-          <div class="relative z-0 w-full mb-6 group">
-            <Label>Sale Price</Label>
-            <NumberInput
-              bind:value={model.salePrice}
-              bind:errors={status.price.errors}
-              min="0"
-            />
-          </div>
-        </div>
-        <div class="relative z-0 w-full mb-6 group">
-          <ProductCategorySelector
-            bind:model={model.productCategory}
-            label="Categories"
-            productId={model.uuid}
-            saveOnSelect={false}
-          />
-        </div>
-      </div>
-      <div class="w-full mb-6">
-        <div class="flex justify-center w-full">
-          <Image
-            model={model.thumb}
-            title="Main Image"
-            maxNumberOfFiles={1}
-            module="Product"
-            itemId={model.uuid}
-            type="main"
-            on:allUploadsComplete={(e) => {
-              model.thumb = e.detail;
-            }}
-          />
-        </div>
-
-        <div class="pt-6">
-          <h3>Tags</h3>
-          <Tags bind:model={model.tag} itemId={model.uuid} saveOnAction={false} />
-        </div>
-
-        <div class="pt-6">
-          {#if model}
-            <DropDown
-              on:opened={(e) => {
-                const opened = e.detail;
-                if (opened) {
-                  getManufacturers();
-                }
-              }}
-              placeholder="Select manufacturer"
-              label="Manufacturers"
-              bind:searchText={searchManufacturerText}
-              bind:value={model.manufacturer}
-              bind:key={model.manufacturer.title}
-              values={manufacturers.map((item) => ({
-                key: item.title,
-                value: item,
-              }))}
-            />
+  <form on:submit|preventDefault={save}>
+  <div class="grid grid-cols-12 gap-2.5 my-4">
+    <div class="lg:col-span-2 md:col-span-4">
+  <Sidebar class="w-48 fixed">
+    <SidebarWrapper>
+      <SidebarGroup>
+        <SidebarItem href={`#basic`} on:click={goToSection} label="Basic"></SidebarItem>
+        <SidebarItem href={`#pricing`} on:click={goToSection} label="Pricing"></SidebarItem>
+        <SidebarItem href={`#description`} on:click={goToSection} label="Descriptions"></SidebarItem>
+        <SidebarItem href={`#taxonomy`} on:click={goToSection} label="Taxonomy"></SidebarItem>
+        <SidebarItem href={`#image`} on:click={goToSection} label="Image"></SidebarItem>
+        <SidebarItem href={`#inventory`} on:click={goToSection} label="Inventory"></SidebarItem>
+        <SidebarItem href={`#storefront`} on:click={goToSection} label="Storefront"></SidebarItem>
+        <SidebarItem href={`#purchasability`} on:click={goToSection} label="Purchasability"></SidebarItem>
+        {#if getGroupFields('extras').length > 0}
+        <SidebarItem href={`#extra`} on:click={goToSection} label="Extras"></SidebarItem>
           {/if}
-        </div>
-        <div class="my-6">
-          <SalesChannelsSelector
-            model={model.salesChannel}
-            itemId={model.uuid}
-            saveOnSelect={true}
-            onSave={saveSalesChannel}
-          />
-        </div>
+      </SidebarGroup>
+    </SidebarWrapper>
+  </Sidebar>
+    </div><!-- END LEFT SIDEBAR -->
+    <div class="lg:col-span-10 md:col-span-8">
+      <div class="my-4">
+        <Card id="basic">
+          <svelte:fragment slot="header">Basic Information</svelte:fragment>
+          <Basic bind:model={model} bind:errors={errors} fields={getGroupFields('main')} />
+        </Card>
       </div>
-    </div>
 
-    <div class="relative z-0 w-full mb-6 group">
-      <RichText id="description" bind:model={model.description} field={getField('description')} />
-      <ErrorMessage errors={status.description.errors} />
-    </div>
+      <div class="my-4" id="pricing">
+        <Card>
+          <svelte:fragment slot="header">Pricing</svelte:fragment>
+          <Pricing bind:model={model} bind:errors={errors} fields={getGroupFields('pricing')} />
+        </Card>
+      </div>
 
-    <div class="relative z-0 w-full mb-6 group">
-      <RichText id="description_long" bind:model={model.description_long} field={getField('description_long')} />
-    </div>
+      <div class="my-4">
+        <Card id="description">
+          <svelte:fragment slot="header">Description</svelte:fragment>
+          <Description bind:model={model} bind:errors={errors} fields={getGroupFields('descriptions')} />
+        </Card>
+      </div>
+
+      <div class="my-4">
+        <Card id="taxonomy">
+          <svelte:fragment slot="header">Taxonomy (categories + tags + sales channels + manufacturer)</svelte:fragment>
+          <Taxonomy bind:model={model} bind:errors={errors} />
+        </Card>
+      </div>
+
+      <div class="my-4">
+        <Card id="image">
+          <svelte:fragment slot="header">Main Image</svelte:fragment>
+          <Image bind:model={model} bind:errors={errors} onSave={save} />
+        </Card>
+      </div>
+
+      <div class="my-4">
+        <Card id="inventory">
+          <svelte:fragment slot="header">Inventory</svelte:fragment>
+          <Inventory bind:model={model} bind:errors={errors} fields={getGroupFields('inventory')} />
+        </Card>
+      </div>
+
+      <div class="my-4">
+        <Card id="storefront">
+          <svelte:fragment slot="header">Storefront details</svelte:fragment>
+          <Storefront bind:model={model} bind:errors={errors} fields={getGroupFields('storefront')} />
+        </Card>
+      </div>
+
+      <div class="my-4">
+        <Card id="purchasability">
+          <svelte:fragment slot="header">Purchasability</svelte:fragment>
+          <Purchasability bind:model={model} bind:errors={errors} fields={getGroupFields('purchasability')} />
+        </Card>
+      </div>
+
+      {#if getGroupFields('extras').length > 0}
+      <div class="my-4">
+        <Card id="extra">
+          <svelte:fragment slot="header">Extras</svelte:fragment>
+          <Extra bind:model={model} bind:errors={errors} fields={getGroupFields('extras')} />
+        </Card>
+      </div>
+        {/if}
+  </div><!-- END RIGHT -->
+  </div>
+
+<div class="my-6">
+  <BottomNav position="fixed" classInner="grid-cols-3">
+    <BottomNavItem btnName="Save" type="submit">
+      <FileCheckOutline class="w-5 h-5 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-500"  />
+    </BottomNavItem>
+
+    <BottomNavItem btnName="Preview">
+      <ArrowUpRightFromSquareOutline class="w-5 h-5 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-500"  />
+    </BottomNavItem>
+
+    <BottomNavItem btnName="Delete">
+      <Trash class="w-5 h-5 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-500"  />
+    </BottomNavItem>
+  </BottomNav>
+</div>
   </form>
 
-  <div
-    class="fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200 dark:bg-gray-700 dark:border-gray-600"
-  >
-    <div class="grid h-full max-w-lg grid-cols-1 mx-auto font-medium">
-      {#if loading}
-        <button
-          class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group"
-        >
-          <Loading />
-        </button>
-      {:else}
-        <button
-          on:click={() =>
-            onSubmitWithLoader({
-              ...model,
-              price: parseFloat(model.price),
-            })}
-          type="button"
-          class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group"
-        >
-          <svg
-            class="w-6 h-6 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500"
-            xmlns="http://www.w3.org/2000/svg"
-            width="32"
-            height="32"
-            viewBox="0 0 24 24"
-            ><path
-              fill="currentColor"
-              d="M21 7v12q0 .825-.588 1.413T19 21H5q-.825 0-1.413-.588T3 19V5q0-.825.588-1.413T5 3h12l4 4Zm-9 11q1.25 0 2.125-.875T15 15q0-1.25-.875-2.125T12 12q-1.25 0-2.125.875T9 15q0 1.25.875 2.125T12 18Zm-6-8h9V6H6v4Z"
-            /></svg
-          >
-          <span
-            class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500"
-            >Save</span
-          >
-        </button>
-      {/if}
-    </div>
-  </div>
 
-  <div class="w-full p-2 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <Fields fields={secondaryFields} bind:model module="Product" itemId={model.uuid} />
-  </div>
+
+
 {/if}

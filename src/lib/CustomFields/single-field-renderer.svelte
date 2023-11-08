@@ -23,11 +23,17 @@
     import Repeater from "./repeater-field-renderer.svelte";
     import RichText from "../DynamicFields/fields/richtext.svelte";
     import MarkDown from './field-types/markdown.svelte';
+    import type {ZodError} from "zod";
+    import FormError from "../Shared/form-error.svelte";
 
     export let field: Partial<IDynamicFieldConfigBlueprint>;
     export let indentNested = false;
     export let indentNestedClass = 'ml-3';
+    export let errors: Partial<ZodError>;
     export let model: any;
+    export let outerClass = `my-4 border border-solid border-gray-500 px-4 ${field.fieldSettings && field.fieldSettings['perRow'] ? `grid gap-2 grid-cols-${field.fieldSettings['perRow']}` : ''}`;
+    export let useHeadingsForNestedFields = true;
+
     let fields,
         itemSelectorConfig: IItemSelectorConfig,
         itemSelectorSelection = null;
@@ -176,21 +182,25 @@
 </script>
 
 {#if ['input', 'text', 'string', 'number'].indexOf(field.type) !== -1}
+
     <Label>{field.label}</Label>
     <Input id={field.varName || field.name}
            bind:value={model}
            type={field.type}
            label={field.label}
+           disabled={field.disabled || false}
            placeholder={field.placeholder || field.label}
     />
     {#if field.hint}
         <Helper class="text-gray-500 my-2">{field.hint}</Helper>
     {/if}
+    <FormError {errors} key={field.varName} />
 {:else if ['boolean', 'switch', 'toggle'].indexOf(field.type) !== -1}
     <Checkbox bind:checked={model} {color}>{field.label}</Checkbox>
     {#if field.hint}
         <Helper class="text-gray-500">{field.hint}</Helper>
     {/if}
+    <FormError {errors} key={field.varName} />
 {:else if ['textarea', 'description'].indexOf(field.type) !== -1}
     <Label>{field.label}</Label>
     <Textarea id={field.varName || field.name}
@@ -198,6 +208,7 @@
               type={field.type}
               label={field.label}
               placeholder={field.placeholder || field.label} ></Textarea>
+    <FormError {errors} key={field.varName} />
 {:else if field.type === 'select'}
     <Label>{field.label}</Label>
 
@@ -206,6 +217,7 @@
             <option value={option.value}>{option.label}</option>
         {/each}
     </Select>
+    <FormError {errors} key={field.varName} />
 {:else if field.type === 'select'}
     <MultiSelect items={items} bind:value={model} size='lg' let:clear let:item
                  on:selected={onSelection}>
@@ -213,6 +225,7 @@
             {item.name}
         </Badge>
     </MultiSelect>
+    <FormError {errors} key={field.varName} />
 {:else if field.type === 'image'}
     <Image
             model={model}
@@ -225,7 +238,7 @@
               model = e.detail;
             }}
     />
-
+    <FormError {errors} key={field.varName} />
 {:else if field.type === 'item-selector'}
 
     <ItemSelectorModal
@@ -273,18 +286,30 @@
     </div>
 {:else if ['group', 'nested'].indexOf(field.type) !== -1}
     <CustomFields fields={field.fields} let:field={child} fieldPrimaryKey="varName"
-                  bind:model={model}
-                  outerClass={`my-4 border border-solid border-gray-500 px-4 ${field.fieldSettings && field.fieldSettings['perRow'] ? `grid gap-2 grid-cols-${field.fieldSettings['perRow']}` : ''}`}>
+                  bind:model={model} bind:errors={errors}
+                  {outerClass}>
+
         <svelte:fragment slot="heading">
+            {#if useHeadingsForNestedFields}
             <Heading tag="h5">{field.label}</Heading>
+            {/if}
         </svelte:fragment>
+
     </CustomFields>
 {:else if field.type === 'repeater'}
 <Repeater bind:model={model} fields={field.fields} {field} />
     {:else if ['richText', 'rich', 'richtext'].indexOf(field.type) !== -1}
     <RichText id={field.varName} bind:model={model} {field} />
+    <FormError {errors} key={field.varName} />
 {:else if ['markDown', 'md', 'markdown'].indexOf(field.type) !== -1}
-    <MarkDown bind:model={model} id={field.varName} />
+    <MarkDown bind:model={model} {field}>
+
+    <svelte:fragment slot="heading">{field.label}</svelte:fragment>
+    <svelte:fragment slot="hint">{field.hint || ''}</svelte:fragment>
+
+
+    </MarkDown>
+    <FormError {errors} key={field.varName} />
 {:else if field.schema && Array.isArray(fields)}
     <div class={`${indentNested ? indentNestedClass : ''}`}>
     <Renderer fields={fields} bind:model={model}  />

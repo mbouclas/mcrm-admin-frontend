@@ -34,15 +34,14 @@
         meta = {},
         allowedFileTypes = ['image/*', '.pdf'],
         maxNumberOfFiles = 10,
-        endpoint = `${import.meta.env.VITE_API_URL}file-uploader/upload`
-
-    ;
+        endpoint = `${import.meta.env.VITE_API_URL}file-uploader/upload`;
 
     export function close() {
         uppyDashboard.setState({files: []});
 
     }
     export let options: UppyOptions = {};
+
     onMount(() => {
         const user = JSON.parse(localStorage.getItem('user'));
         const companionUrl = `${import.meta.env.PUBLIC_BASE_URL}companion`;
@@ -138,5 +137,5 @@
 
 <slot></slot>
 
-<main id={`${id}-uploader-container`} class=" py-2"></main>
+<div {id} class=" py-2"></div>
 

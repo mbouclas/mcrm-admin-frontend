@@ -11,6 +11,7 @@ export class SideBarMenuItem {
     public parent = null;  // Add parent reference
     public isActive = false;
     public href = null;
+    public regexMatch: string = null;//use it to match the route with regex OR children like edit product, page etc
 
     constructor(config: Partial<SideBarMenuItem>) {
         for (const key in config) {
@@ -41,11 +42,12 @@ export const sideBarMenuItems: SideBarMenuItem[] = [
                 label: 'Products',
                 icon: null,
                 route: '/catalogue/products/list',
+                regexMatch: "^/catalogue/products/[^/]+$",
             }),
             new SideBarMenuItem({
                 label: 'Categories',
                 icon: null,
-                route: '/catalogue/products/categories',
+                route: '/catalogue/categories',
             }),
             new SideBarMenuItem({
                 label: 'Properties',
@@ -82,6 +84,7 @@ export const sideBarMenuItems: SideBarMenuItem[] = [
                 label: 'Pages',
                 icon: null,
                 route: '/cms/pages/list',
+                regexMatch: "^/cms/pages/[^/]+$",
             }),
             new SideBarMenuItem({
                 label: 'Categories',
@@ -94,6 +97,11 @@ export const sideBarMenuItems: SideBarMenuItem[] = [
         label: 'Website',
         icon: null,
         children: [
+            new SideBarMenuItem({
+                label: 'Menus',
+                icon: null,
+                route: '/menus',
+            }),
             new SideBarMenuItem({
                 label: 'Editable Regions',
                 icon: null,

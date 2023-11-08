@@ -47,12 +47,12 @@
   });
 
   onMount(async () => {
-    gridInstance.on('ready', () => {
+/*    gridInstance.on('ready', () => {
       const checkboxPlugin = gridInstance.config.plugin.get('selectRow');
       checkboxPlugin.props.store.on('updated', (state) => {
         selectedRows = state.rowIds;
       });
-    });
+    });*/
   });
 
   $: console.log(queryString.parse($location.search));
@@ -203,7 +203,7 @@
 
                 <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                   <a
-                    href={`/catalogue/properties/${item.uuid}`}
+                    href="#" on:click|preventDefault={() => navigate(`/catalogue/properties/${item.uuid}`)}
                     class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer"
                   >
                     {item.title}

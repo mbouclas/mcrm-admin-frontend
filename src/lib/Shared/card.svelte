@@ -1,9 +1,11 @@
 <script lang="ts">
 
     import {Heading, Hr} from "flowbite-svelte";
+    import {v4} from "uuid";
+    export let id: string = v4();
 </script>
 
-<div class="bg-gray-800 text-gray-400 rounded-lg border border-gray-700 divide-gray-700 shadow-md flex flex-col p-4">
+<div {id} class="bg-gray-800 text-gray-400 rounded-lg border border-gray-700 divide-gray-700 shadow-md flex flex-col p-4">
 
     <div class={`${$$slots.headerActions ? 'grid grid-cols-2 gap-2.5' : ''}`}>
         {#if $$slots.header}
