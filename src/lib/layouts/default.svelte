@@ -14,6 +14,7 @@
   import GateRoutes from '../Gate/routes.svelte';
   import SettingRoutes from '../Setting/routes.svelte';
   import EditableRegions from '../EditableRegions/routes.svelte';
+  import Menu from '../Menu/routes.svelte';
   import Area51 from '../area51/routes.svelte';
   import Analytics from '../Analytics/routes.svelte';
   import { BootService } from '../Shared/boot.service';
@@ -22,7 +23,7 @@
   import type { INotification } from '../stores';
   import { fly } from 'svelte/transition';
   import { flip } from 'svelte/animate';
-
+  import QuickNavigation from '../Shared/quick-jump-to.svelte';
   import { v4 } from 'uuid';
   import Toast from '../Shared/Toast.svelte';
   import Dashboard from "../Dashboard/index.svelte";
@@ -67,7 +68,7 @@
 
   let open = false;
 </script>
-
+<QuickNavigation />
 {#if showNotifications && showNotifications.length !== 0}
   <div class="notificator-wrapper">
     {#each showNotifications as notification, index (notification.id)}
@@ -140,6 +141,10 @@
 
           <PrivateRoute path="analytics/*" let:location>
             <Analytics />
+          </PrivateRoute>
+
+          <PrivateRoute path="menus/*" let:location>
+            <Menu />
           </PrivateRoute>
         </div>
       </div>

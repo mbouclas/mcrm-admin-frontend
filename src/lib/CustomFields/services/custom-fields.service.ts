@@ -179,6 +179,13 @@ export const CustomFieldTypes: ICustomFieldType[] = [
                     }
                 ],
             },
+            {
+                varName: 'displayProperty',
+                label: 'Display Property',
+                placeholder: 'Display Property',
+                type: 'text',
+                default: 'title',
+            }
         ]
     },
     {

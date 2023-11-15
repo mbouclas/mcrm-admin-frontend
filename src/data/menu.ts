@@ -101,6 +101,7 @@ export const sideBarMenuItems: SideBarMenuItem[] = [
                 label: 'Menus',
                 icon: null,
                 route: '/menus',
+                regexMatch: "^/menus/[^/]+$",
             }),
             new SideBarMenuItem({
                 label: 'Editable Regions',

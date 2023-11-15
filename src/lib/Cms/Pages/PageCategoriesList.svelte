@@ -3,15 +3,18 @@
   import SimpleTreeSelector from '../../Shared/SimpleTreeSelector.svelte';
 
   import { onMount } from 'svelte';
+  import {simpleTreeSelectorStore} from "../../stores";
   export let model = [];
 
   const service = new PageCategoryService();
 
-  let tree = [];
+  let tree = [],
+  ready = false;
   let movingNode = null;
 
   onMount(async () => {
     tree = await service.tree();
+      ready = true;
   });
 
   function handleEdit(node) {
@@ -20,24 +23,48 @@
 
   const handleMove = async (node, parentNode = null) => {
     const result = await service.move(node.uuid, parentNode?.uuid || null);
+
+      simpleTreeSelectorStore.update((state) => {
+          state.value = tree;
+          state.action = 'itemAdded';
+          return state;
+      });
     return result;
   };
 
   const handleDelete = async (node, deleteType: string) => {
     const newTree = await service.deleteOne(node.uuid, deleteType);
     tree = newTree;
+
+      simpleTreeSelectorStore.update((state) => {
+          state.value = tree;
+          state.action = 'itemAdded';
+          return state;
+      });
     return null;
   };
 
   const handleCreate = async (data) => {
     const newTree = await service.store(data);
     tree = newTree;
+
+      simpleTreeSelectorStore.update((state) => {
+          state.value = tree;
+          state.action = 'itemAdded';
+          return state;
+      });
     return null;
   };
 
   const handleUpdate = async (uuid, data) => {
     const newTree = await service.update(uuid, data);
     tree = newTree;
+
+      simpleTreeSelectorStore.update((state) => {
+          state.value = tree;
+          state.action = 'itemAdded';
+          return state;
+      });
     return null;
   };
 
@@ -58,7 +85,7 @@
     console.log(type, node.uuid);
   }
 </script>
-
+{#if ready}
 <SimpleTreeSelector
   module="page"
   bind:tree
@@ -74,3 +101,4 @@
   {handleDelete}
   bind:movingNode
 />
+    {/if}

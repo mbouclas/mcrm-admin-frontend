@@ -22,7 +22,12 @@ export interface IFilters {
   date?: string;
 }
 
-export const gridRowsStore = writable(null);
+export interface ISimpleTreeSelectorState {
+  action: 'goTo' | 'select' | 'moveComplete' | 'reordered' |'itemAdded' | 'itemRemoved';
+  value: any;
+}
+
+export const simpleTreeSelectorStore = writable<Partial<ISimpleTreeSelectorState>>({});
 export const user = writable(null);
 export const app = writable<IAppState>(null);
 export const notificationsStore = writable<INotification[]>([]);
@@ -39,4 +44,8 @@ export function setNotificationAction(notification: INotification | null) {
     const newArr = [{ ...notification, expiration: notification.expiration || 3000 }, ...arr];
     return newArr;
   });
+}
+
+export function resetSimpleTreeSelectorState() {
+  simpleTreeSelectorStore.set({});
 }

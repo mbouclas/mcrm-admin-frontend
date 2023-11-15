@@ -61,7 +61,7 @@ export class CustomFieldModel  {
             }
         }
 
-        if (config.schema) {
+        if (config && config.schema) {
             this.fields = schemaToFields(config.schema);
         }
 

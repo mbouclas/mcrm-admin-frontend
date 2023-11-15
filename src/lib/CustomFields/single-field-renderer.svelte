@@ -96,7 +96,12 @@
             field.fieldSettings.selectMode = 'single';
         }
 
-        itemSelectorSelection = (field.fieldSettings.selectMode === 'single') ? {} : [];
+
+        if (field.fieldSettings.selectMode === 'single') {
+            itemSelectorSelection = model || {};
+        } else {
+            itemSelectorSelection = model || [];
+        }
     }
 
 
@@ -241,6 +246,7 @@
     <FormError {errors} key={field.varName} />
 {:else if field.type === 'item-selector'}
 
+<div class="grid grid-cols-2">
     <ItemSelectorModal
             config={itemSelectorConfig}
             on:select={onItemSelectorSelection}
@@ -248,12 +254,13 @@
             label={field.label}
             selectMode={field.fieldSettings ? field.fieldSettings['selectMode'] : 'single'}
     >
-        <Button class="gap-1.5">
-            {field.label}
+        <Button color="purple" class="gap-1.5">
+            Select {field.label}
             <ArrowTopRightOnSquare />
         </Button>
     </ItemSelectorModal>
     <div>
+
 
         {#if Array.isArray(itemSelectorSelection) && itemSelectorSelection.length > 0}
             <p>Selected Items:</p>
@@ -263,8 +270,8 @@
                     <li>
                         <Button on:click={removeItemFromItemSelector.bind(this, idx)} class="gap-1.5">
                             {formatItemSelectorLabel(item)}
-                        <Trash color="red" />
-                    </Button>
+                            <Trash color="red" />
+                        </Button>
                     </li>
                 {/each}
             </ul>
@@ -274,9 +281,9 @@
             {#if itemSelectorSelection && Object.keys(itemSelectorSelection).length !== 0}
                 <p>Selected Item</p>
 
-                 <Button on:click={removeItemFromItemSelector.bind(this, null)} class="gap-1.5">
-                     {formatItemSelectorLabel(itemSelectorSelection)} <Trash color="red" />
-            </Button>
+                <Button on:click={removeItemFromItemSelector.bind(this, null)} class="gap-1.5">
+                    {formatItemSelectorLabel(itemSelectorSelection)} <Trash color="red" />
+                </Button>
 
             {/if}
 
@@ -284,7 +291,10 @@
 
         {/if}
     </div>
+</div>
+
 {:else if ['group', 'nested'].indexOf(field.type) !== -1}
+
     <CustomFields fields={field.fields} let:field={child} fieldPrimaryKey="varName"
                   bind:model={model} bind:errors={errors}
                   {outerClass}>

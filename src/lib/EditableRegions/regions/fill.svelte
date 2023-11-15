@@ -6,7 +6,7 @@
     import Repeater from './fill-repeater.svelte';
     import Group from './fill-group.svelte';
     import Executor from './fill-executor.svelte';
-    import {Heading, Helper, Breadcrumb, BreadcrumbItem, Button} from "flowbite-svelte";
+    import {Breadcrumb, BreadcrumbItem, Button} from "flowbite-svelte";
 
     const params = useParams();
     let region: IEditableRegion,

@@ -25,6 +25,11 @@
         og_description: '',
       };
     }
+
+    if (!category.thumb) {
+      category.thumb = {};
+    }
+
     if (category.productCategoryParent) {
       parentCategoryName = category.productCategoryParent.title;
     }

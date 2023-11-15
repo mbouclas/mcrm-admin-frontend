@@ -2,7 +2,7 @@
     import type {IDynamicFieldConfigBlueprint} from "../DynamicFields/types";
     import CustomFields from "./group-field-renderer.svelte";
     import {Button, Heading} from "flowbite-svelte";
-    import {Plus} from "svelte-heros-v2";
+    import {Bars3, Plus} from "svelte-heros-v2";
     import {setupModelFromFields} from "../helpers/data";
     import {onMount} from "svelte";
 
@@ -27,6 +27,7 @@
 </div>
 
 {#each model as item}
+
     <CustomFields fields={fields} let:field={child} fieldPrimaryKey="varName"
                   bind:model={item}
                   outerClass={`my-4 border border-solid border-gray-500 px-4 ${field.fieldSettings && field.fieldSettings['perRow'] ? `grid gap-2 grid-cols-${field.fieldSettings['perRow']}` : ''}`}>

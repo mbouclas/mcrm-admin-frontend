@@ -11,7 +11,7 @@
   import UploadImageFromUrl from './upload-image-from-url.svelte';
   import {v4} from "uuid";
   const uploadIdPrefix = 'upload-';
-  export let model;
+  export let model = {};
   export let itemId;
   export let module = 'Product';
   export let title = 'Image';

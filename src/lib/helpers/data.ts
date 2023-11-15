@@ -148,3 +148,19 @@ export function getPropertyFromObject(key: string, obj?: any) {
 
     return getPropertyFromObject(keys.join('.'), nestedObject); // Recursive call with the remaining keys
 }
+
+
+export function reorderArray(arr, oldIndex, newIndex) {
+    // Copy input array to avoid mutation
+    let newArray = [...arr];
+    // Check indexes
+    if (newIndex >= newArray.length) {
+        let k = newIndex - newArray.length;
+        while ((k--) + 1) {
+            newArray.push(undefined);
+        }
+    }
+    // Reorder array
+    newArray.splice(newIndex, 0, newArray.splice(oldIndex, 1)[0]);
+    return newArray;
+}

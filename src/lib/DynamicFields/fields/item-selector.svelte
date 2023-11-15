@@ -256,7 +256,7 @@
                       checked={selectedItems.includes(item)}
               />
             {:else if selectMode === 'single'}
-              <button
+              <button type="button"
                       on:click={selectItem.bind(this, item)}
                       class="text-gray-500 dark:text-gray-400 hover:!text-blue-700 hover:bg-gray-500 hover:rounded p-2"
               >

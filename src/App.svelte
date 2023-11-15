@@ -1,11 +1,10 @@
 <script lang="ts">
-  import { Router, Route, Link } from "mcrm-svelte-navigator";
+  import { Router, Route } from "mcrm-svelte-navigator";
   import Login from "./lib/Auth/Login.svelte";
   import Logout from "./lib/Auth/Logout.svelte";
   import PrivateRoute from "./lib/Auth/PrivateRoute.svelte";
   import DefaultLayout from "./lib/layouts/default.svelte";
 
-  import { user } from "./lib/stores";
 
 </script>
 

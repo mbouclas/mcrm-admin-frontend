@@ -9,6 +9,7 @@
     export let wrapperClass = 'mb-4 mt-4';
     export let outerClass = undefined;
     export let errors: Partial<ZodError> = {};
+    export let useHeadingsForNestedFields = true;
 
 </script>
 {#if typeof model !== 'undefined'}
@@ -18,7 +19,7 @@
 {#each fields as field}
     <div class={wrapperClass}>
         <slot {field}>
-            <FieldRenderer {field} bind:model={model[field[fieldPrimaryKey]]} bind:outerClass={outerClass} indentNested={true} bind:errors={errors} />
+            <FieldRenderer {field} bind:model={model[field[fieldPrimaryKey]]} bind:outerClass={outerClass} {useHeadingsForNestedFields} indentNested={true} bind:errors={errors} />
         </slot>
     </div>
 {/each}

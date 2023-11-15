@@ -25,3 +25,15 @@ export interface IMcrmDi {
   category?: string;
   metaData?: IGenericObject;
 }
+
+export interface NestedSortableObject {
+    order: number;
+    label: string;
+    children: NestedSortableObject[];
+}
+
+export enum TreeDeleteType {
+  DELETE_CHILDREN = 'DELETE_CHILDREN',
+  MOVE_CHILDREN_TO_PARENT = 'MOVE_CHILDREN_TO_PARENT',
+  MOVE_CHILDREN_TO_ROOT = 'MOVE_CHILDREN_TO_ROOT',
+}

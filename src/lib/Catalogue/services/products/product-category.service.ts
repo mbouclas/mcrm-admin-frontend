@@ -39,7 +39,7 @@ export class ProductCategoryService extends BaseHttpService {
   async deleteOne(uuid: string, deleteType: string) {
     return await super.delete(`product-category/${uuid}?deleteType=${deleteType}`, {
       successMessage: 'Deleted successfully',
-      errorMessage: 'Failed to delete category',
+      errorMessage: 'Failed to delete item',
     });
   }
 
