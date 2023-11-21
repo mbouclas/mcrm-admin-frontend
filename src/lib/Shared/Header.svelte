@@ -3,23 +3,16 @@
     SidebarGroup,
     Sidebar,
     SidebarWrapper,
-    SidebarItem, SidebarBrand, Button,
+    SidebarItem, SidebarBrand, Button
   } from 'flowbite-svelte';
 
   import { user } from '../stores';
   import { AuthService } from '../Auth/auth.service';
   import logo from '../../assets/logo-2.svg';
-  import {
-    ArrowRightToBracketSolid,
-    ChartPieSolid,
-    FileEditSolid,
-    GridSolid,
-    MailBoxSolid,
-    UserSolid
-  } from "flowbite-svelte-icons";
+
   import { sideBarMenuItems} from "../../data/menu";
   import type { SideBarMenuItem} from "../../data/menu";
-  import {ArrowRight, ChevronLeft, ChevronRight} from "svelte-heros-v2";
+  import { ChevronLeft, ChevronRight} from "svelte-heros-v2";
   import {navigate, useLocation} from "mcrm-svelte-navigator";
 
 
@@ -157,6 +150,7 @@
   }
 
 </script>
+
 <Sidebar {activeUrl} class="bg-gray-800 h-screen">
   <SidebarWrapper>
 

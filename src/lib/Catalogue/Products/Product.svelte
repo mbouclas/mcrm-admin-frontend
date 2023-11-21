@@ -11,7 +11,7 @@
   import {ProductModel} from "../models/product.model";
   import Gallery from './tabs/Gallery.svelte';
   import AdvancedPricing from './tabs/AdvancedPricing.svelte';
-
+  import PreviewNavbar from '../../Previews/preview-navbar.svelte';
 
 
   const s = new ProductsService();
@@ -130,6 +130,7 @@
 
 <!-- <Modals /> -->
 {#if ready}
+  <PreviewNavbar itemId={model.uuid} module="Product" />
 <div>
   <Tabs tabStyle="underline" class="mb-4">
     <TabItem open title="General" tabStyle="custom" {customActiveClass} {customInActiveClass}>

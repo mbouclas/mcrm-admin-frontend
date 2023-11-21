@@ -116,6 +116,13 @@ $: if (!loading) {
         selected = originalSelection;
     }
 
+    async function toggleActiveStatus(uuid: string) {
+        const variantIdx = items.findIndex((item) => item.uuid === uuid);
+        const variant = items[variantIdx];
+        await new VariantsService().update(uuid, {active: !variant.active});
+        items[variantIdx].active  = !items[variantIdx].active;
+    }
+
 
 </script>
 
@@ -170,7 +177,40 @@ $: if (!loading) {
                     <TableBodyCell>{item.name}</TableBodyCell>
                     <TableBodyCell>{item.variantId}</TableBodyCell>
                     <TableBodyCell>{moneyFormat(item.price)}</TableBodyCell>
-                    <TableBodyCell>{item.active ? 'Yes' : 'No'}</TableBodyCell>
+                    <TableBodyCell>
+                        <Button
+                                title="Status"
+                                on:click={toggleActiveStatus.bind(this, item.uuid)}
+                                type="button"
+                                class="text-gray-500 transition-colors duration-200 dark:hover:text-yellow-500 dark:text-gray-300 hover:text-yellow-500 focus:outline-none"
+                        >
+                        {#if !item.active}
+                            <svg
+                                    class="text-red-500"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="32"
+                                    height="32"
+                                    viewBox="0 0 24 24"
+                            ><path
+                                    fill="currentColor"
+                                    d="M17 7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h10c2.76 0 5-2.24 5-5s-2.24-5-5-5zM7 15c-1.66 0-3-1.34-3-3s1.34-3 3-3s3 1.34 3 3s-1.34 3-3 3z"
+                            /></svg
+                            >
+                        {:else}
+                            <svg
+                                    class="text-green-500"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="32"
+                                    height="32"
+                                    viewBox="0 0 24 24"
+                            ><path
+                                    fill="currentColor"
+                                    d="M17 7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h10c2.76 0 5-2.24 5-5s-2.24-5-5-5zm0 8c-1.66 0-3-1.34-3-3s1.34-3 3-3s3 1.34 3 3s-1.34 3-3 3z"
+                            /></svg
+                            >
+                        {/if}
+                        </Button>
+                    </TableBodyCell>
                     <TableBodyCell>
                         <div class="gap-2.5 grid grid-cols-1">
                             {#if Array.isArray(item.property) && item.property.length > 0}

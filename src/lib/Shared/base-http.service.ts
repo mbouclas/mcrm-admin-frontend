@@ -46,6 +46,7 @@ export class BaseHttpService {
       const query =
         queryParams && Object.keys(queryParams).length > 0 ? `?${this.objectToQueryParams(queryParams)}` : '';
       const res = await fetch(`${this.apiUrl}${url}${query}`, { headers });
+
       return await res.json();
     } catch (err) {
       if (options?.errorMessage) {

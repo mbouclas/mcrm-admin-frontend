@@ -19,7 +19,7 @@
   import Analytics from '../Analytics/routes.svelte';
   import { BootService } from '../Shared/boot.service';
   import { onMount } from 'svelte';
-  import { notificationsStore } from '../stores';
+  import {notificationsStore, siteHeaderStore} from '../stores';
   import type { INotification } from '../stores';
   import { fly } from 'svelte/transition';
   import { flip } from 'svelte/animate';
@@ -33,6 +33,7 @@
   }
 
   let url,
+          title = 'Mcrm',
     showNotifications: ExtendedINotification[] = [];
   const promise = new BootService().boot();
 
@@ -64,10 +65,15 @@
     url = $location.pathname;
   }
 
-  location.subscribe((r) => console.log(r));
+  siteHeaderStore.subscribe((val) => {
+    title = val.title || 'Mcrm';
+  });
 
   let open = false;
 </script>
+<svelte:head>
+  <title>{title}</title>
+</svelte:head>
 <QuickNavigation />
 {#if showNotifications && showNotifications.length !== 0}
   <div class="notificator-wrapper">

@@ -11,7 +11,6 @@
     export let fields: IDynamicFieldConfigBlueprint[] = [];
     let ready = false;
 
-    console.log(fields)
     onMount(() => {
         ready = true;
     });

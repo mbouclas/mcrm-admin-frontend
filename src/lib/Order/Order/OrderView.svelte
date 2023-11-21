@@ -28,7 +28,7 @@
 
   import { formatDate } from '../../helpers/dates.js';
   import { moneyFormat } from '../../helpers/money';
-  import { app } from '../../stores';
+  import {app, updateSiteTitle} from '../../stores';
 
   import ProductAndVariantSelector from '../../Catalogue/Products/ProductAndVariantSelector.svelte';
   import {FileService} from "../../Shared/services/file.service";
@@ -64,6 +64,7 @@
         model.address = [];
       } else {
         model = await s.findOne($params.id, ['*']);
+        updateSiteTitle(`Order ${model.orderId}`);
       }
     }
   });
@@ -192,6 +193,7 @@
     <Loading />
   </div>
 {:else}
+
   <section class="bg-white dark:bg-gray-900">
     <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
       <div class="mx-auto max-w-screen-sm text-center lg:mb-16 mb-8">
@@ -250,7 +252,7 @@
           </Select>
         </div>
       </div>
-      <div class={lockEdit && 'opacity-20 pointer-events-none'}>
+      <div >
         <div class="grid gap-8 md:grid-cols-2">
           {#if model.user}
             <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
@@ -276,7 +278,7 @@
                   label="Select Shipping address"
                   selectMode="single"
                 >
-                  <Button>Edit</Button>
+                  <Button disabled={lockEdit}>Edit</Button>
                 </ItemSelectorModal>
               </div>
 
@@ -327,7 +329,7 @@
                   label="Select Billing address"
                   selectMode="single"
                 >
-                  <Button>Edit</Button>
+                  <Button disabled={lockEdit}>Edit</Button>
                 </ItemSelectorModal>
               </div>
               {#if billingAddress}
@@ -364,7 +366,7 @@
                 label="Select Payment Method"
                 selectMode="single"
               >
-                <Button>Edit</Button>
+                <Button disabled={lockEdit}>Edit</Button>
               </ItemSelectorModal>
             </div>
 
@@ -392,7 +394,7 @@
                 label="Select Shipping Method"
                 selectMode="single"
               >
-                <Button>Edit</Button>
+                <Button disabled={lockEdit}>Edit</Button>
               </ItemSelectorModal>
             </div>
 
@@ -454,12 +456,12 @@
 
                       <td class="px-6 py-4">
                         <div class="flex items-center justify-between">
-                          <button
+                          <button disabled={lockEdit}
                             on:click={() => decreaseQuantity(index)}
                             class="bg-red-500 text-white px-2 py-1 rounded">-</button
                           >
                           {item.quantity}
-                          <button
+                          <button disabled={lockEdit}
                             on:click={() => increaseQuantity(index)}
                             class="bg-green-500 text-white px-2 py-1 rounded">+</button
                           >
@@ -471,8 +473,9 @@
                       </td>
 
                       <td class="px-6 py-4">
-                        <button on:click={() => removeItem(index)} class="text-gray-500"><Trash color="white" /></button
-                        >
+
+                        <Button disabled={lockEdit} on:click={() => removeItem(index)} class="text-gray-500"><Trash color="white" /></Button>
+
                         {#if item.metaData && Array.isArray(item.metaData.uploadedFiles)}
                           <Button class="relative" size="sm" on:click={showAttachmentsModal.bind(this, item)}>
                             <svg  class="w-6 h-6"
@@ -493,6 +496,7 @@
   </section>
 {/if}
 
+<!--
 <div
   class={`fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200 dark:bg-gray-700 dark:border-gray-600 ${
     lockEdit && 'opacity-60'
@@ -530,3 +534,4 @@
     {/if}
   </div>
 </div>
+-->

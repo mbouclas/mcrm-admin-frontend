@@ -24,8 +24,8 @@
             return;
         }
 
-        navigate(item.route);
         showModal = false;
+        navigate(item.route);
     }
 
     function search() {
@@ -69,7 +69,10 @@
         <div class="hidden h-96 w-1/2 flex-none flex-col divide-y divide-gray-100 overflow-y-auto sm:flex">
             {#if childrenItems.length > 0}
             <div class="flex flex-auto flex-col justify-between p-6">
-                <Listgroup active items={childrenItems} let:item  on:click={(e) => navigate(e.detail.route)}>
+                <Listgroup active items={childrenItems} let:item  on:click={(e) => {
+                    navigate(e.detail.route);
+                    showModal = false;
+                }}>
                     {item.label}
                 </Listgroup>
             </div>

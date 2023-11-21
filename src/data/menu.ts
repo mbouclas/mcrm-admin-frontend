@@ -70,6 +70,7 @@ export const sideBarMenuItems: SideBarMenuItem[] = [
         label: 'Orders',
         icon: null,
         route: '/orders/list',
+        regexMatch: "^/orders/[^/]+$",
     }),
     new SideBarMenuItem({
         label: 'Customers',

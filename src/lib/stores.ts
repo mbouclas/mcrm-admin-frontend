@@ -10,6 +10,11 @@ export interface IAppState {
   configs: IBootConfigs;
 }
 
+export interface ISiteHeader {
+  title: string;
+  description: string;
+}
+
 export interface INotification {
   message: string;
   type: 'success' | 'error' | 'warning' | 'info';
@@ -32,6 +37,10 @@ export const user = writable(null);
 export const app = writable<IAppState>(null);
 export const notificationsStore = writable<INotification[]>([]);
 
+export const siteHeaderStore = writable<Partial<ISiteHeader>>({
+  title: 'Mcrm'
+});
+
 app.subscribe((res) => {
   if (!res) {
     return;
@@ -48,4 +57,10 @@ export function setNotificationAction(notification: INotification | null) {
 
 export function resetSimpleTreeSelectorState() {
   simpleTreeSelectorStore.set({});
+}
+
+export const updateSiteTitle = (title: string) => {
+    siteHeaderStore.update((state) => {
+        return { ...state, title };
+    });
 }
