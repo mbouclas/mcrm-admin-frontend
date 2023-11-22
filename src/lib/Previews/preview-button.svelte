@@ -2,12 +2,14 @@
     import {Button, Dropdown, DropdownItem, Modal, Spinner} from "flowbite-svelte";
     import {PreviewService} from './preview.service';
     import {setNotificationAction} from "../stores";
-    import {EyeOutline} from "flowbite-svelte-icons";
+    import {ArrowUpRightFromSquareOutline, EyeOutline} from "flowbite-svelte-icons";
     import Loading from "../Shared/Loading.svelte";
+    import {ArrowPath} from "svelte-heros-v2";
 
     export let module: string = null;
     export let itemId: string = null;
-    export let mode: 'preview' | 'refresh' = 'preview';
+    export let mode: 'preview' | 'refresh' | 'launch' = 'preview';
+    export let classes: string;
 
     let loading = false;
 
@@ -40,19 +42,23 @@
     </div>
 </Modal>
 {#if mode === 'refresh'}
-    <Button on:click={dumpData} color={mode === 'preview' ? 'blue' : 'purple'}>
+    <Button class={classes} on:click={dumpData} color={mode === 'preview' ? 'blue' : 'purple'} title={mode === 'preview' ? 'Preview' : 'Refresh data'}>
         {#if loading}
             <div class="text-white">
                 <Spinner class="mr-3" size="4" />Loading ...
             </div>
         {:else}
-            <svg class="w-3 h-63 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 1v5h-5M2 19v-5h5m10-4a8 8 0 0 1-14.947 3.97M1 10a8 8 0 0 1 14.947-3.97"/>
-            </svg>
+            <ArrowPath />
+            <slot name="text"></slot>
         {/if}
     </Button>
+{:else if mode === 'launch'}
+    <Button class={classes} on:click={getPreviewUrl} color="blue" title="Launch Preview Site">
+        <ArrowUpRightFromSquareOutline />
+        <slot name="text"></slot>
+    </Button>
 {:else}
-    <Button id="previewButton" color="purple" class="gap-2.5">
+    <Button id="previewButton" color="purple" class={`gap-2.5 ${classes}`}>
         <EyeOutline />
         {#if loading}
             <Spinner class="mr-3" size="4" />Loading ...

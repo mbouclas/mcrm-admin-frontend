@@ -14,7 +14,7 @@
   import type { SideBarMenuItem} from "../../data/menu";
   import { ChevronLeft, ChevronRight} from "svelte-heros-v2";
   import {navigate, useLocation} from "mcrm-svelte-navigator";
-
+  import PreviewButton from '../Previews/preview-button.svelte';
 
   let hasRoleGate = AuthService.hasGate('menu.roles.show');
   let hasUsersGate = AuthService.hasGate('menu.users.show');
@@ -185,7 +185,15 @@
         {/each}
     </SidebarGroup>
 
+    <SidebarGroup border>
+<PreviewButton mode="refresh" classes="w-full gap-2.5">
+  <svelte:fragment slot="text">Refresh Site Data</svelte:fragment>
+</PreviewButton>
 
+      <PreviewButton mode="launch" classes="w-full gap-2.5">
+        <svelte:fragment slot="text">Preview Site</svelte:fragment>
+      </PreviewButton>
+    </SidebarGroup>
 
   </SidebarWrapper>
 </Sidebar>

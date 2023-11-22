@@ -16,7 +16,6 @@
   import {productSchema, ProductsService} from '../../services/products/products.service';
   import { ManufacturersService } from '../../services/manufacturers/manufacturers.service';
   import { navigate } from 'mcrm-svelte-navigator';
-  import { type ISalesChannel, SalesChannelsService } from '../../../SalesChannels/services/sales-channels.service';
   import Card from "../../../Shared/card.svelte";
   import {ProductModel} from "../../models/product.model";
   import {ArrowUpRightFromSquareOutline, FileCheckOutline} from "flowbite-svelte-icons";

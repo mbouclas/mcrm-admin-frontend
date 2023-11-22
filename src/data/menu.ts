@@ -167,11 +167,6 @@ export const sideBarMenuItems: SideBarMenuItem[] = [
                 route: '/settings/conditions/list',
             }),
             new SideBarMenuItem({
-                label: 'Payment Methods',
-                icon: null,
-                route: '/settings/payment-methods',
-            }),
-            new SideBarMenuItem({
                 label: 'Customer Groups',
                 icon: null,
                 route: '/settings/customer-groups',

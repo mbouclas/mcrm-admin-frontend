@@ -7,6 +7,7 @@
     import Group from './fill-group.svelte';
     import Executor from './fill-executor.svelte';
     import {Breadcrumb, BreadcrumbItem, Button} from "flowbite-svelte";
+    import PreviewButton from '../../Previews/preview-button.svelte';
 
     const params = useParams();
     let region: IEditableRegion,
@@ -56,7 +57,11 @@
     </Breadcrumb>
 
 {#if region.type === 'repeater'}
-    <Repeater {region} bind:model={model.items} />
+    <Repeater {region} bind:model={model.items}>
+        <div slot="actions">
+            <PreviewButton mode="refresh" />
+        </div>
+    </Repeater>
 {:else if region.type === 'group'}
     <Group {region} bind:model={model.items} />
 {:else if region.type === 'executor'}

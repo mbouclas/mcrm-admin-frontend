@@ -33,6 +33,7 @@
     export let model: any;
     export let outerClass = `my-4 border border-solid border-gray-500 px-4 ${field.fieldSettings && field.fieldSettings['perRow'] ? `grid gap-2 grid-cols-${field.fieldSettings['perRow']}` : ''}`;
     export let useHeadingsForNestedFields = true;
+    export let classes: string;
 
     let fields,
         itemSelectorConfig: IItemSelectorConfig,
@@ -236,6 +237,7 @@
             model={model}
             title={field.label || 'Image'}
             maxNumberOfFiles={1}
+            classes={classes}
             module={field.settings ? field.settings['module'] : null}
             itemId={field.settings ? field.settings['itemId'] : null}
             type={field.settings ? field.settings['type'] : 'main'}

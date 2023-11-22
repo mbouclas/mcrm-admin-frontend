@@ -40,7 +40,25 @@ export class ShippingService extends BaseHttpService {
         return await this.get(`shipping-method${qs ? `?${qs}` : ''}`);
     }
 
+    async update(uuid: string, data: Partial<IShippingMethod>) {
+        return await this.patch(`shipping-method/${uuid}`, data, {
+            successMessage: 'Shipping method updated successfully',
+        });
+    }
+
+    async store(data: Partial<IShippingMethod>) {
+        return await this.post(`shipping-method`, data, {
+            successMessage: 'Shipping method created successfully',
+        });
+    }
+
     async getProviders() {
         return await this.get(`shipping-method/providers`);
+    }
+
+    async delete(uuid: string) {
+        return await super.delete(`shipping-method/${uuid}`, {
+            successMessage: 'Shipping method deleted successfully',
+        });
     }
 }

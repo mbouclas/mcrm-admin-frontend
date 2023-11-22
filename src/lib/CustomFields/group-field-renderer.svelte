@@ -10,6 +10,7 @@
     export let outerClass = undefined;
     export let errors: Partial<ZodError> = {};
     export let useHeadingsForNestedFields = true;
+    export let imageClasses: string;
 
 </script>
 {#if typeof model !== 'undefined'}
@@ -19,7 +20,7 @@
 {#each fields as field}
     <div class={wrapperClass}>
         <slot {field}>
-            <FieldRenderer {field} bind:model={model[field[fieldPrimaryKey]]} bind:outerClass={outerClass} {useHeadingsForNestedFields} indentNested={true} bind:errors={errors} />
+            <FieldRenderer classes={imageClasses || undefined} {field} bind:model={model[field[fieldPrimaryKey]]} bind:outerClass={outerClass} {useHeadingsForNestedFields} indentNested={true} bind:errors={errors} />
         </slot>
     </div>
 {/each}

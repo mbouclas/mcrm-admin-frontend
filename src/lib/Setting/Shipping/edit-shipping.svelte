@@ -3,18 +3,30 @@
     import {Select, Input, NumberInput, Toggle, Button} from "flowbite-svelte";
     import type {IShippingMethod, IShippingMethodProvider} from "../services/shipping.service";
     import {ShippingService} from "../services/shipping.service";
+    import {ShippingMethodModel} from "./shipping-method.model";
 
     const dispatch = createEventDispatcher();
     export let uuid: string = null;
-    let model: IShippingMethod = null;
+    let model = new ShippingMethodModel();
     let providers: IShippingMethodProvider[] = [];
     onMount(async () => {
-        model = await new ShippingService().findOne(uuid);
+        if (uuid) {
+            model = await new ShippingService().findOne(uuid);
+        }
+
 
         providers = await new ShippingService().getProviders();
     });
 
     async function save() {
+        if (!uuid) {
+            const res = await new ShippingService().store(model);
+            model.uuid = res['uuid'];
+            dispatch('saved', model);
+            return;
+        }
+
+        await new ShippingService().update(uuid, model);
         dispatch('saved', model);
     }
 

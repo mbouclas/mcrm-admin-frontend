@@ -18,6 +18,7 @@
     import EditShipping from './edit-shipping.svelte';
     import AddShipping from './add-shipping.svelte';
     import type {IPagination} from "../../Shared/models/generic";
+    import {Plus} from "svelte-heros-v2";
 
 
     const defaultFilters = {
@@ -58,6 +59,9 @@
     async function deleteItem(item: IShippingMethod) {
         const r = confirm('Are you sure you want to delete this item?');
         if (!r) {return;}
+
+        await new ShippingService().delete(item.uuid);
+        await search();
     }
 
     function editItem(item: IShippingMethod) {
@@ -65,8 +69,12 @@
         showEditModal = true;
     }
 </script>
-<Modal id="image-details-modal" title={`Edit ${selectedItem ? selectedItem.title : ''}`} bind:open={showEditModal} size="xl" autoclose={false}>
+<Modal title={`Edit ${selectedItem ? selectedItem.title : ''}`} bind:open={showEditModal} size="xl" autoclose={false}>
     <EditShipping bind:uuid={selectedItem.uuid} on:saved={() => reset()} />
+</Modal>
+
+<Modal title={`Add new method`} bind:open={showAddModal} size="xl" autoclose={false}>
+    <EditShipping  on:saved={() => reset()} />
 </Modal>
 <Heading tag="h3" class="mb-4">Shipping Methods</Heading>
 <Hr class="mb-4" />
@@ -76,7 +84,7 @@
             <TableHeadCell colspan="2"></TableHeadCell>
             <TableHeadCell colspan="3">
                 <div class="items-end flex justify-end">
-                    <Button>Add New</Button>
+                    <Button color="green" title="Add new" on:click={() => showAddModal = true}><Plus /></Button>
                 </div>
 
             </TableHeadCell>
