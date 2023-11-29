@@ -296,6 +296,21 @@ export const userGroupItemSelectorConfig: IItemSelectorConfig = {
   ],
 };
 
+export const roleItemSelectorConfig: IItemSelectorConfig = {
+  apiUrl: 'role',
+  module: 'Role',
+  filters: {
+
+  },
+  labels: [
+    {
+      field: 'name',
+      label: 'Name',
+    },
+
+  ],
+};
+
 export const itemSelectorConfigs = [
   userItemSelectorConfig,
   customerItemSelectorConfig,
@@ -309,6 +324,7 @@ export const itemSelectorConfigs = [
   shippingMethodItemSelectorConfig,
   paymentMethodItemSelectorConfig,
   salesChannelItemSelectorConfig,
+  roleItemSelectorConfig,
 ];
 
 export const getItemSelectorConfig = (module: string): IItemSelectorConfig => {

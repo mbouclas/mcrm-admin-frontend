@@ -12,12 +12,14 @@
   import { AppService } from '../../Shared/app.service';
   import type { IDynamicFieldConfigBlueprint } from '../../DynamicFields/types';
   import getModelPrototypeFromFields from '../../helpers/model-prototype';
+  import PreviewNavbar from '../../Previews/preview-navbar.svelte';
 
   const s = new PagesService();
   const params = useParams();
   let model;
   let fields: IDynamicFieldConfigBlueprint[] = [];
   export let itemId;
+  let ready = false;
 
   onMount(async () => {
     fields = AppService.getModel('PageModel').fields.filter((f) => f.varName !== 'thumb');
@@ -57,6 +59,8 @@
         og_description: '',
       };
     }
+
+    ready = true;
   });
 
   const onSubmit = async (data) => {
@@ -88,7 +92,8 @@
     model.thumb = e.detail;
   }
 </script>
-
+{#if ready}
+<PreviewNavbar itemId={model.uuid} module="Page" />
 <Form bind:model {hasError}>
   <Tabs tabStyle="underline" class="mb-4">
     <TabItem open title="General" tabStyle="custom" {customActiveClass} {customInActiveClass}>
@@ -110,3 +115,4 @@
   </Tabs>
 </Form>
 <div class="mb-12 pb-6" />
+  {/if}

@@ -55,8 +55,9 @@ export class UserService extends BaseHttpService {
 
   async find(filters: IGenericObject = {}, relationships: string[] = []) {
     let qs;
+
     if (Object.keys(filters).length > 0) {
-      qs = queryString.stringify(filters);
+      qs = queryString.stringify(filters, { arrayFormat: 'bracket'});
     }
 
     if (relationships.length > 0) {

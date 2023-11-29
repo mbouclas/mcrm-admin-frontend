@@ -36,6 +36,7 @@
         // scroll to bottom
         setTimeout(() => {
             const el = document.getElementById('items');
+
             window.scrollTo({
                 top: el.scrollHeight,
                 behavior: 'smooth'

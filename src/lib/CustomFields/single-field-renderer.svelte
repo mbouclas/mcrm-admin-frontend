@@ -309,7 +309,7 @@
 
     </CustomFields>
 {:else if field.type === 'repeater'}
-<Repeater bind:model={model} fields={field.fields} {field} />
+<Repeater bind:model={model} fields={field.fields} {field} imageClasses={classes} />
     {:else if ['richText', 'rich', 'richtext'].indexOf(field.type) !== -1}
     <RichText id={field.varName} bind:model={model} {field} />
     <FormError {errors} key={field.varName} />

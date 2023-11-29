@@ -70,7 +70,9 @@ async function onSaveRegion(region: IEditableRegion) {
 }
 
 function getRegionType(type: string) {
-    return editableRegionTypes.find(t => t.name === type);
+
+    const found = editableRegionTypes.find(t => t.name === type);
+    return found || {label: 'Unknown', name: 'unknown'};
 }
 
 

@@ -296,7 +296,7 @@
               <tr>
                 <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
                   <a
-                    href={`/roles/${role.uuid}`}
+                          href="#" on:click|preventDefault={() => navigate(`/roles/${role.uuid}`)}
                     class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer"
                   >
                     {role.displayName}

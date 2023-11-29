@@ -9,7 +9,7 @@ export let region: IEditableRegion;
 
 </script>
 <div class="my-4 border border-1 border-gray-500 rounded-xl p-4">
-    <CustomFields fields={region.fields} let:field={field} fieldPrimaryKey="varName" bind:model={model}>
+    <CustomFields imageClasses="w-full h-64 object-contain" fields={region.fields} let:field={field} fieldPrimaryKey="varName" bind:model={model}>
 
     </CustomFields>
 </div>

@@ -1,6 +1,6 @@
 import {Dash, Exit} from "radix-icons-svelte";
 import {ChartPieSolid, FolderDuplicateOutline} from "flowbite-svelte-icons";
-import {Cog, Home} from "svelte-heros-v2";
+import {Cog, Home, User} from "svelte-heros-v2";
 
 export class SideBarMenuItem {
     public label: string;
@@ -175,6 +175,28 @@ export const sideBarMenuItems: SideBarMenuItem[] = [
                 label: 'Sales Channels',
                 icon: null,
                 route: '/settings/sales-channels',
+            }),
+        ]
+    }),
+    new SideBarMenuItem({
+        label: 'User Admin',
+        icon: User,
+        children: [
+            new SideBarMenuItem({
+                label: 'Users',
+                icon: User,
+                route: '/users/list',
+                regexMatch: "^/users/[^/]+$",
+            }),
+            new SideBarMenuItem({
+                label: 'Roles',
+                route: '/roles/list',
+                regexMatch: "^/roles/[^/]+$",
+            }),
+            new SideBarMenuItem({
+                label: 'Gates',
+                route: '/gates/list',
+                regexMatch: "^/gates/[^/]+$",
             }),
         ]
     }),

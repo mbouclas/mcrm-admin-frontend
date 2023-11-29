@@ -253,7 +253,7 @@
                     type="checkbox"
                     class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
             />
-            <a href={`/orders/${order.uuid}`} class="hover:underline">
+            <a href="#" on:click|preventDefault={() => navigate(`/orders/${order.uuid}`)} class="hover:underline">
               {order.orderId}
             </a>
           </div>

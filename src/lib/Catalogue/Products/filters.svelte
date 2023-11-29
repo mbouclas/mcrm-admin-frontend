@@ -13,6 +13,13 @@
     let categories = [];
     let toDate: string = null;
 
+    let drawerIsHidden = true;
+    let transitionParamsRight = {
+        x: 320,
+        duration: 200,
+        easing: sineIn
+    };
+
 
     async function getCategories() {
         categories = await new ProductCategoryService().tree();
@@ -20,12 +27,6 @@
         return categories;
     }
 
-    let drawerIsHidden = true;
-    let transitionParamsRight = {
-        x: 320,
-        duration: 200,
-        easing: sineIn
-    };
 
     function submit() {
         dispatch('filter', filters);
