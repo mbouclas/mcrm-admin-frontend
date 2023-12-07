@@ -253,8 +253,8 @@
             {#each customers.data as customer}
               <tr>
                 <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                  <a
-                    href={`/customers/${customer.uuid}`}
+                  <a href="#"
+                    on:click|preventDefault={() => navigate(`/customers/${customer.uuid}`)}
                     class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer"
                   >
                     {customer.lastName}

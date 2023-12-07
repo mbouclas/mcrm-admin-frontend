@@ -49,7 +49,13 @@
                 {config}>
 
   </ItemSelector>
+
   <svelte:fragment slot="footer">
-    <Button on:click={() => onConfirm()}>Close</Button>
+    {#if $$slots.footer}
+      <slot name="footer" />
+    {:else}
+      <Button color="green" on:click={() => onConfirm()}>Select & Close</Button>
+    {/if}
+
   </svelte:fragment>
 </Modal>

@@ -50,6 +50,7 @@ async function onSelectProduct(item: ProductModel) {
 async function onSelectProductVariant(item: ProductModel, variant: ProductVariantModel) {
  const cartItem = CartItem.productVariantToCartItem(item, variant);
  await cart.add(cartItem);
+
  cartItems = [...cart.items];
  updateSummary();
  showProductSelectorModal = false;

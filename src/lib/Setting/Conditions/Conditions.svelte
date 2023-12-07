@@ -243,7 +243,7 @@
 
                   <a
                     class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer"
-                    href={`/settings/conditions/${item.uuid}`}
+                    href="#" on:click|preventDefault={() => navigate(`/settings/conditions/${item.uuid}`)}
                   >
                     {item.title}
                   </a>

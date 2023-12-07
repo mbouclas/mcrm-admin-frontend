@@ -4,14 +4,16 @@
   import {Input, Modal, Button, Toggle, Select, Label, Badge, Heading, Hr} from 'flowbite-svelte';
   import {Trash, PencilSquare, Plus} from 'svelte-heros-v2';
 
-  import { useParams } from 'mcrm-svelte-navigator';
+  import {navigate, useParams} from 'mcrm-svelte-navigator';
   import { onMount } from 'svelte';
   import getModelPrototypeFromFields from '../../helpers/model-prototype';
   import type { IDynamicFieldConfigBlueprint } from '../../DynamicFields/types';
   import { userGroupItemSelectorConfig} from "../../Shared/item-selector-configs";
   import ItemSelectorModal from '../../DynamicFields/fields/item-selector-modal.svelte';
   import Card from '../../Shared/card.svelte';
-  import {user} from "../../stores";
+  import {app, user} from "../../stores";
+  import {moneyFormat} from "../../helpers/money";
+  import {formatDate} from "../../helpers/dates";
 
   const s = new CustomerService();
   const a = new AddressService();
@@ -52,22 +54,12 @@
   let fields: IDynamicFieldConfigBlueprint[] = [];
   export let itemId;
 
-  const statuses = [
-    { id: 1, label: 'started' },
-    { id: 2, label: 'processing' },
-    { id: 3, label: 'shipped' },
-    { id: 4, label: 'completed' },
-    { id: 5, label: 'cancelled' },
-  ];
+  let statuses = [];
 
-  const paymentStatuses = [
-    { id: 1, label: 'in-progress' },
-    { id: 2, label: 'failed' },
-    { id: 3, label: 'unconfirmed' },
-    { id: 4, label: 'paid' },
-    { id: 5, label: 'authorized' },
-    { id: 6, label: 'refunded' },
-  ];
+  app.subscribe((state) => {
+    statuses = state.configs.store.orderStatuses;
+
+  });
 
   const shippingStatuses = [
     { id: 1, label: 'in-progress' },
@@ -368,7 +360,7 @@
           <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
-                <th class="px-6 py-3">UUID</th>
+
                 <th class="px-6 py-3">Street</th>
                 <th class="px-6 py-3">City</th>
                 <th class="px-6 py-3">Region</th>
@@ -384,7 +376,7 @@
                 <tr
                   class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                 >
-                  <td class="px-6 py-4">{address.uuid}</td>
+
                   <td class="px-6 py-4">{address.street}</td>
                   <td class="px-6 py-4">{address.city}</td>
                   <td class="px-6 py-4">{address.region}</td>
@@ -415,8 +407,7 @@
                 <th scope="col" class="px-6 py-3">Order ID</th>
                 <th scope="col" class="px-6 py-3">Total</th>
                 <th scope="col" class="px-6 py-3">Status</th>
-                <th scope="col" class="px-6 py-3">Payment Status</th>
-                <th scope="col" class="px-6 py-3">Shipping Status</th>
+
                 <th scope="col" class="px-6 py-3">Created At</th>
               </tr>
             </thead>
@@ -426,16 +417,16 @@
                   class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                 >
                   <td class="px-6 py-4">
-                    <a href={`/orders/${order.uuid}`} class="hover:underline">{order.orderId}</a></td
-                  >
-                  <td class="px-6 py-4">{Number(order.total).toFixed(2)}</td>
+                    <a href="#" on:click|preventDefault={() => navigate(`/orders/${order.uuid}`)} class="hover:underline">
+                      {order.orderId}
+                    </a>
+                  </td>
+                  <td class="px-6 py-4">{moneyFormat(order.total)}</td>
                   <td class="px-6 py-4">{statuses.find((status) => status.id === order.status).label}</td>
-                  <td class="px-6 py-4">{paymentStatuses.find((status) => status.id === order.paymentStatus).label}</td>
-                  <td class="px-6 py-4"
-                    >{shippingStatuses.find((status) => status.id === order.shippingStatus).label}</td
-                  >
 
-                  <td class="px-6 py-4">{new Date(order.createdAt).toLocaleDateString()}</td>
+
+
+                  <td class="px-6 py-4">{formatDate(order.createdAt)}</td>
                 </tr>
               {/each}
             </tbody>

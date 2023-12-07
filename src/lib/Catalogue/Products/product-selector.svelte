@@ -3,7 +3,7 @@ import ItemSelector from "../../DynamicFields/fields/item-selector.svelte";
 import {productItemSelectorConfig} from "../../Shared/item-selector-configs";
 import {
     Button,
-    Checkbox, Modal, Table,
+    Checkbox, Modal, Search, Table,
     TableBody,
     TableBodyCell,
     TableBodyRow,
@@ -16,12 +16,14 @@ import {Plus} from "svelte-heros-v2";
 import {moneyFormat} from "../../helpers/money";
 import type {ProductModel} from "../models/product.model";
 import type {ProductVariantModel} from "../models/product-variant.model";
+import {navigate} from "mcrm-svelte-navigator";
+import {VariantsService} from "../services/variants/variants.service";
 
 export let selectedItem;
 export let mode: 'single' | 'multiple' = 'single';
 export let onSelectProduct: (item: ProductModel) => void;
 export let onSelectProductVariant: (item: ProductModel, variant: ProductVariantModel) => void;
-const config = {...productItemSelectorConfig, ...{with: ['variants', 'properties', 'propertyValues'], postProcessing}};
+let config = {...productItemSelectorConfig, ...{with: ['variants', 'properties', 'propertyValues', 'thumb'], postProcessing}};
 let searchTerm = '';
 let allSelected = false,
 loading = false,
@@ -36,6 +38,7 @@ let selectedItemId: ProductModel = null,
 let items = {
     data: [],
 } as IPagination<any>;
+let variants: ProductVariantModel[] = [];
 
 function postProcessing(data) {
 
@@ -69,28 +72,28 @@ function onSelectSingle(item: ProductModel) {
     }
 }
 
-async function handleSearch() {
+function handleSearch() {
     if (!config.filters) {
         config.filters = {};
     }
 
     config.filters.q = searchTerm;
+
     refreshResults = true;
 }
 
-$: {
-    handleSearch();
-}
 
-function selectVariants(item) {
+async function selectVariants(item) {
     currentItem = item;
+    const res = await new VariantsService().find({sku: item.sku}, ['thumb']);
+    variants = res.data;
     showVariantsSelectModal = true;
 
 }
 
 function onSelectSingleVariant(idx: number) {
     if (onSelectProductVariant) {
-        onSelectProductVariant(currentItem, currentItem.variants[idx]);
+        onSelectProductVariant(currentItem, variants[idx]);
     }
 }
 
@@ -115,7 +118,7 @@ function onSelectSingleVariant(idx: number) {
     </TableHeadCell>
 </TableHead>
     <TableBody class="divide-y">
-        {#each currentItem.variants as item, idx}
+        {#each variants as item, idx}
         <TableBodyRow>
             <TableHeadCell>
                 {#if mode === 'single'}
@@ -123,7 +126,8 @@ function onSelectSingleVariant(idx: number) {
                     {:else}
                     {/if}
             </TableHeadCell>
-            <TableHeadCell><img src={item.thumb}  class="w-16 object-cover" /></TableHeadCell>
+            <TableHeadCell>
+                <img src={typeof item.thumb === 'object' ? item.thumb.url : item.thumb}  class="w-16 object-cover" /></TableHeadCell>
             <TableBodyCell>
                 {item.variantId}
             </TableBodyCell>
@@ -134,11 +138,16 @@ function onSelectSingleVariant(idx: number) {
     </TableBody>
 </Table>
 </Modal>
+
 <ItemSelector selectMode="single" bind:selectedItem
               on:select={onSelect} useQueryFilter={false} bind:refresh={refreshResults}
-              {config}>
+              bind:config={config}>
     <div slot="items" let:items={items}>
-        <TableSearch placeholder="Search in Titles, sku, descriptions..." hoverable={true} bind:inputValue={searchTerm} >
+
+        <div class="my-4">
+            <Search placeholder="Search in titles, sku..." bind:value={searchTerm} on:input={handleSearch} on:keyup={handleSearch} />
+        </div>
+        <Table placeholder="Search in Titles, sku, descriptions..." hoverable={true}>
             <TableHead>
                 <TableHeadCell>
                     {#if mode === 'multiple'}
@@ -174,9 +183,9 @@ function onSelectSingleVariant(idx: number) {
                     <Button on:click={onSelectSingle.bind(this, item)}><Plus/></Button>
                     {/if}
             </TableBodyCell>
-                <TableHeadCell><img src={item.thumb}  class="w-16 object-cover" /></TableHeadCell>
+                <TableHeadCell><img src={typeof item.thumb === 'object' ? item.thumb.url : item.thumb}  class="w-16 object-cover" /></TableHeadCell>
                 <TableBodyCell>
-                    <a href={`/catalogue/products/${item.uuid}`}
+                    <a href="#" on:click|preventDefault={() => navigate(`/catalogue/products/${item.uuid}`)}
                        class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer">
                         {item.sku}
                     </a>
@@ -196,6 +205,6 @@ function onSelectSingleVariant(idx: number) {
             </TableBodyRow>
         {/each}
         </TableBody>
-        </TableSearch>
+        </Table>
     </div>
 </ItemSelector>

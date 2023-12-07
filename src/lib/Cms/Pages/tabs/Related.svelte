@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { Button } from 'flowbite-svelte';
   import { Trash } from 'svelte-heros-v2';
-
+  import {navigate} from "mcrm-svelte-navigator";
   import ItemSelectorModal from '../../../DynamicFields/fields/item-selector-modal.svelte';
   import { formatDate } from '../../../helpers/dates';
 
@@ -104,13 +104,13 @@
               <tr>
                 <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                   <div class="inline-flex items-center gap-x-3">
-                    <a href={`/cms/pages/${item.uuid}`} class="h-12 w-12">
+                    <a href="#" on:click|preventDefault={() => navigate(`/cms/pages/${item.uuid}`)} class="h-12 w-12">
                       <img src={item.thumb} />
                     </a>
                   </div>
                 </td>
                 <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                  <a href={`/cms/pages/${item.uuid}`} class="hover:underline">
+                  <a href="#" on:click|preventDefault={() => navigate(`/cms/pages/${item.uuid}`)} class="hover:underline">
                     {item.title}
                   </a>
                 </td>

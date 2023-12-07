@@ -1,5 +1,11 @@
-import {Dash, Exit} from "radix-icons-svelte";
-import {ChartPieSolid, FolderDuplicateOutline} from "flowbite-svelte-icons";
+import {
+    CogOutline,
+    FolderDuplicateOutline,
+    UserOutline,
+    ArrowRightToBracketOutline,
+    HomeOutline,
+    ChartLineUpOutline, ShoppingBagOutline, UsersOutline, AtomSolid
+} from "flowbite-svelte-icons";
 import {Cog, Home, User} from "svelte-heros-v2";
 
 export class SideBarMenuItem {
@@ -30,7 +36,7 @@ export class SideBarMenuItem {
 export const sideBarMenuItems: SideBarMenuItem[] = [
     new SideBarMenuItem({
         label: 'Home',
-        icon: Home,
+        icon: HomeOutline,
         route: '/',
     }),
     new SideBarMenuItem({
@@ -68,13 +74,13 @@ export const sideBarMenuItems: SideBarMenuItem[] = [
     }),
     new SideBarMenuItem({
         label: 'Orders',
-        icon: null,
+        icon: ShoppingBagOutline,
         route: '/orders/list',
         regexMatch: "^/orders/[^/]+$",
     }),
     new SideBarMenuItem({
         label: 'Customers',
-        icon: null,
+        icon: UsersOutline,
         route: '/customers/list',
     }),
     new SideBarMenuItem({
@@ -96,7 +102,7 @@ export const sideBarMenuItems: SideBarMenuItem[] = [
     }),
     new SideBarMenuItem({
         label: 'Website',
-        icon: null,
+        icon: AtomSolid,
         children: [
             new SideBarMenuItem({
                 label: 'Menus',
@@ -123,7 +129,7 @@ export const sideBarMenuItems: SideBarMenuItem[] = [
     }),
     new SideBarMenuItem({
         label: 'Analytics',
-        icon: null,
+        icon: ChartLineUpOutline,
         children: [
             new SideBarMenuItem({
                 label: 'Orders',
@@ -143,8 +149,8 @@ export const sideBarMenuItems: SideBarMenuItem[] = [
         ]
     }),
     new SideBarMenuItem({
-        label: 'Store Settings',
-        icon: null,
+        label: 'Store',
+        icon: CogOutline,
         children: [
             new SideBarMenuItem({
                 label: 'Custom Fields',
@@ -179,8 +185,8 @@ export const sideBarMenuItems: SideBarMenuItem[] = [
         ]
     }),
     new SideBarMenuItem({
-        label: 'User Admin',
-        icon: User,
+        label: 'Users',
+        icon: UserOutline,
         children: [
             new SideBarMenuItem({
                 label: 'Users',
@@ -198,11 +204,12 @@ export const sideBarMenuItems: SideBarMenuItem[] = [
                 route: '/gates/list',
                 regexMatch: "^/gates/[^/]+$",
             }),
+
         ]
     }),
     new SideBarMenuItem({
         label: 'Logout',
-        icon: Exit,
+        icon: ArrowRightToBracketOutline,
         href: '/logout',
     }),
 ]

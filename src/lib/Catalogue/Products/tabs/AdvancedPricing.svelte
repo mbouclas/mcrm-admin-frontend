@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { Button } from 'flowbite-svelte';
   import { Trash } from 'svelte-heros-v2';
+  import {navigate} from "mcrm-svelte-navigator";
 
   import ItemSelectorModal from '../../../DynamicFields/fields/item-selector-modal.svelte';
   import { formatDate } from '../../../helpers/dates';
@@ -114,19 +115,19 @@
             {#each cartConditions.sort((a, b) => a.order - b.order) as item}
               <tr>
                 <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                  <a href={`/catalogue/products/${item.uuid}`} class="hover:underline">
+                  <a href="#" on:click|preventDefault={() => navigate(`/catalogue/products/${item.uuid}`)} class="hover:underline">
                     {item.title}
                   </a>
                 </td>
 
                 <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                  <a href={`/catalogue/products/${item.uuid}`} class="hover:underline">
+                  <a href="#" on:click|preventDefault={() => navigate(`/catalogue/products/${item.uuid}`)} class="hover:underline">
                     {item.target}
                   </a>
                 </td>
 
                 <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                  <a href={`/catalogue/products/${item.uuid}`} class="hover:underline">
+                  <a href="#" on:click|preventDefault={() => navigate(`/catalogue/products/${item.uuid}`)} class="hover:underline">
                     {item.value}
                   </a>
                 </td>

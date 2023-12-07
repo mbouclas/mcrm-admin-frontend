@@ -443,7 +443,7 @@
                         <img src={item?.thumb?.url || item?.thumb} />
                       </td>
                       <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                        <a href={`/catalogue/products/${item.productId}`}>{item.title}</a>
+                        <a href="#" on:click|preventDefault={() => navigate(`/catalogue/products/${item.productId}`)}>{item.title}</a>
                       </td>
                       <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
                         {item?.sku}

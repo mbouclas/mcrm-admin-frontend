@@ -179,14 +179,14 @@
                 <tr>
                   <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                     <a
-                      href={`/catalogue/products/${item.uuid}`}
+                      href="#" on:click|preventDefault={() => navigate(`/catalogue/products/${item.uuid}`)}
                       class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer"
                     >
                       {item.variantId}
                     </a>
                   </td>
                   <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                    <a href={`/catalogue/products/${item.uuid}`} class="hover:underline">
+                    <a href="#" on:click|preventDefault={() => navigate(`/catalogue/products/${item.uuid}`)} class="hover:underline">
                       {item.name}
                     </a>
                   </td>
@@ -347,21 +347,21 @@
                 <tr>
                   <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                     <div class="inline-flex items-center gap-x-3">
-                      <a href={`/catalogue/products/${item.uuid}`} class="h-12 w-12">
+                      <a href="#" on:click|preventDefault={() => navigate(`/catalogue/products/${item.uuid}`)} class="h-12 w-12">
                         <img src={item?.thumb?.url || item?.thumb} />
                       </a>
                     </div>
                   </td>
                   <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                     <a
-                      href={`/catalogue/products/${item.uuid}`}
+                      href="#" on:click|preventDefault={() => navigate(`/catalogue/products/${item.uuid}`)}
                       class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer"
                     >
                       {item.sku}
                     </a>
                   </td>
                   <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                    <a href={`/catalogue/products/${item.uuid}`} class="hover:underline">
+                    <a href="#" on:click|preventDefault={() => navigate(`/catalogue/products/${item.uuid}`)} class="hover:underline">
                       {item.title}
                     </a>
                   </td>

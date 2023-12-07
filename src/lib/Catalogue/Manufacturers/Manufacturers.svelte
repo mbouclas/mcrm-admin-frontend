@@ -207,7 +207,7 @@
                       type="checkbox"
                       class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
                     />
-                    <a href={`/catalogue/products/${item.uuid}`} class="h-12 w-12">
+                    <a href="#" on:click|preventDefault={() => navigate(`/catalogue/products/${item.uuid}`)} class="h-12 w-12">
                       <img src={item?.thumb?.url || item?.thumb} />
                     </a>
                   </div>
@@ -220,8 +220,7 @@
                       class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
                     />
 
-                    <a
-                      href={`/catalogue/manufacturers/${item.uuid}`}
+                    <a href="#" on:click|preventDefault={() => navigate(`/catalogue/manufacturers/${item.uuid}`)}
                       class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer"
                     >
                       {item.title}

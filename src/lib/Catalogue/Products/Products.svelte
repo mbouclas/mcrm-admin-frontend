@@ -10,7 +10,7 @@
     Checkbox,
     Dropdown,
     DropdownItem,
-    Modal as NativeModal, TableBody, TableBodyCell, TableBodyRow,
+    Modal as NativeModal, Search, Table, TableBody, TableBodyCell, TableBodyRow,
     TableHead,
     TableHeadCell, TableSearch
   } from 'flowbite-svelte';
@@ -65,6 +65,7 @@
     ;
   let timeout: any;
   let selectedItemId = null;
+  let bulkOperationsUnderWay = false;
   reset();
 
   async function search() {
@@ -151,10 +152,12 @@
   }
 
   async function bulkToggleStatus(activate: boolean) {
+    bulkOperationsUnderWay = true;
     const data = selected.map((uuid) => ({ uuid, active: activate }));
     await service.bulkUpdate(data);
     await search();
     selected = [];
+    bulkOperationsUnderWay = false;
   }
 
     async function applyFilters() {
@@ -206,6 +209,12 @@
   }
 
 </script>
+<NativeModal size="sm" bind:open={bulkOperationsUnderWay} title="Please wait..."
+       dialogClass="fixed top-0 left-0 right-0 h-modal md:inset-0 md:h-full  w-full p-4 flex z-[99999]">
+  <div class="flex items-center justify-center">
+    <Loading>Please wait...</Loading>
+  </div>
+</NativeModal>
 <NativeModal size="xl" bind:open={showAddNewModal} title={`Add new product`}>
   <AddNew onSave={onNewProductAdded} />
 </NativeModal>
@@ -298,8 +307,10 @@
     </Banner>
   </div>
 {/if}
-
-<TableSearch placeholder="Search in Titles, sku, descriptions..." hoverable={true} bind:inputValue={searchTerm} >
+<div class="my-4">
+  <Search placeholder="Search in Titles, sku, descriptions..." bind:value={searchTerm} on:input={handleSearch} on:keyup={handleSearch} />
+</div>
+<Table  hoverable={true} bind:inputValue={searchTerm} >
   <TableHead>
       <TableHeadCell>
         <Checkbox checked={allSelected}
@@ -430,7 +441,7 @@
       </TableBodyRow>
       {/if}
   </TableBody>
-</TableSearch>
+</Table>
 {#if !loading}
   <Paginator
           totalPages={parseInt(items.pages)}

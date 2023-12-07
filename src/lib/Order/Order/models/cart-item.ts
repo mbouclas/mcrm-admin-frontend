@@ -45,6 +45,7 @@ export class CartItem implements ICartItem {
             sku: item.sku,
             slug: item.slug,
             price: variant.price,
+            thumb: typeof item.thumb === 'string' ? item.thumb : item.thumb.url,
             title: item.title,
             metaData: {
                 color,

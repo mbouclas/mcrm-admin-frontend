@@ -180,7 +180,8 @@
 
   $: {
     if (refresh) {
-      onQueryChange('q', filters.q);
+      filters = Object.assign({}, defaultFilters, config.filters || {});
+      onQueryChange('q', filters);
 
       refresh = false;
     }
