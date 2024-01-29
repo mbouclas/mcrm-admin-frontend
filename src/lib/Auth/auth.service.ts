@@ -1,4 +1,5 @@
 import { BaseHttpService } from '../Shared/base-http.service';
+import {navigate} from "mcrm-svelte-navigator";
 export interface IStoredUser {
   accessToken: string;
   accessTokenExpiresAt: string;
@@ -120,6 +121,6 @@ export class AuthService extends BaseHttpService {
     AuthService.clearSessionId();
     localStorage.setItem("user", '');
     localStorage.setItem("bootData", '');
-
+    navigate('/login');
   }
 }

@@ -4,7 +4,14 @@ import type {IAppState} from '../stores';
 
 export class BootService extends BaseHttpService {
   async boot() {
-    const res = await this.get(`boot`) as IAppState;
+    let res;
+    try {
+      res = await this.get(`boot`) as IAppState;
+    }
+    catch (e) {
+      console.log(e)
+    }
+
     // add the data to the store
     if (res.configs && res.configs.editableRegions && res.configs.editableRegions['editableRegions']) {
       res.configs.editableRegions = res.configs.editableRegions['editableRegions'];
