@@ -311,6 +311,43 @@ export const roleItemSelectorConfig: IItemSelectorConfig = {
   ],
 };
 
+export const BusinessItemSelectorConfig: IItemSelectorConfig = {
+  apiUrl: 'business',
+  module: 'Business',
+  labelField: 'title',
+  labels: [
+    {
+      field: 'title',
+      label: 'Title',
+    },
+    {
+      field: 'active',
+      label: 'Active',
+      type: 'boolean',
+    },
+  ],
+};
+
+export const businessCategoryItemSelectorConfig: IItemSelectorConfig = {
+  apiUrl: 'business-category/tree',
+  module: 'BusinessCategory',
+  labelField: 'title',
+  filter: 'local',
+  isTree: true,
+  labels: [
+    {
+      field: 'title',
+      label: 'Title',
+    },
+    {
+      field: 'active',
+      label: 'Active',
+      type: 'boolean',
+    },
+  ],
+};
+
+
 export const itemSelectorConfigs = [
   userItemSelectorConfig,
   customerItemSelectorConfig,
@@ -325,6 +362,8 @@ export const itemSelectorConfigs = [
   paymentMethodItemSelectorConfig,
   salesChannelItemSelectorConfig,
   roleItemSelectorConfig,
+  BusinessItemSelectorConfig,
+  businessCategoryItemSelectorConfig,
 ];
 
 export const getItemSelectorConfig = (module: string): IItemSelectorConfig => {

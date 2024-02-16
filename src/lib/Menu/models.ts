@@ -37,6 +37,7 @@ export class MenuItemModel {
     caption: string;
     permalink: string;
     model: string;
+    itemId: string;
     target: '_self'|'_blank' = '_self';
     type: 'custom'|'object' = 'custom';
     metaData: IGenericObject = {};

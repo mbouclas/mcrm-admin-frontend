@@ -98,6 +98,6 @@
     </div>
 
     <p class="mt-5 pb-1 font-bold">SEO</p>
-    <Fields {fields} model={category?.seo} module="Product" itemId={category.uuid} on:change={handleSeoChange} />
+    <Fields {fields} model={category?.seo} module="Page" itemId={category.uuid} on:change={handleSeoChange} />
   </div>
 {/if}

@@ -81,6 +81,10 @@
         let tree,
         res;
 
+        if (parentId) {
+            model.parentUuid = parentId;
+        }
+
         if (model.uuid) {
            res = await menuService.updateMenuItem(model.uuid, model);
         }
@@ -107,9 +111,11 @@
         model.model = modelName;
         const temp = Object.assign({}, model);
         const y = await new MenuService().toMenuItem(modelName, item);
+
         model = new MenuItemModel(y);
         model.target = temp.target;
         model.metaData = temp.metaData;
+
 
         if (Array.isArray(item.children) && item.children.length > 0) {
             const r = confirm('This item has children. Do you want to add them too?')

@@ -23,6 +23,7 @@
   export let handleCreate;
   export let handleUpdate;
   export let allowMove = false;
+  export let allowReorder = false;
   // let currentTree = [];
   export let movingNode = null;
   export let nodeToDelete = null;
@@ -96,13 +97,13 @@
         break;
       }
       case 'reordered' : {
-        currentTree = getCurrentTree(tree, path);
+        currentTree = getCurrentTree(state.value, path);
       }
       case "itemAdded": {
-        currentTree = getCurrentTree(tree, path);
+        currentTree = getCurrentTree(state.value, path);
       }
       case "itemRemoved": {
-        currentTree = getCurrentTree(tree, path);
+        currentTree = getCurrentTree(state.value, path);
       }
     }
 
@@ -381,7 +382,7 @@
                 ><Plus size="35px" color="white" /></button
               >
 
-              <button on:click={() => openUpdateModal(leaf)} class="text-gray-500"
+              <button on:click={() => openUpdateModal(leaf)} class="text-gray-500" title="Edit"
                 ><PencilSquare color="white" /></button
               >
 

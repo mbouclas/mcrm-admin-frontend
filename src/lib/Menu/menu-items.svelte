@@ -90,8 +90,8 @@ function onCreateModalOpen(e: IEvent<MenuItemModel>) {
 
 
 async function onReorder(e) {
-    const temp = Object.assign({}, item);
-    const newArr = reorderArray(item.menuItem, e.oldIndex, e.newIndex);
+    const items = currentParent ? currentParent.children : item.menuItem;
+    const newArr = reorderArray(items, e.oldIndex, e.newIndex);
     newArr.forEach((el,idx) => {
         el.order = idx;
     });
@@ -136,9 +136,9 @@ async function handleDelete(item: MenuItemModel, deleteType: TreeDeleteType) {
             on:openCreateModal={onCreateModalOpen}
             on:openUpdateModal={editMenuItem}
             on:goToNode={onGotToNode}
+            onMoveEnd={onReorder}
             bind:movingNode
 
-            onMoveEnd={onReorder}
     >
         <svelte:fragment slot="createModal">
             <Modal bind:open={showAddMenuItemModal} size="xl" title="Add Menu Item">

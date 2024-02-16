@@ -4,9 +4,9 @@ import {
     UserOutline,
     ArrowRightToBracketOutline,
     HomeOutline,
-    ChartLineUpOutline, ShoppingBagOutline, UsersOutline, AtomSolid
+    ChartLineUpOutline, ShoppingBagOutline, UsersOutline, AtomSolid, AddressBookOutline, BuildingOutline,
 } from "flowbite-svelte-icons";
-import {Cog, Home, User} from "svelte-heros-v2";
+import {Briefcase, Cog, Home, User} from "svelte-heros-v2";
 
 export class SideBarMenuItem {
     public label: string;
@@ -99,6 +99,40 @@ export const sideBarMenuItems: SideBarMenuItem[] = [
                 route: '/cms/categories',
             }),
         ]
+    }),
+    new SideBarMenuItem({
+        label: 'CRM',
+        icon: AddressBookOutline,
+        children: [
+            new SideBarMenuItem({
+                label: 'Businesses',
+                icon: BuildingOutline,
+                route: '/crm/businesses/list',
+                regexMatch: "^/crm/businesses/[^/]+$",
+            }),
+            new SideBarMenuItem({
+                label: 'Categories',
+                icon: FolderDuplicateOutline,
+                route: '/crm/categories',
+            }),
+            new SideBarMenuItem({
+                label: 'Accounts',
+                icon: Briefcase,
+                route: '/crm/accounts',
+                regexMatch: "^/crm/accounts/[^/]+$",
+            }),
+            new SideBarMenuItem({
+                label: 'People',
+                icon: UserOutline,
+                route: '/crm/people',
+                regexMatch: "^/crm/people/[^/]+$",
+            }),
+            new SideBarMenuItem({
+                label: 'Settings',
+                icon: CogOutline,
+                route: '/crm/settings',
+            }),
+        ],
     }),
     new SideBarMenuItem({
         label: 'Website',
