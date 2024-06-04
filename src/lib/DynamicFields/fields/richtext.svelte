@@ -2,7 +2,7 @@
 
   import type { IDynamicFieldConfigBlueprint } from "../types";
   import { Label, Textarea, Helper } from "flowbite-svelte";
-  import { onMount } from "svelte";
+  import {onDestroy, onMount} from "svelte";
   import {v4} from "uuid";
   export let id = v4();
   export let useDarkMode = true;
@@ -19,13 +19,18 @@
   let pristine = true;
 
   let hasError = false;
+  let editor;
+  onDestroy(() => {
+    editor.remove();
+  })
 
   function init() {
 
     tinymce.init({
       selector: `#${id}`,
       inline: false,
-      setup: (editor) => {
+      setup: (ed) => {
+        editor = ed;
         editor.on('init', (e) => {
           console.log('The Editor has initialized.', `#${id}`);
         });
@@ -53,26 +58,25 @@
       skin: useDarkMode ? 'oxide-dark' : 'oxide',
       content_css: useDarkMode ? 'dark' : 'default',
     });
+
+
   }
 
+  function checkForTinyMce() {
 
-
-  onMount(() => {
-    let timer;
-    if (typeof tinymce === 'undefined') {
-        setInterval(() => {
-          if (typeof tinymce !== 'undefined') {
-            init();
-            clearInterval(timer);
-          }
-        }, 1000);
-
-
+    if (typeof tinymce !== 'undefined') {
+      setTimeout(() => init());
       return;
     }
 
-    init();
+    console.log('Waiting for TinyMCE');
+    setTimeout(() => {
+      checkForTinyMce();
+    }, 1000);
+  }
 
+  onMount(() => {
+    checkForTinyMce();
   })
 
 </script>

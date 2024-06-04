@@ -208,6 +208,16 @@
     navigate(`/catalogue/products/${newProduct.uuid}`);
   }
 
+  function itemThumb(item) {
+    const url = typeof item.thumb === 'object' ? item.thumb.url : item.thumb;
+    // check if it's a cloudinary url
+    if (url && url.includes('cloudinary')) {
+      return url.replace('upload/', 'upload/w_128,h_128,c_fill/');
+    }
+
+    return url;
+  }
+
 </script>
 <NativeModal size="sm" bind:open={bulkOperationsUnderWay} title="Please wait..."
        dialogClass="fixed top-0 left-0 right-0 h-modal md:inset-0 md:h-full  w-full p-4 flex z-[99999]">
@@ -352,7 +362,9 @@
                       value={item.uuid}
             />
           </TableBodyCell>
-          <TableHeadCell><img src={typeof item.thumb === 'object' ? item.thumb.url : item.thumb}  class="w-16 object-cover" /></TableHeadCell>
+          <TableBodyCell>
+            <img src={itemThumb(item)}  class="w-16 object-cover max-w-[128px]" />
+          </TableBodyCell>
           <TableBodyCell>
             <a href="#" on:click|preventDefault={() => navigate(`/catalogue/products/${item.uuid}`)}
                     class="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer">

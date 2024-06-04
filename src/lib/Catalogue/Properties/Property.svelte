@@ -164,7 +164,7 @@
 
     {#if $params.id !== 'new'}
       <TabItem title="Property values" tabStyle="custom" {customActiveClass} {customInActiveClass}>
-        <PropertyValues propertyUuid={$params.id} />
+        <PropertyValues propertyUuid={$params.id} property={model} />
       </TabItem>
     {/if}
 

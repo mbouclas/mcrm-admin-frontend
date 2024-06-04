@@ -175,11 +175,9 @@
   <!-- END USER CARD -->
 
   <div class="footer flex items-center flex-col gap-4 my-4 jusfify-center">
-    <p class="text-gray-200 text-[13px] ">
-      Don't have an account? <a href="/" class="text-blue-500">Signup now!</a>
-    </p>
+
     <span class="font-light  text-gray-200 text-xs"
-      >© 2022 Skote. Crafted with by Themesbrand</span
+      >© 2022 Businesslink HQ</span
     >
   </div>
 </form>

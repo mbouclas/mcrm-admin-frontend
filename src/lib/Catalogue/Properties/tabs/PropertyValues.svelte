@@ -4,18 +4,18 @@
   import { formatDate } from '../../../helpers/dates';
   import Paginator from '../../../Shared/Paginator.svelte';
   import SortButton from '../../../Shared/SortTableHeadButton.svelte';
-  import Input from '../../../Shared/Input.svelte';
   import Loading from '../../../Shared/Loading.svelte';
-  import { Button } from 'flowbite-svelte';
+  import { Button, Modal as NativeModal } from 'flowbite-svelte';
   import { navigate, useLocation } from 'mcrm-svelte-navigator';
-  import Image from '../../../DynamicFields/fields/image.svelte';
   import { RequestErrorException, handleValidationErrors, clearErrors } from '../../../helpers/helperErrors';
   import Modal from '../../../Shared/Modal.svelte';
   import CustomFilters from '../../../Shared/CustomFilters.svelte';
   import type { IPagination } from '../../../Shared/models/generic';
+  import AddEditPropertyValue from './add-edit-property-value.svelte';
+  import type {PropertyModel} from "../../models/property.model";
 
   export let propertyUuid;
-
+  export let property: PropertyModel;
   let isPropertyValueModalOpen = false;
   let isDeletePropertyValueModalOpen = false;
   let isEditPropertyValueModalOpen = false;
@@ -161,21 +161,7 @@
     isDeletePropertyValueModalOpen = true;
   };
 
-  const confirmPropertyValueEdit = async () => {
-    await service.updatePropertyValue({
-      ...propertyValueData,
-      uuid: propertyUuid,
-      propertyValueUuid: propertyValueData.uuid,
-    });
-    isEditPropertyValueModalOpen = false;
-    propertyValueData = propertyValueDefault;
-    await search();
-  };
 
-  const cancelPropertyValueEdit = () => {
-    propertyValueData = propertyValueDefault;
-    isEditPropertyValueModalOpen = false;
-  };
 </script>
 
 <Modal bind:showModal>
@@ -209,93 +195,14 @@
   </div>
 </Modal>
 
-<Modal bind:showModal={isPropertyValueModalOpen}>
-  <h2 class="flowbite-modal-title text-xl font-bold" slot="header">Add new property value</h2>
-  <div class="mt-4" slot="content">
-    <div class="mb-4">
-      <Input label="Name" bind:errors={propertyValueStatus.name.errors} bind:value={propertyValueData.name} required />
-    </div>
+<NativeModal bind:open={isPropertyValueModalOpen} size="xl" autoclose={false} title="Add Property Value">
+  <AddEditPropertyValue  {property} />
+</NativeModal>
 
-    <div class="mb-4 z-50">
-      <Image
-        id="icon"
-        model={propertyValueData?.icon || ''}
-        title="Property value icon"
-        maxNumberOfFiles={1}
-        module="PropertyValue"
-        itemId={propertyValueData.uuid}
-        type="main"
-        on:allUploadsComplete={(e) => {
-          propertyValueData.icon = e.detail;
-        }}
-      />
-    </div>
+<NativeModal bind:open={isEditPropertyValueModalOpen} size="xl" autoclose={false} title="Add Property Value">
+  <AddEditPropertyValue model={propertyValueData} {property}  />
+</NativeModal>
 
-    <div class="mb-4 z-50">
-      <Image
-        id="image"
-        model={propertyValueData?.image || ''}
-        title="Property value image"
-        maxNumberOfFiles={1}
-        module="PropertyValue"
-        itemId={propertyValueData.uuid}
-        type="main"
-        on:allUploadsComplete={(e) => {
-          propertyValueData.image = e.detail;
-        }}
-      />
-    </div>
-  </div>
-
-  <div slot="footer">
-    <Button disabled={hasPropertyValueErrors} on:click={confirmAddPropertyValueModal}>Create</Button>
-    <Button color="alternative" on:click={cancelAddPropertyValueModal}>Cancel</Button>
-  </div>
-</Modal>
-
-<Modal bind:showModal={isEditPropertyValueModalOpen}>
-  <h2 class="flowbite-modal-title text-xl font-bold" slot="header">Edit property value</h2>
-  <div class="mt-4" slot="content">
-    <div class="mb-4">
-      <Input label="Name" bind:errors={propertyValueStatus.name.errors} bind:value={propertyValueData.name} required />
-    </div>
-
-    <div class="mb-4 z-50">
-      <Image
-        id="icon"
-        model={propertyValueData?.icon || ''}
-        title="Property value icon"
-        maxNumberOfFiles={1}
-        module="PropertyValue"
-        itemId={propertyValueData.uuid}
-        type="main"
-        on:allUploadsComplete={(e) => {
-          propertyValueData.icon = e.detail;
-        }}
-      />
-    </div>
-
-    <div class="mb-4 z-50">
-      <Image
-        id="image"
-        model={propertyValueData?.image || ''}
-        title="Property value image"
-        maxNumberOfFiles={1}
-        module="PropertyValue"
-        itemId={propertyValueData.uuid}
-        type="main"
-        on:allUploadsComplete={(e) => {
-          propertyValueData.image = e.detail;
-        }}
-      />
-    </div>
-  </div>
-
-  <div slot="footer">
-    <Button disabled={hasPropertyValueErrors} on:click={confirmPropertyValueEdit}>Edit</Button>
-    <Button color="alternative" on:click={cancelPropertyValueEdit}>Cancel</Button>
-  </div>
-</Modal>
 <div
   class="text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 overflow-y-hidden overflow-x-auto"
 >
@@ -345,6 +252,7 @@
                 >
               </th>
 
+              <th>Color</th>
               <th
                 scope="col"
                 class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
@@ -392,6 +300,14 @@
 
                   <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
                     <img class="w-20" src={item?.icon?.url || item?.icon} />
+                  </td>
+                  <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
+                    {#if item.color}
+                      <div class="flex space-x-2.5">
+                        <div class="w-6 h-6 rounded-full" style="background-color: {item.color}"></div>
+                        <span>{item.color}</span>
+                      </div>
+                      {/if}
                   </td>
 
                   <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">

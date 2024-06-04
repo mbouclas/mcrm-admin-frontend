@@ -361,6 +361,7 @@
       </CustomFields>
       {/if}
 
+
   <FileUpload {options} {model} bind:data={selectedTemplate.data}
               on:done={handleValidationUploadDone} on:started={handleUploadStart} />
     {/if}
